@@ -19,6 +19,11 @@ public class Heater extends AbstractComponent implements HeaterImplementationI {
 	 */
 	protected String myUri;
 
+	protected float requestedTemperature;
+
+	protected boolean isOn;
+
+
 	/**
 	 * Constructor of the heater
 	 * 
@@ -27,5 +32,37 @@ public class Heater extends AbstractComponent implements HeaterImplementationI {
 	public Heater(String uri) {
 		super(uri, 1, 0);
 		myUri = uri;
+		this.requestedTemperature = 20;
+		this.isOn = false;
 	}
+	/**
+	 * @see HeaterCI
+	 */
+	public void turnOff() throws Exception
+	{
+		this.isOn = false;
+	}
+
+	/**
+	 * @see HeaterCI
+	 */
+	public void turnOn() throws Exception
+	{
+		this.isOn = true;
+	}
+	/**
+	 * @see HeaterCI
+	 */
+	public boolean heaterIsOn() throws Exception
+	{
+		return this.isOn;
+	}
+	/**
+	 * @see HeaterCI
+	 */
+	public float getRequestedTemperature() throws Exception
+	{
+		return this.requestedTemperature;
+	}
+
 }
