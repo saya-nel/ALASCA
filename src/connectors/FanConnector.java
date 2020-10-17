@@ -7,7 +7,7 @@ import utils.FanLevel;
 /**
  * Connector for the FanCI component interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public class FanConnector extends AbstractConnector implements FanCI {

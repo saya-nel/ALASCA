@@ -8,7 +8,7 @@ import interfaces.BatteryCI;
  * 
  * Battery inbound port for Battery component interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI {

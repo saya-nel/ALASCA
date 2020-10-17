@@ -8,7 +8,7 @@ import interfaces.SolarPanelsImplementationI;
 /**
  * Class representing the SolarPanels component
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 @OfferedInterfaces(offered = { SolarPanelsCI.class })
@@ -19,6 +19,11 @@ public class SolarPanels extends AbstractComponent implements SolarPanelsImpleme
 	 */
 	protected String myUri;
 
+	/**
+	 * Constructor of the solar panels
+	 * 
+	 * @param uri of the SolarPanels component
+	 */
 	public SolarPanels(String uri) {
 		super(uri, 1, 0);
 		myUri = uri;

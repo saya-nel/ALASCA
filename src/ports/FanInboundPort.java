@@ -10,17 +10,20 @@ import utils.FanLevel;
  * 
  * Fan inbound port for Fan component interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public class FanInboundPort extends AbstractInboundPort implements FanCI {
 
 	private static final long serialVersionUID = 1L;
 
-	public FanInboundPort(ComponentI owner) throws Exception {
-		super(FanCI.class, owner);
-	}
-
+	/**
+	 * Construtor of the fan inbound port
+	 * 
+	 * @param uri   of the fan inbound port
+	 * @param owner owner component
+	 * @throws Exception
+	 */
 	public FanInboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri, FanCI.class, owner);
 	}

@@ -4,7 +4,7 @@ package interfaces;
  * 
  * SolarPanels services interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public interface SolarPanelsImplementationI {

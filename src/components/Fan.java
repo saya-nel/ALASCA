@@ -11,7 +11,7 @@ import utils.FanLevel;
 /**
  * Class representing the Fan component
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 @OfferedInterfaces(offered = { FanCI.class })
@@ -25,7 +25,7 @@ public class Fan extends AbstractComponent implements FanImplementationI {
 	/**
 	 * Actual level of the fan
 	 */
-	protected FanLevel currendLevel;
+	protected FanLevel currentLevel;
 
 	/**
 	 * Actual power state of the fan
@@ -45,7 +45,7 @@ public class Fan extends AbstractComponent implements FanImplementationI {
 	public Fan(String uri, String fipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
-		this.currendLevel = FanLevel.MID;
+		this.currentLevel = FanLevel.MID;
 		this.isOn = false;
 		fip = new FanInboundPort(fipURI, this);
 		fip.publishPort();
@@ -93,7 +93,7 @@ public class Fan extends AbstractComponent implements FanImplementationI {
 	 */
 	@Override
 	public void adjustPower(FanLevel level) throws Exception {
-		this.currendLevel = level;
+		this.currentLevel = level;
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class Fan extends AbstractComponent implements FanImplementationI {
 	 */
 	@Override
 	public FanLevel getFanLevel() throws Exception {
-		return currendLevel;
+		return currentLevel;
 	}
 
 }

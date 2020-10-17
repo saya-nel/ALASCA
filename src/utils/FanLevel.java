@@ -4,7 +4,7 @@ package utils;
  * 
  * Represents fan power
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public enum FanLevel {

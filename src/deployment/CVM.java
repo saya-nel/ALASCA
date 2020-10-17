@@ -4,7 +4,7 @@ import fr.sorbonne_u.components.cvm.AbstractCVM;
 
 /**
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public class CVM extends AbstractCVM {

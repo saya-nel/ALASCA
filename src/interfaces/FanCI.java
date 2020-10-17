@@ -7,7 +7,7 @@ import utils.FanLevel;
  * 
  * Fan component interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public interface FanCI extends FanImplementationI, OfferedCI {

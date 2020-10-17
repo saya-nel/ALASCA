@@ -9,13 +9,20 @@ import interfaces.SolarPanelsCI;
  * 
  * SolarPanels inbound port for SolarPanels component interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public class SolarPanelsInboundPort extends AbstractInboundPort implements SolarPanelsCI {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Construtor of the solar panels inbound port
+	 * 
+	 * @param uri   of the solar panels inbound port
+	 * @param owner owner component
+	 * @throws Exception
+	 */
 	public SolarPanelsInboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri, BatteryCI.class, owner);
 		// TODO Auto-generated constructor stub

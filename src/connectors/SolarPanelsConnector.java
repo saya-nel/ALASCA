@@ -6,7 +6,7 @@ import interfaces.SolarPanelsCI;
 /**
  * Connector for the SolarPanelsCI component interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public class SolarPanelsConnector extends AbstractConnector implements SolarPanelsCI {

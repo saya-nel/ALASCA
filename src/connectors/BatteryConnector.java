@@ -6,7 +6,7 @@ import interfaces.BatteryCI;
 /**
  * Connector for the BatteryCI component interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public class BatteryConnector extends AbstractConnector implements BatteryCI {

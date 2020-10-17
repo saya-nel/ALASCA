@@ -9,13 +9,20 @@ import interfaces.HeaterCI;
  * 
  * Heater inbound port for Heater component interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public class HeaterInboundPort extends AbstractInboundPort implements HeaterCI {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Construtor of the heater inbound port
+	 * 
+	 * @param uri   of the heater inbound port
+	 * @param owner owner component
+	 * @throws Exception
+	 */
 	public HeaterInboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri, BatteryCI.class, owner);
 		// TODO Auto-generated constructor stub

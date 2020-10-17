@@ -6,7 +6,7 @@ import utils.FanLevel;
  * 
  * Fan services interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public interface FanImplementationI {

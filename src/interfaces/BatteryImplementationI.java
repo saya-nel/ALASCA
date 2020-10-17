@@ -4,7 +4,7 @@ package interfaces;
  * 
  * Battery services interface
  * 
- * @author Bello Memmy
+ * @author Bello Memmi
  *
  */
 public interface BatteryImplementationI {
