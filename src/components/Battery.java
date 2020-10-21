@@ -33,6 +33,11 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	protected BatteryState stateBattery;
 
 	/**
+	 * Maximum energy of the battery
+	 */
+	protected float maximumEnergy;
+
+	/**
 	 * Inbound port of the battery
 	 */
 	protected BatteryInboundPort bip;
@@ -42,11 +47,12 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * 
 	 * @param uri of the Battery component
 	 */
-	public Battery(String uri, String bipURI) throws Exception {
+	public Battery(String uri, String bipURI, float maxEnergy) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
 		this.stateBattery = BatteryState.SLEEPING;
 		this.batteryCharge = 0;
+		this.maximumEnergy = maxEnergy;
 		bip = new BatteryInboundPort(bipURI, this);
 		bip.publishPort();
 	}
@@ -109,6 +115,25 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 			batteryCharge = 0;
 			return res;
 		}
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#addEnergy(float)
+	 */
+	@Override
+	public void addEnergy(float toAdd) throws Exception {
+		if (batteryCharge + toAdd <= maximumEnergy)
+			batteryCharge += toAdd;
+		else
+			batteryCharge = maximumEnergy;
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#getMaximumEnergy()
+	 */
+	@Override
+	public float getMaximumEnergy() throws Exception {
+		return maximumEnergy;
 	}
 
 }

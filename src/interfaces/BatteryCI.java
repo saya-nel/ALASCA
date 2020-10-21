@@ -26,6 +26,12 @@ public interface BatteryCI extends BatteryImplementationI, OfferedCI, RequiredCI
 	public BatteryState getBatteryState() throws Exception;
 
 	/**
+	 * @see interfaces.BatteryImplementationI#getMaximumEnergy()
+	 */
+	@Override
+	public float getMaximumEnergy() throws Exception;
+
+	/**
 	 * @see interfaces.BatteryImplementationI#setBatteryState(BatteryState)
 	 */
 	@Override
@@ -36,5 +42,11 @@ public interface BatteryCI extends BatteryImplementationI, OfferedCI, RequiredCI
 	 */
 	@Override
 	public float takeEnergy(float toTake) throws Exception;
+
+	/**
+	 * @see interfaces.BatteryImplementationI#addEnergy(float)
+	 */
+	@Override
+	public void addEnergy(float toAdd) throws Exception;
 
 }

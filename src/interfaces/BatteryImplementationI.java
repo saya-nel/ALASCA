@@ -28,6 +28,11 @@ public interface BatteryImplementationI {
 	public BatteryState getBatteryState() throws Exception;
 
 	/**
+	 * return the maximum energy of the battery
+	 */
+	public float getMaximumEnergy() throws Exception;
+
+	/**
 	 * update the battery state
 	 * 
 	 * @param state new state
@@ -42,5 +47,12 @@ public interface BatteryImplementationI {
 	 * @throws Exception
 	 */
 	public float takeEnergy(float toTake) throws Exception;
+
+	/**
+	 * 
+	 * @param toTake energy to add to Battery
+	 * @throws Exception
+	 */
+	public void addEnergy(float toAdd) throws Exception;
 
 }

@@ -57,4 +57,20 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 		return ((BatteryCI) this.getConnector()).takeEnergy(toTake);
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#addEnergy(float)
+	 */
+	@Override
+	public void addEnergy(float toAdd) throws Exception {
+		((BatteryCI) this.getConnector()).addEnergy(toAdd);
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#getMaximumEnergy()
+	 */
+	@Override
+	public float getMaximumEnergy() throws Exception {
+		return ((BatteryCI) this.getConnector()).getMaximumEnergy();
+	}
+
 }
