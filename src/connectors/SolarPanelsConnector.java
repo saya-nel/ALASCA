@@ -11,4 +11,8 @@ import interfaces.SolarPanelsCI;
  */
 public class SolarPanelsConnector extends AbstractConnector implements SolarPanelsCI {
 
+    @Override
+    public float getCurrentEnergyProduction() throws Exception {
+        return ((SolarPanelsCI) this.offering).getCurrentEnergyProduction();
+    }
 }

@@ -1,5 +1,6 @@
 package ports;
 
+import components.SolarPanels;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import interfaces.BatteryCI;
@@ -26,5 +27,10 @@ public class SolarPanelsInboundPort extends AbstractInboundPort implements Solar
 	public SolarPanelsInboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri, BatteryCI.class, owner);
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public float getCurrentEnergyProduction() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((SolarPanels) owner).getCurrentEnergyProduction());
 	}
 }
