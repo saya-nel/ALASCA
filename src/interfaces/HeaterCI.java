@@ -10,32 +10,29 @@ import fr.sorbonne_u.components.interfaces.OfferedCI;
  *
  */
 public interface HeaterCI extends HeaterImplementationI, OfferedCI {
-    /**
-     *
-     * @return                  requested temperature
-     * @throws Exception
-     */
-    public float getRequestedTemperature() throws Exception;
 
+	/**
+	 * @see interfaces.HeaterImplementationI#getRequestedTemperature()
+	 */
+	@Override
+	public float getRequestedTemperature() throws Exception;
 
-    /**
-     * enables heater system
-     * @throws Exception
-     */
-    public void turnOn() throws Exception;
+	/**
+	 * @see interfaces.HeaterImplementationI#turnOn()
+	 */
+	@Override
+	public void turnOn() throws Exception;
 
-    /**
-     * disables heater system
-     * @throws Exception
-     */
-    public void turnOff() throws Exception;
+	/**
+	 * @see interfaces.HeaterImplementationI#turnOff()
+	 */
+	@Override
+	public void turnOff() throws Exception;
 
-    /**
-     *
-     * @return                  true if the heater is enabled false otherwise
-     * @throws Exception
-     */
-    public boolean heaterIsOn() throws Exception;
-
+	/**
+	 * @see interfaces.HeaterImplementationI#isHeaterOn()
+	 */
+	@Override
+	public boolean isHeaterOn() throws Exception;
 
 }

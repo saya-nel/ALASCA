@@ -3,7 +3,6 @@ package ports;
 import components.Heater;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import interfaces.BatteryCI;
 import interfaces.HeaterCI;
 
 /**
@@ -25,11 +24,11 @@ public class HeaterInboundPort extends AbstractInboundPort implements HeaterCI {
 	 * @throws Exception
 	 */
 	public HeaterInboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, BatteryCI.class, owner);
-		// TODO Auto-generated constructor stub
+		super(uri, HeaterInboundPort.class, owner);
 	}
+
 	/**
-	 * @see HeaterCI
+	 * @see interfaces.HeaterImplementationI#getRequestedTemperature()
 	 */
 	@Override
 	public float getRequestedTemperature() throws Exception {
@@ -37,21 +36,21 @@ public class HeaterInboundPort extends AbstractInboundPort implements HeaterCI {
 	}
 
 	/**
-	 * @see HeaterCI
+	 * @see interfaces.HeaterImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
 		this.getOwner().runTask(owner -> {
-					try {
-						((Heater) owner).turnOn();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-		);
+			try {
+				((Heater) owner).turnOn();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
+
 	/**
-	 * @see HeaterCI
+	 * @see interfaces.HeaterImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception {
@@ -61,15 +60,15 @@ public class HeaterInboundPort extends AbstractInboundPort implements HeaterCI {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-				}
-		);
+		});
 	}
+
 	/**
-	 * @see HeaterCI
+	 * @see interfaces.HeaterImplementationI#isHeaterOn()
 	 */
 	@Override
-	public boolean heaterIsOn() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Heater) owner).heaterIsOn());
+	public boolean isHeaterOn() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Heater) owner).isHeaterOn());
 	}
 
 }
