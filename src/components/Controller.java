@@ -17,10 +17,10 @@ import java.util.Vector;
 
 public class Controller extends AbstractComponent implements ControllerImplementationI {
     //ports used for registering
-    private List<ControllerOutboundPort> registerRequestPort;
+    private List<ControllerInboundPort> registerRequestPort;
 
     //ports used for controlling devices
-    private List<ControllerInboundPort> controlDevicesPorts;
+    private List<ControllerOutboundPort> controlDevicesPorts;
 
     //uri of component
     private String myURI;
@@ -31,8 +31,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 
     public Controller(String uri,
-                      String[] outboundPortRegisterURI,
-                      String[] inboundPortDeviceURI) throws Exception
+                      String[] inboundPortRegisterURI,
+                      String[] outboundPortDeviceURI) throws Exception
     {
         super(uri, 1, 0);
         assert uri != null;
@@ -44,21 +44,21 @@ public class Controller extends AbstractComponent implements ControllerImplement
         // Initialize ports relative to registering
         this.registerRequestPort = new Vector<>();
 
-        for (String out : outboundPortRegisterURI)
+        for (String out : inboundPortRegisterURI)
         {
-            registerRequestPort.add(new ControllerOutboundPort(out, this));
+            registerRequestPort.add(new ControllerInboundPort(out, this));
         }
-        for (ControllerOutboundPort bom : registerRequestPort)
+        for (ControllerInboundPort bom : registerRequestPort)
         {
             bom.publishPort();
         }
 
         // Initialize ports relative to devices control
-        for ( String in : inboundPortDeviceURI)
+        for ( String in : outboundPortDeviceURI)
         {
-            this.controlDevicesPorts.add(new ControllerInboundPort(in,this));
+            this.controlDevicesPorts.add(new ControllerOutboundPort(in,this));
         }
-        for(ControllerInboundPort port : this.controlDevicesPorts)
+        for(ControllerOutboundPort port : this.controlDevicesPorts)
         {
             port.publishPort();
         }
