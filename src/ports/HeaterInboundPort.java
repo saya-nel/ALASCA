@@ -71,4 +71,18 @@ public class HeaterInboundPort extends AbstractInboundPort implements HeaterCI {
 		return this.getOwner().handleRequestSync(owner -> ((Heater) owner).isHeaterOn());
 	}
 
+	/**
+	 * @see interfaces.HeaterImplementationI#setRequestedTemperature(float)
+	 */
+	@Override
+	public void setRequestedTemperature(float requestedTemperature) throws Exception {
+		this.getOwner().runTask(owner -> {
+			try {
+				((Heater) owner).setRequestedTemperature(requestedTemperature);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
 }

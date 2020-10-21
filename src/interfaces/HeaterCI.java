@@ -35,4 +35,10 @@ public interface HeaterCI extends HeaterImplementationI, OfferedCI {
 	@Override
 	public boolean isHeaterOn() throws Exception;
 
+	/**
+	 * @see interfaces.HeaterImplementationI#setRequestedTemperature(float)
+	 */
+	@Override
+	public void setRequestedTemperature(float requestedTemperature) throws Exception;
+
 }

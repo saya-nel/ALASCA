@@ -105,4 +105,12 @@ public class Heater extends AbstractComponent implements HeaterImplementationI {
 		return this.isOn;
 	}
 
+	/**
+	 * @see interfaces.HeaterImplementationI#setRequestedTemperature(float)
+	 */
+	@Override
+	public void setRequestedTemperature(float requestedTemperature) throws Exception {
+		this.requestedTemperature = requestedTemperature;
+	}
+
 }

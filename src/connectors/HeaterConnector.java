@@ -42,4 +42,12 @@ public class HeaterConnector extends AbstractConnector implements HeaterCI {
 	public boolean isHeaterOn() throws Exception {
 		return ((HeaterCI) this.offering).isHeaterOn();
 	}
+
+	/**
+	 * @see interfaces.HeaterImplementationI#setRequestedTemperature(float)
+	 */
+	@Override
+	public void setRequestedTemperature(float requestedTemperature) throws Exception {
+		((HeaterCI) this.offering).setRequestedTemperature(requestedTemperature);
+	}
 }
