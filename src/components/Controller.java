@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @OfferedInterfaces(offered = { ControllerCI.class })
@@ -52,7 +53,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
     public void initialise(String[] inboundPortRegisterURI,
                            String[] outboundPortDeviceURI) throws Exception
     {
-        registeredDevices = new HashMap<>();
+        registeredDevices = new ConcurrentHashMap<>();
 
 
         // Initialize ports relative to registering
