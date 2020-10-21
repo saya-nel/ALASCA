@@ -12,18 +12,27 @@ import utils.BatteryState;
  */
 public class BatteryConnector extends AbstractConnector implements BatteryCI {
 
-    @Override
-    public float readBatteryCharge() throws Exception {
-        return ((BatteryCI) this.offering).readBatteryCharge();
-    }
+	/**
+	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
+	 */
+	@Override
+	public float getBatteryCharge() throws Exception {
+		return ((BatteryCI) this.offering).getBatteryCharge();
+	}
 
-    @Override
-    public BatteryState getBatteryState() throws Exception {
-        return ((BatteryCI) this.offering).getBatteryState();
-    }
+	/**
+	 * @see interfaces.BatteryImplementationI#getBatteryState()
+	 */
+	@Override
+	public BatteryState getBatteryState() throws Exception {
+		return ((BatteryCI) this.offering).getBatteryState();
+	}
 
-    @Override
-    public void setBatteryState(BatteryState state) throws Exception {
-        ((BatteryCI) this.offering).setBatteryState(state);
-    }
+	/**
+	 * @see interfaces.BatteryImplementationI#setBatteryState(BatteryState)
+	 */
+	@Override
+	public void setBatteryState(BatteryState state) throws Exception {
+		((BatteryCI) this.offering).setBatteryState(state);
+	}
 }

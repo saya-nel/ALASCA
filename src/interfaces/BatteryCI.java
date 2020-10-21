@@ -11,24 +11,22 @@ import utils.BatteryState;
  *
  */
 public interface BatteryCI extends BatteryImplementationI, OfferedCI {
-    /**
-     *
-     * @return              battery charge (mA/h)
-     * @throws Exception
-     */
-    public float readBatteryCharge() throws Exception;
 
-    /**
-     *
-     * @return              State of battery
-     * @throws Exception
-     */
-    public BatteryState getBatteryState() throws Exception;
+	/**
+	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
+	 */
+	@Override
+	public float getBatteryCharge() throws Exception;
 
-    /**
-     *
-     * @param state         of battery DRAINING RECHARGING or SLEEPING
-     * @throws Exception
-     */
-    public void setBatteryState(BatteryState state) throws Exception;
+	/**
+	 * @see interfaces.BatteryImplementationI#getBatteryState()
+	 */
+	@Override
+	public BatteryState getBatteryState() throws Exception;
+
+	/**
+	 * @see interfaces.BatteryImplementationI#setBatteryState(BatteryState)
+	 */
+	@Override
+	public void setBatteryState(BatteryState state) throws Exception;
 }
