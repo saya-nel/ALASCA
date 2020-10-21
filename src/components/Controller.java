@@ -14,11 +14,20 @@ import java.util.Map;
 @OfferedInterfaces(offered = { ControllerCI.class })
 
 public class Controller extends AbstractComponent implements ControllerImplementationI {
-    private ControllerInboundPort registerRequestPort;//register
+    //ports used for registering
+    private ControllerInboundPort registerRequestPort;
+
+    //ports used for controlling devices
+
+
+    //uri of component
     private String myURI;
 
     //Map serial number in key and XMLfile value
     private Map<String,String> registeredDevices;
+
+
+
     public Controller(String uri,
                       String[] inboundPortDeviceURI,
                       String[] outboundPortDeviceURI) throws Exception
