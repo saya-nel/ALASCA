@@ -28,4 +28,9 @@ public class SolarPanels extends AbstractComponent implements SolarPanelsImpleme
 		super(uri, 1, 0);
 		myUri = uri;
 	}
+
+	@Override
+	public float getCurrentEnergyProduction() throws Exception {
+		return 0;
+	}
 }
