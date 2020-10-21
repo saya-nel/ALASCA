@@ -77,6 +77,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		this.bip.publishPort();
 	}
 
+
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
 	 */

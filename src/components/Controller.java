@@ -2,6 +2,7 @@ package components;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.cvm.AbstractCVM;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import interfaces.ControllerCI;
 import interfaces.ControllerImplementationI;
@@ -77,15 +78,20 @@ public class Controller extends AbstractComponent implements ControllerImplement
         }
     }
 
+
     /**
      * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
      */
     @Override
     public synchronized void shutdown() throws ComponentShutdownException {
+        //print debug_mode log
         try {
             for (ControllerInboundPort in : this.registerRequestPort)
                 in.unpublishPort();
-        } catch (Exception e) {
+            for (ControllerOutboundPort out : this.controlDevicesPorts)
+                out.unpublishPort();
+        } catch (Exception e)
+        {
             throw new ComponentShutdownException(e);
         }
         super.shutdown();

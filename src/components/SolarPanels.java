@@ -34,6 +34,7 @@ public class SolarPanels extends AbstractComponent implements SolarPanelsImpleme
 	// -------------------------------------------------------------------------
 	// Component life-cycle
 	// -------------------------------------------------------------------------
+
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
 	 */
