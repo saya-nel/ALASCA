@@ -96,4 +96,19 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		this.stateBattery = state;
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#takeEnergy(float)
+	 */
+	@Override
+	public float takeEnergy(float toTake) throws Exception {
+		if (batteryCharge - toTake >= 0) {
+			batteryCharge -= toTake;
+			return toTake;
+		} else {
+			float res = batteryCharge;
+			batteryCharge = 0;
+			return res;
+		}
+	}
+
 }

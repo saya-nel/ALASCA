@@ -51,4 +51,12 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 			}
 		});
 	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#takeEnergy(float)
+	 */
+	@Override
+	public float takeEnergy(float toTake) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).takeEnergy(toTake));
+	}
 }

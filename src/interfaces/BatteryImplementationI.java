@@ -17,7 +17,7 @@ public interface BatteryImplementationI {
 	 * @return the actual battery charge
 	 * @throws Exception
 	 */
-	float getBatteryCharge() throws Exception;
+	public float getBatteryCharge() throws Exception;
 
 	/**
 	 * return the actual battery state
@@ -25,7 +25,7 @@ public interface BatteryImplementationI {
 	 * @return the battery state
 	 * @throws Exception
 	 */
-	BatteryState getBatteryState() throws Exception;
+	public BatteryState getBatteryState() throws Exception;
 
 	/**
 	 * update the battery state
@@ -33,6 +33,14 @@ public interface BatteryImplementationI {
 	 * @param state new state
 	 * @throws Exception
 	 */
-	void setBatteryState(BatteryState state) throws Exception;
+	public void setBatteryState(BatteryState state) throws Exception;
+
+	/**
+	 * 
+	 * @param toTake energy to take from Battery
+	 * @return taken energy
+	 * @throws Exception
+	 */
+	public float takeEnergy(float toTake) throws Exception;
 
 }

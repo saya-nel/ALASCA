@@ -16,29 +16,29 @@ public interface FanCI extends FanImplementationI, OfferedCI {
 	 * @see interfaces.FanImplementationI#turnOn()
 	 */
 	@Override
-	void turnOn() throws Exception;
+	public void turnOn() throws Exception;
 
 	/**
 	 * @see interfaces.FanImplementationI#turnOff()
 	 */
 	@Override
-	void turnOff() throws Exception;
+	public void turnOff() throws Exception;
 
 	/**
 	 * @see interfaces.FanImplementationI#adjustPower(FanLevel)
 	 */
 	@Override
-	void adjustPower(FanLevel level) throws Exception;
+	public void adjustPower(FanLevel level) throws Exception;
 
 	/**
 	 * @see interfaces.FanImplementationI#isTurnedOn()
 	 */
 	@Override
-	boolean isTurnedOn() throws Exception;
+	public boolean isTurnedOn() throws Exception;
 
 	/**
 	 * @see interfaces.FanImplementationI#getFanLevel()
 	 */
 	@Override
-	FanLevel getFanLevel() throws Exception;
+	public FanLevel getFanLevel() throws Exception;
 }

@@ -29,4 +29,11 @@ public interface BatteryCI extends BatteryImplementationI, OfferedCI {
 	 */
 	@Override
 	public void setBatteryState(BatteryState state) throws Exception;
+
+	/**
+	 * @see interfaces.BatteryImplementationI#takeEnergy(float)
+	 */
+	@Override
+	public float takeEnergy(float toTake) throws Exception;
+
 }
