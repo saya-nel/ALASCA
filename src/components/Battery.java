@@ -3,6 +3,7 @@ package components;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.exceptions.PreconditionException;
 import interfaces.BatteryCI;
 import interfaces.BatteryImplementationI;
 import ports.BatteryInboundPort;
@@ -43,23 +44,45 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	protected BatteryInboundPort bip;
 
 	/**
-	 * Constructor of the battery
-	 * 
-	 * @param uri of the Battery component
+	 * Constructor of battery
+	 * @param reflectionInboundPortURI 			URI battery component
+	 * @param bipURI							URI inbound port battery
+	 * @throws Exception
 	 */
 	public Battery(String uri, String bipURI, float maxEnergy) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
-		this.stateBattery = BatteryState.SLEEPING;
-		this.batteryCharge = 0;
-		this.maximumEnergy = maxEnergy;
-		bip = new BatteryInboundPort(bipURI, this);
-		bip.publishPort();
+		this.initialise(bipURI, maxEnergy);
 	}
 
 	// -------------------------------------------------------------------------
 	// Component life-cycle
 	// -------------------------------------------------------------------------
+
+	/**
+	 * Initialize the battery component
+	 *
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 *     pre		{@code batteryInboundPortURI != null}
+	 *     pre 		{@code batteryInboundPortURI.isEmpty()}
+	 *     post 	{@code getBatteryState() == BatteryState.SLEEPING }
+	 *     post 	{@code getBatteryCharge() == 0}
+	 * </pre>
+	 * @param batteryInboundPortURI
+	 * @throws Exception
+	 */
+	protected void initialise(String batteryInboundPortURI, float maximumEnergy) throws Exception {
+		assert batteryInboundPortURI != null : new PreconditionException("batteryInboundPortURI != null");
+		assert !batteryInboundPortURI.isEmpty() : new PreconditionException("batteryInboundPortURI.isEmpty()");
+		this.stateBattery = BatteryState.SLEEPING;
+		this.batteryCharge = 0;
+		this.maximumEnergy = maximumEnergy;
+		this.bip = new BatteryInboundPort(batteryInboundPortURI, this);
+		this.bip.publishPort();
+	}
+
 
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()

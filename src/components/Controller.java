@@ -2,6 +2,8 @@ package components;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.cvm.AbstractCVM;
+import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import interfaces.ControllerCI;
 import interfaces.ControllerImplementationI;
 import ports.ControllerInboundPort;
@@ -38,6 +40,18 @@ public class Controller extends AbstractComponent implements ControllerImplement
         assert uri != null;
         this.myURI = uri;
 
+        initialise(inboundPortRegisterURI,outboundPortDeviceURI);
+    }
+
+
+
+    // -------------------------------------------------------------------------
+    // Component life-cycle
+    // -------------------------------------------------------------------------
+
+    public void initialise(String[] inboundPortRegisterURI,
+                           String[] outboundPortDeviceURI) throws Exception
+    {
         registeredDevices = new HashMap<>();
 
 
@@ -63,6 +77,36 @@ public class Controller extends AbstractComponent implements ControllerImplement
             port.publishPort();
         }
     }
+
+
+    /**
+     * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
+     */
+    @Override
+    public synchronized void shutdown() throws ComponentShutdownException {
+        //print debug_mode log
+        try {
+            for (ControllerInboundPort in : this.registerRequestPort)
+                in.unpublishPort();
+            for (ControllerOutboundPort out : this.controlDevicesPorts)
+                out.unpublishPort();
+        } catch (Exception e)
+        {
+            throw new ComponentShutdownException(e);
+        }
+        super.shutdown();
+    }
+
+
+
+
+
+
+
+    // -------------------------------------------------------------------------
+    // Component services implementation
+    // -------------------------------------------------------------------------
+
     @Override
     public void register(String serial_number, String XMLFile) throws Exception {
         registeredDevices.put(serial_number, XMLFile);

@@ -3,6 +3,7 @@ package components;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.exceptions.PreconditionException;
 import interfaces.FanCI;
 import interfaces.FanImplementationI;
 import ports.FanInboundPort;
@@ -45,15 +46,37 @@ public class Fan extends AbstractComponent implements FanImplementationI {
 	public Fan(String uri, String fipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
-		this.currentLevel = FanLevel.MID;
-		this.isOn = false;
-		fip = new FanInboundPort(fipURI, this);
-		fip.publishPort();
+		initialise(fipURI);
 	}
 
 	// -------------------------------------------------------------------------
 	// Component life-cycle
 	// -------------------------------------------------------------------------
+
+	/**
+	 * Initialise the fan component
+	 *
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 *     pre 		{@code fanInboundPort != null}
+	 *     pre 		{@code !fanInboundPort.isEmpty()}
+	 *     post		{@code getFanLevel() == FanLevel.MID}
+	 *     post 	{@code isTurnedOn() == False}
+	 * </pre>
+	 * @param fanInboundPort
+	 * @throws Exception
+	 */
+	public void initialise(String fanInboundPort) throws Exception
+	{
+		assert fanInboundPort != null : new PreconditionException("fanInboundPort != null");
+		assert !fanInboundPort.isEmpty() : new PreconditionException("!fanInboundPort.isEmpty()");
+		this.currentLevel = FanLevel.MID;
+		this.isOn = false;
+		fip = new FanInboundPort(fanInboundPort, this);
+		fip.publishPort();
+	}
+
 
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
