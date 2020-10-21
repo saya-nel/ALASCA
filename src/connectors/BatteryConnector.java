@@ -35,4 +35,12 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
 	public void setBatteryState(BatteryState state) throws Exception {
 		((BatteryCI) this.offering).setBatteryState(state);
 	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#takeEnergy(float)
+	 */
+	@Override
+	public float takeEnergy(float toTake) throws Exception {
+		return ((BatteryCI) this.offering).takeEnergy(toTake);
+	}
 }

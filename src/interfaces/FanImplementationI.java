@@ -16,14 +16,14 @@ public interface FanImplementationI {
 	 * 
 	 * @throws Exception
 	 */
-	void turnOn() throws Exception;
+	public void turnOn() throws Exception;
 
 	/**
 	 * Turn off the fan
 	 * 
 	 * @throws Exception
 	 */
-	void turnOff() throws Exception;
+	public void turnOff() throws Exception;
 
 	/**
 	 * Adjust the power of the fan
@@ -31,7 +31,7 @@ public interface FanImplementationI {
 	 * @param level desired power
 	 * @throws Exception
 	 */
-	void adjustPower(FanLevel level) throws Exception;
+	public void adjustPower(FanLevel level) throws Exception;
 
 	/**
 	 * Says if the fan is switch on or off
@@ -39,7 +39,7 @@ public interface FanImplementationI {
 	 * @return true if on, false else
 	 * @throws Exception
 	 */
-	boolean isTurnedOn() throws Exception;
+	public boolean isTurnedOn() throws Exception;
 
 	/**
 	 * Return the current level of the fan
@@ -47,6 +47,6 @@ public interface FanImplementationI {
 	 * @return the fan current level
 	 * @throws Exception
 	 */
-	FanLevel getFanLevel() throws Exception;
+	public FanLevel getFanLevel() throws Exception;
 
 }
