@@ -45,13 +45,13 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 
 	/**
 	 * Constructor of battery
-	 * @param reflectionInboundPortURI 			URI battery component
+	 * @param reflectionPortURI		 			URI battery component
 	 * @param bipURI							URI inbound port battery
 	 * @throws Exception
 	 */
-	public Battery(String uri, String bipURI, float maxEnergy) throws Exception {
-		super(uri, 1, 0);
-		myUri = uri;
+	public Battery(String reflectionPortURI, String bipURI, float maxEnergy) throws Exception {
+		super(reflectionPortURI, 1, 0);
+		myUri = reflectionPortURI;
 		this.initialise(bipURI, maxEnergy);
 	}
 
