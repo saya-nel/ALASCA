@@ -1,6 +1,7 @@
 package interfaces;
 
 import fr.sorbonne_u.components.interfaces.OfferedCI;
+import fr.sorbonne_u.components.interfaces.RequiredCI;
 import utils.BatteryState;
 
 /**
@@ -10,7 +11,7 @@ import utils.BatteryState;
  * @author Bello Memmi
  *
  */
-public interface BatteryCI extends BatteryImplementationI, OfferedCI {
+public interface BatteryCI extends BatteryImplementationI, OfferedCI, RequiredCI {
 
 	/**
 	 * @see interfaces.BatteryImplementationI#getBatteryCharge()

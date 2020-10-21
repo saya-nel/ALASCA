@@ -1,6 +1,7 @@
 package interfaces;
 
 import fr.sorbonne_u.components.interfaces.OfferedCI;
+import fr.sorbonne_u.components.interfaces.RequiredCI;
 
 /**
  * 
@@ -9,7 +10,7 @@ import fr.sorbonne_u.components.interfaces.OfferedCI;
  * @author Bello Memmi
  *
  */
-public interface HeaterCI extends HeaterImplementationI, OfferedCI {
+public interface HeaterCI extends HeaterImplementationI, OfferedCI, RequiredCI {
 
 	/**
 	 * @see interfaces.HeaterImplementationI#getRequestedTemperature()

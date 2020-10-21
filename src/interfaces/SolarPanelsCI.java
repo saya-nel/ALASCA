@@ -1,6 +1,7 @@
 package interfaces;
 
 import fr.sorbonne_u.components.interfaces.OfferedCI;
+import fr.sorbonne_u.components.interfaces.RequiredCI;
 
 /**
  * 
@@ -9,6 +10,11 @@ import fr.sorbonne_u.components.interfaces.OfferedCI;
  * @author Bello Memmi
  *
  */
-public interface SolarPanelsCI extends SolarPanelsImplementationI, OfferedCI {
+public interface SolarPanelsCI extends SolarPanelsImplementationI, OfferedCI, RequiredCI {
 
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#getCurrentEnergyProduction()
+	 */
+	@Override
+	public float getCurrentEnergyProduction() throws Exception;
 }

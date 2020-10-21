@@ -1,6 +1,7 @@
 package interfaces;
 
 import fr.sorbonne_u.components.interfaces.OfferedCI;
+import fr.sorbonne_u.components.interfaces.RequiredCI;
 import utils.FanLevel;
 
 /**
@@ -10,7 +11,7 @@ import utils.FanLevel;
  * @author Bello Memmi
  *
  */
-public interface FanCI extends FanImplementationI, OfferedCI {
+public interface FanCI extends FanImplementationI, OfferedCI, RequiredCI {
 
 	/**
 	 * @see interfaces.FanImplementationI#turnOn()
