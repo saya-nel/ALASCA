@@ -1,14 +1,9 @@
 package interfaces;
-
-import fr.sorbonne_u.components.interfaces.RequiredCI;
-
 /**
  *  Contains all methods required from the controller by the devices
  * @author  Bello Memmi
  */
-
-// TODO Implements register in the controller and in every devices
-public interface ControllableCI extends RequiredCI {
+public interface ControllerImplementationI {
     /**
      *
      * @param serial_number         of the device that has to register in Controller
