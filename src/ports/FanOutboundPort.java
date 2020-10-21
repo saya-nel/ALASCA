@@ -18,12 +18,11 @@ public class FanOutboundPort extends AbstractOutboundPort implements FanCI {
 	/**
 	 * Constructor of FanOutboundPort
 	 * 
-	 * @param uri   uri of the port
 	 * @param owner owner component
 	 * @throws Exception
 	 */
-	public FanOutboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, FanCI.class, owner);
+	public FanOutboundPort(ComponentI owner) throws Exception {
+		super(FanCI.class, owner);
 	}
 
 	/**

@@ -17,12 +17,11 @@ public class SolarPanelsOutboundPort extends AbstractOutboundPort implements Sol
 	/**
 	 * Constructor of SolarPanelsOubtboundPort
 	 * 
-	 * @param uri   uri of the port
 	 * @param owner owner component
 	 * @throws Exception
 	 */
-	public SolarPanelsOutboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, SolarPanelsCI.class, owner);
+	public SolarPanelsOutboundPort(ComponentI owner) throws Exception {
+		super(SolarPanelsCI.class, owner);
 	}
 
 	/**

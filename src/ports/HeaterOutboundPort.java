@@ -17,12 +17,11 @@ public class HeaterOutboundPort extends AbstractOutboundPort implements HeaterCI
 	/**
 	 * Constructor of HeaterOutboundPort
 	 * 
-	 * @param uri   uri of the port
 	 * @param owner owner component
 	 * @throws Exception
 	 */
-	public HeaterOutboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, HeaterCI.class, owner);
+	public HeaterOutboundPort(ComponentI owner) throws Exception {
+		super(HeaterCI.class, owner);
 	}
 
 	/**
