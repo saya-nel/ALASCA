@@ -3,6 +3,7 @@ package components;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.exceptions.PreconditionException;
 import interfaces.HeaterCI;
 import interfaces.HeaterImplementationI;
 import ports.HeaterInboundPort;
@@ -38,23 +39,40 @@ public class Heater extends AbstractComponent implements HeaterImplementationI {
 
 	/**
 	 * Constructor of the heater
-	 * 
+	 *
 	 * @param uri    of the Heater component
-	 * @param hipUri uri of the heater inbound port
+	 * @param hipURI uri of the heater inbound port
 	 * @throws Exception
 	 */
 	public Heater(String uri, String hipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
-		this.requestedTemperature = 20;
-		this.isOn = false;
-		hip = new HeaterInboundPort(hipURI, this);
-		hip.publishPort();
+		initialise(hipURI);
 	}
 
 	// -------------------------------------------------------------------------
 	// Component life-cycle
 	// -------------------------------------------------------------------------
+
+	/**
+	 * Initialise the heater component
+	 * <pre>
+	 *     pre		{@code heaterInboundPortURI != null}
+	 *     pre 		{@code heaterInboundPortURI.isEmpty()}
+	 *     post 	{@code isHeaterOn() == False }
+	 * </pre>
+	 * @param heaterInboundPort
+	 * @throws Exception
+	 */
+	public void initialise(String heaterInboundPort) throws Exception
+	{
+		assert heaterInboundPort != null : new PreconditionException("heaterInboundPort != null");
+		assert !heaterInboundPort.isEmpty() : new PreconditionException("heaterInboundPort.isEmpty()");
+		this.requestedTemperature = 20;
+		this.isOn = false;
+		hip = new HeaterInboundPort(heaterInboundPort, this);
+		hip.publishPort();
+	}
 
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
