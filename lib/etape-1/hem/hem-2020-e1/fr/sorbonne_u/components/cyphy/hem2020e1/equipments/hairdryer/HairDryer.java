@@ -34,8 +34,6 @@ package fr.sorbonne_u.components.cyphy.hem2020e1.equipments.hairdryer;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
-import fr.sorbonne_u.components.annotations.RequiredInterfaces;
-import fr.sorbonne_u.components.cyphy.hem2020e1.equipments.hem.EquipmentRegistrationCI;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.exceptions.PreconditionException;
 
@@ -62,7 +60,6 @@ import fr.sorbonne_u.exceptions.PreconditionException;
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
 @OfferedInterfaces(offered={HairDryerCI.class})
-@RequiredInterfaces(required={EquipmentRegistrationCI.class})
 public class			HairDryer
 extends		AbstractComponent
 implements	HairDryerImplementationI

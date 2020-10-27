@@ -34,6 +34,9 @@ package fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
+import fr.sorbonne_u.components.cyphy.hem2020e1.equipments.hem.EquipmentRegistrationCI;
+
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -64,6 +67,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 // -----------------------------------------------------------------------------
 @OfferedInterfaces(offered= {BoilerControlCI.class})
+@RequiredInterfaces(required={EquipmentRegistrationCI.class})
 // -----------------------------------------------------------------------------
 public class			Boiler
 extends		AbstractComponent
