@@ -1,9 +1,6 @@
 package tests;
 
-import components.Battery;
-import components.Fan;
-import components.Heater;
-import components.SolarPanels;
+import components.*;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 
@@ -20,13 +17,13 @@ public class CVMUnitTest extends AbstractCVM {
 	protected final static String FAN_URI = "fan-URI";
 	protected final static String HEATER_URI = "heater-URI";
 	protected final static String SOLARPANELS_URI = "solarpanels-URI";
-
+	protected final static String CONTROLLER_URI = "controller-URI";
 	// ports URIs
 	protected final static String BATTERY_INBOUND_PORT_URI = "bip-URI";
 	protected final static String FAN_INBOUND_PORT_URI = "fip-URI";
 	protected final static String HEATER_INBOUND_PORT_URI = "hip-URI";
 	protected final static String SOLARPANELS_INBOUND_PORT_URI = "spip-URI";
-
+	protected final static String CONTROLLER_INBOUND_PORT_URI = "cip-URI";
 	public CVMUnitTest() throws Exception {
 	}
 
@@ -35,6 +32,7 @@ public class CVMUnitTest extends AbstractCVM {
 	 */
 	@Override
 	public void deploy() throws Exception {
+		/*
 		// Battery
 		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
 				new Object[] { BATTERY_URI, BATTERY_INBOUND_PORT_URI, (float) 10000 });
@@ -57,7 +55,21 @@ public class CVMUnitTest extends AbstractCVM {
 				new Object[] { SOLARPANELS_URI, SOLARPANELS_INBOUND_PORT_URI });
 		AbstractComponent.createComponent(SolarPanelsUnitTester.class.getCanonicalName(),
 				new Object[] { SOLARPANELS_INBOUND_PORT_URI });
+	*/
+		// Controller
+		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
+				new Object[] {
+						CONTROLLER_URI,
+						new String[]{
+								CONTROLLER_INBOUND_PORT_URI
+						},
+						new String[]{
+						}
+				});
 
+		//TODO Resoudre problème sur ControllerUnitTest Creation composant pose probleme
+		AbstractComponent.createComponent(ControllerUnitTest.class.getCanonicalName(),
+				new Object[] { CONTROLLER_INBOUND_PORT_URI });
 		super.deploy();
 	}
 

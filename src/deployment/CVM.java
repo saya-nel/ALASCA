@@ -1,11 +1,9 @@
 package deployment;
 
-import components.Battery;
-import components.Fan;
-import components.Heater;
-import components.SolarPanels;
+import components.*;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
+import org.apache.commons.math3.analysis.function.Abs;
 
 /**
  * 
@@ -38,6 +36,10 @@ public class CVM extends AbstractCVM {
 	 */
 	public final static String solarPanelsURI = "solarPanels";
 
+	/**
+	 * Controller component URI
+	 */
+	public final static String controllerURI = "controller";
 	// Ports URIs
 
 	/**
@@ -59,6 +61,11 @@ public class CVM extends AbstractCVM {
 	 * SolarPanels Inbound port URI
 	 */
 	public final static String solarPanelsSPIP_uri = "solarPanelsSPIP";
+
+	/**
+	 * Controller Inbound port URI
+	 */
+	public final static String controllerCIP_uri = "controllerCIP";
 
 	/**
 	 * CVM constructor
@@ -84,7 +91,17 @@ public class CVM extends AbstractCVM {
 		// create SolarPanels component
 		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),
 				new Object[] { solarPanelsURI, solarPanelsSPIP_uri });
+		// create Controller component
+		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
+				new Object[] {
+						controllerURI,
+						new String[]{
+								controllerCIP_uri,
+						},
+						new String[]{
 
+						}
+		});
 		super.deploy();
 	}
 

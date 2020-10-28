@@ -32,7 +32,6 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		super(uri, 1, 0);
 		assert uri != null;
 		this.myURI = uri;
-
 		initialise(inboundPortRegisterURI, outboundPortDeviceURI);
 	}
 
@@ -45,6 +44,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 		// Initialize ports relative to registering
 		this.registerRequestPort = new Vector<>();
+		// Initialize ports relative to controling devices
+		this.controlDevicesPorts = new Vector<>();
 
 		for (String out : inboundPortRegisterURI) {
 			registerRequestPort.add(new ControllerInboundPort(out, this));
@@ -54,8 +55,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		}
 
 		// Initialize ports relative to devices control
-		for (String in : outboundPortDeviceURI) {
-			this.controlDevicesPorts.add(new ControllerOutboundPort(in, this));
+		for (String out : outboundPortDeviceURI) {
+			this.controlDevicesPorts.add(new ControllerOutboundPort(out, this));
 		}
 		for (ControllerOutboundPort port : this.controlDevicesPorts) {
 			port.publishPort();
@@ -83,8 +84,21 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// Component services implementation
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @see ControllerImplementationI#register(String, String)
+	 */
 	@Override
 	public void register(String serial_number, String XMLFile) throws Exception {
 		registeredDevices.put(serial_number, XMLFile);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Methods useful for tests
+	// ---------------------------------------------------------------------------
+	/**
+	 * @see ControllerImplementationI#getRegisteredDevices()
+	 */
+	public Map<String, String> getRegisteredDevices() throws Exception {
+		return registeredDevices;
 	}
 }
