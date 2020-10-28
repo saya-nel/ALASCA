@@ -119,8 +119,10 @@ public class BatteryUnitTester extends AbstractComponent {
 		try {
 			bop.addEnergy(100);
 			assertEquals(100, this.bop.getBatteryCharge());
+			bop.takeEnergy(100);
 			bop.addEnergy(bop.getMaximumEnergy());
 			assertEquals(bop.getMaximumEnergy(), bop.getBatteryCharge());
+			bop.takeEnergy(bop.getMaximumEnergy());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -138,6 +140,7 @@ public class BatteryUnitTester extends AbstractComponent {
 			assertEquals(50, this.bop.getBatteryCharge());
 			bop.takeEnergy(100);
 			assertEquals(0, this.bop.getBatteryCharge());
+			bop.addEnergy(50);
 		} catch (Exception e) {
 			assertTrue(false);
 		}
