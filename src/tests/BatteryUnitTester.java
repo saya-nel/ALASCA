@@ -193,6 +193,7 @@ public class BatteryUnitTester extends AbstractComponent {
 		this.testGetBatteryState();
 		this.testSetBatteryState();
 		this.testTakeEnergy();
+		Log.printAndLog(this, "all tests passed");
 	}
 
 }

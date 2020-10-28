@@ -128,7 +128,7 @@ public class HeaterUnitTester extends AbstractComponent {
 	 * Test the turnOn method
 	 */
 	public void testTurnOn() {
-		Log.printAndLog(this, "test turnOff()");
+		Log.printAndLog(this, "test turnOn()");
 		try {
 			hop.turnOn();
 			assertTrue(hop.isHeaterOn());
@@ -156,7 +156,7 @@ public class HeaterUnitTester extends AbstractComponent {
 	 * Test the isHeaterTurnedOn method
 	 */
 	public void testIsHeaterOn() {
-		Log.printAndLog(this, "test adjustPower()");
+		Log.printAndLog(this, "test isHeaterOn()");
 		try {
 			assertFalse(hop.isHeaterOn());
 		} catch (Exception e) {
@@ -169,7 +169,7 @@ public class HeaterUnitTester extends AbstractComponent {
 	 * Test the setRequestedTemperature method
 	 */
 	public void testSetRequestedTemperature() {
-		Log.printAndLog(this, "test isTurnedOn()");
+		Log.printAndLog(this, "test setRequestedTemperature()");
 		try {
 			hop.setRequestedTemperature(30);
 			assertEquals(30, hop.getRequestedTemperature());
@@ -188,6 +188,7 @@ public class HeaterUnitTester extends AbstractComponent {
 		testTurnOff();
 		testIsHeaterOn();
 		testSetRequestedTemperature();
+		Log.printAndLog(this, "all tests passed");
 	}
 
 }

@@ -172,7 +172,7 @@ public class FanUnitTester extends AbstractComponent {
 	 * Test the getFanLevel method
 	 */
 	public void testGetFanLevel() {
-		Log.printAndLog(this, "test isTurnedOn()");
+		Log.printAndLog(this, "test getFanLevel()");
 		try {
 			fop.adjustPower(FanLevel.MID);
 			assertEquals(FanLevel.MID, fop.getFanLevel());
@@ -191,5 +191,6 @@ public class FanUnitTester extends AbstractComponent {
 		testAdjustPower();
 		testIsTurnedOn();
 		testGetFanLevel();
+		Log.printAndLog(this, "all tests passed");
 	}
 }

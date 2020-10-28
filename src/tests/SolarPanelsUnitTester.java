@@ -128,6 +128,7 @@ public class SolarPanelsUnitTester extends AbstractComponent {
 	 */
 	protected void runAllTests() {
 		testGetCurrentEnergyProduction();
+		Log.printAndLog(this, "all tests passed");
 	}
 
 }
