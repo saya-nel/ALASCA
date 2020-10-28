@@ -5,6 +5,7 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import interfaces.SolarPanelsCI;
 import interfaces.SolarPanelsImplementationI;
+import ports.SolarPanelsInboundPort;
 
 /**
  * Class representing the SolarPanels component
@@ -21,15 +22,21 @@ public class SolarPanels extends AbstractComponent implements SolarPanelsImpleme
 	protected String myUri;
 
 	/**
+	 * Inboud port of the heater
+	 */
+	protected SolarPanelsInboundPort spip;
+
+	/**
 	 * Constructor of the solar panels
 	 * 
 	 * @param uri of the SolarPanels component
 	 */
-	public SolarPanels(String uri) {
+	public SolarPanels(String uri, String spipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
+		this.spip = new SolarPanelsInboundPort(spipURI, this);
+		this.spip.publishPort();
 	}
-
 
 	// -------------------------------------------------------------------------
 	// Component life-cycle
@@ -40,6 +47,11 @@ public class SolarPanels extends AbstractComponent implements SolarPanelsImpleme
 	 */
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
+		try {
+			this.spip.unpublishPort();
+		} catch (Exception e) {
+			throw new ComponentShutdownException(e);
+		}
 		super.shutdown();
 	}
 	// -------------------------------------------------------------------------
