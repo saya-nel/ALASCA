@@ -44,7 +44,7 @@ public class Heater extends AbstractComponent implements HeaterImplementationI {
 	 * @param hipURI uri of the heater inbound port
 	 * @throws Exception
 	 */
-	public Heater(String uri, String hipURI) throws Exception {
+	protected Heater(String uri, String hipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
 		initialise(hipURI);
@@ -56,16 +56,17 @@ public class Heater extends AbstractComponent implements HeaterImplementationI {
 
 	/**
 	 * Initialise the heater component
+	 * 
 	 * <pre>
 	 *     pre		{@code heaterInboundPortURI != null}
 	 *     pre 		{@code heaterInboundPortURI.isEmpty()}
 	 *     post 	{@code isHeaterOn() == False }
 	 * </pre>
+	 * 
 	 * @param heaterInboundPort
 	 * @throws Exception
 	 */
-	public void initialise(String heaterInboundPort) throws Exception
-	{
+	public void initialise(String heaterInboundPort) throws Exception {
 		assert heaterInboundPort != null : new PreconditionException("heaterInboundPort != null");
 		assert !heaterInboundPort.isEmpty() : new PreconditionException("heaterInboundPort.isEmpty()");
 		this.requestedTemperature = 20;

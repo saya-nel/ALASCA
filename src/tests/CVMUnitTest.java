@@ -37,7 +37,7 @@ public class CVMUnitTest extends AbstractCVM {
 	public void deploy() throws Exception {
 		// Battery
 		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
-				new Object[] { BATTERY_URI, BATTERY_INBOUND_PORT_URI, 10000 });
+				new Object[] { BATTERY_URI, BATTERY_INBOUND_PORT_URI, (float) 10000 });
 		AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
 				new Object[] { BATTERY_INBOUND_PORT_URI });
 

@@ -43,7 +43,7 @@ public class Fan extends AbstractComponent implements FanImplementationI {
 	 * 
 	 * @param uri of the Fan component
 	 */
-	public Fan(String uri, String fipURI) throws Exception {
+	protected Fan(String uri, String fipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
 		initialise(fipURI);
@@ -56,7 +56,9 @@ public class Fan extends AbstractComponent implements FanImplementationI {
 	/**
 	 * Initialise the fan component
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 *     pre 		{@code fanInboundPort != null}
@@ -64,11 +66,11 @@ public class Fan extends AbstractComponent implements FanImplementationI {
 	 *     post		{@code getFanLevel() == FanLevel.MID}
 	 *     post 	{@code isTurnedOn() == False}
 	 * </pre>
+	 * 
 	 * @param fanInboundPort
 	 * @throws Exception
 	 */
-	public void initialise(String fanInboundPort) throws Exception
-	{
+	public void initialise(String fanInboundPort) throws Exception {
 		assert fanInboundPort != null : new PreconditionException("fanInboundPort != null");
 		assert !fanInboundPort.isEmpty() : new PreconditionException("!fanInboundPort.isEmpty()");
 		this.currentLevel = FanLevel.MID;
@@ -76,7 +78,6 @@ public class Fan extends AbstractComponent implements FanImplementationI {
 		fip = new FanInboundPort(fanInboundPort, this);
 		fip.publishPort();
 	}
-
 
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()

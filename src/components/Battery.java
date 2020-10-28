@@ -45,11 +45,12 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 
 	/**
 	 * Constructor of battery
-	 * @param reflectionPortURI		 			URI battery component
-	 * @param bipURI							URI inbound port battery
+	 * 
+	 * @param reflectionPortURI URI battery component
+	 * @param bipURI            URI inbound port battery
 	 * @throws Exception
 	 */
-	public Battery(String reflectionPortURI, String bipURI, float maxEnergy) throws Exception {
+	protected Battery(String reflectionPortURI, String bipURI, float maxEnergy) throws Exception {
 		super(reflectionPortURI, 1, 0);
 		myUri = reflectionPortURI;
 		this.initialise(bipURI, maxEnergy);
@@ -62,7 +63,9 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	/**
 	 * Initialize the battery component
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 *     pre		{@code batteryInboundPortURI != null}
@@ -70,6 +73,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 *     post 	{@code getBatteryState() == BatteryState.SLEEPING }
 	 *     post 	{@code getBatteryCharge() == 0}
 	 * </pre>
+	 * 
 	 * @param batteryInboundPortURI
 	 * @throws Exception
 	 */
@@ -82,7 +86,6 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		this.bip = new BatteryInboundPort(batteryInboundPortURI, this);
 		this.bip.publishPort();
 	}
-
 
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()

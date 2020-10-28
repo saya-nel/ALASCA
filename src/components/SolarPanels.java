@@ -31,7 +31,7 @@ public class SolarPanels extends AbstractComponent implements SolarPanelsImpleme
 	 * 
 	 * @param uri of the SolarPanels component
 	 */
-	public SolarPanels(String uri, String spipURI) throws Exception {
+	protected SolarPanels(String uri, String spipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
 		this.spip = new SolarPanelsInboundPort(spipURI, this);
