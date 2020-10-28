@@ -1,5 +1,11 @@
 package fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler;
 
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 // Copyright Jacques Malenfant, Sorbonne Universite.
 // Jacques.Malenfant@lip6.fr
 //
@@ -37,140 +43,97 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.cyphy.hem2020e1.equipments.hem.EquipmentRegistrationCI;
 
-import java.time.Duration;
-import java.time.LocalTime;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 // -----------------------------------------------------------------------------
 /**
- * The class <code>Boiler</code> implements a boiler component for the
- * household energy management example.
+ * The class <code>Boiler</code> implements a boiler component for the household
+ * energy management example.
  *
- * <p><strong>Description</strong></p>
- * 
  * <p>
- * In this version, the class is incomplete as it does not implement neither
- * the connection between components nor the component life-cycle.
+ * <strong>Description</strong>
  * </p>
  * 
- * <p><strong>Invariant</strong></p>
+ * <p>
+ * In this version, the class is incomplete as it does not implement neither the
+ * connection between components nor the component life-cycle.
+ * </p>
+ * 
+ * <p>
+ * <strong>Invariant</strong>
+ * </p>
  * 
  * <pre>
  * invariant		true
  * </pre>
  * 
- * <p>Created on : 2020-09-22</p>
+ * <p>
+ * Created on : 2020-09-22
+ * </p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ * @author <a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
 // -----------------------------------------------------------------------------
-@OfferedInterfaces(offered= {BoilerControlCI.class})
-@RequiredInterfaces(required={EquipmentRegistrationCI.class})
+@OfferedInterfaces(offered = { BoilerControlCI.class })
+@RequiredInterfaces(required = { EquipmentRegistrationCI.class })
 // -----------------------------------------------------------------------------
-public class			Boiler
-extends		AbstractComponent
-implements	BoilerControlImplementationI
-{
+public class Boiler extends AbstractComponent implements BoilerControlImplementationI {
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
-	/** The description in XML of the link between the required interface of
-	 *  the home energy manager and the actual component interface of the
-	 *  boiler (<code>BoilerCI</code>)).									*/
-	public static final String CONTROL_INTERFACE_DESCRIPTOR =
-	"<control-adapter\n" +
-	"    xmlns=\"http://www.sorbonne-universite.fr/alasca/control-adapter\"\n" +
-	"    type=\"suspension\"\n" +
-	"    uid=\"1A10000\"\n" +
-	"    offered=\"fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI\">\n" +
-	"  <consumption nominal=\"2000\"/>\n" +
-	"  <on>\n" +
-	"    <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n" +
-	"    <body equipmentRef=\"boiler\">\n" +
-	"      return boiler.switchOn(fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.STD);\n" +
-	"    </body>\n" +
-	"  </on>\n" +
-	"  <off>\n" +
-	"    <body equipmentRef=\"boiler\">return boiler.switchOff();</body>\n" +
-	"  </off>\n" +
-	"  <mode-control numberOfModes=\"2\">\n" +
-	"    <upMode>\n" +
-	"      <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n" +
-	"      <body equipmentRef=\"boiler\">\n" +
-	"        int m = boiler.mode();\n" +
-	"        if (m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.ECO) {\n" +
-	"          boiler.std();\n" +
-	"          return true;\n" +
-	"        } else {\n" +
-	"          return false;\n" +
-	"        }\n" +
-	"      </body>\n" +
-	"    </upMode>\n" +
-	"    <downMode>\n" +
-	"      <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n" +
-	"      <body equipmentRef=\"boiler\">\n" +
-	"        int m = boiler.mode();\n" +
-	"        if (m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.STD) {\n" +
-	"          boiler.eco();\n" +
-	"          return true;\n" +
-	"        } else {\n" +
-	"          return false;\n" +
-	"        }\n" +
-	"      </body>\n" +
-	"    </downMode>\n" +
-	"    <setMode>\n" +
-	"      <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n" +
-	"      <parameter name=\"newMode\"/>\n" +
-	"      <body equipmentRef=\"boiler\">\n" +
-	"        boolean ret = false;\n" +
-	"        int m = boiler.mode();\n" +
-	"        if (newMode == 1 &amp;&amp; m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.STD) {\n" +
-	"          boiler.eco();\n" +
-	"          ret = true;\n" +
-	"        } else if (newMode == 2 &amp;&amp; m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.ECO) {\n" +
-	"          boiler.std();\n" +
-	"          ret = true;\n" +
-	"        }\n" +
-	"        return ret;  \n" +
-	"      </body>\n" +
-	"    </setMode>\n" +
-	"    <currentMode>\n" +
-	"      <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n" +
-	"      <body equipmentRef=\"boiler\">\n" +
-	"        int m = boiler.mode();\n" +
-	"        if (m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.ECO) {\n" +
-	"          return 1;\n" +
-	"        } else {\n" +
-	"          return 2;\n" +
-	"        }\n" +
-	"      </body>\n" +
-	"    </currentMode>\n" +
-	"  </mode-control>\n" +
-	"  <suspended>\n" +
-	"    <body equipmentRef=\"boiler\">return boiler.active();</body>\n" +
-	"  </suspended>\n" +
-	"  <suspend>\n" +
-	"    <body equipmentRef=\"boiler\">return boiler.passivate();</body>\n" +
-	"  </suspend>\n" +
-	"  <resume>\n" +
-	"    <body equipmentRef=\"boiler\">return boiler.activate();</body>\n" +
-	"  </resume>\n" +
-	"  <emergency>\n" +
-	"    <body equipmentRef=\"boiler\">return boiler.degreeOfEmergency();</body>\n" +
-	"  </emergency>\n" +
-	"</control-adapter>";
+	/**
+	 * The description in XML of the link between the required interface of the home
+	 * energy manager and the actual component interface of the boiler
+	 * (<code>BoilerCI</code>)).
+	 */
+	public static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n"
+			+ "    xmlns=\"http://www.sorbonne-universite.fr/alasca/control-adapter\"\n" + "    type=\"suspension\"\n"
+			+ "    uid=\"1A10000\"\n"
+			+ "    offered=\"fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI\">\n"
+			+ "  <consumption nominal=\"2000\"/>\n" + "  <on>\n"
+			+ "    <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n"
+			+ "    <body equipmentRef=\"boiler\">\n"
+			+ "      return boiler.switchOn(fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.STD);\n"
+			+ "    </body>\n" + "  </on>\n" + "  <off>\n"
+			+ "    <body equipmentRef=\"boiler\">return boiler.switchOff();</body>\n" + "  </off>\n"
+			+ "  <mode-control numberOfModes=\"2\">\n" + "    <upMode>\n"
+			+ "      <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n"
+			+ "      <body equipmentRef=\"boiler\">\n" + "        int m = boiler.mode();\n"
+			+ "        if (m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.ECO) {\n"
+			+ "          boiler.std();\n" + "          return true;\n" + "        } else {\n"
+			+ "          return false;\n" + "        }\n" + "      </body>\n" + "    </upMode>\n" + "    <downMode>\n"
+			+ "      <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n"
+			+ "      <body equipmentRef=\"boiler\">\n" + "        int m = boiler.mode();\n"
+			+ "        if (m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.STD) {\n"
+			+ "          boiler.eco();\n" + "          return true;\n" + "        } else {\n"
+			+ "          return false;\n" + "        }\n" + "      </body>\n" + "    </downMode>\n" + "    <setMode>\n"
+			+ "      <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n"
+			+ "      <parameter name=\"newMode\"/>\n" + "      <body equipmentRef=\"boiler\">\n"
+			+ "        boolean ret = false;\n" + "        int m = boiler.mode();\n"
+			+ "        if (newMode == 1 &amp;&amp; m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.STD) {\n"
+			+ "          boiler.eco();\n" + "          ret = true;\n"
+			+ "        } else if (newMode == 2 &amp;&amp; m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.ECO) {\n"
+			+ "          boiler.std();\n" + "          ret = true;\n" + "        }\n" + "        return ret;  \n"
+			+ "      </body>\n" + "    </setMode>\n" + "    <currentMode>\n"
+			+ "      <required>fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI</required>\n"
+			+ "      <body equipmentRef=\"boiler\">\n" + "        int m = boiler.mode();\n"
+			+ "        if (m == fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI.ECO) {\n"
+			+ "          return 1;\n" + "        } else {\n" + "          return 2;\n" + "        }\n"
+			+ "      </body>\n" + "    </currentMode>\n" + "  </mode-control>\n" + "  <suspended>\n"
+			+ "    <body equipmentRef=\"boiler\">return boiler.active();</body>\n" + "  </suspended>\n"
+			+ "  <suspend>\n" + "    <body equipmentRef=\"boiler\">return boiler.passivate();</body>\n"
+			+ "  </suspend>\n" + "  <resume>\n" + "    <body equipmentRef=\"boiler\">return boiler.activate();</body>\n"
+			+ "  </resume>\n" + "  <emergency>\n"
+			+ "    <body equipmentRef=\"boiler\">return boiler.degreeOfEmergency();</body>\n" + "  </emergency>\n"
+			+ "</control-adapter>";
 
-	/** maximum time during which the boiler can be suspended.				*/
-	protected static long	MAX_SUSPENSION = Duration.ofHours(12).toMillis() ;
-	/** is the boiler passive or active.									*/
-	protected final AtomicBoolean				passive;
-	/** last time the boiler was suspended while it is still suspended.		*/
-	protected final AtomicReference<LocalTime>	lastSuspensionTime;
-	/** current mode of operation of the boiler (eco or standard).			*/
-	protected final AtomicInteger				operatingMode;
+	/** maximum time during which the boiler can be suspended. */
+	protected static long MAX_SUSPENSION = Duration.ofHours(12).toMillis();
+	/** is the boiler passive or active. */
+	protected final AtomicBoolean passive;
+	/** last time the boiler was suspended while it is still suspended. */
+	protected final AtomicReference<LocalTime> lastSuspensionTime;
+	/** current mode of operation of the boiler (eco or standard). */
+	protected final AtomicInteger operatingMode;
 
 	// -------------------------------------------------------------------------
 	// Constructors
@@ -179,7 +142,9 @@ implements	BoilerControlImplementationI
 	/**
 	 * create a new boiler component.
 	 * 
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	true			// no precondition.
@@ -187,8 +152,7 @@ implements	BoilerControlImplementationI
 	 * </pre>
 	 *
 	 */
-	public				Boiler()
-	{
+	public Boiler() {
 		super(1, 0);
 
 		this.passive = new AtomicBoolean(false);
@@ -199,17 +163,18 @@ implements	BoilerControlImplementationI
 	/**
 	 * create a new boiler component with the given reflection inbound port URI.
 	 * 
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	true			// no precondition.
 	 * post	true			// no postcondition.
 	 * </pre>
 	 *
-	 * @param reflectionInboundPortURI	URI of reflection inbound port URI.
+	 * @param reflectionInboundPortURI URI of reflection inbound port URI.
 	 */
-	public				Boiler(String reflectionInboundPortURI)
-	{
+	public Boiler(String reflectionInboundPortURI) {
 		super(reflectionInboundPortURI, 1, 0);
 
 		this.passive = new AtomicBoolean(false);
@@ -225,8 +190,7 @@ implements	BoilerControlImplementationI
 	 * @see fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler.BoilerControlImplementationI#switchOn(int)
 	 */
 	@Override
-	public boolean		switchOn(int initialMode)
-	{
+	public boolean switchOn(int initialMode) {
 		this.operatingMode.set(initialMode);
 		return true;
 	}
@@ -235,8 +199,7 @@ implements	BoilerControlImplementationI
 	 * @see fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler.BoilerControlImplementationI#switchOff()
 	 */
 	@Override
-	public boolean		switchOff()
-	{
+	public boolean switchOff() {
 		return true;
 	}
 
@@ -244,8 +207,7 @@ implements	BoilerControlImplementationI
 	 * @see fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler.BoilerControlImplementationI#eco()
 	 */
 	@Override
-	public void			eco()
-	{
+	public void eco() {
 		this.operatingMode.set(BoilerControlCI.ECO);
 	}
 
@@ -253,8 +215,7 @@ implements	BoilerControlImplementationI
 	 * @see fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler.BoilerControlImplementationI#std()
 	 */
 	@Override
-	public void			std()
-	{
+	public void std() {
 		this.operatingMode.set(BoilerControlCI.STD);
 	}
 
@@ -262,8 +223,7 @@ implements	BoilerControlImplementationI
 	 * @see fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler.BoilerControlImplementationI#mode()
 	 */
 	@Override
-	public int			mode()
-	{
+	public int mode() {
 		return this.operatingMode.get();
 	}
 
@@ -271,8 +231,7 @@ implements	BoilerControlImplementationI
 	 * @see fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler.BoilerControlImplementationI#active()
 	 */
 	@Override
-	public boolean		active()
-	{
+	public boolean active() {
 		return !this.passive.get();
 	}
 
@@ -280,8 +239,7 @@ implements	BoilerControlImplementationI
 	 * @see fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler.BoilerControlImplementationI#passivate()
 	 */
 	@Override
-	public boolean		passivate()
-	{
+	public boolean passivate() {
 		boolean succeed = false;
 		synchronized (this.passive) {
 			succeed = this.passive.compareAndSet(false, true);
@@ -296,8 +254,7 @@ implements	BoilerControlImplementationI
 	 * @see fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler.BoilerControlImplementationI#activate()
 	 */
 	@Override
-	public boolean		activate()
-	{
+	public boolean activate() {
 		boolean succeed;
 		synchronized (this.passive) {
 			succeed = this.passive.compareAndSet(true, false);
@@ -312,19 +269,17 @@ implements	BoilerControlImplementationI
 	 * @see fr.sorbonne_u.components.cyphy.hem2020e1.equipments.boiler.BoilerControlImplementationI#degreeOfEmergency()
 	 */
 	@Override
-	public double		degreeOfEmergency()
-	{
+	public double degreeOfEmergency() {
 		synchronized (this.passive) {
 			if (!this.passive.get()) {
 				return 0.0;
 			} else {
-				Duration d = Duration.between(this.lastSuspensionTime.get(),
-											  LocalTime.now());
+				Duration d = Duration.between(this.lastSuspensionTime.get(), LocalTime.now());
 				long inMillis = d.toMillis();
 				if (inMillis > MAX_SUSPENSION) {
 					return 1.0;
 				} else {
-					return ((double)inMillis)/((double)MAX_SUSPENSION);
+					return ((double) inMillis) / ((double) MAX_SUSPENSION);
 				}
 			}
 		}
