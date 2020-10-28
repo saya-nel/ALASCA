@@ -54,7 +54,7 @@ public class SolarPanelsUnitTester extends AbstractComponent {
 		this.spop.publishPort();
 
 		this.tracer.get().setTitle("SolarPanels tester component");
-		this.tracer.get().setRelativePosition(1, 0);
+		this.tracer.get().setRelativePosition(1, 3);
 		this.toggleTracing();
 	}
 

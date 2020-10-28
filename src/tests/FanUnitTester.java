@@ -56,7 +56,7 @@ public class FanUnitTester extends AbstractComponent {
 		this.fop.publishPort();
 
 		this.tracer.get().setTitle("Fan tester component");
-		this.tracer.get().setRelativePosition(1, 0);
+		this.tracer.get().setRelativePosition(1, 1);
 		this.toggleTracing();
 	}
 

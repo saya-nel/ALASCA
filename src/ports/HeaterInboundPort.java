@@ -24,7 +24,7 @@ public class HeaterInboundPort extends AbstractInboundPort implements HeaterCI {
 	 * @throws Exception
 	 */
 	public HeaterInboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, HeaterInboundPort.class, owner);
+		super(uri, HeaterCI.class, owner);
 	}
 
 	/**

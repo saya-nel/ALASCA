@@ -3,7 +3,6 @@ package ports;
 import components.SolarPanels;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import interfaces.BatteryCI;
 import interfaces.SolarPanelsCI;
 
 /**
@@ -25,7 +24,7 @@ public class SolarPanelsInboundPort extends AbstractInboundPort implements Solar
 	 * @throws Exception
 	 */
 	public SolarPanelsInboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, BatteryCI.class, owner);
+		super(uri, SolarPanelsCI.class, owner);
 		// TODO Auto-generated constructor stub
 	}
 
