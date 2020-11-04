@@ -61,4 +61,6 @@ public interface WasherImplementationI {
 	 */
 	public int getProgramDuration() throws Exception;
 
+	// TODO retardé programme
+
 }

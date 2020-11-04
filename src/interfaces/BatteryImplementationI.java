@@ -40,6 +40,8 @@ public interface BatteryImplementationI {
 	 */
 	public void setBatteryState(BatteryState state) throws Exception;
 
+	// TODO ELEVER
+
 	/**
 	 * 
 	 * @param toTake energy to take from Battery
