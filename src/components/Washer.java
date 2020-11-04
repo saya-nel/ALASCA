@@ -7,76 +7,118 @@ import interfaces.WasherCI;
 import interfaces.WasherImplementationI;
 import ports.WasherInboundPort;
 
-@OfferedInterfaces(offered = {WasherCI.class})
+@OfferedInterfaces(offered = { WasherCI.class })
 public class Washer extends AbstractComponent implements WasherImplementationI {
-    /**
-     * Component URI
-     */
-    protected String myUri;
+	/**
+	 * Component URI
+	 */
+	protected String myUri;
 
-    /**
-     * Current state of the washer
-     */
-    protected boolean isWorking;
+	/**
+	 * Current state of the washer
+	 */
+	protected boolean isWorking;
 
-    /**
-     * operating water temperature
-     */
-    protected int operating_temperature;
+	/**
+	 * Program temperature in °C
+	 */
+	protected int programTemperature;
 
-    /**
-     * Inbound port of the washer
-     */
-    protected WasherInboundPort bip;
+	/**
+	 * Program duration in minutes
+	 */
+	protected int programDuration;
 
-    /**
-     *
-     * @param reflectionPortURI
-     * @param bipURI
-     * @throws Exception
-     */
-    protected Washer(String reflectionPortURI, String bipURI) throws Exception {
-        super(reflectionPortURI, 1, 0);
-        myUri = reflectionPortURI;
-    }
+	/**
+	 * Inbound port of the washer
+	 */
+	protected WasherInboundPort bip;
 
-    /**
-     * <pre>
-     *     pre      {@code washerInboundPortURI != null}
-     *     pre      {@code washerInboundPortURI.isEmpty()}
-     *     post     {@code getStateWasher == false }
-     *     post     {@code getTemperatureOperating == 0}
-     * </pre>
-     * @param washerInboundPortURI
-     * @throws Exception
-     */
-    protected void initialise(String washerInboundPortURI) throws Exception{
-        assert washerInboundPortURI != null : new PreconditionException("washerInboundPortUri != null");
-        assert !washerInboundPortURI.isEmpty() : new PreconditionException("washerInboundPortURI.isEmpty()");
-        this.isWorking = false;
-        this.operating_temperature = 20; //ambient temperature for now
-        this.bip = new WasherInboundPort(washerInboundPortURI, this);
-        this.bip.publishPort();
-    }
+	/**
+	 *
+	 * @param reflectionPortURI
+	 * @param bipURI
+	 * @throws Exception
+	 */
+	protected Washer(String reflectionPortURI, String bipURI) throws Exception {
+		super(reflectionPortURI, 1, 0);
+		myUri = reflectionPortURI;
+	}
 
-    @Override
-    public boolean getStateWasher() throws Exception {
-        return isWorking;
-    }
+	/**
+	 * <pre>
+	 *     pre      {@code washerInboundPortURI != null}
+	 *     pre      {@code washerInboundPortURI.isEmpty()}
+	 *     post     {@code getStateWasher == false }
+	 *     post     {@code getTemperatureOperating == 0}
+	 * </pre>
+	 * 
+	 * @param washerInboundPortURI
+	 * @throws Exception
+	 */
+	protected void initialise(String washerInboundPortURI) throws Exception {
+		assert washerInboundPortURI != null : new PreconditionException("washerInboundPortUri != null");
+		assert !washerInboundPortURI.isEmpty() : new PreconditionException("washerInboundPortURI.isEmpty()");
+		this.isWorking = false;
+		this.programTemperature = 30;
+		this.programDuration = 60;
+		this.bip = new WasherInboundPort(washerInboundPortURI, this);
+		this.bip.publishPort();
+	}
 
-    @Override
-    public void turnOnWasher(int operating_temperature) throws Exception {
-        this.isWorking = true;
-        this.operating_temperature = operating_temperature;
-    }
+	/**
+	 * @see interfaces.WasherImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return isWorking;
+	}
 
-    @Override
-    public void turnOffWasher() throws Exception {
-        this.isWorking = false;
-    }
+	/**
+	 * @see interfaces.WasherImplementationI#turnOnWasher()
+	 */
+	@Override
+	public void turnOnWasher() throws Exception {
+		this.isWorking = true;
+	}
 
-    @Override
-    public int getOperatingTemperature() throws Exception {
-        return this.operating_temperature;
-    }
+	/**
+	 * @see interfaces.WasherImplementationI#turnOffWasher()
+	 */
+	@Override
+	public void turnOffWasher() throws Exception {
+		this.isWorking = false;
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#getProgramTemperature()
+	 */
+	@Override
+	public int getProgramTemperature() throws Exception {
+		return this.programTemperature;
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setProgramTemperature(int)
+	 */
+	@Override
+	public void setProgramTemperature(int temperature) throws Exception {
+		this.programTemperature = temperature;
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setProgramDuration(int)
+	 */
+	@Override
+	public void setProgramDuration(int duration) throws Exception {
+		this.programDuration = duration;
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#getProgramDuration()
+	 */
+	@Override
+	public int getProgramDuration() throws Exception {
+		return this.programDuration;
+	}
 }

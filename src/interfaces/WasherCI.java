@@ -11,29 +11,47 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
  *
  */
 public interface WasherCI extends WasherImplementationI, RequiredCI, OfferedCI {
-    /**
-     * @see WasherImplementationI#getStateWasher()
-     */
-    @Override
-    public boolean getStateWasher() throws Exception;
 
-    /**
-     * @see WasherImplementationI#turnOnWasher(int)
-     */
-    @Override
-    public void turnOnWasher(int operating_temperature) throws Exception;
+	/**
+	 * @see interfaces.WasherImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception;
 
-    /**
-     * @see WasherImplementationI#turnOffWasher()
-     */
-    @Override
-    public void turnOffWasher() throws Exception;
+	/**
+	 * @see interfaces.WasherImplementationI#turnOnWasher()
+	 */
+	@Override
+	public void turnOnWasher() throws Exception;
 
-    /**
-     * @see WasherImplementationI#getOperatingTemperature()
-     */
-    @Override
-    public int getOperatingTemperature() throws Exception;
+	/**
+	 * @see interfaces.WasherImplementationI#turnOffWasher()
+	 */
+	@Override
+	public void turnOffWasher() throws Exception;
 
+	/**
+	 * @see interfaces.WasherImplementationI#getProgramTemperature()
+	 */
+	@Override
+	public int getProgramTemperature() throws Exception;
+
+	/**
+	 * @see interfaces.WasherImplementationI#setProgramTemperature(int)
+	 */
+	@Override
+	public void setProgramTemperature(int temperature) throws Exception;
+
+	/**
+	 * @see interfaces.WasherImplementationI#getProgramDuration()
+	 */
+	@Override
+	public int getProgramDuration() throws Exception;
+
+	/**
+	 * @see interfaces.WasherImplementationI#setProgramDuration(int)
+	 */
+	@Override
+	public void setProgramDuration(int duration) throws Exception;
 
 }

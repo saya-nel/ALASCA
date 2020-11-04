@@ -9,31 +9,56 @@ package interfaces;
  */
 public interface WasherImplementationI {
 
-    /**
-     * @return                  true if the washer is currently working
-     * @throws Exception
-     */
-    public boolean getStateWasher() throws Exception;
+	/**
+	 * @return true if the washer is currently working, false else
+	 * @throws Exception
+	 */
+	public boolean isTurnedOn() throws Exception;
 
-    /**
-     *  Change the state of the washer and the operating _temperature
-     * @param operating_temperature             of the wash
-     * @throws Exception
-     */
-    public void turnOnWasher(int operating_temperature) throws Exception;
+	/**
+	 * Turn the washer on
+	 * 
+	 * @throws Exception
+	 */
+	public void turnOnWasher() throws Exception;
 
-    /**
-     *  Change the state of the washer and turn it off
-     * @throws Exception
-     */
-    public void turnOffWasher() throws Exception;
+	/**
+	 * Turn the washer off
+	 * 
+	 * @throws Exception
+	 */
+	public void turnOffWasher() throws Exception;
 
-    /**
-     *
-     * @return              washer's operating temperature of water
-     * @throws Exception
-     */
-    public int getOperatingTemperature() throws Exception;
+	/**
+	 * Change the temperature of the program
+	 * 
+	 * @param temperature the new temperature of the program
+	 * @throws Exception
+	 */
+	public void setProgramTemperature(int temperature) throws Exception;
 
+	/**
+	 * Return the temperature of the program
+	 * 
+	 * @return the temperature of the program
+	 * @throws Exception
+	 */
+	public int getProgramTemperature() throws Exception;
+
+	/**
+	 * Change the duration of the program
+	 * 
+	 * @param duration duration of the program
+	 * @throws Exception
+	 */
+	public void setProgramDuration(int duration) throws Exception;
+
+	/**
+	 * Return the duration of the program
+	 * 
+	 * @return duration of the program
+	 * @throws Exception
+	 */
+	public int getProgramDuration() throws Exception;
 
 }

@@ -1,6 +1,5 @@
 package ports;
 
-import components.Washer;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import interfaces.WasherCI;
@@ -14,39 +13,66 @@ import interfaces.WasherImplementationI;
  *
  */
 public class WasherOutboundPort extends AbstractOutboundPort implements WasherCI {
-    public WasherOutboundPort(ComponentI owner) throws Exception {
-        super(WasherCI.class, owner);
-    }
 
-    /**
-     * @see WasherImplementationI#getStateWasher()
-     */
-    @Override
-    public boolean getStateWasher() throws Exception {
-        return ((WasherCI) this.getConnector()).getStateWasher();
-    }
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * @see WasherImplementationI#turnOnWasher(int)
-     */
-    @Override
-    public void turnOnWasher(int operating_temperature) throws Exception {
-        ((WasherCI) this.getConnector()).turnOnWasher(operating_temperature);
-    }
+	public WasherOutboundPort(ComponentI owner) throws Exception {
+		super(WasherCI.class, owner);
+	}
 
-    /**
-     * @see WasherImplementationI#turnOffWasher()
-     */
-    @Override
-    public void turnOffWasher() throws Exception {
-        ((WasherCI) this.getConnector()).turnOffWasher();
-    }
+	/**
+	 * @see WasherImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return ((WasherCI) this.getConnector()).isTurnedOn();
+	}
 
-    /**
-     * @see WasherImplementationI#getOperatingTemperature()
-     */
-    @Override
-    public int getOperatingTemperature() throws Exception {
-        return ((WasherCI) this.getConnector()).getOperatingTemperature();
-    }
+	/**
+	 * @see WasherImplementationI#turnOnWasher()
+	 */
+	@Override
+	public void turnOnWasher() throws Exception {
+		((WasherCI) this.getConnector()).turnOnWasher();
+	}
+
+	/**
+	 * @see WasherImplementationI#turnOffWasher()
+	 */
+	@Override
+	public void turnOffWasher() throws Exception {
+		((WasherCI) this.getConnector()).turnOffWasher();
+	}
+
+	/**
+	 * @see WasherImplementationI#getProgramTemperature()
+	 */
+	@Override
+	public int getProgramTemperature() throws Exception {
+		return ((WasherCI) this.getConnector()).getProgramTemperature();
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setProgramTemperature(int)
+	 */
+	@Override
+	public void setProgramTemperature(int temperature) throws Exception {
+		((WasherCI) this.getConnector()).setProgramTemperature(temperature);
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#getProgramDuration()
+	 */
+	@Override
+	public int getProgramDuration() throws Exception {
+		return ((WasherCI) this.getConnector()).getProgramDuration();
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setProgramDuration(int)
+	 */
+	@Override
+	public void setProgramDuration(int duration) throws Exception {
+		((WasherCI) this.getConnector()).setProgramDuration(duration);
+	}
 }
