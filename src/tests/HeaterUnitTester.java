@@ -55,7 +55,7 @@ public class HeaterUnitTester extends AbstractComponent {
 		this.hop.publishPort();
 
 		this.tracer.get().setTitle("Heater tester component");
-		this.tracer.get().setRelativePosition(1, 2);
+		this.tracer.get().setRelativePosition(0, 2);
 		this.toggleTracing();
 	}
 

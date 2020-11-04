@@ -4,59 +4,46 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import connectors.FanConnector;
+import connectors.WasherConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import interfaces.FanCI;
-import ports.FanOutboundPort;
-import utils.FanLevel;
+import interfaces.WasherCI;
+import ports.WasherOutboundPort;
 import utils.Log;
 
 /**
- * Tester for the Fan component
+ * Tester for the Washer component
  * 
  * @author Bello Memmi
  *
  */
-@RequiredInterfaces(required = { FanCI.class })
-public class FanUnitTester extends AbstractComponent {
+@RequiredInterfaces(required = { WasherCI.class })
+public class WasherUnitTester extends AbstractComponent {
 
 	/**
-	 * Fan outbound port for FanUnitTester
+	 * Washer outbound port for WasherUnitTester
 	 */
-	protected FanOutboundPort fop;
+	protected WasherOutboundPort wop;
 
 	/**
-	 * Fan inbound port to connect to URI
+	 * Washer inbound port to connect to URI
 	 */
-	protected String fipURI;
+	protected String wipURI;
 
-	/**
-	 * FanUnitTester constructor
-	 * 
-	 * @param fipURI fan inbound port uri to connect to
-	 * @throws Exception
-	 */
-	protected FanUnitTester(String fipURI) throws Exception {
+	protected WasherUnitTester(String wipURI) throws Exception {
 		super(1, 0);
-		this.initialise(fipURI);
+		this.initialise(wipURI);
 	}
 
-	/**
-	 * initialise the component
-	 * 
-	 * @param fipURI fan inbound port uri to connect to
-	 * @throws Exception
-	 */
-	protected void initialise(String fipURI) throws Exception {
-		this.fipURI = fipURI;
-		this.fop = new FanOutboundPort(this);
-		this.fop.publishPort();
+	private void initialise(String wipURI) throws Exception {
+		this.wipURI = wipURI;
+		this.wop = new WasherOutboundPort(this);
+		this.wop.publishPort();
 
-		this.tracer.get().setTitle("Fan tester component");
-		this.tracer.get().setRelativePosition(0, 1);
+		this.tracer.get().setTitle("Washer tester component");
+		this.tracer.get().setRelativePosition(1, 0);
 		this.toggleTracing();
 	}
 
@@ -71,7 +58,7 @@ public class FanUnitTester extends AbstractComponent {
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.fop.getPortURI(), fipURI, FanConnector.class.getCanonicalName());
+			this.doPortConnection(this.wop.getPortURI(), wipURI, WasherConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -91,7 +78,7 @@ public class FanUnitTester extends AbstractComponent {
 	 */
 	@Override
 	public synchronized void finalise() throws Exception {
-		this.doPortDisconnection(this.fop.getPortURI());
+		this.doPortDisconnection(this.wop.getPortURI());
 		super.finalise();
 	}
 
@@ -101,7 +88,7 @@ public class FanUnitTester extends AbstractComponent {
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
 		try {
-			this.fop.unpublishPort();
+			this.wop.unpublishPort();
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e);
 		}
@@ -113,13 +100,26 @@ public class FanUnitTester extends AbstractComponent {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Test the isTurnedOn method
+	 */
+	private void testIsTurnedOn() {
+		Log.printAndLog(this, "test isTurnedOn()");
+		try {
+			assertFalse(wop.isTurnedOn());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	/**
 	 * Test the turnOn method
 	 */
-	public void testTurnOn() {
-		Log.printAndLog(this, "test turnOn()");
+	private void testTurnOn() {
+		Log.printAndLog(this, "test turnOnWasher()");
 		try {
-			fop.turnOn();
-			assertTrue(fop.isTurnedOn());
+			wop.turnOn();
+			assertTrue(wop.isTurnedOn());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -129,11 +129,11 @@ public class FanUnitTester extends AbstractComponent {
 	/**
 	 * Test the turnOff method
 	 */
-	public void testTurnOff() {
+	private void testTurnOff() {
 		Log.printAndLog(this, "test turnOff()");
 		try {
-			fop.turnOff();
-			assertFalse(fop.isTurnedOn());
+			wop.turnOff();
+			assertFalse(wop.isTurnedOn());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -141,13 +141,12 @@ public class FanUnitTester extends AbstractComponent {
 	}
 
 	/**
-	 * Test the adjustPower method
+	 * Test the getProgramTemperature method
 	 */
-	public void testAdjustPower() {
-		Log.printAndLog(this, "test adjustPower()");
+	private void testGetProgramTemperature() {
+		Log.printAndLog(this, "test getRequestedTemperature()");
 		try {
-			fop.adjustPower(FanLevel.HIGH);
-			assertEquals(FanLevel.HIGH, fop.getFanLevel());
+			assertEquals(30, wop.getProgramTemperature());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -155,13 +154,14 @@ public class FanUnitTester extends AbstractComponent {
 	}
 
 	/**
-	 * Test the isTurnedOn method
+	 * Test the setProgramTemperature method
 	 */
-	public void testIsTurnedOn() {
-		Log.printAndLog(this, "test isTurnedOn()");
+	private void testSetProgramTemperature() {
+		Log.printAndLog(this, "test setProgramTemperature()");
 		try {
-			fop.turnOn();
-			assertTrue(fop.isTurnedOn());
+			wop.setProgramTemperature(50);
+			assertEquals(50, wop.getProgramTemperature());
+			wop.setProgramTemperature(30);
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -169,13 +169,27 @@ public class FanUnitTester extends AbstractComponent {
 	}
 
 	/**
-	 * Test the getFanLevel method
+	 * Test the setProgramDuration method
 	 */
-	public void testGetFanLevel() {
-		Log.printAndLog(this, "test getFanLevel()");
+	private void testSetProgramDuration() {
+		Log.printAndLog(this, "test setProgramDuration()");
 		try {
-			fop.adjustPower(FanLevel.MID);
-			assertEquals(FanLevel.MID, fop.getFanLevel());
+			wop.setProgramDuration(20);
+			assertEquals(20, wop.getProgramDuration());
+			wop.setProgramDuration(60);
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	/**
+	 * Test the getProgramDuration method
+	 */
+	private void testGetProgramDuration() {
+		Log.printAndLog(this, "test getProgramDuration()");
+		try {
+			assertEquals(60, wop.getProgramDuration());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -185,12 +199,14 @@ public class FanUnitTester extends AbstractComponent {
 	/**
 	 * Run all the tests
 	 */
-	protected void runAllTests() {
+	private void runAllTests() {
+		testIsTurnedOn();
 		testTurnOn();
 		testTurnOff();
-		testAdjustPower();
-		testIsTurnedOn();
-		testGetFanLevel();
+		testGetProgramTemperature();
+		testSetProgramTemperature();
+		testSetProgramDuration();
+		testGetProgramDuration();
 		Log.printAndLog(this, "all tests passed");
 	}
 }

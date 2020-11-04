@@ -2,6 +2,7 @@ package components;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.exceptions.PreconditionException;
 import interfaces.WasherCI;
 import interfaces.WasherImplementationI;
@@ -32,7 +33,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	/**
 	 * Inbound port of the washer
 	 */
-	protected WasherInboundPort bip;
+	protected WasherInboundPort wip;
 
 	/**
 	 *
@@ -40,10 +41,15 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	 * @param bipURI
 	 * @throws Exception
 	 */
-	protected Washer(String reflectionPortURI, String bipURI) throws Exception {
+	protected Washer(String reflectionPortURI, String wipURI) throws Exception {
 		super(reflectionPortURI, 1, 0);
 		myUri = reflectionPortURI;
+		initialise(wipURI);
 	}
+
+	// -------------------------------------------------------------------------
+	// Component life-cycle
+	// -------------------------------------------------------------------------
 
 	/**
 	 * <pre>
@@ -62,9 +68,26 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		this.isWorking = false;
 		this.programTemperature = 30;
 		this.programDuration = 60;
-		this.bip = new WasherInboundPort(washerInboundPortURI, this);
-		this.bip.publishPort();
+		this.wip = new WasherInboundPort(washerInboundPortURI, this);
+		this.wip.publishPort();
 	}
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
+	 */
+	@Override
+	public synchronized void shutdown() throws ComponentShutdownException {
+		try {
+			this.wip.unpublishPort();
+		} catch (Exception e) {
+			throw new ComponentShutdownException(e);
+		}
+		super.shutdown();
+	}
+
+	// -------------------------------------------------------------------------
+	// Component services implementation
+	// -------------------------------------------------------------------------
 
 	/**
 	 * @see interfaces.WasherImplementationI#isTurnedOn()
@@ -75,18 +98,18 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	}
 
 	/**
-	 * @see interfaces.WasherImplementationI#turnOnWasher()
+	 * @see interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
-	public void turnOnWasher() throws Exception {
+	public void turnOn() throws Exception {
 		this.isWorking = true;
 	}
 
 	/**
-	 * @see interfaces.WasherImplementationI#turnOffWasher()
+	 * @see interfaces.WasherImplementationI#turnOff()
 	 */
 	@Override
-	public void turnOffWasher() throws Exception {
+	public void turnOff() throws Exception {
 		this.isWorking = false;
 	}
 

@@ -14,19 +14,19 @@ public class WasherConnector extends AbstractConnector implements WasherCI {
 	}
 
 	/**
-	 * @see WasherImplementationI#turnOnWasher()
+	 * @see WasherImplementationI#turnOn()
 	 */
 	@Override
-	public void turnOnWasher() throws Exception {
-		((WasherCI) this.offering).turnOnWasher();
+	public void turnOn() throws Exception {
+		((WasherCI) this.offering).turnOn();
 	}
 
 	/**
-	 * @see WasherImplementationI#turnOffWasher()
+	 * @see WasherImplementationI#turnOff()
 	 */
 	@Override
-	public void turnOffWasher() throws Exception {
-		((WasherCI) this.offering).turnOffWasher();
+	public void turnOff() throws Exception {
+		((WasherCI) this.offering).turnOff();
 	}
 
 	/**

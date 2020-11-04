@@ -20,14 +20,14 @@ public interface WasherImplementationI {
 	 * 
 	 * @throws Exception
 	 */
-	public void turnOnWasher() throws Exception;
+	public void turnOn() throws Exception;
 
 	/**
 	 * Turn the washer off
 	 * 
 	 * @throws Exception
 	 */
-	public void turnOffWasher() throws Exception;
+	public void turnOff() throws Exception;
 
 	/**
 	 * Change the temperature of the program

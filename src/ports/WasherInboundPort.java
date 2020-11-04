@@ -28,13 +28,13 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	}
 
 	/**
-	 * @see interfaces.WasherImplementationI#turnOnWasher()
+	 * @see interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
-	public void turnOnWasher() throws Exception {
+	public void turnOn() throws Exception {
 		this.getOwner().runTask(owner -> {
 			try {
-				((Washer) owner).turnOnWasher();
+				((Washer) owner).turnOn();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -42,13 +42,13 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	}
 
 	/**
-	 * @see interfaces.WasherImplementationI#turnOffWasher()
+	 * @see interfaces.WasherImplementationI#turnOff()
 	 */
 	@Override
-	public void turnOffWasher() throws Exception {
+	public void turnOff() throws Exception {
 		this.getOwner().runTask(owner -> {
 			try {
-				((Washer) owner).turnOffWasher();
+				((Washer) owner).turnOff();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

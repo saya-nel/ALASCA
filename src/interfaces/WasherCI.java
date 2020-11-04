@@ -19,16 +19,16 @@ public interface WasherCI extends WasherImplementationI, RequiredCI, OfferedCI {
 	public boolean isTurnedOn() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#turnOnWasher()
+	 * @see interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
-	public void turnOnWasher() throws Exception;
+	public void turnOn() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#turnOffWasher()
+	 * @see interfaces.WasherImplementationI#turnOff()
 	 */
 	@Override
-	public void turnOffWasher() throws Exception;
+	public void turnOff() throws Exception;
 
 	/**
 	 * @see interfaces.WasherImplementationI#getProgramTemperature()
