@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.Date;
+
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 
@@ -53,5 +55,17 @@ public interface WasherCI extends WasherImplementationI, RequiredCI, OfferedCI {
 	 */
 	@Override
 	public void setProgramDuration(int duration) throws Exception;
+
+	/**
+	 * @see interfaces.WasherImplementationI#setDelay(Date)
+	 */
+	@Override
+	public void setDelay(Date date) throws Exception;
+
+	/**
+	 * @see interfaces.WasherImplementationI#getDelay()
+	 */
+	@Override
+	public Date getDelay() throws Exception;
 
 }

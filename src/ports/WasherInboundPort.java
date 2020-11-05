@@ -1,5 +1,7 @@
 package ports;
 
+import java.util.Date;
+
 import components.Washer;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
@@ -97,6 +99,28 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 				e.printStackTrace();
 			}
 		});
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setDelay(Date)
+	 */
+	@Override
+	public void setDelay(Date date) throws Exception {
+		this.getOwner().runTask(owner -> {
+			try {
+				((Washer) owner).setDelay(date);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#getDelay()
+	 */
+	@Override
+	public Date getDelay() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).getDelay());
 	}
 
 }

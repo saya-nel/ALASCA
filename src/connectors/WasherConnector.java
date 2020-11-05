@@ -1,5 +1,7 @@
 package connectors;
 
+import java.util.Date;
+
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 import interfaces.WasherCI;
 import interfaces.WasherImplementationI;
@@ -59,5 +61,21 @@ public class WasherConnector extends AbstractConnector implements WasherCI {
 	@Override
 	public void setProgramDuration(int duration) throws Exception {
 		((WasherCI) this.offering).setProgramDuration(duration);
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setDelay(Date)
+	 */
+	@Override
+	public void setDelay(Date date) throws Exception {
+		((WasherCI) this.offering).setDelay(date);
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#getDelay()
+	 */
+	@Override
+	public Date getDelay() throws Exception {
+		return ((WasherCI) this.offering).getDelay();
 	}
 }

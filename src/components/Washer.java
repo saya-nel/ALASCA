@@ -1,5 +1,7 @@
 package components;
 
+import java.util.Date;
+
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
@@ -34,6 +36,11 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	 * Inbound port of the washer
 	 */
 	protected WasherInboundPort wip;
+
+	/**
+	 * Delay for the program
+	 */
+	protected Date delay;
 
 	/**
 	 *
@@ -143,5 +150,21 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public int getProgramDuration() throws Exception {
 		return this.programDuration;
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setDelay(Date)
+	 */
+	@Override
+	public void setDelay(Date date) throws Exception {
+		delay = date;
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#getDelay()
+	 */
+	@Override
+	public Date getDelay() throws Exception {
+		return delay;
 	}
 }

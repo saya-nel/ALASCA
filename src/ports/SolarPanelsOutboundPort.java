@@ -25,11 +25,24 @@ public class SolarPanelsOutboundPort extends AbstractOutboundPort implements Sol
 	}
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#getCurrentEnergyProduction()
+	 * @see interfaces.SolarPanelsImplementationI#turnOn()
 	 */
 	@Override
-	public float getCurrentEnergyProduction() throws Exception {
-		return ((SolarPanelsCI) this.getConnector()).getCurrentEnergyProduction();
+	public void turnOn() throws Exception {
+		((SolarPanelsCI) this.getConnector()).turnOn();
+	}
+
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#turnOff()
+	 */
+	@Override
+	public void turnOff() throws Exception {
+		((SolarPanelsCI) this.getConnector()).turnOff();
+	}
+
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return ((SolarPanelsCI) this.getConnector()).isTurnedOn();
 	}
 
 }

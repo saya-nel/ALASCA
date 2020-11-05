@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Date;
+
 import connectors.WasherConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
@@ -197,6 +199,36 @@ public class WasherUnitTester extends AbstractComponent {
 	}
 
 	/**
+	 * Test the getDelay method
+	 */
+	private void testGetDelay() {
+		Log.printAndLog(this, "test setGetDelay()");
+		try {
+			assertEquals(null, wop.getDelay());
+			wop.setProgramDuration(60);
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	/**
+	 * Test the setDelay method
+	 */
+	private void testSetDelay() {
+		Log.printAndLog(this, "test setDelay()");
+		try {
+			Date date = new Date();
+			wop.setDelay(date);
+			assertEquals(date, wop.getDelay());
+			wop.setProgramDuration(60);
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	/**
 	 * Run all the tests
 	 */
 	private void runAllTests() {
@@ -207,6 +239,8 @@ public class WasherUnitTester extends AbstractComponent {
 		testSetProgramTemperature();
 		testSetProgramDuration();
 		testGetProgramDuration();
+		testGetDelay();
+		testSetDelay();
 		Log.printAndLog(this, "all tests passed");
 	}
 }

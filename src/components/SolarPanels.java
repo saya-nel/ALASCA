@@ -27,6 +27,11 @@ public class SolarPanels extends AbstractComponent implements SolarPanelsImpleme
 	protected SolarPanelsInboundPort spip;
 
 	/**
+	 * True if the solar panels are turnedOn, false else
+	 */
+	protected boolean isTurnedOn;
+
+	/**
 	 * Constructor of the solar panels
 	 * 
 	 * @param uri of the SolarPanels component
@@ -34,6 +39,7 @@ public class SolarPanels extends AbstractComponent implements SolarPanelsImpleme
 	protected SolarPanels(String uri, String spipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
+		isTurnedOn = false;
 		this.spip = new SolarPanelsInboundPort(spipURI, this);
 		this.spip.publishPort();
 	}
@@ -54,12 +60,32 @@ public class SolarPanels extends AbstractComponent implements SolarPanelsImpleme
 		}
 		super.shutdown();
 	}
+
 	// -------------------------------------------------------------------------
 	// Component services implementation
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#turnOn()
+	 */
 	@Override
-	public float getCurrentEnergyProduction() throws Exception {
-		return 0;
+	public void turnOn() throws Exception {
+		isTurnedOn = true;
+	}
+
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#turnOff()
+	 */
+	@Override
+	public void turnOff() throws Exception {
+		isTurnedOn = false;
+	}
+
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return isTurnedOn;
 	}
 }

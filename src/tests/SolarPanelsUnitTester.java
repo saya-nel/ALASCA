@@ -1,6 +1,6 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import connectors.SolarPanelsConnector;
@@ -111,12 +111,41 @@ public class SolarPanelsUnitTester extends AbstractComponent {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Test the getCurrentEnergyProduction method
+	 * Test the turnOn method
 	 */
-	public void testGetCurrentEnergyProduction() {
-		Log.printAndLog(this, "test getCurrentEnergyProduction()");
+	public void testTurnOn() {
+		Log.printAndLog(this, "test turnOn()");
 		try {
-			assertEquals(0, spop.getCurrentEnergyProduction());
+			spop.turnOn();
+			assertTrue(spop.isTurnedOn());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	/**
+	 * Test the turnOff method
+	 */
+	public void testTurnOff() {
+		Log.printAndLog(this, "test turnOff()");
+		try {
+			spop.turnOff();
+			assertFalse(spop.isTurnedOn());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	/**
+	 * Test the isTurnedOn method
+	 */
+	public void testIsTurnedOn() {
+		Log.printAndLog(this, "test isTurnedOn()");
+		try {
+			spop.turnOn();
+			assertTrue(spop.isTurnedOn());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -127,7 +156,9 @@ public class SolarPanelsUnitTester extends AbstractComponent {
 	 * Run all the tests
 	 */
 	protected void runAllTests() {
-		testGetCurrentEnergyProduction();
+		testTurnOn();
+		testTurnOff();
+		testIsTurnedOn();
 		Log.printAndLog(this, "all tests passed");
 	}
 

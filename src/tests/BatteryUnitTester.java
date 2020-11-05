@@ -112,42 +112,6 @@ public class BatteryUnitTester extends AbstractComponent {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Test the addEnergy method
-	 */
-	public void testAddEnergy() {
-		Log.printAndLog(this, "test addEnergy()");
-		try {
-			bop.addEnergy(100);
-			assertEquals(100, this.bop.getBatteryCharge());
-			bop.takeEnergy(100);
-			bop.addEnergy(bop.getMaximumEnergy());
-			assertEquals(bop.getMaximumEnergy(), bop.getBatteryCharge());
-			bop.takeEnergy(bop.getMaximumEnergy());
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
-
-	/**
-	 * Test the takeEnergy method
-	 */
-	public void testTakeEnergy() {
-		Log.printAndLog(this, "test takeEnergy()");
-		try {
-			bop.addEnergy(100);
-			bop.takeEnergy(50);
-			assertEquals(50, this.bop.getBatteryCharge());
-			bop.takeEnergy(100);
-			assertEquals(0, this.bop.getBatteryCharge());
-			bop.addEnergy(50);
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
-
-	/**
 	 * Test the getBatteryCharge method
 	 */
 	public void testGetBatteryCharge() {
@@ -191,11 +155,9 @@ public class BatteryUnitTester extends AbstractComponent {
 	 * Run all the tests
 	 */
 	protected void runAllTests() {
-		this.testAddEnergy();
 		this.testGetBatteryCharge();
 		this.testGetBatteryState();
 		this.testSetBatteryState();
-		this.testTakeEnergy();
 		Log.printAndLog(this, "all tests passed");
 	}
 

@@ -2,7 +2,6 @@ package tests;
 
 import components.Battery;
 import components.Fan;
-import components.Heater;
 import components.SolarPanels;
 import components.Washer;
 import fr.sorbonne_u.components.AbstractComponent;
@@ -19,14 +18,12 @@ public class CVMUnitTest extends AbstractCVM {
 	// componentURIs
 	protected final static String BATTERY_URI = "battery-URI";
 	protected final static String FAN_URI = "fan-URI";
-	protected final static String HEATER_URI = "heater-URI";
 	protected final static String SOLARPANELS_URI = "solarpanels-URI";
 	protected final static String WASHER_URI = "washer-URI";
 	protected final static String CONTROLLER_URI = "controller-URI";
 	// ports URIs
 	protected final static String BATTERY_INBOUND_PORT_URI = "bip-URI";
 	protected final static String FAN_INBOUND_PORT_URI = "fip-URI";
-	protected final static String HEATER_INBOUND_PORT_URI = "hip-URI";
 	protected final static String SOLARPANELS_INBOUND_PORT_URI = "spip-URI";
 	protected final static String WASHER_INBOUND_PORT_URI = "wip-URI";
 	protected final static String CONTROLLER_INBOUND_PORT_URI = "cip-URI";
@@ -49,12 +46,6 @@ public class CVMUnitTest extends AbstractCVM {
 		AbstractComponent.createComponent(Fan.class.getCanonicalName(), new Object[] { FAN_URI, FAN_INBOUND_PORT_URI });
 		AbstractComponent.createComponent(FanUnitTester.class.getCanonicalName(),
 				new Object[] { FAN_INBOUND_PORT_URI });
-
-		// Heater
-		AbstractComponent.createComponent(Heater.class.getCanonicalName(),
-				new Object[] { HEATER_URI, HEATER_INBOUND_PORT_URI });
-		AbstractComponent.createComponent(HeaterUnitTester.class.getCanonicalName(),
-				new Object[] { HEATER_INBOUND_PORT_URI });
 
 		// SolarPanels
 		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),

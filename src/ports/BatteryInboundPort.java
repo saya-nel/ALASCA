@@ -38,14 +38,6 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#getMaximumEnergy()
-	 */
-	@Override
-	public float getMaximumEnergy() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).getMaximumEnergy());
-	}
-
-	/**
 	 * @see interfaces.BatteryImplementationI#setBatteryState(BatteryState)
 	 */
 	@Override
@@ -59,25 +51,4 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 		});
 	}
 
-	/**
-	 * @see interfaces.BatteryImplementationI#takeEnergy(float)
-	 */
-	@Override
-	public float takeEnergy(float toTake) throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).takeEnergy(toTake));
-	}
-
-	/**
-	 * @see interfaces.BatteryImplementationI#addEnergy(float)
-	 */
-	@Override
-	public void addEnergy(float toAdd) throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Battery) owner).addEnergy(toAdd);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
 }

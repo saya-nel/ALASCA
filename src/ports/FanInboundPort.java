@@ -37,7 +37,6 @@ public class FanInboundPort extends AbstractInboundPort implements FanCI {
 			try {
 				((Fan) owner).turnOn();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
@@ -52,7 +51,6 @@ public class FanInboundPort extends AbstractInboundPort implements FanCI {
 			try {
 				((Fan) owner).turnOff();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
@@ -67,7 +65,6 @@ public class FanInboundPort extends AbstractInboundPort implements FanCI {
 			try {
 				((Fan) owner).adjustPower(level);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});

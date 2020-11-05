@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.Date;
+
 /**
  *
  * Washer services interfaces
@@ -61,6 +63,19 @@ public interface WasherImplementationI {
 	 */
 	public int getProgramDuration() throws Exception;
 
-	// TODO retardé programme
+	/**
+	 * Delay the program to the indicated date
+	 * 
+	 * @param Date date to launch the program
+	 * @throws Exception
+	 */
+	public void setDelay(Date date) throws Exception;
+
+	/**
+	 * Get the delay of the program
+	 * 
+	 * @throws Exception
+	 */
+	public Date getDelay() throws Exception;
 
 }

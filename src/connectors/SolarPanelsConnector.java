@@ -11,8 +11,24 @@ import interfaces.SolarPanelsCI;
  */
 public class SolarPanelsConnector extends AbstractConnector implements SolarPanelsCI {
 
-    @Override
-    public float getCurrentEnergyProduction() throws Exception {
-        return ((SolarPanelsCI) this.offering).getCurrentEnergyProduction();
-    }
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#turnOn()
+	 */
+	@Override
+	public void turnOn() throws Exception {
+		((SolarPanelsCI) this.offering).turnOn();
+	}
+
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#turnOff()
+	 */
+	@Override
+	public void turnOff() throws Exception {
+		((SolarPanelsCI) this.offering).turnOff();
+	}
+
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return ((SolarPanelsCI) this.offering).isTurnedOn();
+	}
 }

@@ -1,5 +1,7 @@
 package ports;
 
+import java.util.Date;
+
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import interfaces.WasherCI;
@@ -74,5 +76,18 @@ public class WasherOutboundPort extends AbstractOutboundPort implements WasherCI
 	@Override
 	public void setProgramDuration(int duration) throws Exception {
 		((WasherCI) this.getConnector()).setProgramDuration(duration);
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setDelay(Date)
+	 */
+	@Override
+	public void setDelay(Date date) throws Exception {
+		((WasherCI) this.getConnector()).setDelay(date);
+	}
+
+	@Override
+	public Date getDelay() throws Exception {
+		return ((WasherCI) this.getConnector()).getDelay();
 	}
 }

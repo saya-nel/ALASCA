@@ -25,11 +25,42 @@ public class SolarPanelsInboundPort extends AbstractInboundPort implements Solar
 	 */
 	public SolarPanelsInboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri, SolarPanelsCI.class, owner);
-		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#turnOn()
+	 */
 	@Override
-	public float getCurrentEnergyProduction() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((SolarPanels) owner).getCurrentEnergyProduction());
+	public void turnOn() throws Exception {
+		this.getOwner().runTask(owner -> {
+			try {
+				((SolarPanels) owner).turnOn();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
+
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#turnOff()
+	 */
+	@Override
+	public void turnOff() throws Exception {
+		this.getOwner().runTask(owner -> {
+			try {
+				((SolarPanels) owner).turnOff();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	/**
+	 * @see interfaces.SolarPanelsImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((SolarPanels) owner).isTurnedOn());
+	}
+
 }
