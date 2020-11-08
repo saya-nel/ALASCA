@@ -39,4 +39,12 @@ public interface PetrolGeneratorImplementationI {
 	 * Turn the generator off
 	 */
 	public void turnOff() throws Exception;
+
+	/**
+	 * Return true if the generator is turned on, false else
+	 * 
+	 * @return true if the generator is turned on, false else
+	 * @throws Exception
+	 */
+	public boolean isTurnedOn() throws Exception;
 }

@@ -36,7 +36,11 @@ public class PetrolGeneratorConnector extends AbstractConnector implements Petro
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#turnOn()
+	 * @see interfaces.PetrolGeneratorImplementatReturn true if the generator is
+	 *      turned on, false else
+	 * 
+	 * @return true if the generator is turned on, false else
+	 * @throws ExceptionionI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
@@ -49,6 +53,14 @@ public class PetrolGeneratorConnector extends AbstractConnector implements Petro
 	@Override
 	public void turnOff() throws Exception {
 		((PetrolGeneratorCI) this.offering).turnOff();
+	}
+
+	/**
+	 * @see interfaces.PetrolGeneratorImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return ((PetrolGeneratorCI) this.offering).isTurnedOn();
 	}
 
 }

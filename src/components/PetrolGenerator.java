@@ -132,4 +132,12 @@ public class PetrolGenerator extends AbstractComponent implements PetrolGenerato
 		isTurnedOn = false;
 	}
 
+	/**
+	 * @see interfaces.PetrolGeneratorImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return isTurnedOn;
+	}
+
 }

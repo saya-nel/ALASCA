@@ -1,5 +1,6 @@
 package ports;
 
+import components.PetrolGenerator;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import interfaces.PetrolGeneratorCI;
@@ -24,7 +25,7 @@ public class PetrolGeneratorInboundPort extends AbstractInboundPort implements P
 	 */
 	@Override
 	public float getMaxLevel() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((PetrolGeneratorCI) owner).getMaxLevel());
+		return this.getOwner().handleRequestSync(owner -> ((PetrolGenerator) owner).getMaxLevel());
 	}
 
 	/**
@@ -32,7 +33,7 @@ public class PetrolGeneratorInboundPort extends AbstractInboundPort implements P
 	 */
 	@Override
 	public float getPetrolLevel() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((PetrolGeneratorCI) owner).getPetrolLevel());
+		return this.getOwner().handleRequestSync(owner -> ((PetrolGenerator) owner).getPetrolLevel());
 	}
 
 	/**
@@ -42,7 +43,7 @@ public class PetrolGeneratorInboundPort extends AbstractInboundPort implements P
 	public void addPetrol(float quantity) throws Exception {
 		this.getOwner().runTask(owner -> {
 			try {
-				((PetrolGeneratorCI) owner).addPetrol(quantity);
+				((PetrolGenerator) owner).addPetrol(quantity);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -56,7 +57,7 @@ public class PetrolGeneratorInboundPort extends AbstractInboundPort implements P
 	public void turnOn() throws Exception {
 		this.getOwner().runTask(owner -> {
 			try {
-				((PetrolGeneratorCI) owner).turnOn();
+				((PetrolGenerator) owner).turnOn();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -70,10 +71,18 @@ public class PetrolGeneratorInboundPort extends AbstractInboundPort implements P
 	public void turnOff() throws Exception {
 		this.getOwner().runTask(owner -> {
 			try {
-				((PetrolGeneratorCI) owner).turnOff();
+				((PetrolGenerator) owner).turnOff();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});
+	}
+
+	/**
+	 * @see interfaces.PetrolGeneratorImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((PetrolGenerator) owner).isTurnedOn());
 	}
 }

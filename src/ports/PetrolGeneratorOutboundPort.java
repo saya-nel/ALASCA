@@ -63,4 +63,12 @@ public class PetrolGeneratorOutboundPort extends AbstractOutboundPort implements
 	public void turnOff() throws Exception {
 		((PetrolGeneratorCI) this.getConnector()).turnOff();
 	}
+
+	/**
+	 * @see interfaces.PetrolGeneratorImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return ((PetrolGeneratorCI) this.getConnector()).isTurnedOn();
+	}
 }

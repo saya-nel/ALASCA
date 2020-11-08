@@ -41,4 +41,10 @@ public interface PetrolGeneratorCI extends PetrolGeneratorImplementationI, Requi
 	@Override
 	public void turnOff() throws Exception;
 
+	/**
+	 * @see interfaces.PetrolGeneratorImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception;
+
 }
