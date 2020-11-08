@@ -8,7 +8,7 @@ package interfaces;
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 
-public interface FridgeCI extends FridgeImplementationI, RequiredCI, OfferedCI {
+public interface FridgeCI extends FridgeImplementationI, OfferedCI, RequiredCI {
 
     /**
      * @see FridgeImplementationI#getRequestedTemperature()

@@ -9,13 +9,14 @@ package components;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.exceptions.PreconditionException;
 import interfaces.FridgeCI;
 import interfaces.FridgeImplementationI;
 import ports.FridgeInboundPort;
 
 @OfferedInterfaces(offered = { FridgeCI.class })
-public class Fridge extends AbstractComponent implements FridgeCI {
+public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	/**
 	 * Component URI
 	 */
@@ -46,6 +47,7 @@ public class Fridge extends AbstractComponent implements FridgeCI {
 	protected Fridge(String uri, String fipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
+		this.initialise(fipURI);
 
 	}
 
@@ -81,6 +83,18 @@ public class Fridge extends AbstractComponent implements FridgeCI {
 		this.fip.publishPort();
 	}
 
+	/**
+	 * @see AbstractComponent#shutdown()
+	 */
+	@Override
+	public synchronized void shutdown() throws ComponentShutdownException {
+		try {
+			this.fip.unpublishPort();
+		} catch (Exception e) {
+			throw new ComponentShutdownException(e);
+		}
+		super.shutdown();
+	}
 	// ----------------------------------------------------------------------------
 	// Component services implementation
 	// ----------------------------------------------------------------------------

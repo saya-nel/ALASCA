@@ -1,10 +1,6 @@
 package tests;
 
-import components.Battery;
-import components.Fan;
-import components.PetrolGenerator;
-import components.SolarPanels;
-import components.Washer;
+import components.*;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 
@@ -23,6 +19,7 @@ public class CVMUnitTest extends AbstractCVM {
 	protected final static String WASHER_URI = "washer-URI";
 	protected final static String CONTROLLER_URI = "controller-URI";
 	protected final static String PETROLGENERATOR_URI = "petrolgenerator-URI";
+	protected final static String FRIDGE_URI = "fridge-URI";
 	// ports URIs
 	protected final static String BATTERY_INBOUND_PORT_URI = "bip-URI";
 	protected final static String FAN_INBOUND_PORT_URI = "fip-URI";
@@ -30,7 +27,7 @@ public class CVMUnitTest extends AbstractCVM {
 	protected final static String WASHER_INBOUND_PORT_URI = "wip-URI";
 	protected final static String CONTROLLER_INBOUND_PORT_URI = "cip-URI";
 	protected final static String PETROLGENERATOR_INBOUND_PORT_URI = "pgip-URI";
-
+	protected final static String FRIDGE_INBOUND_PORT_URI = "fridgeip-URI";
 	public CVMUnitTest() throws Exception {
 	}
 
@@ -68,6 +65,11 @@ public class CVMUnitTest extends AbstractCVM {
 		AbstractComponent.createComponent(PetrolGeneratorUnitTester.class.getCanonicalName(),
 				new Object[] { PETROLGENERATOR_INBOUND_PORT_URI });
 
+		// Fridge
+		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
+				new Object[] { FRIDGE_URI, FRIDGE_INBOUND_PORT_URI});
+		AbstractComponent.createComponent(FridgeUnitTester.class.getCanonicalName(),
+				new Object[] { FRIDGE_INBOUND_PORT_URI});
 //		// Controller
 //		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
 //				new Object[] {
