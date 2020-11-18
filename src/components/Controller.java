@@ -52,7 +52,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 		// Initialize ports relative to registering
 		this.registerRequestPort = new Vector<>();
-		// Initialize ports relative to controling devices
+		// Initialize ports relative to controlling devices
 		this.controlDevicesPorts = new Vector<>();
 
 		for (String in : inboundPortRegisterURI) {
@@ -64,7 +64,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 		// Initialize ports relative to devices control
 		for (String out : outboundPortDeviceURI) {
-			this.controlDevicesPorts.add(new ControllerOutboundPort(this));
+			this.controlDevicesPorts.add(new ControllerOutboundPort(out, this));
 		}
 		for (ControllerOutboundPort port : this.controlDevicesPorts) {
 			port.publishPort();

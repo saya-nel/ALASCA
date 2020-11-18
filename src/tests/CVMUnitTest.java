@@ -65,14 +65,14 @@ public class CVMUnitTest extends AbstractCVM {
 				new Object[] { PETROLGENERATOR_URI, PETROLGENERATOR_INBOUND_PORT_URI, (float) 1000 });
 		AbstractComponent.createComponent(PetrolGeneratorUnitTester.class.getCanonicalName(),
 				new Object[] { PETROLGENERATOR_INBOUND_PORT_URI });
-
+		*/
 		// Fridge
 		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
 				new Object[] { FRIDGE_URI, FRIDGE_INBOUND_PORT_URI});
 		AbstractComponent.createComponent(FridgeUnitTester.class.getCanonicalName(),
 				new Object[] { FRIDGE_INBOUND_PORT_URI});
 
-		 */
+
 //		// Controller
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
 				new Object[] {

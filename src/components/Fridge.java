@@ -9,8 +9,10 @@ package components;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.exceptions.PreconditionException;
+import interfaces.ControllerCI;
 import interfaces.FridgeCI;
 import interfaces.FridgeImplementationI;
 import ports.FridgeInboundPort;
@@ -22,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @OfferedInterfaces(offered = { FridgeCI.class })
+@RequiredInterfaces(required = {ControllerCI.class} )
 public class Fridge extends AbstractComponent implements FridgeImplementationI {
 
 	public static final String CONTROL_INTERFACE_DESCRIPTOR ="<control-adapter type=\"suspension\" uid=\"1A10000\" offered=\"interfaces.FridgeCI\">  <consumption nominal=\"2000\" />  <on>  <required>interfaces.FridgeCI</required> <body equipmentRef=\"fridge\"> fridge.switchOn(); </body> </on> <off> <body equipmentRef=\"fridge\">fridge.switchOff();</body> </off> <suspend><body equipmentRef=\"fridge\"> return fridge.passivate();</body> </suspend> <resume> <body equipmentRef=\"fridge\">return fridge.activate();</body> </resume> <active> <body equipmentRef=\"fridge\">return fridge.active();</body> </active> <emergency> <body equipmentRef=\"fridge\">return fridge.degreeOfEmergency();</body> </emergency> </control-adapter>";

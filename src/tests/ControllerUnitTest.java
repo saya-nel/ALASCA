@@ -34,6 +34,10 @@ public class ControllerUnitTest extends AbstractComponent {
 		this.initialise(cipURI);
 	}
 
+	protected ControllerUnitTest(String cipURI, String reflectionInboundPortURI) throws Exception {
+		super(reflectionInboundPortURI, 1, 0);
+		this.initialise(cipURI);
+	}
 
 	/**
 	 * Initialize the component testing the controller

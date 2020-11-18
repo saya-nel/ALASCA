@@ -23,6 +23,12 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 		assert uri != null && owner != null;
 	}
 
+
+	public ControllerOutboundPort(String uri, ComponentI owner) throws Exception {
+		super(uri, ControllerCI.class, owner);
+		assert uri != null && owner != null;
+	}
+
 	/**
 	 * @see interfaces.ControllerImplementationI#register(String, String)
 	 */
