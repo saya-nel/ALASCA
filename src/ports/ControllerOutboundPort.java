@@ -13,8 +13,7 @@ import interfaces.ControllerCI;
 public class ControllerOutboundPort extends AbstractOutboundPort implements ControllerCI {
 	/**
 	 * Constructor of the controller outbound port
-	 * 
-	 * @param uri   uri of the controller inbound port
+	 *
 	 * @param owner owner component
 	 * @throws Exception
 	 */

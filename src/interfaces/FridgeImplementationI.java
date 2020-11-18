@@ -46,4 +46,31 @@ public interface FridgeImplementationI {
      */
     public boolean getState() throws Exception;
 
+    /**
+     *
+     * @return                  true if the fridge is currently active (not suspended)
+     * @throws Exception
+     */
+    public boolean active() throws Exception;
+
+    /**
+     * pass the fridge in the active mode
+     * @return                  true if the fridge has been successfully activated, false otherwise.
+     * @throws Exception
+     */
+    public boolean activate() throws Exception;
+
+    /**
+     * pass the fridge in the passive mode
+     * @return                  true if the fridge has been successfully passivated, false otherwise.
+     * @throws Exception
+     */
+    public boolean passivate() throws Exception;
+
+    /**
+     * return the degree of emergency to reactivate the boiler after passivating it.
+     * @return              the degree of emergency to reactivate the fridge after passivating it.
+     * @throws Exception
+     */
+    public double degreeOfEmergency() throws Exception;
 }

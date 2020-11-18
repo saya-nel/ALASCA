@@ -15,8 +15,18 @@ import interfaces.FridgeCI;
 import interfaces.FridgeImplementationI;
 import ports.FridgeInboundPort;
 
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 @OfferedInterfaces(offered = { FridgeCI.class })
 public class Fridge extends AbstractComponent implements FridgeImplementationI {
+
+	public static final String CONTROL_INTERFACE_DESCRIPTOR ="<control-adapter type=\"suspension\" uid=\"1A10000\" offered=\"interfaces.FridgeCI\">  <consumption nominal=\"2000\" />  <on>  <required>interfaces.FridgeCI</required> <body equipmentRef=\"fridge\"> fridge.switchOn(); </body> </on> <off> <body equipmentRef=\"fridge\">fridge.switchOff();</body> </off> <suspend><body equipmentRef=\"fridge\"> return fridge.passivate();</body> </suspend> <resume> <body equipmentRef=\"fridge\">return fridge.activate();</body> </resume> <active> <body equipmentRef=\"fridge\">return fridge.active();</body> </active> <emergency> <body equipmentRef=\"fridge\">return fridge.degreeOfEmergency();</body> </emergency> </control-adapter>";
+
+
 	/**
 	 * Component URI
 	 */
@@ -39,6 +49,19 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	protected FridgeInboundPort fip;
 
+
+
+	/** maximum time during which the fridge can be suspended **/
+	protected static long MAX_SUSPENSION = Duration.ofHours(12).toMillis();
+
+	/** last time the fridge has been suspended while it is still suspended. **/
+	protected final AtomicReference<LocalTime> lastSuspensionTime;
+
+	/** true if the fridge is passive **/
+	protected final AtomicBoolean passive;
+
+
+
 	/**
 	 * @param uri    of the component
 	 * @param fipURI inbound port's uri
@@ -47,6 +70,8 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	protected Fridge(String uri, String fipURI) throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
+		this.passive = new AtomicBoolean(false);
+		this.lastSuspensionTime = new AtomicReference<>();
 		this.initialise(fipURI);
 
 	}
@@ -76,6 +101,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	public void initialise(String fridgeInboundPortURI) throws Exception {
 		assert fridgeInboundPortURI != null : new PreconditionException("fridgeInboundPortURI != null");
 		assert !fridgeInboundPortURI.isEmpty() : new PreconditionException("!fridgeInboundPortURI.isEmpty()");
+
 		this.currentTemperature = 20;
 		this.isOn = false;
 		this.requestedTemperature = 10;
@@ -145,5 +171,51 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	@Override
 	public boolean getState() throws Exception {
 		return this.isOn;
+	}
+
+	@Override
+	public boolean active() throws Exception {
+		return !this.passive.get();
+	}
+
+	@Override
+	public boolean activate() throws Exception {
+		boolean succeed;
+		synchronized (this.passive) {
+			succeed = this.passive.compareAndSet(true, false);
+			if (succeed) {
+				this.lastSuspensionTime.set(null);
+			}
+		}
+		return succeed;
+	}
+
+	@Override
+	public boolean passivate() throws Exception {
+		boolean succeed = false;
+		synchronized (this.passive) {
+			succeed = this.passive.compareAndSet(false, true);
+			if (succeed) {
+				this.lastSuspensionTime.set(LocalTime.now());
+			}
+		}
+		return succeed;
+	}
+
+	@Override
+	public double degreeOfEmergency() throws Exception {
+		synchronized (this.passive) {
+			if (!this.passive.get()) {
+				return 0.0;
+			} else {
+				Duration d = Duration.between(this.lastSuspensionTime.get(), LocalTime.now());
+				long inMillis = d.toMillis();
+				if (inMillis > MAX_SUSPENSION) {
+					return 1.0;
+				} else {
+					return ((double) inMillis) / ((double) MAX_SUSPENSION);
+				}
+			}
+		}
 	}
 }

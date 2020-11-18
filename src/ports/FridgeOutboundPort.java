@@ -71,4 +71,24 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
     public boolean getState() throws Exception {
         return ((FridgeCI) this.getConnector()).getState();
     }
+
+    @Override
+    public boolean active() throws Exception {
+        return ((FridgeCI) this.getConnector()).active();
+    }
+
+    @Override
+    public boolean activate() throws Exception {
+        return ((FridgeCI) this.getConnector()).activate();
+    }
+
+    @Override
+    public boolean passivate() throws Exception {
+        return ((FridgeCI) this.getConnector()).passivate();
+    }
+
+    @Override
+    public double degreeOfEmergency() throws Exception {
+        return ((FridgeCI) this.getConnector()).degreeOfEmergency();
+    }
 }

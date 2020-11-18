@@ -40,4 +40,24 @@ public class FridgeConnector extends AbstractConnector implements FridgeCI {
     public boolean getState() throws Exception {
         return ((FridgeCI) this.offering).getState();
     }
+
+    @Override
+    public boolean active() throws Exception {
+        return ((FridgeCI) this.offering).active();
+    }
+
+    @Override
+    public boolean activate() throws Exception {
+        return ((FridgeCI) this.offering).activate();
+    }
+
+    @Override
+    public boolean passivate() throws Exception {
+        return ((FridgeCI) this.offering).passivate();
+    }
+
+    @Override
+    public double degreeOfEmergency() throws Exception {
+        return ((FridgeCI) this.offering).degreeOfEmergency();
+    }
 }

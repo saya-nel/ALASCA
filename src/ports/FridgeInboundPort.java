@@ -83,4 +83,24 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
     public boolean getState() throws Exception {
         return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getState());
     }
+
+    @Override
+    public boolean active() throws Exception {
+        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).active());
+    }
+
+    @Override
+    public boolean activate() throws Exception {
+        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).activate());
+    }
+
+    @Override
+    public boolean passivate() throws Exception {
+        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).passivate());
+    }
+
+    @Override
+    public double degreeOfEmergency() throws Exception {
+        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).degreeOfEmergency());
+    }
 }
