@@ -18,8 +18,9 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 	 * @param owner owner component
 	 * @throws Exception
 	 */
-	public ControllerOutboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, ControllerCI.class, owner);
+	public ControllerOutboundPort(ComponentI owner) throws Exception {
+		super(ControllerCI.class, owner);
+		//super(uri, ControllerCI.class, owner);
 		assert uri != null && owner != null;
 	}
 
@@ -28,7 +29,7 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 	 */
 	@Override
 	public void register(String serial_number, String XMLFile) throws Exception {
-		((ControllerCI) this.connector).register(serial_number, XMLFile);
+		((ControllerCI) this.getConnector()).register(serial_number, XMLFile);
 	}
 
 	/**
@@ -36,6 +37,6 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 	 */
 	@Override
 	public Map<String, String> getRegisteredDevices() throws Exception {
-		return ((ControllerCI) this.connector).getRegisteredDevices();
+		return ((ControllerCI) this.getConnector()).getRegisteredDevices();
 	}
 }

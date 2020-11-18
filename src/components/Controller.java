@@ -13,7 +13,13 @@ import interfaces.ControllerImplementationI;
 import ports.ControllerInboundPort;
 import ports.ControllerOutboundPort;
 
-@OfferedInterfaces(offered = { ControllerCI.class })
+/**
+ *
+ * @author Bello Memmi
+ *
+ */
+@OfferedInterfaces(offered = { ControllerCI.class})
+
 
 public class Controller extends AbstractComponent implements ControllerImplementationI {
 	// ports used for registering
@@ -25,8 +31,10 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// uri of component
 	private String myURI;
 
-	// Map serial number in key and XMLfile value
+	// Map serial number in key and XMLFile content this xml is supposed to contain the implementation of the connector's controlled methods
 	private Map<String, String> registeredDevices;
+
+
 
 	protected Controller(String uri, String[] inboundPortRegisterURI, String[] outboundPortDeviceURI) throws Exception {
 		super(uri, 1, 0);
@@ -39,7 +47,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// Component life-cycle
 	// -------------------------------------------------------------------------
 
-	public void initialise(String[] inboundPortRegisterURI, String[] outboundPortDeviceURI) throws Exception {
+	protected void initialise(String[] inboundPortRegisterURI, String[] outboundPortDeviceURI) throws Exception {
 		registeredDevices = new ConcurrentHashMap<>();
 
 		// Initialize ports relative to registering
@@ -47,8 +55,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		// Initialize ports relative to controling devices
 		this.controlDevicesPorts = new Vector<>();
 
-		for (String out : inboundPortRegisterURI) {
-			registerRequestPort.add(new ControllerInboundPort(out, this));
+		for (String in : inboundPortRegisterURI) {
+			registerRequestPort.add(new ControllerInboundPort(in, this));
 		}
 		for (ControllerInboundPort bom : registerRequestPort) {
 			bom.publishPort();
@@ -56,7 +64,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 		// Initialize ports relative to devices control
 		for (String out : outboundPortDeviceURI) {
-			this.controlDevicesPorts.add(new ControllerOutboundPort(out, this));
+			this.controlDevicesPorts.add(new ControllerOutboundPort(this));
 		}
 		for (ControllerOutboundPort port : this.controlDevicesPorts) {
 			port.publishPort();
@@ -98,6 +106,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	/**
 	 * @see ControllerImplementationI#getRegisteredDevices()
 	 */
+	@Override
 	public Map<String, String> getRegisteredDevices() throws Exception {
 		return registeredDevices;
 	}

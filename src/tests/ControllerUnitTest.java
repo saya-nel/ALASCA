@@ -11,7 +11,7 @@ import interfaces.ControllerCI;
 import ports.ControllerOutboundPort;
 import utils.Log;
 
-@RequiredInterfaces(required = { ControllerCI.class })
+@RequiredInterfaces(required = { ControllerCI.class})
 public class ControllerUnitTest extends AbstractComponent {
 
 	/**
@@ -23,10 +23,6 @@ public class ControllerUnitTest extends AbstractComponent {
 	 */
 	protected String cipURI;
 
-	/**
-	 * Controller outbound port uri
-	 */
-	protected String copURI;
 
 	/**
 	 *
@@ -38,6 +34,7 @@ public class ControllerUnitTest extends AbstractComponent {
 		this.initialise(cipURI);
 	}
 
+
 	/**
 	 * Initialize the component testing the controller
 	 * 
@@ -46,7 +43,8 @@ public class ControllerUnitTest extends AbstractComponent {
 	 */
 	protected void initialise(String cipURI) throws Exception {
 		this.cipURI = cipURI;
-		this.cop = new ControllerOutboundPort(this.cipURI, this);
+		assert cipURI.equals("cip-URI");
+		this.cop = new ControllerOutboundPort(this);
 		this.cop.publishPort();
 
 		this.tracer.get().setTitle("Controller tester component");
@@ -65,7 +63,7 @@ public class ControllerUnitTest extends AbstractComponent {
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.cop.getPortURI(), cipURI, ControllerConnector.class.getCanonicalName());
+			this.doPortConnection(this.cop.getPortURI(), this.cipURI, ControllerConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -110,8 +108,10 @@ public class ControllerUnitTest extends AbstractComponent {
 		try {
 			String serialNumber = "MYSERIALNUMBER1";
 			String XMLFile = "XMLFILE1";
+			Log.printAndLog(this, "first test");
 			cop.register(serialNumber, XMLFile);
 			assertTrue(this.cop.getRegisteredDevices().get(serialNumber).equals(XMLFile));
+			Log.printAndLog(this, "end of first test");
 			serialNumber = "MYSERIALNUMBER2";
 			XMLFile = "XMLFILE2";
 			cop.register(serialNumber, XMLFile);
@@ -121,6 +121,7 @@ public class ControllerUnitTest extends AbstractComponent {
 			cop.register(serialNumber, XMLFile);
 			assertTrue(this.cop.getRegisteredDevices().get(serialNumber).equals(XMLFile));
 		} catch (Exception e) {
+			System.out.println("Error during test register");
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");

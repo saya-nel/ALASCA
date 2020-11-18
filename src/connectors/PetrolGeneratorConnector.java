@@ -28,7 +28,7 @@ public class PetrolGeneratorConnector extends AbstractConnector implements Petro
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#addPetrol(quantity)
+	 * @see interfaces.PetrolGeneratorImplementationI#addPetrol(float)
 	 */
 	@Override
 	public void addPetrol(float quantity) throws Exception {
@@ -36,11 +36,7 @@ public class PetrolGeneratorConnector extends AbstractConnector implements Petro
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementatReturn true if the generator is
-	 *      turned on, false else
-	 * 
-	 * @return true if the generator is turned on, false else
-	 * @throws ExceptionionI#turnOn()
+	 * @see PetrolGeneratorCI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
