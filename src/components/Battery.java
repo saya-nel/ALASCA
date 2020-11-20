@@ -55,16 +55,22 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	protected BatteryOutboundPort bop;
 
 	/**
+	 *
+	 */
+	protected String cip_uri;
+	/**
 	 * Constructor of battery
 	 * 
 	 * @param reflectionPortURI URI battery component
 	 * @param bipURI            URI inbound port battery
 	 * @throws Exception
 	 */
-	protected Battery(String reflectionPortURI, String bipURI, String bopURI, float maxEnergy) throws Exception {
+	protected Battery(String reflectionPortURI, String bipURI, String bopURI, String cip_URI, float maxEnergy) throws Exception {
 		super(reflectionPortURI, 1, 0);
 		myUri = reflectionPortURI;
+		this.cip_uri = cip_URI;
 		this.bop = new BatteryOutboundPort(this);
+		this.bop.publishPort();
 		this.initialise(bipURI, maxEnergy);
 	}
 
@@ -106,7 +112,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.bop.getPortURI(), bip.getPortURI(), BatteryConnector.class.getCanonicalName());
+			this.doPortConnection(this.bop.getPortURI(), this.cip_uri, BatteryConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
