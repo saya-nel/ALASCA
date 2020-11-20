@@ -16,6 +16,12 @@ import ports.BatteryOutboundPort;
 import ports.ControllerOutboundPort;
 import utils.BatteryState;
 
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * Class representing the Battery component
  * 
@@ -41,9 +47,12 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	protected float batteryCharge;
 
 	/**
-	 * Actual state of battery
+	 * Actual battery mode
+	 * 0 for RECHARGING
+	 * 1 for DRAINING
+	 * 2 for SLEEPING
 	 */
-	protected BatteryState stateBattery;
+	protected AtomicInteger operatingMode;
 
 	/**
 	 * Maximum energy of the battery
@@ -64,6 +73,29 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 *
 	 */
 	protected String cip_uri;
+
+	/**
+	 * boolean indicating whether the battery has plan
+	 */
+	protected AtomicBoolean hasPlan;
+
+	/**
+	 * last time the chrono has been triggered
+	 */
+	protected AtomicReference<LocalTime> lastStartTime;
+
+	/**
+	 * duration time of last planified task
+	 */
+	protected AtomicReference<Duration> durationLastPlanned;
+
+	/**
+	 * deadline of the last program
+	 */
+	protected AtomicReference<LocalTime> deadlineTime;
+
+	protected AtomicReference<Duration> postponeDur;
+
 	/**
 	 * Constructor of battery
 	 * 
@@ -71,12 +103,11 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @param bipURI            URI inbound port battery
 	 * @throws Exception
 	 */
-	protected Battery(String reflectionPortURI, String bipURI, String cip_URI, float maxEnergy) throws Exception {
+	protected Battery(String reflectionPortURI, String bipURI, String cip_URI,String serial_number, float maxEnergy) throws Exception {
 		super(reflectionPortURI, 1, 0);
 		myUri = reflectionPortURI;
 		this.cip_uri = cip_URI;
-		this.cop = new ControllerOutboundPort(this);
-		this.cop.publishPort();
+		this.SERIAL_NUMBER = serial_number;
 		this.initialise(bipURI, maxEnergy);
 	}
 
@@ -104,11 +135,18 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	protected void initialise(String batteryInboundPortURI, float maximumEnergy) throws Exception {
 		assert batteryInboundPortURI != null : new PreconditionException("batteryInboundPortURI != null");
 		assert !batteryInboundPortURI.isEmpty() : new PreconditionException("batteryInboundPortURI.isEmpty()");
-		this.stateBattery = BatteryState.SLEEPING;
+		this.setMode(BatteryState.SLEEPING.ordinal());
+		this.deadlineTime = null;
+		this.durationLastPlanned = null;
+		this.postponeDur = null;
+		this.lastStartTime = null;
+		this.hasPlan.set(false);
 		this.batteryCharge = 0;
 		this.maximumEnergy = maximumEnergy;
 		this.bip = new BatteryInboundPort(batteryInboundPortURI, this);
 		this.bip.publishPort();
+		this.cop = new ControllerOutboundPort(this);
+		this.cop.publishPort();
 	}
 
 	/**
@@ -144,33 +182,108 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 			throw new Exception("can't register to controller");
 	}
 
+	@Override
+	public float getBatteryCharge() throws Exception {
+		return 0;
+	}
+
+	@Override
+	public boolean upMode() {
+		boolean succeed = false;
+		if(this.operatingMode.get() == BatteryState.SLEEPING.ordinal())
+		{// return to 0
+			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.RECHARGING.ordinal());
+		}
+		else{
+			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.incrementAndGet());
+		}
+		return succeed;
+	}
+
+	@Override
+	public boolean downMode() {
+		boolean succeed = false;
+		if(this.operatingMode.get() == BatteryState.RECHARGING.ordinal())
+		{
+			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.SLEEPING.ordinal());
+		}
+		else{
+			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.decrementAndGet());
+		}
+		return succeed;
+	}
+
+	@Override
+	public boolean setMode(int modeIndex) {
+
+		boolean succeed = false;
+		try {
+			if (modeIndex < BatteryState.RECHARGING.ordinal() || modeIndex > BatteryState.SLEEPING.ordinal()) {
+				throw new Exception("wrong mode for set mode in Battery");
+			}
+			else
+			{
+				succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), modeIndex);
+			}
+		} catch (Exception e)
+		{
+			System.err.println("wronge mode for set mode in battery");
+		}
+		return succeed;
+
+	}
+
+	@Override
+	public int currentMode() {
+		return this.operatingMode.get();
+	}
+
+	@Override
+	public boolean hasPlan() {
+		return this.hasPlan.get();
+	}
+
+	@Override
+	public LocalTime startTime() {
+		return this.lastStartTime.get();
+	}
+
+	@Override
+	public Duration duration() {
+		return this.durationLastPlanned.get();
+	}
+
+	@Override
+	public LocalTime deadline() {
+		return this.deadlineTime.get();
+	}
+
+	@Override
+	public boolean postpone(Duration d) {
+		boolean succeed = false;
+		succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(),this.lastStartTime.get().plusHours(d.toHours()));
+		return succeed;
+
+	}
+
+	@Override
+	public boolean cancel() {
+		boolean succeed = false;
+		synchronized (this.lastStartTime)
+		{
+			succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(), null);
+			succeed = this.hasPlan.compareAndSet(true, false);
+			succeed = this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), null);
+			succeed = this.deadlineTime.compareAndSet(this.deadlineTime.get(), null);
+		}
+
+		return succeed;
+	}
+
 
 	// -------------------------------------------------------------------------
 	// Component services implementation
 	// -------------------------------------------------------------------------
 
-	/**
-	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
-	 */
-	@Override
-	public float getBatteryCharge() throws Exception {
-		return this.batteryCharge;
-	}
-
-	/**
-	 * @see interfaces.BatteryImplementationI#getBatteryState()
-	 */
-	@Override
-	public BatteryState getBatteryState() throws Exception {
-		return this.stateBattery;
-	}
-
-	/**
-	 * @see interfaces.BatteryImplementationI#setBatteryState(BatteryState)
-	 */
-	@Override
-	public void setBatteryState(BatteryState state) throws Exception {
-		this.stateBattery = state;
-	}
 
 }
