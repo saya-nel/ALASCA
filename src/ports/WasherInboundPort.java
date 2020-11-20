@@ -1,5 +1,7 @@
 package ports;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Date;
 
 import components.Washer;
@@ -21,106 +23,103 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 		super(uri, WasherCI.class, owner);
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#isTurnedOn()
-	 */
+
 	@Override
 	public boolean isTurnedOn() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner)).isTurnedOn();
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).isTurnedOn());
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#turnOn()
-	 */
 	@Override
-	public void turnOn() throws Exception {
+	public void setProgramTemperature(int temperature) throws Exception {
 		this.getOwner().runTask(owner -> {
-			try {
-				((Washer) owner).turnOn();
-			} catch (Exception e) {
+			try{
+				((Washer) owner).setProgramTemperature(temperature);
+			} catch (Exception e)
+			{
 				e.printStackTrace();
 			}
 		});
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#turnOff()
-	 */
-	@Override
-	public void turnOff() throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Washer) owner).turnOff();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * @see interfaces.WasherImplementationI#getProgramTemperature()
-	 */
 	@Override
 	public int getProgramTemperature() throws Exception {
 		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).getProgramTemperature());
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#setProgramTemperature(int)
-	 */
 	@Override
-	public void setProgramTemperature(int temperature) throws Exception {
+	public void setProgramDuration(int duration) throws Exception {
 		this.getOwner().runTask(owner -> {
-			try {
-				((Washer) owner).setProgramTemperature(temperature);
-			} catch (Exception e) {
+			try{
+				((Washer) owner).setProgramDuration(duration);
+			} catch(Exception e)
+			{
 				e.printStackTrace();
 			}
 		});
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#getProgramDuration()
-	 */
 	@Override
 	public int getProgramDuration() throws Exception {
 		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).getProgramDuration());
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#setProgramDuration(int)
-	 */
 	@Override
-	public void setProgramDuration(int duration) throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Washer) owner).setProgramDuration(duration);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+	public boolean turnOn() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).turnOn());
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#setDelay(Date)
-	 */
 	@Override
-	public void setDelay(Date date) throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Washer) owner).setDelay(date);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+	public boolean turnOff() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).turnOff());
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#getDelay()
-	 */
 	@Override
-	public Date getDelay() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).getDelay());
+	public boolean upMode() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).upMode());
 	}
 
+	@Override
+	public boolean downMode() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).downMode());
+	}
+
+	@Override
+	public boolean setMode(int modeIndex) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).setMode(modeIndex));
+	}
+
+	@Override
+	public int currentMode() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).currentMode());
+	}
+
+	@Override
+	public boolean hasPlan() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).hasPlan());
+	}
+
+	@Override
+	public LocalTime startTime() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).startTime());
+	}
+
+	@Override
+	public Duration duration() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).duration());
+	}
+
+	@Override
+	public LocalTime deadline() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).deadline());
+	}
+
+	@Override
+	public boolean postpone(Duration d) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).postpone(d));
+	}
+
+	@Override
+	public boolean cancel() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).cancel());
+	}
 }

@@ -1,5 +1,7 @@
 package ports;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Date;
 
 import fr.sorbonne_u.components.ComponentI;
@@ -22,72 +24,89 @@ public class WasherOutboundPort extends AbstractOutboundPort implements WasherCI
 		super(WasherCI.class, owner);
 	}
 
-	/**
-	 * @see WasherImplementationI#isTurnedOn()
-	 */
+
 	@Override
 	public boolean isTurnedOn() throws Exception {
 		return ((WasherCI) this.getConnector()).isTurnedOn();
 	}
 
-	/**
-	 * @see WasherImplementationI#turnOn()
-	 */
-	@Override
-	public void turnOn() throws Exception {
-		((WasherCI) this.getConnector()).turnOn();
-	}
-
-	/**
-	 * @see WasherImplementationI#turnOff()
-	 */
-	@Override
-	public void turnOff() throws Exception {
-		((WasherCI) this.getConnector()).turnOff();
-	}
-
-	/**
-	 * @see WasherImplementationI#getProgramTemperature()
-	 */
-	@Override
-	public int getProgramTemperature() throws Exception {
-		return ((WasherCI) this.getConnector()).getProgramTemperature();
-	}
-
-	/**
-	 * @see interfaces.WasherImplementationI#setProgramTemperature(int)
-	 */
 	@Override
 	public void setProgramTemperature(int temperature) throws Exception {
 		((WasherCI) this.getConnector()).setProgramTemperature(temperature);
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#getProgramDuration()
-	 */
 	@Override
-	public int getProgramDuration() throws Exception {
-		return ((WasherCI) this.getConnector()).getProgramDuration();
+	public int getProgramTemperature() throws Exception {
+		return ((WasherCI) this.getConnector()).getProgramTemperature();
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#setProgramDuration(int)
-	 */
 	@Override
 	public void setProgramDuration(int duration) throws Exception {
 		((WasherCI) this.getConnector()).setProgramDuration(duration);
 	}
 
-	/**
-	 * @see interfaces.WasherImplementationI#setDelay(Date)
-	 */
 	@Override
-	public void setDelay(Date date) throws Exception {
-		((WasherCI) this.getConnector()).setDelay(date);
+	public int getProgramDuration() throws Exception {
+		return ((WasherCI) this.getConnector()).getProgramDuration();
 	}
 
 	@Override
-	public Date getDelay() throws Exception {
-		return ((WasherCI) this.getConnector()).getDelay();
+	public boolean turnOn() throws Exception {
+		return ((WasherCI) this.getConnector()).turnOn();
+	}
+
+	@Override
+	public boolean turnOff() throws Exception {
+		return ((WasherCI) this.getConnector()).turnOff();
+	}
+
+	@Override
+	public boolean upMode() throws Exception{
+		return ((WasherCI) this.getConnector()).upMode();
+	}
+
+	@Override
+	public boolean downMode() throws Exception{
+		return ((WasherCI) this.getConnector()).downMode();
+	}
+
+	@Override
+	public boolean setMode(int modeIndex) throws Exception{
+		return ((WasherCI) this.getConnector()).setMode(modeIndex);
+	}
+
+	@Override
+	public int currentMode() throws Exception{
+		return ((WasherCI) this.getConnector()).currentMode();
+	}
+
+	@Override
+	public boolean hasPlan() throws Exception{
+		return ((WasherCI) this.getConnector()).hasPlan();
+	}
+
+	@Override
+	public LocalTime startTime() throws Exception{
+		return ((WasherCI) this.getConnector()).startTime();
+	}
+
+	@Override
+	public Duration duration() throws Exception{
+		return ((WasherCI) this.getConnector()).duration();
+	}
+
+	@Override
+	public LocalTime deadline() throws Exception{
+		return ((WasherCI) this.getConnector()).deadline();
+	}
+
+	@Override
+	public boolean postpone(Duration d) throws Exception{
+		return ((WasherCI) this.getConnector()).postpone(d);
+	}
+
+	@Override
+	public boolean cancel() throws Exception{
+		return ((WasherCI) this.getConnector()).cancel();
 	}
 }

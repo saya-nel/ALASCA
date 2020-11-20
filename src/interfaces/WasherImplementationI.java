@@ -62,13 +62,13 @@ public interface WasherImplementationI {
 
 	public boolean turnOff() throws Exception;
 	
-	public boolean upMode();
+	public boolean upMode() throws Exception;
 
-	public boolean downMode();
+	public boolean downMode() throws Exception;
 
-	public boolean setMode(int modeIndex);
+	public boolean setMode(int modeIndex) throws Exception;
 
-	public int currentMode();
+	public int currentMode() throws Exception;
 	
 	/*
 	 *
@@ -77,16 +77,16 @@ public interface WasherImplementationI {
 	 */
 	
 
-	public boolean hasPlan();
+	public boolean hasPlan() throws Exception;
 
-	public LocalTime startTime();
+	public LocalTime startTime() throws Exception;
 
-	public Duration duration();
+	public Duration duration() throws Exception;
 
-	public LocalTime deadline();
+	public LocalTime deadline() throws Exception;
 
-	public boolean postpone(Duration d);
+	public boolean postpone(Duration d) throws Exception;
 
-	public boolean cancel();
+	public boolean cancel() throws Exception;
 
 }

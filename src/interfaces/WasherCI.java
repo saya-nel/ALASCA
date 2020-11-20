@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Date;
 
 import fr.sorbonne_u.components.interfaces.OfferedCI;
@@ -13,59 +15,54 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
  *
  */
 public interface WasherCI extends WasherImplementationI, RequiredCI, OfferedCI {
-
-	/**
-	 * @see interfaces.WasherImplementationI#isTurnedOn()
-	 */
 	@Override
-	public boolean isTurnedOn() throws Exception;
+	boolean isTurnedOn() throws Exception;
 
-	/**
-	 * @see interfaces.WasherImplementationI#turnOn()
-	 */
 	@Override
-	public void turnOn() throws Exception;
+	void setProgramTemperature(int temperature) throws Exception;
 
-	/**
-	 * @see interfaces.WasherImplementationI#turnOff()
-	 */
 	@Override
-	public void turnOff() throws Exception;
+	int getProgramTemperature() throws Exception;
 
-	/**
-	 * @see interfaces.WasherImplementationI#getProgramTemperature()
-	 */
 	@Override
-	public int getProgramTemperature() throws Exception;
+	void setProgramDuration(int duration) throws Exception;
 
-	/**
-	 * @see interfaces.WasherImplementationI#setProgramTemperature(int)
-	 */
 	@Override
-	public void setProgramTemperature(int temperature) throws Exception;
+	int getProgramDuration() throws Exception;
 
-	/**
-	 * @see interfaces.WasherImplementationI#getProgramDuration()
-	 */
 	@Override
-	public int getProgramDuration() throws Exception;
+	boolean turnOn() throws Exception;
 
-	/**
-	 * @see interfaces.WasherImplementationI#setProgramDuration(int)
-	 */
 	@Override
-	public void setProgramDuration(int duration) throws Exception;
+	boolean turnOff() throws Exception;
 
-	/**
-	 * @see interfaces.WasherImplementationI#setDelay(Date)
-	 */
 	@Override
-	public void setDelay(Date date) throws Exception;
+	boolean upMode() throws Exception;
 
-	/**
-	 * @see interfaces.WasherImplementationI#getDelay()
-	 */
 	@Override
-	public Date getDelay() throws Exception;
+	boolean downMode() throws Exception;
 
+	@Override
+	boolean setMode(int modeIndex) throws Exception;
+
+	@Override
+	int currentMode() throws Exception;
+
+	@Override
+	boolean hasPlan() throws Exception;
+
+	@Override
+	LocalTime startTime() throws Exception;
+
+	@Override
+	Duration duration() throws Exception;
+
+	@Override
+	LocalTime deadline() throws Exception;
+
+	@Override
+	boolean postpone(Duration d) throws Exception;
+
+	@Override
+	boolean cancel() throws Exception;
 }
