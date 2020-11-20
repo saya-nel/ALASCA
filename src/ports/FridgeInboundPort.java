@@ -15,6 +15,8 @@ import interfaces.FridgeImplementationI;
 public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 
 
+	private static final long serialVersionUID = 1L;
+
 	public FridgeInboundPort(String uri, ComponentI owner) throws Exception {
         super(uri, FridgeCI.class, owner);
     }
@@ -50,58 +52,105 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
     }
 
     /**
-     * @see FridgeImplementationI#switchOff()
+     * @see FridgeImplementationI#upMode()
      */
-    @Override
-    public void switchOff() throws Exception {
-        this.getOwner().runTask(owner -> {
-            try{
-                ((Fridge) owner).switchOff();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
+	@Override
+	public boolean upMode() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).upMode());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    /**
-     * @see FridgeImplementationI#switchOn()
+	/**
+     * @see FridgeImplementationI#downMode()
      */
-    @Override
-    public void switchOn() throws Exception {
-        this.getOwner().runTask(owner -> {
-            try{
-                ((Fridge) owner).switchOn();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
+	@Override
+	public boolean downMode() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).downMode());
+		} catch (AssertionError | Exception e) {
+			return false;
+		}
+	}
 
-    /**
-     * @see FridgeImplementationI#getState()
+	/**
+     * @see FridgeImplementationI#setMode(int)
      */
-    @Override
-    public boolean getState() throws Exception {
-        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getState());
-    }
+	@Override
+	public boolean setMode(int modeIndex) {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).setMode(modeIndex));
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    @Override
-    public boolean active() throws Exception {
-        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).active());
-    }
+	/**
+     * @see FridgeImplementationI#currentMode()
+     */
+	@Override
+	public int currentMode() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).currentMode());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
 
-    @Override
-    public boolean activate() throws Exception {
-        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).activate());
-    }
+	/**
+     * @see FridgeImplementationI#suspended()
+     */
+	@Override
+	public boolean suspended() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).suspended());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    @Override
-    public boolean passivate() throws Exception {
-        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).passivate());
-    }
+	/**
+     * @see FridgeImplementationI#suspend()
+     */
+	@Override
+	public boolean suspend() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).suspend());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    @Override
-    public double degreeOfEmergency() throws Exception {
-        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).degreeOfEmergency());
-    }
+	/**
+     * @see FridgeImplementationI#resume()
+     */
+	@Override
+	public boolean resume() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).resume());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+     * @see FridgeImplementationI#emergency()
+     */
+	@Override
+	public double emergency() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).emergency());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
 }

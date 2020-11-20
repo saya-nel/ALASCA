@@ -25,6 +25,7 @@ import interfaces.FridgeCI;
 import interfaces.FridgeImplementationI;
 import ports.ControllerOutboundPort;
 import ports.FridgeInboundPort;
+import utils.FridgeMode;
 import utils.GeneratingSerialNumber;
 
 @OfferedInterfaces(offered = { FridgeCI.class })
@@ -74,6 +75,11 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 
 	/** true if the fridge is passive **/
 	protected final AtomicBoolean passive;
+	
+	/**
+	 * Current mode of the Fridge
+	 */
+	protected FridgeMode mode;
 
 	/**
 	 * @param uri    of the component
@@ -85,6 +91,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		myUri = uri;
 		this.passive = new AtomicBoolean(false);
 		this.lastSuspensionTime = new AtomicReference<>();
+		this.mode = FridgeMode.NORMAL;
 		this.cop = new ControllerOutboundPort(this);
 		this.cop.publishPort();
 		this.initialise(fipURI);
@@ -183,48 +190,58 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#switchOff()
+	 * @see FridgeImplementationI#upMode()
 	 */
 	@Override
-	public void switchOff() throws Exception {
-		this.isOn = false;
+	public boolean upMode() {
+		mode = FridgeMode.NORMAL;
+		return true;
 	}
 
 	/**
-	 * @see FridgeImplementationI#switchOn()
+	 * @see FridgeImplementationI#downMode()
 	 */
 	@Override
-	public void switchOn() throws Exception {
-		this.isOn = true;
-	}
-
-	/**
-	 * @see FridgeImplementationI#getState()
-	 */
-	@Override
-	public boolean getState() throws Exception {
-		return this.isOn;
-	}
-
-	@Override
-	public boolean active() throws Exception {
-		return !this.passive.get();
-	}
-
-	@Override
-	public boolean activate() throws Exception {
-		boolean succeed;
-		synchronized (this.passive) {
-			succeed = this.passive.compareAndSet(true, false);
-			if (succeed) {
-				this.lastSuspensionTime.set(null);
-			}
+	public boolean downMode() {
+		mode = FridgeMode.ECO;
+		return true;
 		}
-		return succeed;
+
+	/**
+	 * @see FridgeImplementationI#setMode(int)
+	 */
+	@Override
+	public boolean setMode(int modeIndex) {
+		try {
+			mode = FridgeMode.values()[modeIndex];
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 
+	/**
+	 * @see FridgeImplementationI#currentMode()
+	 */
 	@Override
-	public boolean passivate() throws Exception {
+	public int currentMode() {
+		return mode.getValue();
+	}
+
+	/**
+	 * @see FridgeImplementationI#suspended()
+	 */
+	@Override
+	public boolean suspended() {
+		return this.passive.get();
+	}
+
+	/**
+	 * @see FridgeImplementationI#suspend()
+	 */
+	@Override
+	public boolean suspend() {
 		boolean succeed = false;
 		synchronized (this.passive) {
 			succeed = this.passive.compareAndSet(false, true);
@@ -235,8 +252,26 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		return succeed;
 	}
 
+	/**
+	 * @see FridgeImplementationI#resume()
+	 */
 	@Override
-	public double degreeOfEmergency() throws Exception {
+	public boolean resume() {
+		boolean succeed;
+		synchronized (this.passive) {
+			succeed = this.passive.compareAndSet(true, false);
+			if (succeed) {
+				this.lastSuspensionTime.set(null);
+			}
+		}
+		return succeed;
+	}
+
+	/**
+	 * @see FridgeImplementationI#emergency()
+	 */
+	@Override
+	public double emergency() {
 		synchronized (this.passive) {
 			if (!this.passive.get()) {
 				return 0.0;

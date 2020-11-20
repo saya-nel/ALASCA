@@ -1,6 +1,7 @@
 package connectors;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
+import interfaces.FridgeCI;
 import interfaces.SuspensionEquipmentControlCI;
 
 /**
@@ -12,13 +13,15 @@ import interfaces.SuspensionEquipmentControlCI;
  */
 public class ControlFridgeConnector extends AbstractConnector implements SuspensionEquipmentControlCI {
 	
+    public float getRequestedTemperature() throws Exception {
+    	return ((FridgeCI)this.offering).getRequestedTemperature();
+    }
 
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#on()
 	 */
 	@Override
 	public boolean on() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -27,7 +30,6 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 */
 	@Override
 	public boolean off() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -36,8 +38,11 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 */
 	@Override
 	public boolean upMode() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((FridgeCI)this.offering).upMode();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -45,8 +50,11 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 */
 	@Override
 	public boolean downMode() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((FridgeCI)this.offering).downMode();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -54,8 +62,11 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 */
 	@Override
 	public boolean setMode(int modeIndex) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((FridgeCI)this.offering).setMode(modeIndex);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -63,8 +74,11 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 */
 	@Override
 	public int currentMode() {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			return ((FridgeCI)this.offering).currentMode();
+		} catch (Exception e) {
+			return -1;
+		}
 	}
 
 	/**

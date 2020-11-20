@@ -1,5 +1,9 @@
 package ports;
 
+import fr.sorbonne_u.components.ComponentI;
+import fr.sorbonne_u.components.ports.AbstractOutboundPort;
+import interfaces.FridgeCI;
+import interfaces.FridgeImplementationI;
 
 /**
  * Outbound port of Fridge component
@@ -7,15 +11,11 @@ package ports;
  * @author Bello Memmi
  *
  */
-
-import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.ports.AbstractOutboundPort;
-import interfaces.FridgeCI;
-import interfaces.FridgeImplementationI;
-
-
 public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI {
-    /**
+
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Constructor of Fridge inbound port
      * @param owner         owner of the component
      * @throws Exception
@@ -49,46 +49,106 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
     }
 
     /**
-     * @see FridgeImplementationI#switchOff()
+     * @see FridgeImplementationI#upMode()
      */
-    @Override
-    public void switchOff() throws Exception {
-        ((FridgeCI) this.getConnector()).switchOff();
-    }
+	@Override
+	public boolean upMode() {
+		try {
+			return ((FridgeCI) this.getConnector()).upMode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    /**
-     * @see FridgeImplementationI#switchOn()
+	/**
+     * @see FridgeImplementationI#downMode()
      */
-    @Override
-    public void switchOn() throws Exception {
-        ((FridgeCI) this.getConnector()).switchOn();
-    }
+	@Override
+	public boolean downMode() {
+		try {
+			return ((FridgeCI) this.getConnector()).downMode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    /**
-     * @see FridgeImplementationI#getState()
+	/**
+     * @see FridgeImplementationI#setMode(int)
      */
-    @Override
-    public boolean getState() throws Exception {
-        return ((FridgeCI) this.getConnector()).getState();
-    }
+	@Override
+	public boolean setMode(int modeIndex) {
+		try {
+			return ((FridgeCI) this.getConnector()).setMode(modeIndex);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    @Override
-    public boolean active() throws Exception {
-        return ((FridgeCI) this.getConnector()).active();
-    }
+	/**
+     * @see FridgeImplementationI#currentMode()
+     */
+	@Override
+	public int currentMode() {
+		try {
+			return ((FridgeCI) this.getConnector()).currentMode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
 
-    @Override
-    public boolean activate() throws Exception {
-        return ((FridgeCI) this.getConnector()).activate();
-    }
+	/**
+     * @see FridgeImplementationI#suspended()
+     */
+	@Override
+	public boolean suspended() {
+		try {
+			return ((FridgeCI) this.getConnector()).suspended();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    @Override
-    public boolean passivate() throws Exception {
-        return ((FridgeCI) this.getConnector()).passivate();
-    }
+	/**
+     * @see FridgeImplementationI#suspend()
+     */
+	@Override
+	public boolean suspend() {
+		try {
+			return ((FridgeCI) this.getConnector()).suspend();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    @Override
-    public double degreeOfEmergency() throws Exception {
-        return ((FridgeCI) this.getConnector()).degreeOfEmergency();
-    }
+	/**
+     * @see FridgeImplementationI#resume()
+     */
+	@Override
+	public boolean resume() {
+		try {
+			return ((FridgeCI) this.getConnector()).resume();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+     * @see FridgeImplementationI#emergency()
+     */
+	@Override
+	public double emergency() {
+		try {
+			return ((FridgeCI) this.getConnector()).emergency();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
 }

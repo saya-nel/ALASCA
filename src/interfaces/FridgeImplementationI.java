@@ -7,6 +7,7 @@ package interfaces;
  *
  */
 public interface FridgeImplementationI {
+	
     /**
      * @return              requested temperature of fridge
      * @throws Exception
@@ -52,13 +53,6 @@ public interface FridgeImplementationI {
      * @see interfaces.StandardEquipmentControlCI#currentMode()
      */
 	public int currentMode();
-
-    /**
-     *
-     * @return                  true if the fridge is currently active (not suspended)
-     * @throws Exception
-     */
-    public boolean active() throws Exception;
 
     /*
      * 

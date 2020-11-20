@@ -9,40 +9,59 @@ import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 
 public interface FridgeCI extends FridgeImplementationI, OfferedCI, RequiredCI {
+	/**
+	 * @see interfaces.FridgeImplementationI#getRequestedTemperature()
+	 */
+    public float getRequestedTemperature() throws Exception;
 
     /**
-     * @see FridgeImplementationI#getRequestedTemperature()
-     */
-    @Override
-    public float getRequestedTemperature() throws Exception;
-    /**
-     * @see FridgeImplementationI#setRequestedTemperature(float)
-     */
-    @Override
+	 * @see interfaces.FridgeImplementationI#setRequestedTemperature(float)
+	 */
     public void setRequestedTemperature(float temp) throws Exception;
 
     /**
-     * @see FridgeImplementationI#getCurrentTemperature()
-     */
-    @Override
+	 * @see interfaces.FridgeImplementationI#getCurrentTemperature()
+	 */
     public float getCurrentTemperature() throws Exception;
-
+    
     /**
-     * @see FridgeImplementationI#switchOff()
+     * @see interfaces.StandardEquipmentControlCI#upMode()
      */
-    @Override
-    public void switchOff() throws Exception;
+	public boolean upMode();
 
-    /**
-     * @see FridgeImplementationI#switchOn()
+	/**
+     * @see interfaces.StandardEquipmentControlCI#downMode()
      */
-    @Override
-    public void switchOn() throws Exception;
+	public boolean downMode();
 
-    /**
-     * @see FridgeImplementationI#getState()
+	/**
+     * @see interfaces.StandardEquipmentControlCI#setMode(int)
      */
-    @Override
-    public boolean getState() throws Exception;
+	public boolean setMode(int modeIndex);
+
+	/**
+     * @see interfaces.StandardEquipmentControlCI#currentMode()
+     */
+	public int currentMode();
+    
+    /**
+     * @see interfaces.SuspensionEquipmentControlCI#suspended()
+     */
+	public boolean suspended();
+
+	/**
+     * @see interfaces.SuspensionEquipmentControlCI#suspend()
+     */
+	public boolean suspend();
+
+	/**
+     * @see interfaces.SuspensionEquipmentControlCI#resume()
+     */
+	public boolean resume();
+
+	/**
+     * @see interfaces.SuspensionEquipmentControlCI#emergency()
+     */
+	public double emergency();
 
 }
