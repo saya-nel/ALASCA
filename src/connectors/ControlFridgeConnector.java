@@ -11,6 +11,7 @@ import interfaces.SuspensionEquipmentControlCI;
  *
  */
 public class ControlFridgeConnector extends AbstractConnector implements SuspensionEquipmentControlCI {
+	
 
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#on()

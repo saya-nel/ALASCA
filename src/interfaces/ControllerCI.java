@@ -11,7 +11,7 @@ public interface ControllerCI extends ControllerImplementationI, OfferedCI, Requ
 	 * @see interfaces.ControllerImplementationI#register(String, String)
 	 */
 	@Override
-	boolean register(String serial_number, String XMLFile) throws Exception;
+	boolean register(String serial_number, String InboundPortURI, String XMLFile) throws Exception;
 
 	/**
 	 * @see interfaces.ControllerImplementationI#getRegisteredDevices()

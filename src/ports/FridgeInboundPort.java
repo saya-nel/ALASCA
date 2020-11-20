@@ -14,7 +14,8 @@ import interfaces.FridgeImplementationI;
 
 public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 
-    public FridgeInboundPort(String uri, ComponentI owner) throws Exception {
+
+	public FridgeInboundPort(String uri, ComponentI owner) throws Exception {
         super(uri, FridgeCI.class, owner);
     }
 

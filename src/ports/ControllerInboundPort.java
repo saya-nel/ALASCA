@@ -13,8 +13,8 @@ public class ControllerInboundPort extends AbstractInboundPort implements Contro
 	}
 
 	@Override
-	public boolean register(String serial_number, String XMLFile) throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Controller) owner).register(serial_number, XMLFile));
+	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Controller) owner).register(serial_number, inboundPortURI, XMLFile));
 	}
 
 	@Override

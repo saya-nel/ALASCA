@@ -33,8 +33,8 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 	 * @see interfaces.ControllerImplementationI#register(String, String)
 	 */
 	@Override
-	public boolean register(String serial_number, String XMLFile) throws Exception {
-		return ((ControllerCI) this.getConnector()).register(serial_number, XMLFile);
+	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
+		return ((ControllerCI) this.getConnector()).register(serial_number, inboundPortURI, XMLFile);
 	}
 
 	/**

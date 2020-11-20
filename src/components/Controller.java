@@ -94,7 +94,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	 * @see ControllerImplementationI#register(String, String)
 	 */
 	@Override
-	public boolean register(String serial_number, String XMLFile) throws Exception {
+	public boolean register(String serial_number,  String inboundPortURI, String XMLFile) throws Exception {
 		// TODO connector generation here
 
 		// connector is generated, we can register the component

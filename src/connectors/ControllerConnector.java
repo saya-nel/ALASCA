@@ -17,8 +17,8 @@ public class ControllerConnector extends AbstractConnector implements Controller
 	 * @see interfaces.ControllerCI#register(String, String)
 	 */
 	@Override
-	public boolean register(String serial_number, String XMLFile) throws Exception {
-		return ((ControllerCI) this.offering).register(serial_number, XMLFile);
+	public boolean register(String serial_number,  String inboundPortURI, String XMLFile) throws Exception {
+		return ((ControllerCI) this.offering).register(serial_number, inboundPortURI, XMLFile);
 	}
 
 	/**

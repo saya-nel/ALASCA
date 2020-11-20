@@ -132,6 +132,12 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		}
 		super.shutdown();
 	}
+	
+	@Override
+	public synchronized void	execute() throws Exception {
+		
+	}
+
 
 	// -------------------------------------------------------------------------
 	// Component services implementation
