@@ -29,57 +29,57 @@ public interface BatteryImplementationI {
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#upMode()
 	 */
-	public boolean upMode();
+	public boolean upMode() throws Exception;
 
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#downMode()
 	 */
-	public boolean downMode();
+	public boolean downMode() throws Exception;
 
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#setMode(int)
 	 */
-	public boolean setMode(int modeIndex);
+	public boolean setMode(int modeIndex) throws Exception;
 
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#currentMode()
 	 */
-	public int currentMode();
-	
+	public int currentMode() throws Exception;
+
 	/*
 	 * 
 	 * PLANNING
 	 * 
 	 */
-	
+
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#hasPlan()
 	 */
-	public boolean hasPlan();
+	public boolean hasPlan() throws Exception;
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#startTime()
 	 */
-	public LocalTime startTime();
+	public LocalTime startTime() throws Exception;
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#duration()
 	 */
-	public Duration duration();
+	public Duration duration() throws Exception;
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#deadline()
 	 */
-	public LocalTime deadline();
+	public LocalTime deadline() throws Exception;
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#postpone(Duration)
 	 */
-	public boolean postpone(Duration d);
+	public boolean postpone(Duration d) throws Exception;
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#cancel()
 	 */
-	public boolean cancel();
+	public boolean cancel() throws Exception;
 
 }

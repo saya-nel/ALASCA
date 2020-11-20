@@ -2,7 +2,6 @@ package components;
 
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,15 +21,20 @@ import ports.WasherInboundPort;
 import utils.WasherModes;
 
 @OfferedInterfaces(offered = { WasherCI.class })
-@RequiredInterfaces(required = {ControllerCI.class })
+@RequiredInterfaces(required = { ControllerCI.class })
 public class Washer extends AbstractComponent implements WasherImplementationI {
 
-	protected static final String CONTROL_INTERFACE_DESCRIPTOR="";
+	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "";
 
 	/**
 	 * Component URI
 	 */
 	protected String myUri;
+
+	/**
+	 * Serial number for registering on controller
+	 */
+	protected String serialNumber;
 
 	/**
 	 * Current state of the washer
@@ -43,10 +47,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	protected AtomicInteger programTemperature;
 
 	/**
-	 * mode currently used
-	 * 0 	ECO
-	 * 1 	STD
-	 * 2	PERFORMANCE
+	 * mode currently used 0 ECO 1 STD 2 PERFORMANCE
 	 */
 	protected AtomicInteger mode;
 
@@ -64,11 +65,6 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	 * uri of controller inbound port
 	 */
 	protected String cip_uri;
-
-	/**
-	 * serial number of compo
-	 */
-	protected String SERIAL_NUMBER;
 
 	/**
 	 * boolean indicating whether the battery has plan
@@ -101,10 +97,10 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	 * @throws Exception
 	 */
 
-	protected Washer(String reflectionPortURI, String wipURI, String cip_URI, String serial_number) throws Exception {
+	protected Washer(String reflectionPortURI, String serialNumber, String wipURI, String cip_URI) throws Exception {
 		super(reflectionPortURI, 1, 0);
 		myUri = reflectionPortURI;
-		this.SERIAL_NUMBER = serial_number;
+		this.serialNumber = serialNumber;
 		this.cip_uri = cip_URI;
 		initialise(wipURI);
 	}
@@ -164,9 +160,11 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 			throw new ComponentStartException(e);
 		}
 	}
+
 	@Override
 	public synchronized void execute() throws Exception {
-		boolean isRegister = this.cop.register(this.SERIAL_NUMBER, wip.getPortURI(), Washer.CONTROL_INTERFACE_DESCRIPTOR);
+		boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(),
+				Washer.CONTROL_INTERFACE_DESCRIPTOR);
 		if (!isRegister)
 			throw new Exception("can't register to controller");
 	}
@@ -189,7 +187,6 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return this.programTemperature.get();
 	}
 
-
 	@Override
 	public boolean turnOn() throws Exception {
 		boolean succeed = false;
@@ -207,12 +204,10 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public boolean upMode() {
 		boolean succeed = false;
-		synchronized (this.lastStartTime)
-		{
-			if(this.mode.get() == WasherModes.PERFORMANCE.ordinal()) // wheel restaure to 0
+		synchronized (this.lastStartTime) {
+			if (this.mode.get() == WasherModes.PERFORMANCE.ordinal()) // wheel restaure to 0
 				succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.ECO.ordinal());
-			else
-			{
+			else {
 				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndIncrement());
 			}
 		}
@@ -223,12 +218,10 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public boolean downMode() {
 		boolean succeed = false;
-		synchronized (this.lastStartTime)
-		{
-			if(this.mode.get() == WasherModes.ECO.ordinal()) // wheel restaure to 0
+		synchronized (this.lastStartTime) {
+			if (this.mode.get() == WasherModes.ECO.ordinal()) // wheel restaure to 0
 				succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
-			else
-			{
+			else {
 				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndDecrement());
 			}
 		}
@@ -238,8 +231,8 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 
 	@Override
 	public boolean setMode(int modeIndex) {
-		boolean succeed = false;
-		succeed = this.mode.compareAndSet(this.mode.get(), modeIndex);
+		boolean succeed = this.mode.compareAndSet(this.mode.get(), modeIndex);
+		return succeed;
 	}
 
 	@Override
@@ -270,15 +263,15 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public boolean postpone(Duration d) {
 		boolean succeed = false;
-		succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(), this.lastStartTime.get().plusHours(d.toHours()));
+		succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(),
+				this.lastStartTime.get().plusHours(d.toHours()));
 		return succeed;
 	}
 
 	@Override
 	public boolean cancel() {
 		boolean succeed = false;
-		synchronized (this.lastStartTime)
-		{
+		synchronized (this.lastStartTime) {
 			succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(), null);
 			succeed = this.hasPlan.compareAndSet(true, false);
 			succeed = this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), null);
@@ -288,6 +281,18 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return succeed;
 	}
 
+	// TODO a voir si necessaire, mais a priori oui
 
+	@Override
+	public void setProgramDuration(int duration) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int getProgramDuration() throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

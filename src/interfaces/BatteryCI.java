@@ -18,56 +18,67 @@ public interface BatteryCI extends BatteryImplementationI, OfferedCI, RequiredCI
 	/**
 	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
 	 */
+	@Override
 	public float getBatteryCharge() throws Exception;
 
 	/**
 	 * @see interfaces.BatteryImplementationI#upMode()
 	 */
-	public boolean upMode();
+	@Override
+	public boolean upMode() throws Exception;
 
 	/**
 	 * @see interfaces.BatteryImplementationI#downMode()
 	 */
-	public boolean downMode();
+	@Override
+	public boolean downMode() throws Exception;
 
 	/**
 	 * @see interfaces.BatteryImplementationI#setMode(int)
 	 */
-	public boolean setMode(int modeIndex);
+	@Override
+	public boolean setMode(int modeIndex) throws Exception;
 
 	/**
 	 * @see interfaces.BatteryImplementationI#currentMode()
 	 */
-	public int currentMode();
-	
+	@Override
+	public int currentMode() throws Exception;
+
 	/**
 	 * @see interfaces.BatteryImplementationI#hasPlan()
 	 */
-	public boolean hasPlan();
+	@Override
+	public boolean hasPlan() throws Exception;
 
 	/**
 	 * @see interfaces.BatteryImplementationI#startTime()
 	 */
-	public LocalTime startTime();
+	@Override
+	public LocalTime startTime() throws Exception;
 
 	/**
 	 * @see interfaces.BatteryImplementationI#duration()
 	 */
-	public Duration duration();
+	@Override
+	public Duration duration() throws Exception;
 
 	/**
 	 * @see interfaces.BatteryImplementationI#deadline()
 	 */
-	public LocalTime deadline();
+	@Override
+	public LocalTime deadline() throws Exception;
 
 	/**
 	 * @see interfaces.BatteryImplementationI#postpone(Duration)
 	 */
-	public boolean postpone(Duration d);
+	@Override
+	public boolean postpone(Duration d) throws Exception;
 
 	/**
 	 * @see interfaces.BatteryImplementationI#cancel()
 	 */
-	public boolean cancel();
+	@Override
+	public boolean cancel() throws Exception;
 
 }

@@ -5,6 +5,9 @@ import java.time.LocalTime;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 import interfaces.PlanningEquipmentControlCI;
+import interfaces.WasherCI;
+
+//TODO : revoir gestion des exeptions 
 
 /**
  * Connector between the Controller and the Washer, TODO : this class should be
@@ -20,8 +23,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public boolean on() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((WasherCI) this.offering).turnOn();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -29,8 +36,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public boolean off() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((WasherCI) this.offering).turnOff();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -38,8 +49,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public boolean upMode() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((WasherCI) this.offering).upMode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -47,8 +62,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public boolean downMode() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((WasherCI) this.offering).downMode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -56,8 +75,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public boolean setMode(int modeIndex) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((WasherCI) this.offering).setMode(modeIndex);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -65,8 +88,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public int currentMode() {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			return ((WasherCI) this.offering).currentMode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
 	}
 
 	/**
@@ -74,8 +101,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public boolean hasPlan() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((WasherCI) this.offering).hasPlan();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -83,8 +114,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public LocalTime startTime() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return ((WasherCI) this.offering).startTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -92,8 +127,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public Duration duration() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return ((WasherCI) this.offering).duration();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -101,8 +140,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public LocalTime deadline() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return ((WasherCI) this.offering).deadline();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -110,8 +153,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public boolean postpone(Duration d) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((WasherCI) this.offering).postpone(d);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -119,8 +166,12 @@ public class ControlWasherConnector extends AbstractConnector implements Plannin
 	 */
 	@Override
 	public boolean cancel() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((WasherCI) this.offering).cancel();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

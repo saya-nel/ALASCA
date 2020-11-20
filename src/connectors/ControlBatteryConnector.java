@@ -7,6 +7,8 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 import interfaces.BatteryCI;
 import interfaces.PlanningEquipmentControlCI;
 
+// TODO : revoir gestion des exeptions 
+
 /**
  * Connector between the Controller and the Battery, TODO : this class should be
  * auto-generated in the future.
@@ -16,14 +18,13 @@ import interfaces.PlanningEquipmentControlCI;
  */
 public class ControlBatteryConnector extends AbstractConnector implements PlanningEquipmentControlCI {
 
-	
 	/**
 	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
 	 */
 	public float getBatteryCharge() throws Exception {
 		return ((BatteryCI) this.offering).getBatteryCharge();
 	}
-	
+
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#on()
 	 */
@@ -45,7 +46,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean upMode() {
-		return ((BatteryCI) this.offering).upMode();
+		try {
+			return ((BatteryCI) this.offering).upMode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -53,7 +59,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean downMode() {
-		return ((BatteryCI) this.offering).downMode();
+		try {
+			return ((BatteryCI) this.offering).downMode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -61,7 +72,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean setMode(int modeIndex) {
-		return ((BatteryCI) this.offering).setMode(modeIndex);
+		try {
+			return ((BatteryCI) this.offering).setMode(modeIndex);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -69,7 +85,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public int currentMode() {
-		return ((BatteryCI) this.offering).currentMode();
+		try {
+			return ((BatteryCI) this.offering).currentMode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
 	}
 
 	/**
@@ -77,7 +98,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean hasPlan() {
-		return ((BatteryCI) this.offering).hasPlan();
+		try {
+			return ((BatteryCI) this.offering).hasPlan();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -85,7 +111,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public LocalTime startTime() {
-		return ((BatteryCI) this.offering).startTime();
+		try {
+			return ((BatteryCI) this.offering).startTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -93,7 +124,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public Duration duration() {
-		return ((BatteryCI) this.offering).duration();
+		try {
+			return ((BatteryCI) this.offering).duration();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -101,7 +137,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public LocalTime deadline() {
-		return ((BatteryCI) this.offering).deadline();
+		try {
+			return ((BatteryCI) this.offering).deadline();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -109,7 +150,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean postpone(Duration d) {
-		return ((BatteryCI) this.offering).postpone(d);
+		try {
+			return ((BatteryCI) this.offering).postpone(d);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -117,7 +163,12 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean cancel() {
-		return ((BatteryCI) this.offering).cancel();
+		try {
+			return ((BatteryCI) this.offering).cancel();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }
