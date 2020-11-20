@@ -33,6 +33,12 @@ public class BatteryUnitTester extends AbstractComponent {
 	protected String bipURI;
 
 	/**
+	 * Inbound port of the controller
+	 */
+	protected  String cipURI;
+
+	
+	/**
 	 * BatteryUnitTester constructor
 	 * 
 	 * @param bipURI battery inbound port uri to connect to
