@@ -1,12 +1,17 @@
 package components;
 
+import connectors.BatteryConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.exceptions.PreconditionException;
 import interfaces.BatteryCI;
 import interfaces.BatteryImplementationI;
+import interfaces.ControllerCI;
 import ports.BatteryInboundPort;
+import ports.BatteryOutboundPort;
 import utils.BatteryState;
 
 /**
@@ -16,6 +21,7 @@ import utils.BatteryState;
  *
  */
 @OfferedInterfaces(offered = { BatteryCI.class })
+@RequiredInterfaces(required = {ControllerCI.class })
 public class Battery extends AbstractComponent implements BatteryImplementationI {
 
 	/**
@@ -44,15 +50,21 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	protected BatteryInboundPort bip;
 
 	/**
+	 * Outbound port of the battery for registering
+	 */
+	protected BatteryOutboundPort bop;
+
+	/**
 	 * Constructor of battery
 	 * 
 	 * @param reflectionPortURI URI battery component
 	 * @param bipURI            URI inbound port battery
 	 * @throws Exception
 	 */
-	protected Battery(String reflectionPortURI, String bipURI, float maxEnergy) throws Exception {
+	protected Battery(String reflectionPortURI, String bipURI, String bopURI, float maxEnergy) throws Exception {
 		super(reflectionPortURI, 1, 0);
 		myUri = reflectionPortURI;
+		this.bop = new BatteryOutboundPort(this);
 		this.initialise(bipURI, maxEnergy);
 	}
 
@@ -85,6 +97,19 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		this.maximumEnergy = maximumEnergy;
 		this.bip = new BatteryInboundPort(batteryInboundPortURI, this);
 		this.bip.publishPort();
+	}
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#start()
+	 */
+	@Override
+	public synchronized void start() throws ComponentStartException {
+		super.start();
+		try {
+			this.doPortConnection(this.bop.getPortURI(), bip.getPortURI(), BatteryConnector.class.getCanonicalName());
+		} catch (Exception e) {
+			throw new ComponentStartException(e);
+		}
 	}
 
 	/**

@@ -20,7 +20,7 @@ consumption = element consumption {
 operations =
     on,
     off,
-    (   (attribute type { "suspension" },
+    (   (attribute type { "fridge" },
         suspension-control)
     )
 
