@@ -269,10 +269,14 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	@Override
 	public boolean cancel() {
 		boolean succeed = false;
-		succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(), null);
-		succeed = this.hasPlan.compareAndSet(true, false);
-		succeed = this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), null);
-		succeed = this.deadlineTime.compareAndSet(this.deadlineTime.get(), null);
+		synchronized (this.lastStartTime)
+		{
+			succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(), null);
+			succeed = this.hasPlan.compareAndSet(true, false);
+			succeed = this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), null);
+			succeed = this.deadlineTime.compareAndSet(this.deadlineTime.get(), null);
+		}
+
 		return succeed;
 	}
 
