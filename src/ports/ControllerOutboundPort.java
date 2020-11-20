@@ -11,6 +11,7 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import interfaces.ControllerCI;
 
 public class ControllerOutboundPort extends AbstractOutboundPort implements ControllerCI {
+
 	/**
 	 * Constructor of the controller outbound port
 	 *
@@ -19,10 +20,9 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 	 */
 	public ControllerOutboundPort(ComponentI owner) throws Exception {
 		super(ControllerCI.class, owner);
-		//super(uri, ControllerCI.class, owner);
+		// super(uri, ControllerCI.class, owner);
 		assert uri != null && owner != null;
 	}
-
 
 	public ControllerOutboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri, ControllerCI.class, owner);
@@ -33,8 +33,8 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 	 * @see interfaces.ControllerImplementationI#register(String, String)
 	 */
 	@Override
-	public void register(String serial_number, String XMLFile) throws Exception {
-		((ControllerCI) this.getConnector()).register(serial_number, XMLFile);
+	public boolean register(String serial_number, String XMLFile) throws Exception {
+		return ((ControllerCI) this.getConnector()).register(serial_number, XMLFile);
 	}
 
 	/**

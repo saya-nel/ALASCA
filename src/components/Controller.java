@@ -18,8 +18,7 @@ import ports.ControllerOutboundPort;
  * @author Bello Memmi
  *
  */
-@OfferedInterfaces(offered = { ControllerCI.class})
-
+@OfferedInterfaces(offered = { ControllerCI.class })
 
 public class Controller extends AbstractComponent implements ControllerImplementationI {
 	// ports used for registering
@@ -31,10 +30,9 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// uri of component
 	private String myURI;
 
-	// Map serial number in key and XMLFile content this xml is supposed to contain the implementation of the connector's controlled methods
+	// Map serial number in key and XMLFile content this xml is supposed to contain
+	// the implementation of the connector's controlled methods
 	private Map<String, String> registeredDevices;
-
-
 
 	protected Controller(String uri, String[] inboundPortRegisterURI, String[] outboundPortDeviceURI) throws Exception {
 		super(uri, 1, 0);
@@ -96,8 +94,12 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	 * @see ControllerImplementationI#register(String, String)
 	 */
 	@Override
-	public void register(String serial_number, String XMLFile) throws Exception {
+	public boolean register(String serial_number, String XMLFile) throws Exception {
+		// TODO connector generation here
+
+		// connector is generated, we can register the component
 		registeredDevices.put(serial_number, XMLFile);
+		return true;
 	}
 
 	// ---------------------------------------------------------------------------
