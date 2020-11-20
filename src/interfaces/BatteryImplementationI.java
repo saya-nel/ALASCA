@@ -1,5 +1,8 @@
 package interfaces;
 
+import java.time.Duration;
+import java.time.LocalTime;
+
 import utils.BatteryState;
 
 /**
@@ -19,20 +22,39 @@ public interface BatteryImplementationI {
 	 */
 	public float getBatteryCharge() throws Exception;
 
-	/**
-	 * return the actual battery state
+	/*
 	 * 
-	 * @return the battery state
-	 * @throws Exception
+	 * STANDARD
+	 * 
 	 */
-	public BatteryState getBatteryState() throws Exception;
 
-	/**
-	 * update the battery state
+	public boolean upMode();
+
+	public boolean downMode();
+
+	public boolean setMode(int modeIndex);
+
+	public int currentMode();
+	
+	/*
 	 * 
-	 * @param state new state
-	 * @throws Exception
+	 * PLANNING
+	 * 
 	 */
-	public void setBatteryState(BatteryState state) throws Exception;
+	
+
+	public boolean hasPlan();
+
+	public LocalTime startTime();
+
+
+	public Duration duration();
+
+
+	public LocalTime deadline();
+
+	public boolean postpone(Duration d);
+
+	public boolean cancel();
 
 }

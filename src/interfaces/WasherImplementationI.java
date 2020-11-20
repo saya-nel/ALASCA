@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Date;
 
 /**
@@ -16,20 +18,6 @@ public interface WasherImplementationI {
 	 * @throws Exception
 	 */
 	public boolean isTurnedOn() throws Exception;
-
-	/**
-	 * Turn the washer on
-	 * 
-	 * @throws Exception
-	 */
-	public void turnOn() throws Exception;
-
-	/**
-	 * Turn the washer off
-	 * 
-	 * @throws Exception
-	 */
-	public void turnOff() throws Exception;
 
 	/**
 	 * Change the temperature of the program
@@ -63,19 +51,42 @@ public interface WasherImplementationI {
 	 */
 	public int getProgramDuration() throws Exception;
 
-	/**
-	 * Delay the program to the indicated date
+	/*
 	 * 
-	 * @param Date date to launch the program
-	 * @throws Exception
+	 * STANDARD
+	 * 
 	 */
-	public void setDelay(Date date) throws Exception;
+	
 
-	/**
-	 * Get the delay of the program
+	public boolean turnOn() throws Exception;
+
+	public boolean turnOff() throws Exception;
+	
+	public boolean upMode();
+
+	public boolean downMode();
+
+	public boolean setMode(int modeIndex);
+
+	public int currentMode();
+	
+	/*
+	 *
+	 * PLANNING
 	 * 
-	 * @throws Exception
 	 */
-	public Date getDelay() throws Exception;
+	
+
+	public boolean hasPlan();
+
+	public LocalTime startTime();
+
+	public Duration duration();
+
+	public LocalTime deadline();
+
+	public boolean postpone(Duration d);
+
+	public boolean cancel();
 
 }

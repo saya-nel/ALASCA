@@ -26,25 +26,32 @@ public interface FridgeImplementationI {
      * @throws Exception
      */
     public float getCurrentTemperature() throws Exception;
-
-    /**
-     * Switch off the fridge component
-     * @throws Exception
+    
+    /*
+     * 
+     * STANDARD METHODS
+     * 
      */
-    public void switchOff() throws Exception;
-
+    
     /**
-     * Switch on the fridge component
-     * @throws Exception
+     * @see interfaces.StandardEquipmentControlCI#upMode()
      */
-    public void switchOn() throws Exception;
+	public boolean upMode();
 
-    /**
-     *
-     * @return              true if fridge is on
-     * @throws Exception
+	/**
+     * @see interfaces.StandardEquipmentControlCI#downMode()
      */
-    public boolean getState() throws Exception;
+	public boolean downMode();
+
+	/**
+     * @see interfaces.StandardEquipmentControlCI#setMode(int)
+     */
+	public boolean setMode(int modeIndex);
+
+	/**
+     * @see interfaces.StandardEquipmentControlCI#currentMode()
+     */
+	public int currentMode();
 
     /**
      *
@@ -53,24 +60,29 @@ public interface FridgeImplementationI {
      */
     public boolean active() throws Exception;
 
-    /**
-     * pass the fridge in the active mode
-     * @return                  true if the fridge has been successfully activated, false otherwise.
-     * @throws Exception
+    /*
+     * 
+     *  SUSPENSION
+     * 
      */
-    public boolean activate() throws Exception;
+    
+    /**
+     * @see interfaces.SuspensionEquipmentControlCI#suspended()
+     */
+	public boolean suspended();
 
-    /**
-     * pass the fridge in the passive mode
-     * @return                  true if the fridge has been successfully passivated, false otherwise.
-     * @throws Exception
+	/**
+     * @see interfaces.SuspensionEquipmentControlCI#suspend()
      */
-    public boolean passivate() throws Exception;
+	public boolean suspend();
 
-    /**
-     * return the degree of emergency to reactivate the boiler after passivating it.
-     * @return              the degree of emergency to reactivate the fridge after passivating it.
-     * @throws Exception
+	/**
+     * @see interfaces.SuspensionEquipmentControlCI#resume()
      */
-    public double degreeOfEmergency() throws Exception;
+	public boolean resume();
+
+	/**
+     * @see interfaces.SuspensionEquipmentControlCI#emergency()
+     */
+	public double emergency();
 }

@@ -25,6 +25,10 @@ import utils.BatteryState;
 @OfferedInterfaces(offered = { BatteryCI.class })
 @RequiredInterfaces(required = {ControllerCI.class })
 public class Battery extends AbstractComponent implements BatteryImplementationI {
+	
+	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "";
+	
+	protected String SERIAL_NUMBER = "";
 
 	/**
 	 * Component URI
@@ -134,8 +138,10 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	}
 	
 	@Override
-	public synchronized void	execute() throws Exception {
-		
+	public synchronized void execute() throws Exception {
+		boolean isRegister = this.cop.register(this.SERIAL_NUMBER, bip.getPortURI(), Battery.CONTROL_INTERFACE_DESCRIPTOR);
+		if (!isRegister)
+			throw new Exception("can't register to controller");
 	}
 
 
