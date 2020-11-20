@@ -13,8 +13,25 @@ import interfaces.SuspensionEquipmentControlCI;
  */
 public class ControlFridgeConnector extends AbstractConnector implements SuspensionEquipmentControlCI {
 	
+	/**
+	 * @see interfaces.FridgeImplementationI#getRequestedTemperature()
+	 */
     public float getRequestedTemperature() throws Exception {
     	return ((FridgeCI)this.offering).getRequestedTemperature();
+    }
+    
+    /**
+     * @see interfaces.FridgeImplementationI#setRequestedTemperature(float)
+     */
+    public void setRequestedTemperature(float temp) throws Exception {
+    	((FridgeCI)this.offering).setRequestedTemperature(temp);
+    }
+
+    /**
+     * @see interfaces.FridgeImplementationI#getCurrentTemperature()
+     */
+    public float getCurrentTemperature() throws Exception {
+    	return ((FridgeCI)this.offering).getCurrentTemperature();
     }
 
 	/**
@@ -86,8 +103,11 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 */
 	@Override
 	public boolean suspended() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((FridgeCI)this.offering).upMode();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -95,8 +115,11 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 */
 	@Override
 	public boolean suspend() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((FridgeCI)this.offering).suspend();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -104,8 +127,11 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 */
 	@Override
 	public boolean resume() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return ((FridgeCI)this.offering).resume();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -113,8 +139,11 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 */
 	@Override
 	public double emergency() {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			return ((FridgeCI)this.offering).emergency();
+		} catch (Exception e) {
+			return -1;
+		}
 	}
 
 }

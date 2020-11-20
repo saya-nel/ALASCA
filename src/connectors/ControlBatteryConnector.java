@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
+import interfaces.BatteryCI;
 import interfaces.PlanningEquipmentControlCI;
 
 /**
@@ -15,12 +16,19 @@ import interfaces.PlanningEquipmentControlCI;
  */
 public class ControlBatteryConnector extends AbstractConnector implements PlanningEquipmentControlCI {
 
+	
+	/**
+	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
+	 */
+	public float getBatteryCharge() throws Exception {
+		return ((BatteryCI) this.offering).getBatteryCharge();
+	}
+	
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#on()
 	 */
 	@Override
 	public boolean on() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -29,7 +37,6 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean off() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -38,8 +45,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean upMode() {
-		// TODO Auto-generated method stub
-		return false;
+		return ((BatteryCI) this.offering).upMode();
 	}
 
 	/**
@@ -47,8 +53,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean downMode() {
-		// TODO Auto-generated method stub
-		return false;
+		return ((BatteryCI) this.offering).downMode();
 	}
 
 	/**
@@ -56,8 +61,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean setMode(int modeIndex) {
-		// TODO Auto-generated method stub
-		return false;
+		return ((BatteryCI) this.offering).setMode(modeIndex);
 	}
 
 	/**
@@ -65,8 +69,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public int currentMode() {
-		// TODO Auto-generated method stub
-		return 0;
+		return ((BatteryCI) this.offering).currentMode();
 	}
 
 	/**
@@ -74,8 +77,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean hasPlan() {
-		// TODO Auto-generated method stub
-		return false;
+		return ((BatteryCI) this.offering).hasPlan();
 	}
 
 	/**
@@ -83,8 +85,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public LocalTime startTime() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((BatteryCI) this.offering).startTime();
 	}
 
 	/**
@@ -92,8 +93,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public Duration duration() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((BatteryCI) this.offering).duration();
 	}
 
 	/**
@@ -101,8 +101,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public LocalTime deadline() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((BatteryCI) this.offering).deadline();
 	}
 
 	/**
@@ -110,8 +109,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean postpone(Duration d) {
-		// TODO Auto-generated method stub
-		return false;
+		return ((BatteryCI) this.offering).postpone(d);
 	}
 
 	/**
@@ -119,8 +117,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 */
 	@Override
 	public boolean cancel() {
-		// TODO Auto-generated method stub
-		return false;
+		return ((BatteryCI) this.offering).cancel();
 	}
 
 }

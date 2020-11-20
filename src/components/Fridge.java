@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  */
 
-import connectors.BatteryConnector;
 import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;

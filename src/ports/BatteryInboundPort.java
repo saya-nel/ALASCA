@@ -1,10 +1,12 @@
 package ports;
 
+import java.time.Duration;
+import java.time.LocalTime;
+
 import components.Battery;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import interfaces.BatteryCI;
-import utils.BatteryState;
 
 /**
  * 
@@ -30,25 +32,133 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#getBatteryState()
+	 * @see interfaces.BatteryImplementationI#upMode()
 	 */
 	@Override
-	public BatteryState getBatteryState() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).getBatteryState());
+	public boolean upMode() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).upMode());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#setBatteryState(BatteryState)
+	 * @see interfaces.BatteryImplementationI#upMode()
 	 */
 	@Override
-	public void setBatteryState(BatteryState state) throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Battery) owner).setBatteryState(state);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+	public boolean downMode() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).downMode());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#setMode(int)
+	 */
+	@Override
+	public boolean setMode(int modeIndex) {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).setMode(modeIndex));
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#currentMode()
+	 */
+	@Override
+	public int currentMode() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).currentMode());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#hasPlan()
+	 */
+	@Override
+	public boolean hasPlan() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).hasPlan());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#startTime()
+	 */
+	@Override
+	public LocalTime startTime() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).startTime());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#duration()
+	 */
+	@Override
+	public Duration duration() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).duration());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#deadline()
+	 */
+	@Override
+	public LocalTime deadline() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).deadline());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#postpone(Duration)
+	 */
+	@Override
+	public boolean postpone(Duration d) {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).postpone(d));
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * @see interfaces.BatteryImplementationI#cancel()
+	 */
+	@Override
+	public boolean cancel() {
+		try {
+			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).cancel());
+		} catch (AssertionError | Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

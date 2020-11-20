@@ -3,8 +3,6 @@ package interfaces;
 import java.time.Duration;
 import java.time.LocalTime;
 
-import utils.BatteryState;
-
 /**
  * 
  * Battery services interface
@@ -28,12 +26,24 @@ public interface BatteryImplementationI {
 	 * 
 	 */
 
+	/**
+	 * @see interfaces.StandardEquipmentControlCI#upMode()
+	 */
 	public boolean upMode();
 
+	/**
+	 * @see interfaces.StandardEquipmentControlCI#downMode()
+	 */
 	public boolean downMode();
 
+	/**
+	 * @see interfaces.StandardEquipmentControlCI#setMode(int)
+	 */
 	public boolean setMode(int modeIndex);
 
+	/**
+	 * @see interfaces.StandardEquipmentControlCI#currentMode()
+	 */
 	public int currentMode();
 	
 	/*
@@ -42,19 +52,34 @@ public interface BatteryImplementationI {
 	 * 
 	 */
 	
-
+	/**
+	 * @see interfaces.PlanningEquipmentControlCI#hasPlan()
+	 */
 	public boolean hasPlan();
 
+	/**
+	 * @see interfaces.PlanningEquipmentControlCI#startTime()
+	 */
 	public LocalTime startTime();
 
-
+	/**
+	 * @see interfaces.PlanningEquipmentControlCI#duration()
+	 */
 	public Duration duration();
 
-
+	/**
+	 * @see interfaces.PlanningEquipmentControlCI#deadline()
+	 */
 	public LocalTime deadline();
 
+	/**
+	 * @see interfaces.PlanningEquipmentControlCI#postpone(Duration)
+	 */
 	public boolean postpone(Duration d);
 
+	/**
+	 * @see interfaces.PlanningEquipmentControlCI#cancel()
+	 */
 	public boolean cancel();
 
 }

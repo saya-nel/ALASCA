@@ -1,8 +1,10 @@
 package interfaces;
 
+import java.time.Duration;
+import java.time.LocalTime;
+
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
-import utils.BatteryState;
 
 /**
  * 
@@ -16,19 +18,56 @@ public interface BatteryCI extends BatteryImplementationI, OfferedCI, RequiredCI
 	/**
 	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
 	 */
-	@Override
 	public float getBatteryCharge() throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#getBatteryState()
+	 * @see interfaces.BatteryImplementationI#upMode()
 	 */
-	@Override
-	public BatteryState getBatteryState() throws Exception;
+	public boolean upMode();
 
 	/**
-	 * @see interfaces.BatteryImplementationI#setBatteryState(BatteryState)
+	 * @see interfaces.BatteryImplementationI#downMode()
 	 */
-	@Override
-	public void setBatteryState(BatteryState state) throws Exception;
+	public boolean downMode();
+
+	/**
+	 * @see interfaces.BatteryImplementationI#setMode(int)
+	 */
+	public boolean setMode(int modeIndex);
+
+	/**
+	 * @see interfaces.BatteryImplementationI#currentMode()
+	 */
+	public int currentMode();
+	
+	/**
+	 * @see interfaces.BatteryImplementationI#hasPlan()
+	 */
+	public boolean hasPlan();
+
+	/**
+	 * @see interfaces.BatteryImplementationI#startTime()
+	 */
+	public LocalTime startTime();
+
+	/**
+	 * @see interfaces.BatteryImplementationI#duration()
+	 */
+	public Duration duration();
+
+	/**
+	 * @see interfaces.BatteryImplementationI#deadline()
+	 */
+	public LocalTime deadline();
+
+	/**
+	 * @see interfaces.BatteryImplementationI#postpone(Duration)
+	 */
+	public boolean postpone(Duration d);
+
+	/**
+	 * @see interfaces.BatteryImplementationI#cancel()
+	 */
+	public boolean cancel();
 
 }

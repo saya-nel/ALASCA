@@ -1,6 +1,11 @@
 package components;
 
-import connectors.BatteryConnector;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -12,15 +17,8 @@ import interfaces.BatteryCI;
 import interfaces.BatteryImplementationI;
 import interfaces.ControllerCI;
 import ports.BatteryInboundPort;
-import ports.BatteryOutboundPort;
 import ports.ControllerOutboundPort;
 import utils.BatteryState;
-
-import java.time.Duration;
-import java.time.LocalTime;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Class representing the Battery component
@@ -148,7 +146,14 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		this.cop = new ControllerOutboundPort(this);
 		this.cop.publishPort();
 	}
+	
+	
+	
+	// -------------------------------------------------------------------------
+	// Component services implementation
+	// -------------------------------------------------------------------------
 
+	
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#start()
 	 */
@@ -175,6 +180,9 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		super.shutdown();
 	}
 	
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
+	 */
 	@Override
 	public synchronized void execute() throws Exception {
 		boolean isRegister = this.cop.register(this.SERIAL_NUMBER, bip.getPortURI(), Battery.CONTROL_INTERFACE_DESCRIPTOR);
@@ -182,11 +190,17 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 			throw new Exception("can't register to controller");
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
+	 */
 	@Override
 	public float getBatteryCharge() throws Exception {
 		return 0;
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#upMode()
+	 */
 	@Override
 	public boolean upMode() {
 		boolean succeed = false;
@@ -200,6 +214,9 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		return succeed;
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#downMode()
+	 */
 	@Override
 	public boolean downMode() {
 		boolean succeed = false;
@@ -213,6 +230,9 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		return succeed;
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#setMode(int)
+	 */
 	@Override
 	public boolean setMode(int modeIndex) {
 
@@ -233,31 +253,49 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#currentMode()
+	 */
 	@Override
 	public int currentMode() {
 		return this.operatingMode.get();
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#hasPlan()
+	 */
 	@Override
 	public boolean hasPlan() {
 		return this.hasPlan.get();
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#startTime()
+	 */
 	@Override
 	public LocalTime startTime() {
 		return this.lastStartTime.get();
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#duration()
+	 */
 	@Override
 	public Duration duration() {
 		return this.durationLastPlanned.get();
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#deadline()
+	 */
 	@Override
 	public LocalTime deadline() {
 		return this.deadlineTime.get();
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#postpone(Duration)
+	 */
 	@Override
 	public boolean postpone(Duration d) {
 		boolean succeed = false;
@@ -266,6 +304,9 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 
 	}
 
+	/**
+	 * @see interfaces.BatteryImplementationI#cancel()
+	 */
 	@Override
 	public boolean cancel() {
 		boolean succeed = false;
@@ -279,11 +320,6 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 
 		return succeed;
 	}
-
-
-	// -------------------------------------------------------------------------
-	// Component services implementation
-	// -------------------------------------------------------------------------
 
 
 }
