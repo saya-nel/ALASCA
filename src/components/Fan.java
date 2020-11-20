@@ -16,6 +16,7 @@ import utils.FanLevel;
  *
  */
 @OfferedInterfaces(offered = { FanCI.class })
+
 public class Fan extends AbstractComponent implements FanImplementationI {
 
 	/**
