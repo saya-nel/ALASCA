@@ -201,24 +201,32 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public boolean upMode() {
 		boolean succeed = false;
-		if(this.mode.get() == WasherModes.PERFORMANCE.ordinal()) // wheel restaure to 0
-			succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.ECO.ordinal());
-		else
+		synchronized (this.lastStartTime)
 		{
-			succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndIncrement());
+			if(this.mode.get() == WasherModes.PERFORMANCE.ordinal()) // wheel restaure to 0
+				succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.ECO.ordinal());
+			else
+			{
+				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndIncrement());
+			}
 		}
+
 		return succeed;
 	}
 
 	@Override
 	public boolean downMode() {
 		boolean succeed = false;
-		if(this.mode.get() == WasherModes.ECO.ordinal()) // wheel restaure to 0
-			succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
-		else
+		synchronized (this.lastStartTime)
 		{
-			succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndDecrement());
+			if(this.mode.get() == WasherModes.ECO.ordinal()) // wheel restaure to 0
+				succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
+			else
+			{
+				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndDecrement());
+			}
 		}
+
 		return succeed;
 	}
 
