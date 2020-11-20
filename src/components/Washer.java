@@ -128,6 +128,11 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		assert washerInboundPortURI != null : new PreconditionException("washerInboundPortUri != null");
 		assert !washerInboundPortURI.isEmpty() : new PreconditionException("washerInboundPortURI.isEmpty()");
 		this.setMode(0);
+		this.deadlineTime = null;
+		this.durationLastPlanned = null;
+		this.postponeDur = null;
+		this.lastStartTime = null;
+		this.hasPlan.set(false);
 		this.wip = new WasherInboundPort(washerInboundPortURI, this);
 		this.wip.publishPort();
 		this.cop = new ControllerOutboundPort(this);
@@ -183,6 +188,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	public int getProgramTemperature() throws Exception {
 		return this.programTemperature.get();
 	}
+
 
 	@Override
 	public boolean turnOn() throws Exception {
