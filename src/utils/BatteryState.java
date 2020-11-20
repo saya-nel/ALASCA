@@ -5,5 +5,5 @@ package utils;
  * @author Bello Memmi
  */
 public enum BatteryState {
-    RECHARGING, DRAINING, SLEEPING
+    RECHARGING, DRAINING, SLEEPING;
 }
