@@ -1,6 +1,7 @@
 package components;
 
 import connectors.BatteryConnector;
+import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
@@ -12,6 +13,7 @@ import interfaces.BatteryImplementationI;
 import interfaces.ControllerCI;
 import ports.BatteryInboundPort;
 import ports.BatteryOutboundPort;
+import ports.ControllerOutboundPort;
 import utils.BatteryState;
 
 /**
@@ -52,7 +54,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	/**
 	 * Outbound port of the battery for registering
 	 */
-	protected BatteryOutboundPort bop;
+	protected ControllerOutboundPort cop;
 
 	/**
 	 *
@@ -65,12 +67,12 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @param bipURI            URI inbound port battery
 	 * @throws Exception
 	 */
-	protected Battery(String reflectionPortURI, String bipURI, String bopURI, String cip_URI, float maxEnergy) throws Exception {
+	protected Battery(String reflectionPortURI, String bipURI, String cip_URI, float maxEnergy) throws Exception {
 		super(reflectionPortURI, 1, 0);
 		myUri = reflectionPortURI;
 		this.cip_uri = cip_URI;
-		this.bop = new BatteryOutboundPort(this);
-		this.bop.publishPort();
+		this.cop = new ControllerOutboundPort(this);
+		this.cop.publishPort();
 		this.initialise(bipURI, maxEnergy);
 	}
 
@@ -112,7 +114,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.bop.getPortURI(), this.cip_uri, BatteryConnector.class.getCanonicalName());
+			this.doPortConnection(this.cop.getPortURI(), this.cip_uri, ControllerConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
