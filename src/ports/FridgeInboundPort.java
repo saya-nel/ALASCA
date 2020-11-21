@@ -1,4 +1,5 @@
 package ports;
+
 /**
  * Inbound port of Fridge component
  *
@@ -14,143 +15,103 @@ import interfaces.FridgeImplementationI;
 
 public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 
-
 	private static final long serialVersionUID = 1L;
 
 	public FridgeInboundPort(String uri, ComponentI owner) throws Exception {
-        super(uri, FridgeCI.class, owner);
-    }
-
-    /**
-     * @see FridgeImplementationI#getCurrentTemperature()
-     */
-    @Override
-    public float getRequestedTemperature() throws Exception {
-        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getRequestedTemperature());
-    }
-
-    /**
-     * @see FridgeImplementationI#setRequestedTemperature(float)
-     */
-    @Override
-    public void setRequestedTemperature(float temp) throws Exception {
-        this.getOwner().runTask(owner -> {
-            try{
-                ((Fridge) owner).setRequestedTemperature(temp);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    /**
-     * @see FridgeImplementationI#getCurrentTemperature()
-     */
-    @Override
-    public float getCurrentTemperature() throws Exception {
-        return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getCurrentTemperature());
-    }
-
-    /**
-     * @see FridgeImplementationI#upMode()
-     */
-	@Override
-	public boolean upMode() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).upMode());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		super(uri, FridgeCI.class, owner);
 	}
 
 	/**
-     * @see FridgeImplementationI#downMode()
-     */
+	 * @see FridgeImplementationI#getCurrentTemperature()
+	 */
 	@Override
-	public boolean downMode() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).downMode());
-		} catch (AssertionError | Exception e) {
-			return false;
-		}
+	public float getRequestedTemperature() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getRequestedTemperature());
 	}
 
 	/**
-     * @see FridgeImplementationI#setMode(int)
-     */
+	 * @see FridgeImplementationI#setRequestedTemperature(float)
+	 */
 	@Override
-	public boolean setMode(int modeIndex) {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).setMode(modeIndex));
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public void setRequestedTemperature(float temp) throws Exception {
+		this.getOwner().runTask(owner -> {
+			try {
+				((Fridge) owner).setRequestedTemperature(temp);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	/**
-     * @see FridgeImplementationI#currentMode()
-     */
+	 * @see FridgeImplementationI#getCurrentTemperature()
+	 */
 	@Override
-	public int currentMode() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).currentMode());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return -1;
-		}
+	public float getCurrentTemperature() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getCurrentTemperature());
 	}
 
 	/**
-     * @see FridgeImplementationI#suspended()
-     */
+	 * @see FridgeImplementationI#upMode()
+	 */
 	@Override
-	public boolean suspended() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).suspended());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean upMode() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).upMode());
 	}
 
 	/**
-     * @see FridgeImplementationI#suspend()
-     */
+	 * @see FridgeImplementationI#downMode()
+	 */
 	@Override
-	public boolean suspend() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).suspend());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean downMode() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).downMode());
 	}
 
 	/**
-     * @see FridgeImplementationI#resume()
-     */
+	 * @see FridgeImplementationI#setMode(int)
+	 */
 	@Override
-	public boolean resume() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).resume());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean setMode(int modeIndex) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).setMode(modeIndex));
 	}
 
 	/**
-     * @see FridgeImplementationI#emergency()
-     */
+	 * @see FridgeImplementationI#currentMode()
+	 */
 	@Override
-	public double emergency() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).emergency());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return -1;
-		}
+	public int currentMode() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).currentMode());
+	}
+
+	/**
+	 * @see FridgeImplementationI#suspended()
+	 */
+	@Override
+	public boolean suspended() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).suspended());
+	}
+
+	/**
+	 * @see FridgeImplementationI#suspend()
+	 */
+	@Override
+	public boolean suspend() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).suspend());
+	}
+
+	/**
+	 * @see FridgeImplementationI#resume()
+	 */
+	@Override
+	public boolean resume() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).resume());
+	}
+
+	/**
+	 * @see FridgeImplementationI#emergency()
+	 */
+	@Override
+	public double emergency() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).emergency());
 	}
 }

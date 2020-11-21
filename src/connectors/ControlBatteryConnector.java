@@ -7,8 +7,6 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 import interfaces.BatteryCI;
 import interfaces.PlanningEquipmentControlCI;
 
-// TODO : revoir gestion des exeptions 
-
 /**
  * Connector between the Controller and the Battery, TODO : this class should be
  * auto-generated in the future.
@@ -29,7 +27,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 * @see interfaces.StandardEquipmentControlCI#on()
 	 */
 	@Override
-	public boolean on() {
+	public boolean on() throws Exception {
 		return false;
 	}
 
@@ -37,7 +35,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 * @see interfaces.StandardEquipmentControlCI#off()
 	 */
 	@Override
-	public boolean off() {
+	public boolean off() throws Exception {
 		return false;
 	}
 
@@ -45,130 +43,80 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 * @see interfaces.StandardEquipmentControlCI#upMode()
 	 */
 	@Override
-	public boolean upMode() {
-		try {
-			return ((BatteryCI) this.offering).upMode();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean upMode() throws Exception {
+		return ((BatteryCI) this.offering).upMode();
 	}
 
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#downMode()
 	 */
 	@Override
-	public boolean downMode() {
-		try {
-			return ((BatteryCI) this.offering).downMode();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean downMode() throws Exception {
+		return ((BatteryCI) this.offering).downMode();
 	}
 
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#setMode(int)
 	 */
 	@Override
-	public boolean setMode(int modeIndex) {
-		try {
-			return ((BatteryCI) this.offering).setMode(modeIndex);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean setMode(int modeIndex) throws Exception {
+		return ((BatteryCI) this.offering).setMode(modeIndex);
 	}
 
 	/**
 	 * @see interfaces.StandardEquipmentControlCI#currentMode()
 	 */
 	@Override
-	public int currentMode() {
-		try {
-			return ((BatteryCI) this.offering).currentMode();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return -1;
-		}
+	public int currentMode() throws Exception {
+		return ((BatteryCI) this.offering).currentMode();
 	}
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#hasPlan()
 	 */
 	@Override
-	public boolean hasPlan() {
-		try {
-			return ((BatteryCI) this.offering).hasPlan();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean hasPlan() throws Exception {
+		return ((BatteryCI) this.offering).hasPlan();
 	}
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#startTime()
 	 */
 	@Override
-	public LocalTime startTime() {
-		try {
-			return ((BatteryCI) this.offering).startTime();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public LocalTime startTime() throws Exception {
+		return ((BatteryCI) this.offering).startTime();
 	}
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#duration()
 	 */
 	@Override
-	public Duration duration() {
-		try {
-			return ((BatteryCI) this.offering).duration();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Duration duration() throws Exception {
+		return ((BatteryCI) this.offering).duration();
 	}
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#deadline()
 	 */
 	@Override
-	public LocalTime deadline() {
-		try {
-			return ((BatteryCI) this.offering).deadline();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public LocalTime deadline() throws Exception {
+		return ((BatteryCI) this.offering).deadline();
 	}
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#postpone(Duration)
 	 */
 	@Override
-	public boolean postpone(Duration d) {
-		try {
-			return ((BatteryCI) this.offering).postpone(d);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean postpone(Duration d) throws Exception {
+		return ((BatteryCI) this.offering).postpone(d);
 	}
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#cancel()
 	 */
 	@Override
-	public boolean cancel() {
-		try {
-			return ((BatteryCI) this.offering).cancel();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean cancel() throws Exception {
+		return ((BatteryCI) this.offering).cancel();
 	}
 
 }

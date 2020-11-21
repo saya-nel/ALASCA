@@ -202,7 +202,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	}
 
 	@Override
-	public boolean upMode() {
+	public boolean upMode() throws Exception {
 		boolean succeed = false;
 		synchronized (this.lastStartTime) {
 			if (this.mode.get() == WasherModes.PERFORMANCE.ordinal()) // wheel restaure to 0
@@ -216,7 +216,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	}
 
 	@Override
-	public boolean downMode() {
+	public boolean downMode() throws Exception {
 		boolean succeed = false;
 		synchronized (this.lastStartTime) {
 			if (this.mode.get() == WasherModes.ECO.ordinal()) // wheel restaure to 0
@@ -230,38 +230,38 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	}
 
 	@Override
-	public boolean setMode(int modeIndex) {
+	public boolean setMode(int modeIndex) throws Exception {
 		boolean succeed = this.mode.compareAndSet(this.mode.get(), modeIndex);
 		return succeed;
 	}
 
 	@Override
-	public int currentMode() {
+	public int currentMode() throws Exception {
 		return this.mode.get();
 	}
 
 	@Override
-	public boolean hasPlan() {
+	public boolean hasPlan() throws Exception {
 		return this.hasPlan.get();
 	}
 
 	@Override
-	public LocalTime startTime() {
+	public LocalTime startTime() throws Exception {
 		return this.lastStartTime.get();
 	}
 
 	@Override
-	public Duration duration() {
+	public Duration duration() throws Exception {
 		return this.durationLastPlanned.get();
 	}
 
 	@Override
-	public LocalTime deadline() {
+	public LocalTime deadline() throws Exception {
 		return this.deadlineTime.get();
 	}
 
 	@Override
-	public boolean postpone(Duration d) {
+	public boolean postpone(Duration d) throws Exception {
 		boolean succeed = false;
 		succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(),
 				this.lastStartTime.get().plusHours(d.toHours()));
@@ -269,7 +269,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	}
 
 	@Override
-	public boolean cancel() {
+	public boolean cancel() throws Exception {
 		boolean succeed = false;
 		synchronized (this.lastStartTime) {
 			succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(), null);

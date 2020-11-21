@@ -196,7 +196,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#upMode()
 	 */
 	@Override
-	public boolean upMode() {
+	public boolean upMode() throws Exception {
 		boolean succeed = false;
 		if (this.operatingMode.get() == BatteryState.SLEEPING.ordinal()) {// return to 0
 			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.RECHARGING.ordinal());
@@ -210,7 +210,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#downMode()
 	 */
 	@Override
-	public boolean downMode() {
+	public boolean downMode() throws Exception {
 		boolean succeed = false;
 		if (this.operatingMode.get() == BatteryState.RECHARGING.ordinal()) {
 			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.SLEEPING.ordinal());
@@ -224,7 +224,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#setMode(int)
 	 */
 	@Override
-	public boolean setMode(int modeIndex) {
+	public boolean setMode(int modeIndex) throws Exception {
 
 		boolean succeed = false;
 		try {
@@ -244,7 +244,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#currentMode()
 	 */
 	@Override
-	public int currentMode() {
+	public int currentMode() throws Exception {
 		return this.operatingMode.get();
 	}
 
@@ -252,7 +252,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#hasPlan()
 	 */
 	@Override
-	public boolean hasPlan() {
+	public boolean hasPlan() throws Exception {
 		return this.hasPlan.get();
 	}
 
@@ -260,7 +260,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#startTime()
 	 */
 	@Override
-	public LocalTime startTime() {
+	public LocalTime startTime() throws Exception {
 		return this.lastStartTime.get();
 	}
 
@@ -268,7 +268,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#duration()
 	 */
 	@Override
-	public Duration duration() {
+	public Duration duration() throws Exception {
 		return this.durationLastPlanned.get();
 	}
 
@@ -276,7 +276,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#deadline()
 	 */
 	@Override
-	public LocalTime deadline() {
+	public LocalTime deadline() throws Exception {
 		return this.deadlineTime.get();
 	}
 
@@ -284,7 +284,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#postpone(Duration)
 	 */
 	@Override
-	public boolean postpone(Duration d) {
+	public boolean postpone(Duration d) throws Exception {
 		boolean succeed = false;
 		succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(),
 				this.lastStartTime.get().plusHours(d.toHours()));
@@ -296,7 +296,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @see interfaces.BatteryImplementationI#cancel()
 	 */
 	@Override
-	public boolean cancel() {
+	public boolean cancel() throws Exception {
 		boolean succeed = false;
 		synchronized (this.lastStartTime) {
 			succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(), null);

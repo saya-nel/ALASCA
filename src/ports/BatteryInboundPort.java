@@ -35,130 +35,80 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 * @see interfaces.BatteryImplementationI#upMode()
 	 */
 	@Override
-	public boolean upMode() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).upMode());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean upMode() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).upMode());
 	}
 
 	/**
 	 * @see interfaces.BatteryImplementationI#upMode()
 	 */
 	@Override
-	public boolean downMode() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).downMode());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean downMode() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).downMode());
 	}
 
 	/**
 	 * @see interfaces.BatteryImplementationI#setMode(int)
 	 */
 	@Override
-	public boolean setMode(int modeIndex) {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).setMode(modeIndex));
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean setMode(int modeIndex) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).setMode(modeIndex));
 	}
 
 	/**
 	 * @see interfaces.BatteryImplementationI#currentMode()
 	 */
 	@Override
-	public int currentMode() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).currentMode());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return -1;
-		}
+	public int currentMode() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).currentMode());
 	}
 
 	/**
 	 * @see interfaces.BatteryImplementationI#hasPlan()
 	 */
 	@Override
-	public boolean hasPlan() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).hasPlan());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean hasPlan() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).hasPlan());
 	}
 
 	/**
 	 * @see interfaces.BatteryImplementationI#startTime()
 	 */
 	@Override
-	public LocalTime startTime() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).startTime());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public LocalTime startTime() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).startTime());
 	}
 
 	/**
 	 * @see interfaces.BatteryImplementationI#duration()
 	 */
 	@Override
-	public Duration duration() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).duration());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Duration duration() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).duration());
 	}
 
 	/**
 	 * @see interfaces.BatteryImplementationI#deadline()
 	 */
 	@Override
-	public LocalTime deadline() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).deadline());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public LocalTime deadline() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).deadline());
 	}
 
 	/**
 	 * @see interfaces.BatteryImplementationI#postpone(Duration)
 	 */
 	@Override
-	public boolean postpone(Duration d) {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).postpone(d));
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean postpone(Duration d) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).postpone(d));
 	}
 
 	/**
 	 * @see interfaces.BatteryImplementationI#cancel()
 	 */
 	@Override
-	public boolean cancel() {
-		try {
-			return this.getOwner().handleRequestSync(owner -> ((Battery) owner).cancel());
-		} catch (AssertionError | Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean cancel() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).cancel());
 	}
 
 }

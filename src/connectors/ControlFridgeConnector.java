@@ -4,8 +4,6 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 import interfaces.FridgeCI;
 import interfaces.SuspensionEquipmentControlCI;
 
-//TODO : revoir gestion des exeptions 
-
 /**
  * Connector between the Controller and the Fridge, TODO : this class should be
  * auto-generated in the future.
@@ -40,7 +38,7 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 * @see interfaces.StandardEquipmentControlCI#on()
 	 */
 	@Override
-	public boolean on() {
+	public boolean on() throws Exception {
 		return false;
 	}
 
@@ -48,7 +46,7 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 * @see interfaces.PlanningEquipmentControlCI#off()
 	 */
 	@Override
-	public boolean off() {
+	public boolean off() throws Exception {
 		return false;
 	}
 
@@ -56,96 +54,64 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	 * @see interfaces.PlanningEquipmentControlCI#upMode()
 	 */
 	@Override
-	public boolean upMode() {
-		try {
-			return ((FridgeCI) this.offering).upMode();
-		} catch (Exception e) {
-			return false;
-		}
+	public boolean upMode() throws Exception {
+		return ((FridgeCI) this.offering).upMode();
 	}
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#downMode()
 	 */
 	@Override
-	public boolean downMode() {
-		try {
-			return ((FridgeCI) this.offering).downMode();
-		} catch (Exception e) {
-			return false;
-		}
+	public boolean downMode() throws Exception {
+		return ((FridgeCI) this.offering).downMode();
 	}
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#setMode(int)
 	 */
 	@Override
-	public boolean setMode(int modeIndex) {
-		try {
-			return ((FridgeCI) this.offering).setMode(modeIndex);
-		} catch (Exception e) {
-			return false;
-		}
+	public boolean setMode(int modeIndex) throws Exception {
+		return ((FridgeCI) this.offering).setMode(modeIndex);
 	}
 
 	/**
 	 * @see interfaces.PlanningEquipmentControlCI#currentMode()
 	 */
 	@Override
-	public int currentMode() {
-		try {
-			return ((FridgeCI) this.offering).currentMode();
-		} catch (Exception e) {
-			return -1;
-		}
+	public int currentMode() throws Exception {
+		return ((FridgeCI) this.offering).currentMode();
 	}
 
 	/**
 	 * @see interfaces.SuspensionEquipmentControlCI#suspended()
 	 */
 	@Override
-	public boolean suspended() {
-		try {
-			return ((FridgeCI) this.offering).upMode();
-		} catch (Exception e) {
-			return false;
-		}
+	public boolean suspended() throws Exception {
+		return ((FridgeCI) this.offering).upMode();
 	}
 
 	/**
 	 * @see interfaces.SuspensionEquipmentControlCI#suspend()
 	 */
 	@Override
-	public boolean suspend() {
-		try {
-			return ((FridgeCI) this.offering).suspend();
-		} catch (Exception e) {
-			return false;
-		}
+	public boolean suspend() throws Exception {
+		return ((FridgeCI) this.offering).suspend();
 	}
 
 	/**
 	 * @see interfaces.SuspensionEquipmentControlCI#resume()
 	 */
 	@Override
-	public boolean resume() {
-		try {
-			return ((FridgeCI) this.offering).resume();
-		} catch (Exception e) {
-			return false;
-		}
+	public boolean resume() throws Exception {
+		return ((FridgeCI) this.offering).resume();
 	}
 
 	/**
 	 * @see interfaces.SuspensionEquipmentControlCI#emergency()
 	 */
 	@Override
-	public double emergency() {
-		try {
-			return ((FridgeCI) this.offering).emergency();
-		} catch (Exception e) {
-			return -1;
-		}
+	public double emergency() throws Exception {
+		return ((FridgeCI) this.offering).emergency();
 	}
 
 }

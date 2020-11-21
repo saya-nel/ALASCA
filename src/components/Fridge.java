@@ -196,7 +196,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * @see FridgeImplementationI#upMode()
 	 */
 	@Override
-	public boolean upMode() {
+	public boolean upMode() throws Exception {
 		mode = FridgeMode.NORMAL;
 		return true;
 	}
@@ -205,7 +205,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * @see FridgeImplementationI#downMode()
 	 */
 	@Override
-	public boolean downMode() {
+	public boolean downMode() throws Exception {
 		mode = FridgeMode.ECO;
 		return true;
 	}
@@ -214,7 +214,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * @see FridgeImplementationI#setMode(int)
 	 */
 	@Override
-	public boolean setMode(int modeIndex) {
+	public boolean setMode(int modeIndex) throws Exception {
 		try {
 			mode = FridgeMode.values()[modeIndex];
 			return true;
@@ -227,7 +227,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * @see FridgeImplementationI#currentMode()
 	 */
 	@Override
-	public int currentMode() {
+	public int currentMode() throws Exception {
 		return mode.ordinal();
 	}
 
@@ -235,7 +235,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * @see FridgeImplementationI#suspended()
 	 */
 	@Override
-	public boolean suspended() {
+	public boolean suspended() throws Exception {
 		return this.passive.get();
 	}
 
@@ -243,7 +243,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * @see FridgeImplementationI#suspend()
 	 */
 	@Override
-	public boolean suspend() {
+	public boolean suspend() throws Exception {
 		boolean succeed = false;
 		synchronized (this.passive) {
 			succeed = this.passive.compareAndSet(false, true);
@@ -258,7 +258,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * @see FridgeImplementationI#resume()
 	 */
 	@Override
-	public boolean resume() {
+	public boolean resume() throws Exception {
 		boolean succeed;
 		synchronized (this.passive) {
 			succeed = this.passive.compareAndSet(true, false);
@@ -273,7 +273,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * @see FridgeImplementationI#emergency()
 	 */
 	@Override
-	public double emergency() {
+	public double emergency() throws Exception {
 		synchronized (this.passive) {
 			if (!this.passive.get()) {
 				return 0.0;

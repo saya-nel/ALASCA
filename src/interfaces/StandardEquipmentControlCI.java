@@ -9,7 +9,7 @@ public interface StandardEquipmentControlCI extends RequiredCI {
 	 *
 	 * @return true if the operation succeeded or false otherwise.
 	 */
-	public boolean on();
+	public boolean on() throws Exception;
 
 	/**
 	 * switch off the equipment, returning true if the operation succeeded or false
@@ -17,7 +17,7 @@ public interface StandardEquipmentControlCI extends RequiredCI {
 	 *
 	 * @return true if the operation succeeded or false otherwise.
 	 */
-	public boolean off();
+	public boolean off() throws Exception;
 
 	/**
 	 * force the equipment to the next more energy consuming mode of operation,
@@ -25,7 +25,7 @@ public interface StandardEquipmentControlCI extends RequiredCI {
 	 *
 	 * @return true if the operation succeeded or false otherwise.
 	 */
-	public boolean upMode();
+	public boolean upMode() throws Exception;
 
 	/**
 	 * force the equipment to the next less energy consuming mode of operation,
@@ -33,7 +33,7 @@ public interface StandardEquipmentControlCI extends RequiredCI {
 	 *
 	 * @return true if the operation succeeded or false otherwise.
 	 */
-	public boolean downMode();
+	public boolean downMode() throws Exception;
 
 	/**
 	 * set the equipment to the given mode of operation, returning true if the
@@ -42,12 +42,12 @@ public interface StandardEquipmentControlCI extends RequiredCI {
 	 * @param modeIndex index of the new mode of operation.
 	 * @return true if the operation succeeded or false otherwise.
 	 */
-	public boolean setMode(int modeIndex);
+	public boolean setMode(int modeIndex) throws Exception;
 
 	/**
 	 * return the current mode of operation of the equipment.
 	 *
 	 * @return the current mode of operation of the equipment.
 	 */
-	public int currentMode();
+	public int currentMode() throws Exception;
 }
