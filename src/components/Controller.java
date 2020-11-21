@@ -5,13 +5,16 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import connectors.ControlBatteryConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import interfaces.ControllerCI;
 import interfaces.ControllerImplementationI;
+import ports.BatteryOutboundPort;
 import ports.ControllerInboundPort;
 import ports.ControllerOutboundPort;
+import utils.Log;
 
 /**
  *
@@ -21,6 +24,17 @@ import ports.ControllerOutboundPort;
 @OfferedInterfaces(offered = { ControllerCI.class })
 
 public class Controller extends AbstractComponent implements ControllerImplementationI {
+
+	/**
+	 * URI of the pool of threads for control
+	 */
+	public static final String CONTROL_EXECUTOR_URI = "control";
+
+	/**
+	 * URI of the pool of threads for registering
+	 */
+	public static final String REGISTER_EXECUTOR_URI = "register";
+
 	// ports used for registering
 	private List<ControllerInboundPort> registerRequestPort;
 
@@ -34,11 +48,22 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// the implementation of the connector's controlled methods
 	private Map<String, String> registeredDevices;
 
-	protected Controller(String uri, String[] inboundPortRegisterURI, String[] outboundPortDeviceURI) throws Exception {
+	// TODO parametres a revoir, bizarre
+	protected Controller(String uri, boolean toogleTracing, String[] inboundPortRegisterURI,
+			String[] outboundPortDeviceURI) throws Exception {
 		super(uri, 1, 0);
 		assert uri != null;
 		this.myURI = uri;
+
+		this.createNewExecutorService(CONTROL_EXECUTOR_URI, 4, false);
+		this.createNewExecutorService(REGISTER_EXECUTOR_URI, 4, false);
+
 		initialise(inboundPortRegisterURI, outboundPortDeviceURI);
+		if (toogleTracing) {
+			this.tracer.get().setTitle("Controller component");
+			this.tracer.get().setRelativePosition(0, 0);
+			this.toggleTracing();
+		}
 	}
 
 	// -------------------------------------------------------------------------
@@ -53,8 +78,9 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		// Initialize ports relative to controlling devices
 		this.controlDevicesPorts = new Vector<>();
 
+		int executorServiceIndex = this.getExecutorServiceIndex(REGISTER_EXECUTOR_URI);
 		for (String in : inboundPortRegisterURI) {
-			registerRequestPort.add(new ControllerInboundPort(in, this));
+			registerRequestPort.add(new ControllerInboundPort(in, executorServiceIndex, this));
 		}
 		for (ControllerInboundPort bom : registerRequestPort) {
 			bom.publishPort();
@@ -86,6 +112,24 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		super.shutdown();
 	}
 
+	@Override
+	public synchronized void execute() throws Exception {
+		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
+			try {
+				// wait for components to register
+				Thread.sleep(2000);
+				// connect to the battery and change the mode of the battery
+				String bipUri = (String) registeredDevices.values().toArray()[0];
+				BatteryOutboundPort bop = new BatteryOutboundPort(this);
+				bop.publishPort();
+				bop.doConnection(bipUri, ControlBatteryConnector.class.getCanonicalName());
+				bop.setMode(0);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
 	// -------------------------------------------------------------------------
 	// Component services implementation
 	// -------------------------------------------------------------------------
@@ -94,11 +138,12 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	 * @see ControllerImplementationI#register(String, String)
 	 */
 	@Override
-	public boolean register(String serial_number,  String inboundPortURI, String XMLFile) throws Exception {
+	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
 		// TODO connector generation here
 
 		// connector is generated, we can register the component
-		registeredDevices.put(serial_number, XMLFile);
+		registeredDevices.put(serial_number, inboundPortURI);
+		Log.printAndLog(this, "register(" + serial_number + ", " + inboundPortURI + ") service result : " + true);
 		return true;
 	}
 

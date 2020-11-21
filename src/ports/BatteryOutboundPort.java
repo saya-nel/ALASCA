@@ -3,6 +3,7 @@ package ports;
 import java.time.Duration;
 import java.time.LocalTime;
 
+import connectors.ControlBatteryConnector;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import interfaces.BatteryCI;
@@ -18,7 +19,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Constructor of FanOutboundPort
+	 * Constructor of ControlBatteryOutboundPort
 	 * 
 	 * @param owner owner component
 	 * @throws Exception
@@ -32,7 +33,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public float getBatteryCharge() throws Exception {
-		return ((BatteryCI) this.getConnector()).getBatteryCharge();
+		return ((ControlBatteryConnector) this.getConnector()).getBatteryCharge();
 	}
 
 	/**
@@ -40,7 +41,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public boolean upMode() throws Exception {
-		return ((BatteryCI) this.getConnector()).upMode();
+		return ((ControlBatteryConnector) this.getConnector()).upMode();
 	}
 
 	/**
@@ -48,7 +49,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public boolean downMode() throws Exception {
-		return ((BatteryCI) this.getConnector()).downMode();
+		return ((ControlBatteryConnector) this.getConnector()).downMode();
 	}
 
 	/**
@@ -56,7 +57,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
-		return ((BatteryCI) this.getConnector()).setMode(modeIndex);
+		return ((ControlBatteryConnector) this.getConnector()).setMode(modeIndex);
 	}
 
 	/**
@@ -64,7 +65,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public int currentMode() throws Exception {
-		return ((BatteryCI) this.getConnector()).currentMode();
+		return ((ControlBatteryConnector) this.getConnector()).currentMode();
 	}
 
 	/**
@@ -72,7 +73,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public boolean hasPlan() throws Exception {
-		return ((BatteryCI) this.getConnector()).hasPlan();
+		return ((ControlBatteryConnector) this.getConnector()).hasPlan();
 	}
 
 	/**
@@ -80,7 +81,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public LocalTime startTime() throws Exception {
-		return ((BatteryCI) this.getConnector()).startTime();
+		return ((ControlBatteryConnector) this.getConnector()).startTime();
 	}
 
 	/**
@@ -88,7 +89,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public Duration duration() throws Exception {
-		return ((BatteryCI) this.getConnector()).duration();
+		return ((ControlBatteryConnector) this.getConnector()).duration();
 	}
 
 	/**
@@ -96,7 +97,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public LocalTime deadline() throws Exception {
-		return ((BatteryCI) this.getConnector()).deadline();
+		return ((ControlBatteryConnector) this.getConnector()).deadline();
 	}
 
 	/**
@@ -104,7 +105,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public boolean postpone(Duration d) throws Exception {
-		return ((BatteryCI) this.getConnector()).postpone(d);
+		return ((ControlBatteryConnector) this.getConnector()).postpone(d);
 	}
 
 	/**
@@ -112,7 +113,7 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	@Override
 	public boolean cancel() throws Exception {
-		return ((BatteryCI) this.getConnector()).cancel();
+		return ((ControlBatteryConnector) this.getConnector()).cancel();
 	}
 
 }

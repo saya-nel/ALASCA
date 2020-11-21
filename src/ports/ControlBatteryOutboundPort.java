@@ -15,11 +15,11 @@ import interfaces.BatteryCI;
  * @author Bello Memmi
  *
  */
-public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI {
+public class ControlBatteryOutboundPort extends AbstractInboundPort implements BatteryCI {
 
 	private static final long serialVersionUID = 1L;
 
-	public BatteryInboundPort(String uri, ComponentI owner) throws Exception {
+	public ControlBatteryOutboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri, BatteryCI.class, owner);
 	}
 

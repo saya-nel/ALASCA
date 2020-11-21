@@ -17,6 +17,41 @@ import interfaces.WasherCI;
 public class ControlWasherConnector extends AbstractConnector implements PlanningEquipmentControlCI {
 
 	/**
+	 * @see interfaces.WasherImplementationI#isTurnedOn()
+	 */
+	public boolean isTurnedOn() throws Exception {
+		return ((WasherCI) this.offering).isTurnedOn();
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setProgramTemperature(int)
+	 */
+	public void setProgramTemperature(int temperature) throws Exception {
+		((WasherCI) this.offering).setProgramTemperature(temperature);
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#getProgramTemperature()
+	 */
+	public int getProgramTemperature() throws Exception {
+		return ((WasherCI) this.offering).getProgramDuration();
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#setProgramDuration(int)
+	 */
+	public void setProgramDuration(int duration) throws Exception {
+		((WasherCI) this.offering).setProgramDuration(duration);
+	}
+
+	/**
+	 * @see interfaces.WasherImplementationI#getProgramDuration()
+	 */
+	public int getProgramDuration() throws Exception {
+		return ((WasherCI) this.offering).getProgramDuration();
+	}
+
+	/**
 	 * @see interfaces.StandardEquipmentControlCI#on()
 	 */
 	@Override

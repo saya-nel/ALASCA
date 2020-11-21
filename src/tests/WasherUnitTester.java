@@ -12,7 +12,7 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import interfaces.WasherCI;
-import ports.WasherOutboundPort;
+import ports.ControlWasherOutboundPort;
 import utils.Log;
 
 /**
@@ -27,7 +27,7 @@ public class WasherUnitTester extends AbstractComponent {
 	/**
 	 * Washer outbound port for WasherUnitTester
 	 */
-	protected WasherOutboundPort wop;
+	protected ControlWasherOutboundPort wop;
 
 	/**
 	 * Washer inbound port to connect to URI
@@ -41,7 +41,7 @@ public class WasherUnitTester extends AbstractComponent {
 
 	private void initialise(String wipURI) throws Exception {
 		this.wipURI = wipURI;
-		this.wop = new WasherOutboundPort(this);
+		this.wop = new ControlWasherOutboundPort(this);
 		this.wop.publishPort();
 
 		this.tracer.get().setTitle("Washer tester component");

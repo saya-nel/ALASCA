@@ -2,8 +2,6 @@ package deployment;
 
 import components.Battery;
 import components.Controller;
-import components.Fan;
-import components.SolarPanels;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 
@@ -16,12 +14,13 @@ public class CVM extends AbstractCVM {
 
 	// single-JVM execution
 
-	// Components URIs
+	// Components URIs and serials
 
 	/**
 	 * Battery component URI
 	 */
 	public final static String batteryURI = "battery";
+	public final static String batterySerial = "battery1";
 
 	/**
 	 * Fan component URI
@@ -80,17 +79,10 @@ public class CVM extends AbstractCVM {
 	public void deploy() throws Exception {
 		// create Battery component
 		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
-				new Object[] { batteryURI, batteryBIP_uri });
-		// create Fan component
-		AbstractComponent.createComponent(Fan.class.getCanonicalName(), new Object[] { fanURI, fanFIP_uri });
-		// create SolarPanels component
-		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),
-				new Object[] { solarPanelsURI, solarPanelsSPIP_uri });
+				new Object[] { batteryURI, true, batterySerial, batteryBIP_uri, controllerCIP_uri, (float) 2000 });
 		// create Controller component
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
-				new Object[] { controllerURI, new String[] { controllerCIP_uri, }, new String[] {
-
-				} });
+				new Object[] { controllerURI, true, new String[] { controllerCIP_uri, }, new String[] {} });
 		super.deploy();
 	}
 

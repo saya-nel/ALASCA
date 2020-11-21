@@ -6,7 +6,7 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import interfaces.FridgeCI;
-import ports.FridgeOutboundPort;
+import ports.ControlFridgeOutboundPort;
 import utils.Log;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +22,7 @@ public class FridgeUnitTester extends AbstractComponent {
     /**
      * Fridge outbound port for FridgeUnitTester
      */
-    protected FridgeOutboundPort fop;
+    protected ControlFridgeOutboundPort fop;
 
     /**
      * Fridge inbound port to connect to URI
@@ -46,7 +46,7 @@ public class FridgeUnitTester extends AbstractComponent {
      */
     protected void initialise(String fipURI) throws Exception {
         this.fipURI = fipURI;
-        this.fop = new FridgeOutboundPort(this);
+        this.fop = new ControlFridgeOutboundPort(this);
         this.fop.publishPort();
         this.tracer.get().setTitle("Fridge tester component");
         this.tracer.get().setRelativePosition(0,0);

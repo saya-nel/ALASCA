@@ -1,5 +1,6 @@
 package ports;
 
+import connectors.ControlFridgeConnector;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import interfaces.FridgeCI;
@@ -11,7 +12,7 @@ import interfaces.FridgeImplementationI;
  * @author Bello Memmi
  *
  */
-public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI {
+public class ControlFridgeOutboundPort extends AbstractOutboundPort implements FridgeCI {
 
 	private static final long serialVersionUID = 1L;
 
@@ -21,7 +22,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 * @param owner owner of the component
 	 * @throws Exception
 	 */
-	public FridgeOutboundPort(ComponentI owner) throws Exception {
+	public ControlFridgeOutboundPort(ComponentI owner) throws Exception {
 		super(FridgeCI.class, owner);
 	}
 
@@ -30,7 +31,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public float getRequestedTemperature() throws Exception {
-		return ((FridgeCI) this.getConnector()).getRequestedTemperature();
+		return ((ControlFridgeConnector) this.getConnector()).getRequestedTemperature();
 	}
 
 	/**
@@ -38,7 +39,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public void setRequestedTemperature(float temp) throws Exception {
-		((FridgeCI) this.getConnector()).setRequestedTemperature(temp);
+		((ControlFridgeConnector) this.getConnector()).setRequestedTemperature(temp);
 	}
 
 	/**
@@ -46,7 +47,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public float getCurrentTemperature() throws Exception {
-		return ((FridgeCI) this.getConnector()).getCurrentTemperature();
+		return ((ControlFridgeConnector) this.getConnector()).getCurrentTemperature();
 	}
 
 	/**
@@ -54,7 +55,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public boolean upMode() throws Exception {
-		return ((FridgeCI) this.getConnector()).upMode();
+		return ((ControlFridgeConnector) this.getConnector()).upMode();
 	}
 
 	/**
@@ -62,7 +63,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public boolean downMode() throws Exception {
-		return ((FridgeCI) this.getConnector()).downMode();
+		return ((ControlFridgeConnector) this.getConnector()).downMode();
 	}
 
 	/**
@@ -70,7 +71,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
-		return ((FridgeCI) this.getConnector()).setMode(modeIndex);
+		return ((ControlFridgeConnector) this.getConnector()).setMode(modeIndex);
 	}
 
 	/**
@@ -78,7 +79,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public int currentMode() throws Exception {
-		return ((FridgeCI) this.getConnector()).currentMode();
+		return ((ControlFridgeConnector) this.getConnector()).currentMode();
 	}
 
 	/**
@@ -86,7 +87,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public boolean suspended() throws Exception {
-		return ((FridgeCI) this.getConnector()).suspended();
+		return ((ControlFridgeConnector) this.getConnector()).suspended();
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public boolean suspend() throws Exception {
-		return ((FridgeCI) this.getConnector()).suspend();
+		return ((ControlFridgeConnector) this.getConnector()).suspend();
 	}
 
 	/**
@@ -102,7 +103,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public boolean resume() throws Exception {
-		return ((FridgeCI) this.getConnector()).resume();
+		return ((ControlFridgeConnector) this.getConnector()).resume();
 	}
 
 	/**
@@ -110,6 +111,6 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	 */
 	@Override
 	public double emergency() throws Exception {
-		return ((FridgeCI) this.getConnector()).emergency();
+		return ((ControlFridgeConnector) this.getConnector()).emergency();
 	}
 }

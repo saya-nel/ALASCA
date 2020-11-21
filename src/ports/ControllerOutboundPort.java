@@ -12,6 +12,8 @@ import interfaces.ControllerCI;
 
 public class ControllerOutboundPort extends AbstractOutboundPort implements ControllerCI {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Constructor of the controller outbound port
 	 *
