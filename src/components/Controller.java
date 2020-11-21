@@ -120,6 +120,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 				Thread.sleep(2000);
 				// connect to the battery and change the mode of the battery
 				String bipUri = (String) registeredDevices.values().toArray()[0];
+				System.out.println("bipuri: "+bipUri);
 				BatteryOutboundPort bop = new BatteryOutboundPort(this);
 				bop.publishPort();
 				bop.doConnection(bipUri, ControlBatteryConnector.class.getCanonicalName());

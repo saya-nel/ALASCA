@@ -1,6 +1,6 @@
 package tests;
 
-import connectors.FridgeConnector;
+import connectors.ControlFridgeConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
@@ -63,7 +63,7 @@ public class FridgeUnitTester extends AbstractComponent {
     public synchronized void start() throws ComponentStartException {
         super.start();
         try {
-            this.doPortConnection(this.fop.getPortURI(), this.fipURI, FridgeConnector.class.getCanonicalName());
+            this.doPortConnection(this.fop.getPortURI(), this.fipURI, ControlFridgeConnector.class.getCanonicalName());
         } catch (Exception e) {
             throw new ComponentStartException(e);
         }
@@ -143,48 +143,6 @@ public class FridgeUnitTester extends AbstractComponent {
         Log.printAndLog(this, "done...");
     }
 
-    /**
-     * Test the getState() method
-     */
-    public void testGetState() {
-        Log.printAndLog(this, "test getState()");
-        try {
-            assertEquals(false, this.fop.getState());
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-        Log.printAndLog(this, "done...");
-    }
-
-    /**
-     * Test the switchOn() method
-     */
-    public void testSwitchOn() {
-        Log.printAndLog(this, "test switchOn()");
-        try {
-            this.fop.switchOn();
-            assertTrue(this.fop.getState());
-        } catch (Exception e)
-        {
-            assertTrue(false);
-        }
-        Log.printAndLog(this, "done...");
-    }
-
-    /**
-     * Test the switchOff() method
-     */
-    public void testSwitchOff() {
-        Log.printAndLog(this, "test switchOff()");
-        try {
-            this.fop.switchOff();
-            assertFalse(this.fop.getState());
-        } catch (Exception e)
-        {
-            assertTrue(false);
-        }
-        Log.printAndLog(this, "done...");
-    }
 
     /**
      * Run all the tests
@@ -193,9 +151,6 @@ public class FridgeUnitTester extends AbstractComponent {
         this.testGetCurrentTemperature();
         this.testGetRequestedTemperature();
         this.testSetRequestedTemperature();
-        this.testGetState();
-        this.testSwitchOn();
-        this.testSwitchOff();
         Log.printAndLog(this, "all test passed");
     }
 }

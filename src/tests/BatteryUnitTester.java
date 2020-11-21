@@ -3,7 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import connectors.BatteryConnector;
+import connectors.ControlBatteryConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
@@ -76,7 +76,7 @@ public class BatteryUnitTester extends AbstractComponent {
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.bop.getPortURI(), bipURI, BatteryConnector.class.getCanonicalName());
+			this.doPortConnection(this.bop.getPortURI(), bipURI, ControlBatteryConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -117,6 +117,19 @@ public class BatteryUnitTester extends AbstractComponent {
 	// TESTS
 	// -------------------------------------------------------------------------
 
+
+	public void testUpMode()  {
+		Log.printAndLog(this, "testUpMode()");
+		try{
+			int cur_value = this.bop.currentMode();
+			this.bop.upMode();
+			assertEquals(this.bop.currentMode(),(cur_value+1)%3);
+		}catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
 	/**
 	 * Test the getBatteryCharge method
 	 */
@@ -130,40 +143,13 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
-	/**
-	 * Test the getBatteryState method
-	 */
-	public void testGetBatteryState() {
-		Log.printAndLog(this, "test getBatteryState()");
-		try {
-			assertEquals(BatteryState.SLEEPING, this.bop.getBatteryState());
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
-
-	/**
-	 * Test the setBatteryState method
-	 */
-	public void testSetBatteryState() {
-		Log.printAndLog(this, "test setBatteryState()");
-		try {
-			bop.setBatteryState(BatteryState.RECHARGING);
-			assertEquals(BatteryState.RECHARGING, this.bop.getBatteryState());
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
 
 	/**
 	 * Run all the tests
 	 */
 	protected void runAllTests() {
 		this.testGetBatteryCharge();
-		this.testGetBatteryState();
-		this.testSetBatteryState();
+		this.testUpMode();
 		Log.printAndLog(this, "all tests passed");
 	}
 

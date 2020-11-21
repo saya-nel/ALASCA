@@ -36,13 +36,13 @@ public class CVMUnitTest extends AbstractCVM {
 	 */
 	@Override
 	public void deploy() throws Exception {
-		/*
+
 		// Battery
 		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
-				new Object[] { BATTERY_URI, BATTERY_INBOUND_PORT_URI, (float) 10000 });
+				new Object[] { BATTERY_URI,true, "serial_number_battery", BATTERY_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, (float) 10000 });
 		AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
 				new Object[] { BATTERY_INBOUND_PORT_URI });
-
+		/*
 		// Fan
 		AbstractComponent.createComponent(Fan.class.getCanonicalName(), new Object[] { FAN_URI, FAN_INBOUND_PORT_URI });
 		AbstractComponent.createComponent(FanUnitTester.class.getCanonicalName(),
@@ -67,16 +67,18 @@ public class CVMUnitTest extends AbstractCVM {
 				new Object[] { PETROLGENERATOR_INBOUND_PORT_URI });
 		*/
 		// Fridge
+		/*
 		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
 				new Object[] { FRIDGE_URI, FRIDGE_INBOUND_PORT_URI});
 		AbstractComponent.createComponent(FridgeUnitTester.class.getCanonicalName(),
 				new Object[] { FRIDGE_INBOUND_PORT_URI});
 
-
+		*/
 //		// Controller
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
 				new Object[] {
 						CONTROLLER_URI,
+						false,
 						new String[]{
 								CONTROLLER_INBOUND_PORT_URI
 						},

@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 
-import connectors.WasherConnector;
+import connectors.ControlWasherConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
@@ -60,7 +60,7 @@ public class WasherUnitTester extends AbstractComponent {
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.wop.getPortURI(), wipURI, WasherConnector.class.getCanonicalName());
+			this.doPortConnection(this.wop.getPortURI(), wipURI, ControlWasherConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -198,35 +198,6 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
-	/**
-	 * Test the getDelay method
-	 */
-	private void testGetDelay() {
-		Log.printAndLog(this, "test setGetDelay()");
-		try {
-			assertEquals(null, wop.getDelay());
-			wop.setProgramDuration(60);
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
-
-	/**
-	 * Test the setDelay method
-	 */
-	private void testSetDelay() {
-		Log.printAndLog(this, "test setDelay()");
-		try {
-			Date date = new Date();
-			wop.setDelay(date);
-			assertEquals(date, wop.getDelay());
-			wop.setProgramDuration(60);
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
 
 	/**
 	 * Run all the tests
@@ -239,8 +210,7 @@ public class WasherUnitTester extends AbstractComponent {
 		testSetProgramTemperature();
 		testSetProgramDuration();
 		testGetProgramDuration();
-		testGetDelay();
-		testSetDelay();
+
 		Log.printAndLog(this, "all tests passed");
 	}
 }
