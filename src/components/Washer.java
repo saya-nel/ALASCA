@@ -39,7 +39,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	/**
 	 * Current state of the washer
 	 */
-	protected AtomicBoolean isWorking;
+	protected AtomicBoolean isOn;
 
 	/**
 	 * Program temperature in °C
@@ -86,14 +86,17 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	 */
 	protected AtomicReference<LocalTime> deadlineTime;
 
+	/**
+	 * delay the program
+	 */
 	protected AtomicReference<Duration> postponeDur;
 
 	/**
 	 *
 	 * @param reflectionPortURI
-	 * @param wipURI
-	 * @param cip_URI
-	 * @param serial_number
+	 * @param serialNumber			serial number of Washer component
+	 * @param wipURI				inbound port's URI of Washer
+	 * @param cip_URI				inbound port's URI of controller for registering
 	 * @throws Exception
 	 */
 
@@ -124,6 +127,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		assert washerInboundPortURI != null : new PreconditionException("washerInboundPortUri != null");
 		assert !washerInboundPortURI.isEmpty() : new PreconditionException("washerInboundPortURI.isEmpty()");
 		this.setMode(0);
+		this.turnOn();
 		this.deadlineTime = null;
 		this.durationLastPlanned = null;
 		this.postponeDur = null;
@@ -174,7 +178,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 
 	@Override
 	public boolean isTurnedOn() throws Exception {
-		return this.isWorking.get();
+		return this.isOn.get();
 	}
 
 	@Override
@@ -190,14 +194,14 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public boolean turnOn() throws Exception {
 		boolean succeed = false;
-		succeed = this.isWorking.compareAndSet(false, true);
+		succeed = this.isOn.compareAndSet(false, true);
 		return succeed;
 	}
 
 	@Override
 	public boolean turnOff() throws Exception {
 		boolean succeed = false;
-		succeed = this.isWorking.compareAndSet(true, false);
+		succeed = this.isOn.compareAndSet(true, false);
 		return succeed;
 	}
 

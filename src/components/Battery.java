@@ -142,7 +142,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		assert !batteryInboundPortURI.isEmpty() : new PreconditionException("batteryInboundPortURI.isEmpty()");
 		this.operatingMode = new AtomicInteger();
 		this.setMode(BatteryState.SLEEPING.ordinal());
-		this.hasPlan = new AtomicBoolean();
+		this.hasPlan = new AtomicBoolean(false);
 		this.maximumEnergy = maximumEnergy;
 		this.bip = new ControlBatteryOutboundPort(batteryInboundPortURI, this);
 		this.bip.publishPort();
