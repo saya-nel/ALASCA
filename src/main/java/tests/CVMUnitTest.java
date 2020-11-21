@@ -40,8 +40,8 @@ public class CVMUnitTest extends AbstractCVM {
 		// Battery
 		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
 				new Object[] { BATTERY_URI,true, "serial_number_battery", BATTERY_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, (float) 10000 });
-		AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
-				new Object[] { BATTERY_INBOUND_PORT_URI });
+		//AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
+		//		new Object[] { BATTERY_INBOUND_PORT_URI });
 		/*
 		// Fan
 		AbstractComponent.createComponent(Fan.class.getCanonicalName(), new Object[] { FAN_URI, FAN_INBOUND_PORT_URI });
@@ -87,16 +87,16 @@ public class CVMUnitTest extends AbstractCVM {
 				});
 //
 //		//TODO Resoudre problème sur ControllerUnitTest Creation composant pose probleme
-		AbstractComponent.createComponent(ControllerUnitTest.class.getCanonicalName(),
-				new Object[] { CONTROLLER_INBOUND_PORT_URI});
+		//AbstractComponent.createComponent(ControllerUnitTest.class.getCanonicalName(),
+		//		new Object[] { CONTROLLER_INBOUND_PORT_URI});
 		super.deploy();
 	}
 
 	public static void main(String[] args) {
 		try {
 			CVMUnitTest cvm = new CVMUnitTest();
-			cvm.startStandardLifeCycle(1000L);
-			Thread.sleep(5000L);
+			cvm.startStandardLifeCycle(8000L);
+			Thread.sleep(8000L);
 			System.exit(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

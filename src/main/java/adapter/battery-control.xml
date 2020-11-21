@@ -1,0 +1,18 @@
+<control-adapter
+        type="suspension"
+        uid="1A10000"
+        offered="fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI">
+    <consumption nominal="200"/>
+    <getBatteryCharge>
+        <required>interfaces.BatteryCI</required>
+        <body equipmentRef="battery">
+            return battery.getBatteryCharge();
+        </body>
+    </getBatteryCharge>
+    <upMode>
+        <required>interfaces.BatteryCI</required>
+        <body equipmentRef="battery">
+            return battery.upMode();
+        </body>
+    </upMode>
+</control-adapter>

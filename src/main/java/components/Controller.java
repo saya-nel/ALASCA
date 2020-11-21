@@ -1,20 +1,40 @@
 package components;
 
+import java.io.File;
+import java.io.StringReader;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-import connectors.ControlBatteryConnector;
+import com.thaiopensource.validate.SchemaReader;
+import com.thaiopensource.validate.ValidationDriver;
+import com.thaiopensource.validate.auto.AutoSchemaReader;
+import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import interfaces.ControllerCI;
 import interfaces.ControllerImplementationI;
-import ports.BatteryOutboundPort;
+import javassist.*;
+import javassist.bytecode.AccessFlag;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.FieldInfo;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import ports.ControllerInboundPort;
 import ports.ControllerOutboundPort;
 import utils.Log;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import static java.lang.reflect.Modifier.PUBLIC;
 
 /**
  *
@@ -117,16 +137,22 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
 			try {
 				// wait for components to register
-				Thread.sleep(2000);
+				//Thread.sleep(4000);
 				// connect to the battery and change the mode of the battery
-				System.out.println(registeredDevices.values());
-				String bipUri = (String) registeredDevices.values().toArray()[1];
-				System.out.println("bipuri: "+bipUri);
-				BatteryOutboundPort bop = new BatteryOutboundPort(bipUri,this);
-				bop.publishPort();
-				bop.doConnection(bipUri, ControlBatteryConnector.class.getCanonicalName());
-				bop.upMode();
-				bop.setMode(0);
+				//System.out.println(registeredDevices.values());
+				//String bipUri = (String) registeredDevices.values().toArray()[1];
+				//System.out.println("bipuri: "+bipUri);
+				//AbstractInboundPort
+				// get uri
+				// discover from what component type it is from
+				// instantiate the correct outbound port with the uri
+				//System.out.println();
+				//BatteryOutboundPort bop = new BatteryOutboundPort(bipUri,this);
+				//bop.publishPort();
+				//bop.doConnection(bipUri, ControlBatteryConnector.class.getCanonicalName());
+				//bop.upMode();
+				//bop.setMode(0);
+				//System.out.println(this.registeredDevices);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -146,6 +172,46 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 		// connector is generated, we can register the component
 		registeredDevices.put(serial_number, inboundPortURI);
+		controlDevicesPorts.add(new ControllerOutboundPort(this));
+		controlDevicesPorts.get(controlDevicesPorts.size()-1).publishPort();
+		this.doPortConnection(this.controlDevicesPorts.get(controlDevicesPorts.size()-1).getPortURI(), inboundPortURI, ControllerConnector.class.getCanonicalName());
+
+		System.out.println("avant xml");
+
+		ClassPool classPool = ClassPool.getDefault();
+		//		System.out.println(this.getClass());
+		CtClass cc = classPool.makeClass(serial_number+"connector");
+		//cc.writeFile("src/main/generatedClasses");
+
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(new InputSource(new StringReader(XMLFile)));
+		System.out.println("My doc is : "+doc.getElementsByTagName("control-adapter"));
+
+		NodeList nodeList = doc.getElementsByTagName("control-adapter").item(0).getChildNodes();
+		for (int i=2; i< nodeList.getLength(); i++){
+			Node node = nodeList.item(i);
+			System.out.println("i"+i);
+
+			if(node.getNodeType() == Node.ELEMENT_NODE)
+			{
+				//System.out.println(node);
+				Element eElement = (Element) node;
+				NodeList children = eElement.getChildNodes();
+				for(int j=2; j<children.getLength(); j++)
+				{
+					System.out.println(eElement.getTagName());
+					Node item = children.item(j);
+					System.out.println(item.getTextContent());
+				}
+			}
+		}
+
+
+		CtMethod m = new CtMethod(CtClass.intType, "move", new CtClass[] {CtClass.intType}, cc);//CtNewMethod.make("public int xmove(int dx) { x += dx; }",cc);
+		cc.addMethod(m);
+
+		cc.writeFile("src/main/generatedClasses");
 		Log.printAndLog(this, "register(" + serial_number + ", " + inboundPortURI + ") service result : " + true);
 		return true;
 	}

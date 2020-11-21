@@ -32,8 +32,24 @@ import utils.Log;
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Battery extends AbstractComponent implements BatteryImplementationI {
 
-	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "";
-
+	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" +
+			"        type=\"suspension\"\n" +
+			"        uid=\"1A10000\"\n" +
+			"        offered=\"fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI\">\n" +
+			"    <consumption nominal=\"200\"/>\n" +
+			"    <getBatteryCharge>\n" +
+			"        <required>interfaces.BatteryCI</required>\n" +
+			"        <body equipmentRef=\"battery\">\n" +
+			"            return battery.getBatteryCharge();\n" +
+			"        </body>\n" +
+			"    </getBatteryCharge>\n" +
+			"    <upMode>\n" +
+			"        <required>interfaces.BatteryCI</required>\n" +
+			"        <body equipmentRef=\"battery\">\n" +
+			"            return battery.upMode();\n" +
+			"        </body>\n" +
+			"    </upMode>\n" +
+			"</control-adapter>\n";
 	/**
 	 * Component URI
 	 */
@@ -42,7 +58,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	/**
 	 * Serial number for registering on controller
 	 */
-	protected String serialNumber;
+	protected String serialNumber= "SERIALNUMBER";
 
 	/**
 	 * Actual charge of battery in mA/h
