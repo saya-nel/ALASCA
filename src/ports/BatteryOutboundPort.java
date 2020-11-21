@@ -3,6 +3,7 @@ package ports;
 import java.time.Duration;
 import java.time.LocalTime;
 
+import components.Battery;
 import connectors.ControlBatteryConnector;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
@@ -26,6 +27,10 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 */
 	public BatteryOutboundPort(ComponentI owner) throws Exception {
 		super(BatteryCI.class, owner);
+	}
+
+	public BatteryOutboundPort(String inbound_uri, ComponentI owner) throws Exception {
+		super(inbound_uri, BatteryCI.class, owner);
 	}
 
 	/**

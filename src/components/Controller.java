@@ -55,8 +55,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		assert uri != null;
 		this.myURI = uri;
 
-		this.createNewExecutorService(CONTROL_EXECUTOR_URI, 4, false);
-		this.createNewExecutorService(REGISTER_EXECUTOR_URI, 4, false);
+		this.createNewExecutorService(CONTROL_EXECUTOR_URI, 1, false);
+		this.createNewExecutorService(REGISTER_EXECUTOR_URI, 1, false);
 
 		initialise(inboundPortRegisterURI, outboundPortDeviceURI);
 		if (toogleTracing) {
@@ -119,11 +119,13 @@ public class Controller extends AbstractComponent implements ControllerImplement
 				// wait for components to register
 				Thread.sleep(2000);
 				// connect to the battery and change the mode of the battery
-				String bipUri = (String) registeredDevices.values().toArray()[0];
+				System.out.println(registeredDevices.values());
+				String bipUri = (String) registeredDevices.values().toArray()[1];
 				System.out.println("bipuri: "+bipUri);
-				BatteryOutboundPort bop = new BatteryOutboundPort(this);
+				BatteryOutboundPort bop = new BatteryOutboundPort(bipUri,this);
 				bop.publishPort();
 				bop.doConnection(bipUri, ControlBatteryConnector.class.getCanonicalName());
+				bop.upMode();
 				bop.setMode(0);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -136,7 +138,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see ControllerImplementationI#register(String, String)
+	 * @see ControllerImplementationI#register(String,String, String)
 	 */
 	@Override
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {

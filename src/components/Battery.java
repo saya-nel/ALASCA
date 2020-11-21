@@ -12,11 +12,12 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import fr.sorbonne_u.components.ports.InboundPortI;
 import fr.sorbonne_u.exceptions.PreconditionException;
 import interfaces.BatteryCI;
 import interfaces.BatteryImplementationI;
 import interfaces.ControllerCI;
-import ports.ControlBatteryOutboundPort;
+import ports.BatteryInboundPort;
 import ports.ControllerOutboundPort;
 import utils.BatteryState;
 import utils.Log;
@@ -61,7 +62,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	/**
 	 * Inbound port of the battery
 	 */
-	protected ControlBatteryOutboundPort bip;
+	protected BatteryInboundPort bip;
 
 	/**
 	 * Outbound port of the battery for registering
@@ -144,7 +145,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		this.setMode(BatteryState.SLEEPING.ordinal());
 		this.hasPlan = new AtomicBoolean(false);
 		this.maximumEnergy = maximumEnergy;
-		//this.bip = new BatteryI(batteryInboundPortURI, this);
+		this.bip = new BatteryInboundPort(batteryInboundPortURI, this);
 		this.bip.publishPort();
 		this.cop = new ControllerOutboundPort(this);
 		this.cop.publishPort();
