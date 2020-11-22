@@ -1,7 +1,7 @@
 <control-adapter
         type="suspension"
         uid="1A10000"
-        offered="fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI">
+        offered="interfaces.BatteryCI">
     <consumption nominal="200"/>
     <getBatteryCharge>
         <required>interfaces.BatteryCI</required>

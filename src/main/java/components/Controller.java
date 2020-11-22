@@ -1,17 +1,10 @@
 package components;
 
-import java.io.File;
 import java.io.StringReader;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.thaiopensource.validate.SchemaReader;
-import com.thaiopensource.validate.ValidationDriver;
-import com.thaiopensource.validate.auto.AutoSchemaReader;
 import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -19,9 +12,6 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import interfaces.ControllerCI;
 import interfaces.ControllerImplementationI;
 import javassist.*;
-import javassist.bytecode.AccessFlag;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.FieldInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -176,17 +166,33 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		controlDevicesPorts.get(controlDevicesPorts.size()-1).publishPort();
 		this.doPortConnection(this.controlDevicesPorts.get(controlDevicesPorts.size()-1).getPortURI(), inboundPortURI, ControllerConnector.class.getCanonicalName());
 
-		System.out.println("avant xml");
-
+		// Génération de classe
 		ClassPool classPool = ClassPool.getDefault();
-		//		System.out.println(this.getClass());
 		CtClass cc = classPool.makeClass(serial_number+"connector");
-		//cc.writeFile("src/main/generatedClasses");
+		// extends abstractConnector
+		cc.setSuperclass(classPool.get("fr.sorbonne_u.components.connectors.AbstractConnector"));
+		//cc.setInterfaces(new CtClass[]{classPool.get("interfaces.ControlBatteryConnector")});
 
+		//parse xml
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(new InputSource(new StringReader(XMLFile)));
+
+
 		System.out.println("My doc is : "+doc.getElementsByTagName("control-adapter"));
+		//Détermination du type d'équipement interface à implémenter
+		String typeEquipment = doc.getElementsByTagName("control-adapter").item(0).getAttributes().getNamedItem("type").getTextContent();
+		switch(typeEquipment)
+		{
+			case "suspension":
+				cc.setInterfaces(new CtClass[] {classPool.get("interfaces.SuspensionEquipmentControlCI")});
+				break;
+			//case "standard":
+			//	cc.setInterfaces();
+
+		}
+		System.out.println("type : "+typeEquipment);
+
 
 		NodeList nodeList = doc.getElementsByTagName("control-adapter").item(0).getChildNodes();
 		for (int i=2; i< nodeList.getLength(); i++){
@@ -197,18 +203,30 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			{
 				//System.out.println(node);
 				Element eElement = (Element) node;
-				NodeList children = eElement.getChildNodes();
-				for(int j=2; j<children.getLength(); j++)
-				{
-					System.out.println(eElement.getTagName());
-					Node item = children.item(j);
-					System.out.println(item.getTextContent());
-				}
+				System.out.println("eElement: "+eElement);
+				System.out.println("eElement tag name: "+eElement.getTagName());
+				CtMethod m = new CtMethod(CtClass.voidType, eElement.getTagName(), new CtClass[] {}, cc);
+
+				String body = eElement.getElementsByTagName("body").item(0).getTextContent() ;
+				String req = eElement.getElementsByTagName("required").item(0).getTextContent();
+				//System.out.println("required: "+req);
+				String nameComponent = eElement.getElementsByTagName("body").item(0).getAttributes().getNamedItem("equipmentRef").getTextContent();
+				System.out.println("name component :"+nameComponent);
+				String body2 = req + " " + nameComponent + " = "+ "("+req+") this.offering;\n";
+				System.out.println("body2: "+body2);
+				String body3 = body2 + body;
+				//System.out.println("body: "+ body);
+				System.out.println("body3: "+body3);
+				//m.setBody(body);
+				//System.out.println(m);
+				System.out.println("content source: "+eElement.getElementsByTagName("body").item(0).getTextContent());
+				cc.addMethod(m);
 			}
 		}
 
 
-		CtMethod m = new CtMethod(CtClass.intType, "move", new CtClass[] {CtClass.intType}, cc);//CtNewMethod.make("public int xmove(int dx) { x += dx; }",cc);
+		CtMethod m = new CtMethod(CtClass.intType, "move", new CtClass[] {}, cc);//CtNewMethod.make("public int xmove(int dx) { x += dx; }",cc);
+		m.setBody("return 3;");
 		cc.addMethod(m);
 
 		cc.writeFile("src/main/generatedClasses");
