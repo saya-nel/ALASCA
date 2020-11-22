@@ -37,12 +37,6 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 			"        uid=\"1A10000\"\n" +
 			"        offered=\"fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI\">\n" +
 			"    <consumption nominal=\"200\"/>\n" +
-			"    <getBatteryCharge>\n" +
-			"        <required>interfaces.BatteryCI</required>\n" +
-			"        <body equipmentRef=\"battery\">\n" +
-			"            return battery.getBatteryCharge();\n" +
-			"        </body>\n" +
-			"    </getBatteryCharge>\n" +
 			"    <upMode>\n" +
 			"        <required>interfaces.BatteryCI</required>\n" +
 			"        <body equipmentRef=\"battery\">\n" +

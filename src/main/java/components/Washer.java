@@ -24,7 +24,24 @@ import utils.WasherModes;
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Washer extends AbstractComponent implements WasherImplementationI {
 
-	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "";
+	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" +
+			"        type=\"planning\"\n" +
+			"        uid=\"1A10000\"\n" +
+			"        offered=\"interfaces.WasherCI\">\n" +
+			"    <consumption nominal=\"2000\" />\n" +
+			"    <startTime>\n" +
+			"        <required>interfaces.WasherCI</required>\n" +
+			"        <body equipmentRef=\"washer\">\n" +
+			"            return washer.startTime();\n" +
+			"        </body>\n" +
+			"    </startTime>\n" +
+			"    <on>\n" +
+			"        <required>interfaces.WasherCI</required>\n" +
+			"        <body equipmentRef=\"washer\">\n" +
+			"            return washer.turnOn();\n" +
+			"        </body>\n" +
+			"    </on>\n" +
+			"</control-adapter>\n";
 
 	/**
 	 * Component URI
@@ -126,6 +143,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	protected void initialise(String washerInboundPortURI) throws Exception {
 		assert washerInboundPortURI != null : new PreconditionException("washerInboundPortUri != null");
 		assert !washerInboundPortURI.isEmpty() : new PreconditionException("washerInboundPortURI.isEmpty()");
+		this.mode = new AtomicInteger();
+		this.isOn = new AtomicBoolean();
+		this.hasPlan = new AtomicBoolean();
 		this.setMode(0);
 		this.turnOn();
 		this.deadlineTime = null;
@@ -159,6 +179,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
+			System.out.println("controlconnector :"+ControllerConnector.class.getCanonicalName());
 			this.doPortConnection(this.cop.getPortURI(), this.cip_uri, ControllerConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);

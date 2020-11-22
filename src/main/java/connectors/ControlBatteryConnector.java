@@ -20,7 +20,7 @@ public class ControlBatteryConnector extends AbstractConnector implements Planni
 	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
 	 */
 	public float getBatteryCharge() throws Exception {
-		return ((BatteryCI) this.offering).getBatteryCharge();
+		return ((BatteryCI) super.offering).getBatteryCharge();
 	}
 
 	/**

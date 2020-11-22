@@ -38,8 +38,8 @@ public class CVMUnitTest extends AbstractCVM {
 	public void deploy() throws Exception {
 
 		// Battery
-		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
-				new Object[] { BATTERY_URI,true, "serial_number_battery", BATTERY_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, (float) 10000 });
+		//AbstractComponent.createComponent(Battery.class.getCanonicalName(),
+		//		new Object[] { BATTERY_URI,true, "serial_number_battery", BATTERY_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, (float) 10000 });
 		//AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
 		//		new Object[] { BATTERY_INBOUND_PORT_URI });
 		/*
@@ -74,6 +74,9 @@ public class CVMUnitTest extends AbstractCVM {
 				new Object[] { FRIDGE_INBOUND_PORT_URI});
 
 		*/
+		//Washer
+		AbstractComponent.createComponent(Washer.class.getCanonicalName(),
+				new Object[] {WASHER_URI,"WASHER_SERIAL_NUMBER", WASHER_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI});
 //		// Controller
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
 				new Object[] {
@@ -95,8 +98,8 @@ public class CVMUnitTest extends AbstractCVM {
 	public static void main(String[] args) {
 		try {
 			CVMUnitTest cvm = new CVMUnitTest();
-			cvm.startStandardLifeCycle(8000L);
-			Thread.sleep(8000L);
+			cvm.startStandardLifeCycle(1000L);
+			Thread.sleep(1000L);
 			System.exit(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

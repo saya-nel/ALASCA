@@ -11,6 +11,7 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import interfaces.ControllerCI;
 import interfaces.ControllerImplementationI;
+import interfaces.SuspensionEquipmentControlCI;
 import javassist.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,6 +20,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import ports.ControllerInboundPort;
 import ports.ControllerOutboundPort;
+import ports.PlanningEquipmentControlOutboundPort;
+import ports.SuspensionEquipmentControlOutboundPort;
 import utils.Log;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -126,8 +129,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	public synchronized void execute() throws Exception {
 		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
 			try {
+				//Thread.sleep(10000);
 				// wait for components to register
-				//Thread.sleep(4000);
 				// connect to the battery and change the mode of the battery
 				//System.out.println(registeredDevices.values());
 				//String bipUri = (String) registeredDevices.values().toArray()[1];
@@ -168,68 +171,103 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 		// Génération de classe
 		ClassPool classPool = ClassPool.getDefault();
-		CtClass cc = classPool.makeClass(serial_number+"connector");
+		CtClass cc = classPool.makeClass(serial_number+"_connector");
+
 		// extends abstractConnector
 		cc.setSuperclass(classPool.get("fr.sorbonne_u.components.connectors.AbstractConnector"));
-		//cc.setInterfaces(new CtClass[]{classPool.get("interfaces.ControlBatteryConnector")});
 
 		//parse xml
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(new InputSource(new StringReader(XMLFile)));
 
-
-		System.out.println("My doc is : "+doc.getElementsByTagName("control-adapter"));
 		//Détermination du type d'équipement interface à implémenter
 		String typeEquipment = doc.getElementsByTagName("control-adapter").item(0).getAttributes().getNamedItem("type").getTextContent();
+
 		switch(typeEquipment)
 		{
 			case "suspension":
 				cc.setInterfaces(new CtClass[] {classPool.get("interfaces.SuspensionEquipmentControlCI")});
 				break;
-			//case "standard":
-			//	cc.setInterfaces();
-
+			case "planning":
+				cc.setInterfaces(new CtClass[] {classPool.get("interfaces.PlanningEquipmentControlCI")});
+				break;
+			default:
+				cc.setInterfaces(new CtClass[] {classPool.get("interfaces.StandardEquipmentControlCI")});
 		}
 		System.out.println("type : "+typeEquipment);
 
 
 		NodeList nodeList = doc.getElementsByTagName("control-adapter").item(0).getChildNodes();
 		for (int i=2; i< nodeList.getLength(); i++){
+			// method
+			String prototypeFunction ;
 			Node node = nodeList.item(i);
-			System.out.println("i"+i);
 
 			if(node.getNodeType() == Node.ELEMENT_NODE)
 			{
-				//System.out.println(node);
 				Element eElement = (Element) node;
-				System.out.println("eElement: "+eElement);
-				System.out.println("eElement tag name: "+eElement.getTagName());
-				CtMethod m = new CtMethod(CtClass.voidType, eElement.getTagName(), new CtClass[] {}, cc);
+				String functionName = eElement.getTagName();
+				switch(functionName){
+					case "currentMode":
+						prototypeFunction = "public int currentMode() throws Exception ";
+						break;
+					case "emergency":
+						prototypeFunction = "public double emergency() throws Exception";
+						break;
+					case "startTime":
+						prototypeFunction = "public java.time.LocalTime startTime() throws Exception";
+						break;
+					case "duration":
+						prototypeFunction = "public java.time.Duration duration() throws Exception";
+						break;
+					default:
+						prototypeFunction = "public boolean "+functionName+"() throws Exception";
+				}
 
 				String body = eElement.getElementsByTagName("body").item(0).getTextContent() ;
 				String req = eElement.getElementsByTagName("required").item(0).getTextContent();
-				//System.out.println("required: "+req);
-				String nameComponent = eElement.getElementsByTagName("body").item(0).getAttributes().getNamedItem("equipmentRef").getTextContent();
-				System.out.println("name component :"+nameComponent);
-				String body2 = req + " " + nameComponent + " = "+ "("+req+") this.offering;\n";
-				System.out.println("body2: "+body2);
+				String nameEquipment = eElement.getElementsByTagName("body").item(0).getAttributes().getNamedItem("equipmentRef").getTextContent();
+				String body2 = req + " " + nameEquipment + " = "+ "("+req+") this.offering;";
 				String body3 = body2 + body;
-				//System.out.println("body: "+ body);
-				System.out.println("body3: "+body3);
-				//m.setBody(body);
-				//System.out.println(m);
-				System.out.println("content source: "+eElement.getElementsByTagName("body").item(0).getTextContent());
+				String function = prototypeFunction + "{\n" + body3 + "}";
+				System.out.println("function: "+ function);
+				CtMethod m = CtMethod.make(function,cc);
 				cc.addMethod(m);
 			}
 		}
 
 
-		CtMethod m = new CtMethod(CtClass.intType, "move", new CtClass[] {}, cc);//CtNewMethod.make("public int xmove(int dx) { x += dx; }",cc);
-		m.setBody("return 3;");
-		cc.addMethod(m);
 
-		cc.writeFile("src/main/generatedClasses");
+
+		cc.writeFile("src/main/java/generatedClasses");
+		switch(typeEquipment){
+			case "suspension":
+				this.doPortConnection(inboundPortURI,
+						new SuspensionEquipmentControlOutboundPort(this).getPortURI(),
+						serial_number+"_connector.class");
+				System.out.println("ports "+this.portURIs2ports);
+				break;
+			case "planning":
+				System.out.println("in planning");
+				PlanningEquipmentControlOutboundPort out = new PlanningEquipmentControlOutboundPort(this);
+				out.publishPort();
+
+				//System.out.println("ports" + out.getPortURI());
+				try {
+					this.doPortConnection(inboundPortURI,
+							out.getPortURI(),
+							"generatedClasses.WASHER_SERIAL_NUMBER_connector");
+				} catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+
+				//TODO Régler le problème de synchronisation doPortConnection pas fait
+
+				break;
+
+		}
 		Log.printAndLog(this, "register(" + serial_number + ", " + inboundPortURI + ") service result : " + true);
 		return true;
 	}

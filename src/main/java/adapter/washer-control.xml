@@ -1,0 +1,18 @@
+<control-adapter
+        type="planning"
+        uid="1A10000"
+        offered="interfaces.WasherCI">
+    <consumption nominal="2000" />
+    <startTime>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.startTime();
+        </body>
+    </startTime>
+    <on>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.turnOn();
+        </body>
+    </on>
+</control-adapter>
