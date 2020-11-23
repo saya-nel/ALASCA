@@ -15,4 +15,59 @@
             return washer.turnOn();
         </body>
     </on>
+    <off>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.turnOff();
+        </body>
+    </off>
+    <hasPlan>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.hasPlan();
+        </body>
+    </hasPlan>
+    <duration>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.duration();
+        </body>
+    </duration>
+    <deadline>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.deadline();
+        </body>
+    </deadline>
+    <postpone>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.postpone();
+        </body>
+    </postpone>
+    <cancel>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.cancel();
+        </body>
+    </cancel>
+
+    <upMode>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.upMode();
+        </body>
+    </upMode>
+    <downMode>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.downMode();
+        </body>
+    </downMode>
+    <currentMode>
+        <required>interfaces.WasherCI</required>
+        <body equipmentRef="washer">
+            return washer.currentMode();
+        </body>
+    </currentMode>
 </control-adapter>

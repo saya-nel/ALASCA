@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
+
 import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import interfaces.ControllerCI;
 import interfaces.ControllerImplementationI;
 import interfaces.SuspensionEquipmentControlCI;
@@ -60,6 +63,11 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// Map serial number in key and XMLFile content this xml is supposed to contain
 	// the implementation of the connector's controlled methods
 	private Map<String, String> registeredDevices;
+
+	//mutex
+	private ReentrantLock mutex_register = new ReentrantLock();
+
+	public static final String REGISTERING_POOL = "registering-pool";
 
 	// TODO parametres a revoir, bizarre
 	protected Controller(String uri, boolean toogleTracing, String[] inboundPortRegisterURI,
@@ -129,7 +137,9 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	public synchronized void execute() throws Exception {
 		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
 			try {
-				//Thread.sleep(10000);
+				Log.printAndLog(this, "in execute");
+
+				//this.mutex_register.lock();
 				// wait for components to register
 				// connect to the battery and change the mode of the battery
 				//System.out.println(registeredDevices.values());
@@ -152,6 +162,12 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		});
 	}
 
+	@Override
+	public synchronized  void start() throws ComponentStartException {
+		super.start();
+
+
+	}
 	// -------------------------------------------------------------------------
 	// Component services implementation
 	// -------------------------------------------------------------------------
@@ -162,6 +178,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	@Override
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
 		// TODO connector generation here
+
 
 		// connector is generated, we can register the component
 		registeredDevices.put(serial_number, inboundPortURI);
@@ -241,26 +258,28 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 
 		cc.writeFile("src/main/java/generatedClasses");
+
 		switch(typeEquipment){
 			case "suspension":
 				this.doPortConnection(inboundPortURI,
 						new SuspensionEquipmentControlOutboundPort(this).getPortURI(),
-						serial_number+"_connector.class");
+						"generatedClasses."+serial_number+"_connector");
 				System.out.println("ports "+this.portURIs2ports);
 				break;
 			case "planning":
 				System.out.println("in planning");
-				PlanningEquipmentControlOutboundPort out = new PlanningEquipmentControlOutboundPort(this);
+				PlanningEquipmentControlOutboundPort out = new PlanningEquipmentControlOutboundPort(inboundPortURI,this);
 				out.publishPort();
 
 				//System.out.println("ports" + out.getPortURI());
 				try {
-					this.doPortConnection(inboundPortURI,
-							out.getPortURI(),
-							"generatedClasses.WASHER_SERIAL_NUMBER_connector");
+
+					out.doConnection(inboundPortURI,"generatedClasses."+serial_number+"_connector");
+					boolean succeed = out.downMode();
 				} catch(Exception e)
 				{
 					e.printStackTrace();
+
 				}
 
 				//TODO Régler le problème de synchronisation doPortConnection pas fait
@@ -269,6 +288,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 		}
 		Log.printAndLog(this, "register(" + serial_number + ", " + inboundPortURI + ") service result : " + true);
+
 		return true;
 	}
 

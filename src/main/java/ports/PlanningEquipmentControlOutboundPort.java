@@ -13,6 +13,9 @@ public class PlanningEquipmentControlOutboundPort extends AbstractOutboundPort i
         super(PlanningEquipmentControlCI.class, owner);
     }
 
+    public PlanningEquipmentControlOutboundPort(String inbound_uri, ComponentI owner) throws Exception{
+        super(inbound_uri,PlanningEquipmentControlCI.class, owner);
+    }
 
     @Override
     public boolean hasPlan() throws Exception {

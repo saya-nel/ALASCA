@@ -81,7 +81,7 @@ public class CVMUnitTest extends AbstractCVM {
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
 				new Object[] {
 						CONTROLLER_URI,
-						false,
+						true,
 						new String[]{
 								CONTROLLER_INBOUND_PORT_URI
 						},
@@ -99,7 +99,7 @@ public class CVMUnitTest extends AbstractCVM {
 		try {
 			CVMUnitTest cvm = new CVMUnitTest();
 			cvm.startStandardLifeCycle(1000L);
-			Thread.sleep(1000L);
+			Thread.sleep(700L);
 			System.exit(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

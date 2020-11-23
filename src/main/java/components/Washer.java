@@ -166,6 +166,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	public synchronized void shutdown() throws ComponentShutdownException {
 		try {
 			this.wip.unpublishPort();
+			this.cop.unpublishPort();
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e);
 		}
@@ -178,9 +179,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public synchronized void start() throws ComponentStartException {
 		super.start();
-		try {
-			System.out.println("controlconnector :"+ControllerConnector.class.getCanonicalName());
+		try {//port écoute des register
 			this.doPortConnection(this.cop.getPortURI(), this.cip_uri, ControllerConnector.class.getCanonicalName());
+
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -188,8 +189,11 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 
 	@Override
 	public synchronized void execute() throws Exception {
+		Thread.sleep(10);
+		System.out.println("in execute washer");
 		boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(),
 				Washer.CONTROL_INTERFACE_DESCRIPTOR);
+		System.out.println("isRegister: "+isRegister);
 		if (!isRegister)
 			throw new Exception("can't register to controller");
 	}
