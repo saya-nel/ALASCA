@@ -1,7 +1,5 @@
 package main.java.ports;
 
-import java.util.Map;
-
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import main.java.components.Controller;
@@ -24,8 +22,4 @@ public class ControllerInboundPort extends AbstractInboundPort implements Contro
 				owner -> ((Controller) owner).register(serial_number, inboundPortURI, XMLFile));
 	}
 
-	@Override
-	public Map<String, String> getRegisteredDevices() throws Exception {
-		return this.getOwner().handleRequestSync(executorIndex, owner -> ((Controller) owner).getRegisteredDevices());
-	}
 }

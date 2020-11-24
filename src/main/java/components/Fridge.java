@@ -1,5 +1,7 @@
 package main.java.components;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,8 +24,6 @@ import main.java.utils.FridgeMode;
 @OfferedInterfaces(offered = { FridgeCI.class })
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Fridge extends AbstractComponent implements FridgeImplementationI {
-
-	public static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter type=\"suspension\" uid=\"1A10000\" offered=\"interfaces.FridgeCI\">  <consumption nominal=\"2000\" />  <on>  <required>interfaces.FridgeCI</required> <body equipmentRef=\"fridge\"> fridge.switchOn(); </body> </on> <off> <body equipmentRef=\"fridge\">fridge.switchOff();</body> </off> <suspend><body equipmentRef=\"fridge\"> return fridge.passivate();</body> </suspend> <resume> <body equipmentRef=\"fridge\">return fridge.activate();</body> </resume> <active> <body equipmentRef=\"fridge\">return fridge.active();</body> </active> <emergency> <body equipmentRef=\"fridge\">return fridge.degreeOfEmergency();</body> </emergency> </control-adapter>";
 
 	/**
 	 * Component URI
@@ -155,7 +155,11 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 
 	@Override
 	public synchronized void execute() throws Exception {
-		this.cop.register(this.serialNumber, this.fip.getPortURI(), Fridge.CONTROL_INTERFACE_DESCRIPTOR);
+		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/fridge-control.xml"));
+		String xmlFile = new String(encoded, "UTF-8");
+		boolean isRegister = this.cop.register(this.serialNumber, this.fip.getPortURI(), xmlFile);
+		if (!isRegister)
+			throw new Exception("Fridge can't register to controller");
 	}
 	// ----------------------------------------------------------------------------
 	// Component services implementation

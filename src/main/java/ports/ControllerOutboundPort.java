@@ -1,11 +1,5 @@
 package main.java.ports;
 
-/**
- * Controller outbound port
- */
-
-import java.util.Map;
-
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.interfaces.ControllerCI;
@@ -39,11 +33,4 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 		return ((ControllerCI) this.getConnector()).register(serial_number, inboundPortURI, XMLFile);
 	}
 
-	/**
-	 * @see interfaces.ControllerImplementationI#getRegisteredDevices()
-	 */
-	@Override
-	public Map<String, String> getRegisteredDevices() throws Exception {
-		return ((ControllerCI) this.getConnector()).getRegisteredDevices();
-	}
 }

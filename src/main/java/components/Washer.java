@@ -1,5 +1,7 @@
 package main.java.components;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,14 +25,6 @@ import main.java.utils.WasherModes;
 @OfferedInterfaces(offered = { WasherCI.class })
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Washer extends AbstractComponent implements WasherImplementationI {
-
-	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" + "        type=\"planning\"\n"
-			+ "        uid=\"1A10000\"\n" + "        offered=\"interfaces.WasherCI\">\n"
-			+ "    <consumption nominal=\"2000\" />\n" + "    <startTime>\n"
-			+ "        <required>interfaces.WasherCI</required>\n" + "        <body equipmentRef=\"washer\">\n"
-			+ "            return washer.startTime();\n" + "        </body>\n" + "    </startTime>\n" + "    <on>\n"
-			+ "        <required>interfaces.WasherCI</required>\n" + "        <body equipmentRef=\"washer\">\n"
-			+ "            return washer.turnOn();\n" + "        </body>\n" + "    </on>\n" + "</control-adapter>\n";
 
 	/**
 	 * Component URI
@@ -178,13 +172,11 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 
 	@Override
 	public synchronized void execute() throws Exception {
-		Thread.sleep(10);
-		System.out.println("in execute washer");
-		boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(),
-				Washer.CONTROL_INTERFACE_DESCRIPTOR);
-		System.out.println("isRegister: " + isRegister);
+		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/washer-control.xml"));
+		String xmlFile = new String(encoded, "UTF-8");
+		boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(), xmlFile);
 		if (!isRegister)
-			throw new Exception("can't register to controller");
+			throw new Exception("Washer can't register to controller");
 	}
 	// -------------------------------------------------------------------------
 	// Component services implementation
@@ -295,7 +287,6 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 			succeed = this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), null);
 			succeed = this.deadlineTime.compareAndSet(this.deadlineTime.get(), null);
 		}
-
 		return succeed;
 	}
 

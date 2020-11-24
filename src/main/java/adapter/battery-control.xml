@@ -3,16 +3,16 @@
         uid="1A10000"
         offered="main.java.interfaces.BatteryCI">
     <consumption nominal="200"/>
-    <getBatteryCharge>
-        <required>main.java.interfaces.BatteryCI</required>
-        <body equipmentRef="battery">
-            return battery.getBatteryCharge();
-        </body>
-    </getBatteryCharge>
     <upMode>
         <required>main.java.interfaces.BatteryCI</required>
         <body equipmentRef="battery">
             return battery.upMode();
         </body>
     </upMode>
+    <downMode>
+	<required>main.java.interfaces.BatteryCI</required>
+        <body equipmentRef="battery">
+	    return battery.downMode();
+	</body>
+    </downMode>
 </control-adapter>

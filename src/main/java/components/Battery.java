@@ -1,5 +1,7 @@
 package main.java.components;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,13 +33,6 @@ import main.java.utils.Log;
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Battery extends AbstractComponent implements BatteryImplementationI {
 
-	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" + "        type=\"planning\"\n"
-			+ "        uid=\"1A10000\"\n"
-			+ "        offered=\"fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI\">\n"
-			+ "    <consumption nominal=\"200\"/>\n" + "    <upMode>\n"
-			+ "        <required>main.java.interfaces.BatteryCI</required>\n"
-			+ "        <body equipmentRef=\"battery\">\n" + "            return battery.upMode();\n"
-			+ "        </body>\n" + "    </upMode>\n" + "</control-adapter>\n";
 	/**
 	 * Component URI
 	 */
@@ -193,10 +188,12 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 */
 	@Override
 	public synchronized void execute() throws Exception {
-		boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(),
-				Battery.CONTROL_INTERFACE_DESCRIPTOR);
+
+		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
+		String xmlFile = new String(encoded, "UTF-8");
+		boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(), xmlFile);
 		if (!isRegister)
-			throw new Exception("can't register to controller");
+			throw new Exception("Battery can't register to controller");
 	}
 
 	// -------------------------------------------------------------------------

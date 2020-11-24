@@ -2,7 +2,6 @@ package main.java.components;
 
 import java.io.StringReader;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -22,7 +21,6 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import main.java.connectors.ControlBatteryConnector;
 import main.java.interfaces.ControllerCI;
 import main.java.interfaces.ControllerImplementationI;
 import main.java.interfaces.PlanningEquipmentControlCI;
@@ -141,7 +139,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 				// iter on planning equipments
 				for (PlanningEquipmentControlOutboundPort plecop : this.plecops) {
 					plecop.upMode();
-					plecop.setMode(0);
+					plecop.downMode();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -159,7 +157,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	@Override
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
 		// TODO connector generation here
-		if (!generateConnector(serial_number, XMLFile))
+		Class<?> generatedConnector = generateConnector(serial_number, XMLFile);
+		if (generatedConnector == null)
 			return false;
 
 		// connector is generated, we can register the component
@@ -173,36 +172,22 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			SuspensionEquipmentControlOutboundPort suecop = new SuspensionEquipmentControlOutboundPort(this);
 			suecop.publishPort();
 			suecops.add(suecop);
-			// TODO remplacer ici avec le conneteur générer
-			this.doPortConnection(suecop.getPortURI(), inboundPortURI,
-					ControlBatteryConnector.class.getCanonicalName());
+			this.doPortConnection(suecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
 			break;
 		case "planning":
 			PlanningEquipmentControlOutboundPort plecop = new PlanningEquipmentControlOutboundPort(this);
 			plecop.publishPort();
 			plecops.add(plecop);
-			// TODO remplacer ici avec le conneteur générer
-			this.doPortConnection(plecop.getPortURI(), inboundPortURI,
-					ControlBatteryConnector.class.getCanonicalName());
+			this.doPortConnection(plecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
 			break;
 		default:
 			StandardEquipmentControlOutboundPort stecop = new StandardEquipmentControlOutboundPort(this);
 			stecop.publishPort();
 			stecops.add(stecop);
-			// TODO remplacer ici avec le conneteur générer
-//			stecop.doConnection(inboundPortURI, ControlBatteryConnector.class.getCanonicalName());
+			this.doPortConnection(stecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
 			break;
 		}
 		return true;
-	}
-
-	/**
-	 * @see ControllerImplementationI#getRegisteredDevices()
-	 */
-	@Override
-	public Map<String, String> getRegisteredDevices() throws Exception {
-//		return registeredDevices;
-		return null;
 	}
 
 	// -------------------------------------------------------------------------
@@ -223,7 +208,14 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		}
 	}
 
-	private boolean generateConnector(String serial_number, String XMLFile) {
+	/**
+	 * Generate a connector Class from an xml string
+	 * 
+	 * @param serial_number
+	 * @param XMLFile
+	 * @return
+	 */
+	private Class<?> generateConnector(String serial_number, String XMLFile) {
 		try {
 			// Génération de classe
 			ClassPool classPool = ClassPool.getDefault();
@@ -291,13 +283,13 @@ public class Controller extends AbstractComponent implements ControllerImplement
 					cc.addMethod(m);
 				}
 			}
-
-			cc.writeFile("src/main/java/generatedClasses");
-			System.out.println("WRITE ok");
+			Class<?> ret = cc.toClass();
+			cc.detach();
+			return ret;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
-		return true;
 	}
+
 }
