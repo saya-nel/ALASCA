@@ -82,7 +82,7 @@ public class CVM extends AbstractCVM {
 				new Object[] { batteryURI, true, batterySerial, batteryBIP_uri, controllerCIP_uri, (float) 2000 });
 		// create Controller component
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
-				new Object[] { controllerURI, true, new String[] { controllerCIP_uri, }, new String[] {} });
+				new Object[] { controllerURI, true, controllerCIP_uri });
 		super.deploy();
 	}
 
@@ -98,6 +98,7 @@ public class CVM extends AbstractCVM {
 			Thread.sleep(10000L);
 			System.exit(0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}

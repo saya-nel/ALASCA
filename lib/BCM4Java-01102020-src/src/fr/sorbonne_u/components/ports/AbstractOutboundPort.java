@@ -36,6 +36,7 @@ package fr.sorbonne_u.components.ports;
 import java.lang.reflect.Constructor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
 import fr.sorbonne_u.components.AbstractPort;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.connectors.ConnectorI;
@@ -53,43 +54,47 @@ import fr.sorbonne_u.exceptions.PreconditionException;
 // -----------------------------------------------------------------------------
 /**
  * The class <code>AbstractOutboundPort</code> partially implements an outbound
- * port which implements the required interface of the owning component so
- * that it can call its providers through this port.
+ * port which implements the required interface of the owning component so that
+ * it can call its providers through this port.
  *
- * <p><strong>Description</strong></p>
+ * <p>
+ * <strong>Description</strong>
+ * </p>
  * 
  * <p>
  * A concrete port class must implement the required interface of the component
- * with methods that call the corresponding services of their provider
- * component using the connector.
+ * with methods that call the corresponding services of their provider component
+ * using the connector.
  * </p>
  * 
- * <p><strong>Invariant</strong></p>
+ * <p>
+ * <strong>Invariant</strong>
+ * </p>
  * 
  * <pre>
  * invariant	true
  * </pre>
  * 
- * <p>Created on : 2011-11-07</p>
+ * <p>
+ * Created on : 2011-11-07
+ * </p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ * @author <a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-public abstract class	AbstractOutboundPort
-extends		AbstractPort
-implements	OutboundPortI
-{
+public abstract class AbstractOutboundPort extends AbstractPort implements OutboundPortI {
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
-	private static final long					serialVersionUID = 1L;
-	/** URI of the server port to which this port is connected.				*/
-	protected final AtomicReference<String>		serverPortURI ;
-	/** connector used to link with the provider component.					*/
-	protected final AtomicReference<RequiredCI>	connector ;
-	/** when connected, true if the connection is remote and false
-	 *  otherwise.															*/
-	protected final AtomicBoolean				isRemotelyConnected ;
+	private static final long serialVersionUID = 1L;
+	/** URI of the server port to which this port is connected. */
+	protected final AtomicReference<String> serverPortURI;
+	/** connector used to link with the provider component. */
+	protected final AtomicReference<RequiredCI> connector;
+	/**
+	 * when connected, true if the connection is remote and false otherwise.
+	 */
+	protected final AtomicBoolean isRemotelyConnected;
 
 	// -------------------------------------------------------------------------
 	// Constructors
@@ -98,85 +103,73 @@ implements	OutboundPortI
 	/**
 	 * check the implementation invariant of the class.
 	 * 
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	p != null
 	 * post	true			// no postcondition.
 	 * </pre>
 	 *
-	 * @param p				instance on which the invariant must be checked.
-	 * @throws Exception	<i>to do</i>.
+	 * @param p instance on which the invariant must be checked.
+	 * @throws Exception <i>to do</i>.
 	 */
-	protected static void	checkImplementationInvariant(
-		AbstractOutboundPort p
-		) throws Exception
-	{
-		assert	p != null;
+	protected static void checkImplementationInvariant(AbstractOutboundPort p) throws Exception {
+		assert p != null;
 
 		synchronized (p) {
-			assert	!p.connected() == (p.connector.get() == null) :
-						new ImplementationInvariantException(
-								"connected() == (connector.get() == null)");
-			assert	(p.connector.get() == null) ==
-											(p.serverPortURI.get() == null) :
-						new ImplementationInvariantException(
-								"(connector.get() == null) == "
-										+ "(serverPortURI.get() == null)");
+			assert !p.connected() == (p.connector.get() == null) : new ImplementationInvariantException(
+					"connected() == (connector.get() == null)");
+			assert (p.connector.get() == null) == (p.serverPortURI
+					.get() == null) : new ImplementationInvariantException(
+							"(connector.get() == null) == " + "(serverPortURI.get() == null)");
 		}
 	}
 
 	/**
 	 * check the invariant of the class.
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	p != null
 	 * post	true			// no postcondition.
 	 * </pre>
 	 *
-	 * @param p				the object on which the invariant must be checked.
-	 * @throws Exception	<i>todo.</i>
+	 * @param p the object on which the invariant must be checked.
+	 * @throws Exception <i>todo.</i>
 	 */
-	protected static void	checkInvariant(AbstractOutboundPort p)
-	throws Exception
-	{
-		assert	p != null ;
+	protected static void checkInvariant(AbstractOutboundPort p) throws Exception {
+		assert p != null;
 
 		synchronized (p) {
 			// From OutboundPortI
-			assert	p.getOwner().isRequiredInterface(
-												p.getImplementedInterface()) :
-						new InvariantException(
-								"getOwner().isRequiredInterface("
-								+ "getImplementedInterface())"
-								+ p.getImplementedInterface() + "]");
-			assert	!p.connected() || p.isPublished() :
-						new InvariantException("!connected() || isPublished()");
-			assert	!p.connected() || p.getPortURI().equals(p.getClientPortURI()) :
-						new InvariantException(
-								"!connected() || "
-								+ "getPortURI().equals(getClientPortURI())");
-			assert	!p.connected() || p.getServerPortURI() != null :
-						new InvariantException(
-								"!connected() || getServerPortURI() != null");
-			assert	!p.connected() == (p.getConnector() == null) :
-						new InvariantException(
-								"!connected() == (getConnector() == null)");
-			assert	!p.connected() == (p.getConnector() == null) :
-						new InvariantException(
-								"!connected() == (getConnector() == null)");
-			assert	!p.isRemotelyConnected() || p.connected() :
-						new InvariantException(
-								"!isRemotelyConnected() || connected()");
+			assert p.getOwner().isRequiredInterface(p.getImplementedInterface()) : new InvariantException(
+					"getOwner().isRequiredInterface(" + "getImplementedInterface())" + p.getImplementedInterface()
+							+ "]");
+			assert !p.connected() || p.isPublished() : new InvariantException("!connected() || isPublished()");
+			assert !p.connected() || p.getPortURI().equals(p.getClientPortURI()) : new InvariantException(
+					"!connected() || " + "getPortURI().equals(getClientPortURI())");
+			assert !p.connected() || p.getServerPortURI() != null : new InvariantException(
+					"!connected() || getServerPortURI() != null");
+			assert !p.connected() == (p.getConnector() == null) : new InvariantException(
+					"!connected() == (getConnector() == null)");
+			assert !p.connected() == (p.getConnector() == null) : new InvariantException(
+					"!connected() == (getConnector() == null)");
+			assert !p.isRemotelyConnected()
+					|| p.connected() : new InvariantException("!isRemotelyConnected() || connected()");
 		}
 	}
 
 	/**
 	 * create and initialise outbound ports, with a given URI.
 	 * 
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code owner != null && uri != null && implementedInterface != null}
@@ -191,18 +184,14 @@ implements	OutboundPortI
 	 * post	{@code owner.isPortExisting(uri)}
 	 * </pre>
 	 *
-	 * @param uri					unique identifier of the port.
-	 * @param implementedInterface	interface implemented by this port.
-	 * @param owner					component that owns this port.
-	 * @throws Exception 			<i>todo.</i>
+	 * @param uri                  unique identifier of the port.
+	 * @param implementedInterface interface implemented by this port.
+	 * @param owner                component that owns this port.
+	 * @throws Exception <i>todo.</i>
 	 */
-	public				AbstractOutboundPort(
-		String uri,
-		Class<? extends RequiredCI> implementedInterface,
-		ComponentI owner
-		) throws Exception
-	{
-		super(uri, implementedInterface, owner) ;
+	public AbstractOutboundPort(String uri, Class<? extends RequiredCI> implementedInterface, ComponentI owner)
+			throws Exception {
+		super(uri, implementedInterface, owner);
 
 		this.serverPortURI = new AtomicReference<String>(null);
 		this.connector = new AtomicReference<RequiredCI>(null);
@@ -212,15 +201,16 @@ implements	OutboundPortI
 		AbstractOutboundPort.checkInvariant(this);
 		AbstractPort.checkImplementationInvariant(this);
 		AbstractPort.checkInvariant(this);
-		assert	!this.connected() : new PostconditionException("!connected()");
-		assert	!this.isRemotelyConnected() :
-					new PostconditionException("!isRemotelyConnected()");
+		assert !this.connected() : new PostconditionException("!connected()");
+		assert !this.isRemotelyConnected() : new PostconditionException("!isRemotelyConnected()");
 	}
 
 	/**
 	 * create and initialize outbound ports.
 	 * 
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code owner != null && implementedInterface != null}
@@ -233,18 +223,13 @@ implements	OutboundPortI
 	 * post	{@code owner.isPortExisting(getPortURI())}
 	 * </pre>
 	 *
-	 * @param implementedInterface	interface implemented by this port.
-	 * @param owner					component that owns this port.
-	 * @throws Exception			<i>todo.</i>
+	 * @param implementedInterface interface implemented by this port.
+	 * @param owner                component that owns this port.
+	 * @throws Exception <i>todo.</i>
 	 */
-	public				AbstractOutboundPort(
-		Class<? extends RequiredCI> implementedInterface,
-		ComponentI owner
-		) throws Exception
-	{
-		this(AbstractPort.generatePortURI(implementedInterface),
-			 implementedInterface, owner);
- 	}
+	public AbstractOutboundPort(Class<? extends RequiredCI> implementedInterface, ComponentI owner) throws Exception {
+		this(AbstractPort.generatePortURI(implementedInterface), implementedInterface, owner);
+	}
 
 	// -------------------------------------------------------------------------
 	// Self-properties management
@@ -256,24 +241,19 @@ implements	OutboundPortI
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Class<? extends RequiredCI>	getImplementedInterface()
-	throws Exception
-	{
+	public Class<? extends RequiredCI> getImplementedInterface() throws Exception {
 		return (Class<? extends RequiredCI>) super.getImplementedInterface();
 	}
 	// -------------------------------------------------------------------------
 	// Registry management
 	// -------------------------------------------------------------------------
 
-
 	/**
 	 * @see fr.sorbonne_u.components.ports.PortI#unpublishPort()
 	 */
 	@Override
-	public void			unpublishPort() throws Exception
-	{
-		assert	!this.connected() :
-					new PreconditionException("!connected()");
+	public void unpublishPort() throws Exception {
+		assert !this.connected() : new PreconditionException("!connected()");
 
 		super.unpublishPort();
 	}
@@ -286,10 +266,8 @@ implements	OutboundPortI
 	 * @see fr.sorbonne_u.components.ports.PortI#destroyPort()
 	 */
 	@Override
-	public void			destroyPort() throws Exception
-	{
-		assert	!this.connected() :
-					new PreconditionException("!connected()");
+	public void destroyPort() throws Exception {
+		assert !this.connected() : new PreconditionException("!connected()");
 
 		super.destroyPort();
 	}
@@ -302,29 +280,22 @@ implements	OutboundPortI
 	 * @see fr.sorbonne_u.components.AbstractPort#setServerPortURI(java.lang.String)
 	 */
 	@Override
-	public void			setServerPortURI(String serverPortURI)
-	throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
-		assert	serverPortURI != null :
-					new PreconditionException("serverPortURI != null");
+	public void setServerPortURI(String serverPortURI) throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
+		assert serverPortURI != null : new PreconditionException("serverPortURI != null");
 
 		this.serverPortURI.set(serverPortURI);
 
-		assert	this.getServerPortURI().equals(serverPortURI) :
-					new PostconditionException(
-								"getServerPortURI().equals(serverPortURI)");
+		assert this.getServerPortURI()
+				.equals(serverPortURI) : new PostconditionException("getServerPortURI().equals(serverPortURI)");
 	}
 
 	/**
 	 * @see fr.sorbonne_u.components.AbstractPort#unsetServerPortURI()
 	 */
 	@Override
-	public void			unsetServerPortURI() throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
+	public void unsetServerPortURI() throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
 
 		this.serverPortURI.set(null);
 	}
@@ -333,11 +304,8 @@ implements	OutboundPortI
 	 * @see fr.sorbonne_u.components.ports.PortI#getServerPortURI()
 	 */
 	@Override
-	public String		getServerPortURI()
-	throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
+	public String getServerPortURI() throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
 
 		return this.serverPortURI.get();
 	}
@@ -346,28 +314,20 @@ implements	OutboundPortI
 	 * @see fr.sorbonne_u.components.AbstractPort#setClientPortURI(java.lang.String)
 	 */
 	@Override
-	public void			setClientPortURI(String clientPortURI)
-	throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
-		assert	clientPortURI != null :
-					new PreconditionException("clientPortURI != null");
-		assert	this.getPortURI().equals(clientPortURI) :
-					new PreconditionException(
-								"getPortURI().equals(clientPortURI)");
+	public void setClientPortURI(String clientPortURI) throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
+		assert clientPortURI != null : new PreconditionException("clientPortURI != null");
+		assert this.getPortURI()
+				.equals(clientPortURI) : new PreconditionException("getPortURI().equals(clientPortURI)");
 	}
 
 	/**
 	 * @see fr.sorbonne_u.components.AbstractPort#unsetClientPortURI()
 	 */
 	@Override
-	public void			unsetClientPortURI() throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
-		throw new ConnectionException("Can't unset the client port URI "
-												+ "of an outbound port!");
+	public void unsetClientPortURI() throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
+		throw new ConnectionException("Can't unset the client port URI " + "of an outbound port!");
 
 	}
 
@@ -375,11 +335,8 @@ implements	OutboundPortI
 	 * @see fr.sorbonne_u.components.ports.PortI#getClientPortURI()
 	 */
 	@Override
-	public String		getClientPortURI()
-	throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
+	public String getClientPortURI() throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
 
 		return this.getPortURI();
 	}
@@ -392,35 +349,26 @@ implements	OutboundPortI
 	 * @see fr.sorbonne_u.components.ports.OutboundPortI#setConnector(fr.sorbonne_u.components.connectors.ConnectorI)
 	 */
 	@Override
-	public void			setConnector(ConnectorI c)
-	throws	Exception
-	{
+	public void setConnector(ConnectorI c) throws Exception {
 		if (AbstractCVM.DEBUG_MODE.contains(CVMDebugModes.CONNECTING)) {
-			AbstractCVM.getCVM().logDebug(
-				CVMDebugModes.CONNECTING,
-				this.getClass().getName() + " setting connector "
-															+ c.toString());
+			AbstractCVM.getCVM().logDebug(CVMDebugModes.CONNECTING,
+					this.getClass().getName() + " setting connector " + c.toString());
 		}
 
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
-		assert	c != null :
-					new PreconditionException("c != null");
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
+		assert c != null : new PreconditionException("c != null");
 
-		this.connector.set((RequiredCI)c);
+		this.connector.set(c);
 
-		assert	this.getConnector() == c :
-					new PostconditionException("getConnector() == c");
+		assert this.getConnector() == c : new PostconditionException("getConnector() == c");
 	}
 
 	/**
 	 * @see fr.sorbonne_u.components.ports.OutboundPortI#unsetConnector()
 	 */
 	@Override
-	public void			unsetConnector() throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
+	public void unsetConnector() throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
 
 		this.connector.set(null);
 	}
@@ -429,20 +377,17 @@ implements	OutboundPortI
 	 * @see fr.sorbonne_u.components.ports.OutboundPortI#getConnector()
 	 */
 	@Override
-	public ConnectorI	getConnector() throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
+	public ConnectorI getConnector() throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
 
-		return (ConnectorI)this.connector.get();
+		return (ConnectorI) this.connector.get();
 	}
 
 	/**
 	 * @see fr.sorbonne_u.components.ports.PortI#connected()
 	 */
 	@Override
-	public boolean		connected() throws Exception
-	{
+	public boolean connected() throws Exception {
 		return this.connector.get() != null;
 	}
 
@@ -450,58 +395,44 @@ implements	OutboundPortI
 	 * @see fr.sorbonne_u.components.ports.PortI#isRemotelyConnected()
 	 */
 	@Override
-	public boolean		isRemotelyConnected() throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
+	public boolean isRemotelyConnected() throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
 
 		return this.isRemotelyConnected.get();
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.ports.PortI#doConnection(java.lang.String, java.lang.String)
+	 * @see fr.sorbonne_u.components.ports.PortI#doConnection(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
-	public synchronized void	doConnection(
-		String otherPortURI,
-		String ccname
-		) throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
-		assert	this.isPublished() && !this.connected() :
-					new PreconditionException("isPublished() && "
-													+ "!connected()");
-		assert	otherPortURI != null && ccname != null :
-					new PreconditionException("otherPortURI != null && "
-													+ "ccname != null");
+	public synchronized void doConnection(String otherPortURI, String ccname) throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
+		assert this.isPublished()
+				&& !this.connected() : new PreconditionException("isPublished() && " + "!connected()");
+		assert otherPortURI != null
+				&& ccname != null : new PreconditionException("otherPortURI != null && " + "ccname != null");
 
 		// FIXME: should use a proper state machine model to implement the
 		// connection and disconnection protocol
 
 		Class<?> cc = Class.forName(ccname);
-		Constructor<?> c = cc.getConstructor(new Class<?>[]{});
+		Constructor<?> c = cc.getConstructor(new Class<?>[] {});
 		ConnectorI connector = (ConnectorI) c.newInstance();
 		this.doConnection(otherPortURI, connector);
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.ports.PortI#doConnection(java.lang.String, fr.sorbonne_u.components.connectors.ConnectorI)
+	 * @see fr.sorbonne_u.components.ports.PortI#doConnection(java.lang.String,
+	 *      fr.sorbonne_u.components.connectors.ConnectorI)
 	 */
 	@Override
-	public synchronized void	doConnection(
-		String otherPortURI,
-		ConnectorI connector
-		) throws	Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
-		assert	this.isPublished() && !this.connected() :
-					new PreconditionException("isPublished() && "
-													+ "!connected()");
-		assert	otherPortURI != null && connector != null :
-					new PreconditionException("otherPortURI != null && "
-													+ "connector != null");
+	public synchronized void doConnection(String otherPortURI, ConnectorI connector) throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
+		assert this.isPublished()
+				&& !this.connected() : new PreconditionException("isPublished() && " + "!connected()");
+		assert otherPortURI != null
+				&& connector != null : new PreconditionException("otherPortURI != null && " + "connector != null");
 
 		// FIXME: should use a proper state machine model to implement the
 		// connection and disconnection protocol
@@ -516,75 +447,58 @@ implements	OutboundPortI
 		AbstractOutboundPort.checkInvariant(this);
 		AbstractPort.checkImplementationInvariant(this);
 		AbstractPort.checkInvariant(this);
-		assert	this.connected() :
-					new PostconditionException("connected()");
+		assert this.connected() : new PostconditionException("connected()");
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.AbstractPort#doMyConnection(java.lang.String, fr.sorbonne_u.components.connectors.ConnectorI)
+	 * @see fr.sorbonne_u.components.AbstractPort#doMyConnection(java.lang.String,
+	 *      fr.sorbonne_u.components.connectors.ConnectorI)
 	 */
 	@Override
-	protected synchronized void	doMyConnection(
-		String otherPortURI,
-		ConnectorI connector
-		) throws Exception
-	{
+	protected synchronized void doMyConnection(String otherPortURI, ConnectorI connector) throws Exception {
 		// FIXME: should use a proper state machine model to implement the
 		// connection and disconnection protocol
 
 		this.setConnector(connector);
 		this.setServerPortURI(otherPortURI);
-		PortI serverPort =
-				AbstractCVM.getFromLocalRegistry(this.getServerPortURI());
+		PortI serverPort = AbstractCVM.getFromLocalRegistry(this.getServerPortURI());
 		if (serverPort == null && AbstractCVM.isDistributed) {
 			this.isRemotelyConnected.set(true);
-			serverPort = (PortI)AbstractDistributedCVM.getCVM().
-									getRemoteReference(this.getServerPortURI());
+			serverPort = (PortI) AbstractDistributedCVM.getCVM().getRemoteReference(this.getServerPortURI());
 		} else {
 			this.isRemotelyConnected.set(false);
 		}
-		assert	serverPort != null :
-					new ConnectionException("Unknown server port URI: " +
-													this.getServerPortURI());
+		assert serverPort != null : new ConnectionException("Unknown server port URI: " + this.getServerPortURI());
 
-		this.getConnector().connect((OfferedCI)serverPort, this);
+		this.getConnector().connect((OfferedCI) serverPort, this);
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.ports.PortI#obeyConnection(java.lang.String, java.lang.String)
+	 * @see fr.sorbonne_u.components.ports.PortI#obeyConnection(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
-	public void			obeyConnection(String otherPortURI, String ccname)
-	throws	Exception
-	{
-		throw new ConnectionException("Can't call obeyConnection on simple"
-														+ " outbound ports.");
+	public void obeyConnection(String otherPortURI, String ccname) throws Exception {
+		throw new ConnectionException("Can't call obeyConnection on simple" + " outbound ports.");
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.ports.PortI#obeyConnection(java.lang.String, fr.sorbonne_u.components.connectors.ConnectorI)
+	 * @see fr.sorbonne_u.components.ports.PortI#obeyConnection(java.lang.String,
+	 *      fr.sorbonne_u.components.connectors.ConnectorI)
 	 */
 	@Override
-	public void			obeyConnection(String otherPortURI, ConnectorI connector)
-	throws	Exception
-	{
-		throw new ConnectionException("Can't call obeyConnection on simple"
-														+ " outbound ports.");
+	public void obeyConnection(String otherPortURI, ConnectorI connector) throws Exception {
+		throw new ConnectionException("Can't call obeyConnection on simple" + " outbound ports.");
 	}
 
 	/**
 	 * @see fr.sorbonne_u.components.ports.PortI#doDisconnection()
 	 */
 	@Override
-	public synchronized void	doDisconnection() throws Exception
-	{
-		assert	!this.isDestroyed() :
-					new PreconditionException("!isDestroyed()");
-		assert	this.connected() &&
-							((ConnectorI)this.getConnector()).connected() :
-					new PreconditionException(
-							"connected() && "
-							+ "((ConnectorI)connector).connected()");
+	public synchronized void doDisconnection() throws Exception {
+		assert !this.isDestroyed() : new PreconditionException("!isDestroyed()");
+		assert this.connected() && this.getConnector().connected() : new PreconditionException(
+				"connected() && " + "((ConnectorI)connector).connected()");
 
 		// FIXME: should use a proper state machine model to implement the
 		// connection and disconnection protocol
@@ -599,39 +513,33 @@ implements	OutboundPortI
 		AbstractOutboundPort.checkInvariant(this);
 		AbstractPort.checkImplementationInvariant(this);
 		AbstractPort.checkInvariant(this);
-		assert	!this.connected() :
-					new PostconditionException("!connected()");
+		assert !this.connected() : new PostconditionException("!connected()");
 	}
 
 	/**
 	 * @see fr.sorbonne_u.components.AbstractPort#doMyDisconnection()
 	 */
 	@Override
-	protected synchronized void	doMyDisconnection() throws Exception
-	{
-		assert	this.connected() :
-					new PreconditionException("connected()");
+	protected synchronized void doMyDisconnection() throws Exception {
+		assert this.connected() : new PreconditionException("connected()");
 
 		// FIXME: should use a proper state machine model to implement the
 		// connection and disconnection protocol
 
-		((ConnectorI)this.getConnector()).disconnect();
+		this.getConnector().disconnect();
 		this.unsetServerPortURI();
 		this.unsetConnector();
 		this.isRemotelyConnected.set(false);
 
-		assert	!this.connected() :
-					new PostconditionException("!connected()");
+		assert !this.connected() : new PostconditionException("!connected()");
 	}
 
 	/**
 	 * @see fr.sorbonne_u.components.ports.PortI#obeyDisconnection()
 	 */
 	@Override
-	public void			obeyDisconnection() throws Exception
-	{
-		throw new ConnectionException("Can't call obeyDisconnection on simple"
-														+ " outbound ports.");
+	public void obeyDisconnection() throws Exception {
+		throw new ConnectionException("Can't call obeyDisconnection on simple" + " outbound ports.");
 	}
 }
 // -----------------------------------------------------------------------------

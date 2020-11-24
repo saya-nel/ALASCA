@@ -1,8 +1,9 @@
 package main.java.interfaces;
 
+import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 
-public interface StandardEquipmentControlCI extends RequiredCI {
+public interface StandardEquipmentControlCI extends RequiredCI, OfferedCI {
 	/**
 	 * switch on the equipment, returning true if the operation succeeded or false
 	 * otherwise.

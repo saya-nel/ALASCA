@@ -31,13 +31,13 @@ import main.java.utils.Log;
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Battery extends AbstractComponent implements BatteryImplementationI {
 
-	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" + "        type=\"suspension\"\n"
+	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" + "        type=\"planning\"\n"
 			+ "        uid=\"1A10000\"\n"
 			+ "        offered=\"fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI\">\n"
 			+ "    <consumption nominal=\"200\"/>\n" + "    <upMode>\n"
-			+ "        <required>interfaces.BatteryCI</required>\n" + "        <body equipmentRef=\"battery\">\n"
-			+ "            return battery.upMode();\n" + "        </body>\n" + "    </upMode>\n"
-			+ "</control-adapter>\n";
+			+ "        <required>main.java.interfaces.BatteryCI</required>\n"
+			+ "        <body equipmentRef=\"battery\">\n" + "            return battery.upMode();\n"
+			+ "        </body>\n" + "    </upMode>\n" + "</control-adapter>\n";
 	/**
 	 * Component URI
 	 */
@@ -168,12 +168,19 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		}
 	}
 
+	@Override
+	public synchronized void finalise() throws Exception {
+		this.cop.doDisconnection();
+		super.finalise();
+	}
+
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
 	 */
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
 		try {
+			this.cop.unpublishPort();
 			this.bip.unpublishPort();
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e);

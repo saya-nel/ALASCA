@@ -1,16 +1,16 @@
 <control-adapter
-        type="suspension"
+        type="planning"
         uid="1A10000"
-        offered="interfaces.BatteryCI">
+        offered="main.java.interfaces.BatteryCI">
     <consumption nominal="200"/>
     <getBatteryCharge>
-        <required>interfaces.BatteryCI</required>
+        <required>main.java.interfaces.BatteryCI</required>
         <body equipmentRef="battery">
             return battery.getBatteryCharge();
         </body>
     </getBatteryCharge>
     <upMode>
-        <required>interfaces.BatteryCI</required>
+        <required>main.java.interfaces.BatteryCI</required>
         <body equipmentRef="battery">
             return battery.upMode();
         </body>
