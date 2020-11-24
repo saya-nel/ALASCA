@@ -1,13 +1,12 @@
-package ports;
+package main.java.ports;
 
 import java.time.Duration;
 import java.time.LocalTime;
 
-import components.Battery;
-import connectors.ControlBatteryConnector;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
-import interfaces.BatteryCI;
+import main.java.connectors.ControlBatteryConnector;
+import main.java.interfaces.BatteryCI;
 
 /**
  * Outbound port of Battery component

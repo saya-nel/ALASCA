@@ -1,17 +1,17 @@
-package tests;
+package main.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import interfaces.ControllerCI;
-import ports.ControllerOutboundPort;
-import utils.Log;
+import main.java.connectors.ControllerConnector;
+import main.java.interfaces.ControllerCI;
+import main.java.ports.ControllerOutboundPort;
+import main.java.utils.Log;
 
-@RequiredInterfaces(required = { ControllerCI.class})
+@RequiredInterfaces(required = { ControllerCI.class })
 public class ControllerUnitTest extends AbstractComponent {
 
 	/**
@@ -22,7 +22,6 @@ public class ControllerUnitTest extends AbstractComponent {
 	 * Controller inbound port to connect to URI
 	 */
 	protected String cipURI;
-
 
 	/**
 	 *
@@ -113,16 +112,16 @@ public class ControllerUnitTest extends AbstractComponent {
 			String serialNumber = "MYSERIALNUMBER1";
 			String XMLFile = "XMLFILE1";
 			Log.printAndLog(this, "first test");
-			cop.register(serialNumber,"", XMLFile);
+			cop.register(serialNumber, "", XMLFile);
 			assertTrue(this.cop.getRegisteredDevices().get(serialNumber).equals(XMLFile));
 			Log.printAndLog(this, "end of first test");
 			serialNumber = "MYSERIALNUMBER2";
 			XMLFile = "XMLFILE2";
-			cop.register(serialNumber,"", XMLFile);
+			cop.register(serialNumber, "", XMLFile);
 			assertTrue(this.cop.getRegisteredDevices().get(serialNumber).equals(XMLFile));
 			// Test register with same key but different value (XMLFile)
 			XMLFile = "XMLFILE3";
-			cop.register(serialNumber,"", XMLFile);
+			cop.register(serialNumber, "", XMLFile);
 			assertTrue(this.cop.getRegisteredDevices().get(serialNumber).equals(XMLFile));
 		} catch (Exception e) {
 			System.out.println("Error during test register");

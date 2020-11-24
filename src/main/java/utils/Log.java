@@ -1,4 +1,4 @@
-package utils;
+package main.java.utils;
 
 import fr.sorbonne_u.components.ComponentI;
 

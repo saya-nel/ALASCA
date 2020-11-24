@@ -1,16 +1,16 @@
-package tests;
+package main.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import connectors.SolarPanelsConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import interfaces.SolarPanelsCI;
-import ports.SolarPanelsOutboundPort;
-import utils.Log;
+import main.java.connectors.SolarPanelsConnector;
+import main.java.interfaces.SolarPanelsCI;
+import main.java.ports.SolarPanelsOutboundPort;
+import main.java.utils.Log;
 
 /**
  * Tester for the SolarPanels component

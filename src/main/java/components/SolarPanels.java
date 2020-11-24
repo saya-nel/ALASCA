@@ -1,11 +1,11 @@
-package components;
+package main.java.components;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
-import interfaces.SolarPanelsCI;
-import interfaces.SolarPanelsImplementationI;
-import ports.SolarPanelsInboundPort;
+import main.java.interfaces.SolarPanelsCI;
+import main.java.interfaces.SolarPanelsImplementationI;
+import main.java.ports.SolarPanelsInboundPort;
 
 /**
  * Class representing the SolarPanels component

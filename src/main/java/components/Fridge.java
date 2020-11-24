@@ -1,30 +1,23 @@
-package components;
+package main.java.components;
 
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * Fridge component
- *
- * @author Bello Memmi
- *
- */
-
-import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.exceptions.PreconditionException;
-import interfaces.ControllerCI;
-import interfaces.FridgeCI;
-import interfaces.FridgeImplementationI;
-import ports.ControllerOutboundPort;
-import ports.FridgeInboundPort;
-import utils.FridgeMode;
+import main.java.connectors.ControllerConnector;
+import main.java.interfaces.ControllerCI;
+import main.java.interfaces.FridgeCI;
+import main.java.interfaces.FridgeImplementationI;
+import main.java.ports.ControllerOutboundPort;
+import main.java.ports.FridgeInboundPort;
+import main.java.utils.FridgeMode;
 
 @OfferedInterfaces(offered = { FridgeCI.class })
 @RequiredInterfaces(required = { ControllerCI.class })

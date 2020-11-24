@@ -1,17 +1,16 @@
-package tests;
+package main.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import connectors.ControlBatteryConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import interfaces.BatteryCI;
-import ports.BatteryOutboundPort;
-import utils.BatteryState;
-import utils.Log;
+import main.java.connectors.ControlBatteryConnector;
+import main.java.interfaces.BatteryCI;
+import main.java.ports.BatteryOutboundPort;
+import main.java.utils.Log;
 
 /**
  * Tester for the Battery component
@@ -35,9 +34,8 @@ public class BatteryUnitTester extends AbstractComponent {
 	/**
 	 * Inbound port of the controller
 	 */
-	protected  String cipURI;
+	protected String cipURI;
 
-	
 	/**
 	 * BatteryUnitTester constructor
 	 * 
@@ -117,14 +115,13 @@ public class BatteryUnitTester extends AbstractComponent {
 	// TESTS
 	// -------------------------------------------------------------------------
 
-
-	public void testUpMode()  {
+	public void testUpMode() {
 		Log.printAndLog(this, "testUpMode()");
-		try{
+		try {
 			int cur_value = this.bop.currentMode();
 			this.bop.upMode();
-			assertEquals(this.bop.currentMode(),(cur_value+1)%3);
-		}catch (Exception e) {
+			assertEquals(this.bop.currentMode(), (cur_value + 1) % 3);
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -142,7 +139,6 @@ public class BatteryUnitTester extends AbstractComponent {
 		}
 		Log.printAndLog(this, "done...");
 	}
-
 
 	/**
 	 * Run all the tests

@@ -1,4 +1,4 @@
-package interfaces;
+package main.java.interfaces;
 
 import java.time.Duration;
 import java.time.LocalTime;

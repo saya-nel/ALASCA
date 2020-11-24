@@ -1,17 +1,17 @@
-package tests;
+package main.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import connectors.PetrolGeneratorConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import interfaces.PetrolGeneratorCI;
-import ports.PetrolGeneratorOutboundPort;
-import utils.Log;
+import main.java.connectors.PetrolGeneratorConnector;
+import main.java.interfaces.PetrolGeneratorCI;
+import main.java.ports.PetrolGeneratorOutboundPort;
+import main.java.utils.Log;
 
 /**
  * 

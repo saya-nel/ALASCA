@@ -1,7 +1,7 @@
-package connectors;
+package main.java.connectors;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
-import interfaces.PetrolGeneratorCI;
+import main.java.interfaces.PetrolGeneratorCI;
 
 /**
  * Connector for the PetrolGeneratorCI component interface

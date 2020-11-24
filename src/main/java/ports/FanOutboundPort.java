@@ -1,9 +1,9 @@
-package ports;
+package main.java.ports;
 
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
-import interfaces.FanCI;
-import utils.FanLevel;
+import main.java.interfaces.FanCI;
+import main.java.utils.FanLevel;
 
 /**
  * Outbound port of Fan component

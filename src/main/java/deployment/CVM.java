@@ -1,9 +1,9 @@
-package deployment;
+package main.java.deployment;
 
-import components.Battery;
-import components.Controller;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
+import main.java.components.Battery;
+import main.java.components.Controller;
 
 /**
  * 

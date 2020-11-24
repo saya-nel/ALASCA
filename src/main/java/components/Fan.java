@@ -1,13 +1,13 @@
-package components;
+package main.java.components;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.exceptions.PreconditionException;
-import interfaces.FanCI;
-import interfaces.FanImplementationI;
-import ports.FanInboundPort;
-import utils.FanLevel;
+import main.java.interfaces.FanCI;
+import main.java.interfaces.FanImplementationI;
+import main.java.ports.FanInboundPort;
+import main.java.utils.FanLevel;
 
 /**
  * Class representing the Fan component

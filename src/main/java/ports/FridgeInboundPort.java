@@ -1,17 +1,10 @@
-package ports;
+package main.java.ports;
 
-/**
- * Inbound port of Fridge component
- *
- * @author Bello Memmi
- *
- */
-
-import components.Fridge;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import interfaces.FridgeCI;
-import interfaces.FridgeImplementationI;
+import main.java.components.Fridge;
+import main.java.interfaces.FridgeCI;
+import main.java.interfaces.FridgeImplementationI;
 
 public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 

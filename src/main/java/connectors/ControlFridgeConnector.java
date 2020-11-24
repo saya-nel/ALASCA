@@ -1,8 +1,8 @@
-package connectors;
+package main.java.connectors;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
-import interfaces.FridgeCI;
-import interfaces.SuspensionEquipmentControlCI;
+import main.java.interfaces.FridgeCI;
+import main.java.interfaces.SuspensionEquipmentControlCI;
 
 /**
  * Connector between the Controller and the Fridge, TODO : this class should be

@@ -1,5 +1,5 @@
-package utils;
+package main.java.utils;
 
 public enum WasherModes {
-    ECO, STD, PERFORMANCE
+	ECO, STD, PERFORMANCE
 }

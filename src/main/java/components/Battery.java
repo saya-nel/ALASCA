@@ -1,4 +1,4 @@
-package components;
+package main.java.components;
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -6,21 +6,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import fr.sorbonne_u.components.ports.InboundPortI;
 import fr.sorbonne_u.exceptions.PreconditionException;
-import interfaces.BatteryCI;
-import interfaces.BatteryImplementationI;
-import interfaces.ControllerCI;
-import ports.BatteryInboundPort;
-import ports.ControllerOutboundPort;
-import utils.BatteryState;
-import utils.Log;
+import main.java.connectors.ControllerConnector;
+import main.java.interfaces.BatteryCI;
+import main.java.interfaces.BatteryImplementationI;
+import main.java.interfaces.ControllerCI;
+import main.java.ports.BatteryInboundPort;
+import main.java.ports.ControllerOutboundPort;
+import main.java.utils.BatteryState;
+import main.java.utils.Log;
 
 /**
  * Class representing the Battery component
@@ -32,18 +31,13 @@ import utils.Log;
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Battery extends AbstractComponent implements BatteryImplementationI {
 
-	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" +
-			"        type=\"suspension\"\n" +
-			"        uid=\"1A10000\"\n" +
-			"        offered=\"fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI\">\n" +
-			"    <consumption nominal=\"200\"/>\n" +
-			"    <upMode>\n" +
-			"        <required>interfaces.BatteryCI</required>\n" +
-			"        <body equipmentRef=\"battery\">\n" +
-			"            return battery.upMode();\n" +
-			"        </body>\n" +
-			"    </upMode>\n" +
-			"</control-adapter>\n";
+	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" + "        type=\"suspension\"\n"
+			+ "        uid=\"1A10000\"\n"
+			+ "        offered=\"fr.sorbonne_u.components.cyphy.hem.equipments.boiler.BoilerControlCI\">\n"
+			+ "    <consumption nominal=\"200\"/>\n" + "    <upMode>\n"
+			+ "        <required>interfaces.BatteryCI</required>\n" + "        <body equipmentRef=\"battery\">\n"
+			+ "            return battery.upMode();\n" + "        </body>\n" + "    </upMode>\n"
+			+ "</control-adapter>\n";
 	/**
 	 * Component URI
 	 */
@@ -52,7 +46,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	/**
 	 * Serial number for registering on controller
 	 */
-	protected String serialNumber= "SERIALNUMBER";
+	protected String serialNumber = "SERIALNUMBER";
 
 	/**
 	 * Actual charge of battery in mA/h

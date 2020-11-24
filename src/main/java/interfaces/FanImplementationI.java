@@ -1,6 +1,6 @@
-package interfaces;
+package main.java.interfaces;
 
-import utils.FanLevel;
+import main.java.utils.FanLevel;
 
 /**
  * 

@@ -1,9 +1,9 @@
-package ports;
+package main.java.ports;
 
-import components.PetrolGenerator;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import interfaces.PetrolGeneratorCI;
+import main.java.components.PetrolGenerator;
+import main.java.interfaces.PetrolGeneratorCI;
 
 /**
  * 

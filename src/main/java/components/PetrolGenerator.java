@@ -1,11 +1,11 @@
-package components;
+package main.java.components;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
-import interfaces.PetrolGeneratorCI;
-import interfaces.PetrolGeneratorImplementationI;
-import ports.PetrolGeneratorInboundPort;
+import main.java.interfaces.PetrolGeneratorCI;
+import main.java.interfaces.PetrolGeneratorImplementationI;
+import main.java.ports.PetrolGeneratorInboundPort;
 
 /**
  * Class representing the petrol generator component

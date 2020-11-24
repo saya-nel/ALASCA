@@ -1,18 +1,18 @@
-package tests;
+package main.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import connectors.FanConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import interfaces.FanCI;
-import ports.FanOutboundPort;
-import utils.FanLevel;
-import utils.Log;
+import main.java.connectors.FanConnector;
+import main.java.interfaces.FanCI;
+import main.java.ports.FanOutboundPort;
+import main.java.utils.FanLevel;
+import main.java.utils.Log;
 
 /**
  * Tester for the Fan component

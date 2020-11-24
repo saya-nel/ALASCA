@@ -1,4 +1,4 @@
-package components;
+package main.java.components;
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -6,42 +6,31 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import connectors.ControllerConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.exceptions.PreconditionException;
-import interfaces.ControllerCI;
-import interfaces.WasherCI;
-import interfaces.WasherImplementationI;
-import ports.ControllerOutboundPort;
-import ports.WasherInboundPort;
-import utils.WasherModes;
+import main.java.connectors.ControllerConnector;
+import main.java.interfaces.ControllerCI;
+import main.java.interfaces.WasherCI;
+import main.java.interfaces.WasherImplementationI;
+import main.java.ports.ControllerOutboundPort;
+import main.java.ports.WasherInboundPort;
+import main.java.utils.WasherModes;
 
 @OfferedInterfaces(offered = { WasherCI.class })
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Washer extends AbstractComponent implements WasherImplementationI {
 
-	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" +
-			"        type=\"planning\"\n" +
-			"        uid=\"1A10000\"\n" +
-			"        offered=\"interfaces.WasherCI\">\n" +
-			"    <consumption nominal=\"2000\" />\n" +
-			"    <startTime>\n" +
-			"        <required>interfaces.WasherCI</required>\n" +
-			"        <body equipmentRef=\"washer\">\n" +
-			"            return washer.startTime();\n" +
-			"        </body>\n" +
-			"    </startTime>\n" +
-			"    <on>\n" +
-			"        <required>interfaces.WasherCI</required>\n" +
-			"        <body equipmentRef=\"washer\">\n" +
-			"            return washer.turnOn();\n" +
-			"        </body>\n" +
-			"    </on>\n" +
-			"</control-adapter>\n";
+	protected static final String CONTROL_INTERFACE_DESCRIPTOR = "<control-adapter\n" + "        type=\"planning\"\n"
+			+ "        uid=\"1A10000\"\n" + "        offered=\"interfaces.WasherCI\">\n"
+			+ "    <consumption nominal=\"2000\" />\n" + "    <startTime>\n"
+			+ "        <required>interfaces.WasherCI</required>\n" + "        <body equipmentRef=\"washer\">\n"
+			+ "            return washer.startTime();\n" + "        </body>\n" + "    </startTime>\n" + "    <on>\n"
+			+ "        <required>interfaces.WasherCI</required>\n" + "        <body equipmentRef=\"washer\">\n"
+			+ "            return washer.turnOn();\n" + "        </body>\n" + "    </on>\n" + "</control-adapter>\n";
 
 	/**
 	 * Component URI
@@ -111,9 +100,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	/**
 	 *
 	 * @param reflectionPortURI
-	 * @param serialNumber			serial number of Washer component
-	 * @param wipURI				inbound port's URI of Washer
-	 * @param cip_URI				inbound port's URI of controller for registering
+	 * @param serialNumber      serial number of Washer component
+	 * @param wipURI            inbound port's URI of Washer
+	 * @param cip_URI           inbound port's URI of controller for registering
 	 * @throws Exception
 	 */
 
@@ -179,7 +168,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public synchronized void start() throws ComponentStartException {
 		super.start();
-		try {//port écoute des register
+		try {// port écoute des register
 			this.doPortConnection(this.cop.getPortURI(), this.cip_uri, ControllerConnector.class.getCanonicalName());
 
 		} catch (Exception e) {
@@ -193,7 +182,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		System.out.println("in execute washer");
 		boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(),
 				Washer.CONTROL_INTERFACE_DESCRIPTOR);
-		System.out.println("isRegister: "+isRegister);
+		System.out.println("isRegister: " + isRegister);
 		if (!isRegister)
 			throw new Exception("can't register to controller");
 	}

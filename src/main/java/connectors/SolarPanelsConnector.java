@@ -1,7 +1,7 @@
-package connectors;
+package main.java.connectors;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
-import interfaces.SolarPanelsCI;
+import main.java.interfaces.SolarPanelsCI;
 
 /**
  * Connector for the SolarPanelsCI component interface

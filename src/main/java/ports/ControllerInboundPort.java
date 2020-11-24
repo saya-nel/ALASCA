@@ -1,11 +1,11 @@
-package ports;
+package main.java.ports;
 
 import java.util.Map;
 
-import components.Controller;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import interfaces.ControllerCI;
+import main.java.components.Controller;
+import main.java.interfaces.ControllerCI;
 
 public class ControllerInboundPort extends AbstractInboundPort implements ControllerCI {
 

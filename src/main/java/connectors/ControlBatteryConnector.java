@@ -1,11 +1,11 @@
-package connectors;
+package main.java.connectors;
 
 import java.time.Duration;
 import java.time.LocalTime;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
-import interfaces.BatteryCI;
-import interfaces.PlanningEquipmentControlCI;
+import main.java.interfaces.BatteryCI;
+import main.java.interfaces.PlanningEquipmentControlCI;
 
 /**
  * Connector between the Controller and the Battery, TODO : this class should be

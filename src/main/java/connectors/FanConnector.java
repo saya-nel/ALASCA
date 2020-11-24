@@ -1,8 +1,8 @@
-package connectors;
+package main.java.connectors;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
-import interfaces.FanCI;
-import utils.FanLevel;
+import main.java.interfaces.FanCI;
+import main.java.utils.FanLevel;
 
 /**
  * Connector for the FanCI component interface

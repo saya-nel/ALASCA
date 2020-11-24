@@ -1,10 +1,10 @@
-package connectors;
+package main.java.connectors;
 
 import java.util.Map;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
-import interfaces.ControllerCI;
-import interfaces.ControllerImplementationI;
+import main.java.interfaces.ControllerCI;
+import main.java.interfaces.ControllerImplementationI;
 
 /**
  * Connector for the ControllerCI component interface
@@ -17,7 +17,7 @@ public class ControllerConnector extends AbstractConnector implements Controller
 	 * @see interfaces.ControllerCI#register(String, String)
 	 */
 	@Override
-	public boolean register(String serial_number,  String inboundPortURI, String XMLFile) throws Exception {
+	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
 		return ((ControllerCI) this.offering).register(serial_number, inboundPortURI, XMLFile);
 	}
 

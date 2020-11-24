@@ -1,10 +1,10 @@
-package ports;
+package main.java.ports;
 
-import connectors.ControlFridgeConnector;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
-import interfaces.FridgeCI;
-import interfaces.FridgeImplementationI;
+import main.java.connectors.ControlFridgeConnector;
+import main.java.interfaces.FridgeCI;
+import main.java.interfaces.FridgeImplementationI;
 
 /**
  * Outbound port of Fridge component

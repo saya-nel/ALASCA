@@ -1,4 +1,4 @@
-package interfaces;
+package main.java.interfaces;
 
 /**
  * Methods of fridge component

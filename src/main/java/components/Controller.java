@@ -1,4 +1,4 @@
-package components;
+package main.java.components;
 
 import java.io.StringReader;
 import java.util.List;
@@ -7,30 +7,30 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import connectors.ControllerConnector;
-import fr.sorbonne_u.components.AbstractComponent;
-import fr.sorbonne_u.components.annotations.OfferedInterfaces;
-import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
-import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import interfaces.ControllerCI;
-import interfaces.ControllerImplementationI;
-import interfaces.SuspensionEquipmentControlCI;
-import javassist.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import ports.ControllerInboundPort;
-import ports.ControllerOutboundPort;
-import ports.PlanningEquipmentControlOutboundPort;
-import ports.SuspensionEquipmentControlOutboundPort;
-import utils.Log;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import static java.lang.reflect.Modifier.PUBLIC;
+import fr.sorbonne_u.components.AbstractComponent;
+import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import main.java.connectors.ControllerConnector;
+import main.java.interfaces.ControllerCI;
+import main.java.interfaces.ControllerImplementationI;
+import main.java.ports.ControllerInboundPort;
+import main.java.ports.ControllerOutboundPort;
+import main.java.ports.PlanningEquipmentControlOutboundPort;
+import main.java.ports.SuspensionEquipmentControlOutboundPort;
+import main.java.utils.Log;
 
 /**
  *
@@ -64,7 +64,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// the implementation of the connector's controlled methods
 	private Map<String, String> registeredDevices;
 
-	//mutex
+	// mutex
 	private ReentrantLock mutex_register = new ReentrantLock();
 
 	public static final String REGISTERING_POOL = "registering-pool";
@@ -139,23 +139,23 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			try {
 				Log.printAndLog(this, "in execute");
 
-				//this.mutex_register.lock();
+				// this.mutex_register.lock();
 				// wait for components to register
 				// connect to the battery and change the mode of the battery
-				//System.out.println(registeredDevices.values());
-				//String bipUri = (String) registeredDevices.values().toArray()[1];
-				//System.out.println("bipuri: "+bipUri);
-				//AbstractInboundPort
+				// System.out.println(registeredDevices.values());
+				// String bipUri = (String) registeredDevices.values().toArray()[1];
+				// System.out.println("bipuri: "+bipUri);
+				// AbstractInboundPort
 				// get uri
 				// discover from what component type it is from
 				// instantiate the correct outbound port with the uri
-				//System.out.println();
-				//BatteryOutboundPort bop = new BatteryOutboundPort(bipUri,this);
-				//bop.publishPort();
-				//bop.doConnection(bipUri, ControlBatteryConnector.class.getCanonicalName());
-				//bop.upMode();
-				//bop.setMode(0);
-				//System.out.println(this.registeredDevices);
+				// System.out.println();
+				// BatteryOutboundPort bop = new BatteryOutboundPort(bipUri,this);
+				// bop.publishPort();
+				// bop.doConnection(bipUri, ControlBatteryConnector.class.getCanonicalName());
+				// bop.upMode();
+				// bop.setMode(0);
+				// System.out.println(this.registeredDevices);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -163,9 +163,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	}
 
 	@Override
-	public synchronized  void start() throws ComponentStartException {
+	public synchronized void start() throws ComponentStartException {
 		super.start();
-
 
 	}
 	// -------------------------------------------------------------------------
@@ -179,112 +178,106 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
 		// TODO connector generation here
 
-
 		// connector is generated, we can register the component
 		registeredDevices.put(serial_number, inboundPortURI);
 		controlDevicesPorts.add(new ControllerOutboundPort(this));
-		controlDevicesPorts.get(controlDevicesPorts.size()-1).publishPort();
-		this.doPortConnection(this.controlDevicesPorts.get(controlDevicesPorts.size()-1).getPortURI(), inboundPortURI, ControllerConnector.class.getCanonicalName());
+		controlDevicesPorts.get(controlDevicesPorts.size() - 1).publishPort();
+		this.doPortConnection(this.controlDevicesPorts.get(controlDevicesPorts.size() - 1).getPortURI(), inboundPortURI,
+				ControllerConnector.class.getCanonicalName());
 
 		// Génération de classe
 		ClassPool classPool = ClassPool.getDefault();
-		CtClass cc = classPool.makeClass(serial_number+"_connector");
+		CtClass cc = classPool.makeClass(serial_number + "_connector");
 
 		// extends abstractConnector
 		cc.setSuperclass(classPool.get("fr.sorbonne_u.components.connectors.AbstractConnector"));
 
-		//parse xml
+		// parse xml
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(new InputSource(new StringReader(XMLFile)));
 
-		//Détermination du type d'équipement interface à implémenter
-		String typeEquipment = doc.getElementsByTagName("control-adapter").item(0).getAttributes().getNamedItem("type").getTextContent();
+		// Détermination du type d'équipement interface à implémenter
+		String typeEquipment = doc.getElementsByTagName("control-adapter").item(0).getAttributes().getNamedItem("type")
+				.getTextContent();
 
-		switch(typeEquipment)
-		{
-			case "suspension":
-				cc.setInterfaces(new CtClass[] {classPool.get("interfaces.SuspensionEquipmentControlCI")});
-				break;
-			case "planning":
-				cc.setInterfaces(new CtClass[] {classPool.get("interfaces.PlanningEquipmentControlCI")});
-				break;
-			default:
-				cc.setInterfaces(new CtClass[] {classPool.get("interfaces.StandardEquipmentControlCI")});
+		switch (typeEquipment) {
+		case "suspension":
+			cc.setInterfaces(new CtClass[] { classPool.get("interfaces.SuspensionEquipmentControlCI") });
+			break;
+		case "planning":
+			cc.setInterfaces(new CtClass[] { classPool.get("interfaces.PlanningEquipmentControlCI") });
+			break;
+		default:
+			cc.setInterfaces(new CtClass[] { classPool.get("interfaces.StandardEquipmentControlCI") });
 		}
-		System.out.println("type : "+typeEquipment);
-
+		System.out.println("type : " + typeEquipment);
 
 		NodeList nodeList = doc.getElementsByTagName("control-adapter").item(0).getChildNodes();
-		for (int i=2; i< nodeList.getLength(); i++){
+		for (int i = 2; i < nodeList.getLength(); i++) {
 			// method
-			String prototypeFunction ;
+			String prototypeFunction;
 			Node node = nodeList.item(i);
 
-			if(node.getNodeType() == Node.ELEMENT_NODE)
-			{
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) node;
 				String functionName = eElement.getTagName();
-				switch(functionName){
-					case "currentMode":
-						prototypeFunction = "public int currentMode() throws Exception ";
-						break;
-					case "emergency":
-						prototypeFunction = "public double emergency() throws Exception";
-						break;
-					case "startTime":
-						prototypeFunction = "public java.time.LocalTime startTime() throws Exception";
-						break;
-					case "duration":
-						prototypeFunction = "public java.time.Duration duration() throws Exception";
-						break;
-					default:
-						prototypeFunction = "public boolean "+functionName+"() throws Exception";
+				switch (functionName) {
+				case "currentMode":
+					prototypeFunction = "public int currentMode() throws Exception ";
+					break;
+				case "emergency":
+					prototypeFunction = "public double emergency() throws Exception";
+					break;
+				case "startTime":
+					prototypeFunction = "public java.time.LocalTime startTime() throws Exception";
+					break;
+				case "duration":
+					prototypeFunction = "public java.time.Duration duration() throws Exception";
+					break;
+				default:
+					prototypeFunction = "public boolean " + functionName + "() throws Exception";
 				}
 
-				String body = eElement.getElementsByTagName("body").item(0).getTextContent() ;
+				String body = eElement.getElementsByTagName("body").item(0).getTextContent();
 				String req = eElement.getElementsByTagName("required").item(0).getTextContent();
-				String nameEquipment = eElement.getElementsByTagName("body").item(0).getAttributes().getNamedItem("equipmentRef").getTextContent();
-				String body2 = req + " " + nameEquipment + " = "+ "("+req+") this.offering;";
+				String nameEquipment = eElement.getElementsByTagName("body").item(0).getAttributes()
+						.getNamedItem("equipmentRef").getTextContent();
+				String body2 = req + " " + nameEquipment + " = " + "(" + req + ") this.offering;";
 				String body3 = body2 + body;
 				String function = prototypeFunction + "{\n" + body3 + "}";
-				System.out.println("function: "+ function);
-				CtMethod m = CtMethod.make(function,cc);
+				System.out.println("function: " + function);
+				CtMethod m = CtMethod.make(function, cc);
 				cc.addMethod(m);
 			}
 		}
 
-
-
-
 		cc.writeFile("src/main/java/generatedClasses");
 
-		switch(typeEquipment){
-			case "suspension":
-				this.doPortConnection(inboundPortURI,
-						new SuspensionEquipmentControlOutboundPort(this).getPortURI(),
-						"generatedClasses."+serial_number+"_connector");
-				System.out.println("ports "+this.portURIs2ports);
-				break;
-			case "planning":
-				System.out.println("in planning");
-				PlanningEquipmentControlOutboundPort out = new PlanningEquipmentControlOutboundPort(inboundPortURI,this);
-				out.publishPort();
+		switch (typeEquipment) {
+		case "suspension":
+			this.doPortConnection(inboundPortURI, new SuspensionEquipmentControlOutboundPort(this).getPortURI(),
+					"generatedClasses." + serial_number + "_connector");
+			System.out.println("ports " + this.portURIs2ports);
+			break;
+		case "planning":
+			System.out.println("in planning");
+			PlanningEquipmentControlOutboundPort out = new PlanningEquipmentControlOutboundPort(inboundPortURI, this);
+			out.publishPort();
 
-				//System.out.println("ports" + out.getPortURI());
-				try {
+			// System.out.println("ports" + out.getPortURI());
+			try {
 
-					out.doConnection(inboundPortURI,"generatedClasses."+serial_number+"_connector");
-					boolean succeed = out.downMode();
-				} catch(Exception e)
-				{
-					e.printStackTrace();
+				out.doConnection(inboundPortURI, "generatedClasses." + serial_number + "_connector");
+				boolean succeed = out.downMode();
+			} catch (Exception e) {
+				e.printStackTrace();
 
-				}
+			}
 
-				//TODO Régler le problème de synchronisation doPortConnection pas fait
+			// TODO Régler le problème de synchronisation doPortConnection pas fait
 
-				break;
+			break;
 
 		}
 		Log.printAndLog(this, "register(" + serial_number + ", " + inboundPortURI + ") service result : " + true);

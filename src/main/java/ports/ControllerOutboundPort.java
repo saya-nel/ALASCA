@@ -1,4 +1,4 @@
-package ports;
+package main.java.ports;
 
 /**
  * Controller outbound port
@@ -8,7 +8,7 @@ import java.util.Map;
 
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
-import interfaces.ControllerCI;
+import main.java.interfaces.ControllerCI;
 
 public class ControllerOutboundPort extends AbstractOutboundPort implements ControllerCI {
 

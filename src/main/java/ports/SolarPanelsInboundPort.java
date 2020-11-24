@@ -1,9 +1,9 @@
-package ports;
+package main.java.ports;
 
-import components.SolarPanels;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import interfaces.SolarPanelsCI;
+import main.java.components.SolarPanels;
+import main.java.interfaces.SolarPanelsCI;
 
 /**
  * 

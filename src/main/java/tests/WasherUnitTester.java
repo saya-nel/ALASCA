@@ -1,19 +1,17 @@
-package tests;
+package main.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Date;
-
-import connectors.ControlWasherConnector;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import interfaces.WasherCI;
-import ports.ControlWasherOutboundPort;
-import utils.Log;
+import main.java.connectors.ControlWasherConnector;
+import main.java.interfaces.WasherCI;
+import main.java.ports.ControlWasherOutboundPort;
+import main.java.utils.Log;
 
 /**
  * Tester for the Washer component
@@ -197,7 +195,6 @@ public class WasherUnitTester extends AbstractComponent {
 		}
 		Log.printAndLog(this, "done...");
 	}
-
 
 	/**
 	 * Run all the tests

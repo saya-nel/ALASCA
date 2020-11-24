@@ -1,12 +1,12 @@
-package ports;
+package main.java.ports;
 
 import java.time.Duration;
 import java.time.LocalTime;
 
-import components.Washer;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import interfaces.WasherCI;
+import main.java.components.Washer;
+import main.java.interfaces.WasherCI;
 
 /**
  * Class representing the inbound port of the component Washer

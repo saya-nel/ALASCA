@@ -1,8 +1,8 @@
-package interfaces;
+package main.java.interfaces;
 
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
-import utils.FanLevel;
+import main.java.utils.FanLevel;
 
 /**
  * 
