@@ -20,6 +20,7 @@ import main.java.interfaces.FridgeImplementationI;
 import main.java.ports.ControllerOutboundPort;
 import main.java.ports.FridgeInboundPort;
 import main.java.utils.FridgeMode;
+import main.java.utils.Log;
 
 @OfferedInterfaces(offered = { FridgeCI.class })
 @RequiredInterfaces(required = { ControllerCI.class })
@@ -82,7 +83,8 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * @param fipURI inbound port's uri
 	 * @throws Exception
 	 */
-	protected Fridge(String uri, String serialNumber, String fipURI, String cip_URI) throws Exception {
+	protected Fridge(String uri, boolean toogleTracing, String serialNumber, String fipURI, String cip_URI)
+			throws Exception {
 		super(uri, 1, 0);
 		myUri = uri;
 		this.serialNumber = serialNumber;
@@ -92,6 +94,11 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		this.cop = new ControllerOutboundPort(this);
 		this.cop.publishPort();
 		this.initialise(fipURI);
+		if (toogleTracing) {
+			this.tracer.get().setTitle("Fridge component");
+			this.tracer.get().setRelativePosition(0, 2);
+			this.toggleTracing();
+		}
 
 	}
 
@@ -170,6 +177,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	@Override
 	public float getRequestedTemperature() throws Exception {
+		Log.printAndLog(this, "getRequestedTemperature() service result : " + requestedTemperature);
 		return requestedTemperature;
 	}
 
@@ -178,6 +186,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	@Override
 	public void setRequestedTemperature(float temp) throws Exception {
+		Log.printAndLog(this, "setRequestedTemperature(" + temp + ") service called, new temp = " + temp);
 		this.requestedTemperature = temp;
 	}
 
@@ -186,6 +195,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	@Override
 	public float getCurrentTemperature() throws Exception {
+		Log.printAndLog(this, "getCurrentTemperature() service result : " + this.currentTemperature);
 		return this.currentTemperature;
 	}
 
@@ -195,6 +205,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	@Override
 	public boolean upMode() throws Exception {
 		mode = FridgeMode.NORMAL;
+		Log.printAndLog(this, "upMode() service result : " + true);
 		return true;
 	}
 
@@ -204,6 +215,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	@Override
 	public boolean downMode() throws Exception {
 		mode = FridgeMode.ECO;
+		Log.printAndLog(this, "downmode() service result : " + true);
 		return true;
 	}
 
@@ -212,12 +224,15 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
+		boolean res = false;
 		try {
 			mode = FridgeMode.values()[modeIndex];
-			return true;
+			res = true;
 		} catch (Exception e) {
-			return false;
+			e.printStackTrace();
 		}
+		Log.printAndLog(this, "setMode(" + modeIndex + ") service result : " + res);
+		return res;
 	}
 
 	/**
@@ -225,7 +240,9 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	@Override
 	public int currentMode() throws Exception {
-		return mode.ordinal();
+		int res = mode.ordinal();
+		Log.printAndLog(this, "currentMode() service result : " + res);
+		return res;
 	}
 
 	/**
@@ -233,7 +250,9 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	@Override
 	public boolean suspended() throws Exception {
-		return this.passive.get();
+		boolean res = this.passive.get();
+		Log.printAndLog(this, "suspended() service result : " + res);
+		return res;
 	}
 
 	/**
@@ -248,6 +267,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 				this.lastSuspensionTime.set(LocalTime.now());
 			}
 		}
+		Log.printAndLog(this, "suspend() service result : " + succeed);
 		return succeed;
 	}
 
@@ -263,6 +283,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 				this.lastSuspensionTime.set(null);
 			}
 		}
+		Log.printAndLog(this, "resume() service result : " + succeed);
 		return succeed;
 	}
 
@@ -272,17 +293,20 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	@Override
 	public double emergency() throws Exception {
 		synchronized (this.passive) {
+			double res = 0d;
 			if (!this.passive.get()) {
-				return 0.0;
+				res = 0.0;
 			} else {
 				Duration d = Duration.between(this.lastSuspensionTime.get(), LocalTime.now());
 				long inMillis = d.toMillis();
 				if (inMillis > MAX_SUSPENSION) {
-					return 1.0;
+					res = 1.0;
 				} else {
-					return ((double) inMillis) / ((double) MAX_SUSPENSION);
+					res = ((double) inMillis) / ((double) MAX_SUSPENSION);
 				}
 			}
+			Log.printAndLog(this, "emergency() service result : " + res);
+			return res;
 		}
 	}
 }

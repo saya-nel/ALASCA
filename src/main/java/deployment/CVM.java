@@ -4,6 +4,9 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.Battery;
 import main.java.components.Controller;
+import main.java.components.Fan;
+import main.java.components.PetrolGenerator;
+import main.java.components.SolarPanels;
 
 /**
  * 
@@ -17,7 +20,7 @@ public class CVM extends AbstractCVM {
 	// Components URIs and serials
 
 	/**
-	 * Battery component URI
+	 * Battery component URI & serial
 	 */
 	public final static String batteryURI = "battery";
 	public final static String batterySerial = "battery1";
@@ -30,7 +33,7 @@ public class CVM extends AbstractCVM {
 	/**
 	 * Heater component URI
 	 */
-	public final static String heaterURI = "heater";
+	public final static String petrolGeneratorURI = "petrolGenerator";
 
 	/**
 	 * SolarPanels component URI
@@ -38,9 +41,22 @@ public class CVM extends AbstractCVM {
 	public final static String solarPanelsURI = "solarPanels";
 
 	/**
+	 * Fridge component URI & serial
+	 */
+	public final static String fridgeUri = "fridge";
+	public final static String fridgeSerial = "fridge1";
+
+	/**
+	 * Washer component URI
+	 */
+	public final static String washerUri = "washer";
+	public final static String washerSerial = "washer1";
+
+	/**
 	 * Controller component URI
 	 */
 	public final static String controllerURI = "controller";
+
 	// Ports URIs
 
 	/**
@@ -54,9 +70,24 @@ public class CVM extends AbstractCVM {
 	public final static String fanFIP_uri = "fanFIP";
 
 	/**
+	 * PetrolGenerator Inbound port URI
+	 */
+	public final static String petrolGeneratorPGIP_uri = "petrolGeneratorPGIP";
+
+	/**
 	 * SolarPanels Inbound port URI
 	 */
 	public final static String solarPanelsSPIP_uri = "solarPanelsSPIP";
+
+	/**
+	 * Fridge Inbound port URI
+	 */
+	public final static String fridgeFIP_uri = "fridgeFIP";
+
+	/**
+	 * Washer Inbound port URI
+	 */
+	public final static String washerWIP_uri = "washerWIP";
 
 	/**
 	 * Controller Inbound port URI
@@ -77,12 +108,40 @@ public class CVM extends AbstractCVM {
 	 */
 	@Override
 	public void deploy() throws Exception {
-		// create Battery component
-		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
-				new Object[] { batteryURI, true, batterySerial, batteryBIP_uri, controllerCIP_uri, (float) 2000 });
+
+		// create components that arn't connected to controller :
+
+		// create Fan component
+		AbstractComponent.createComponent(Fan.class.getCanonicalName(), new Object[] { fanURI, fanFIP_uri });
+
+		// create PetrolGenerator component
+		AbstractComponent.createComponent(PetrolGenerator.class.getCanonicalName(),
+				new Object[] { petrolGeneratorURI, petrolGeneratorPGIP_uri, (float) 2000 });
+
+		// create SolarPanels component
+		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),
+				new Object[] { solarPanelsURI, solarPanelsSPIP_uri });
+
+		// create the controller and components that are connected to controller :
+
 		// create Controller component
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
 				new Object[] { controllerURI, true, controllerCIP_uri });
+
+		// create Battery component
+		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
+				new Object[] { batteryURI, true, batterySerial, batteryBIP_uri, controllerCIP_uri, (float) 2000 });
+
+		// create Fridge component
+//		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
+//				new Object[] { fridgeUri, true, fridgeSerial, fridgeFIP_uri, controllerCIP_uri });
+
+		// create Washer component
+//		AbstractComponent.createComponent(Washer.class.getCanonicalName(),
+//				new Object[] { washerUri, true, washerSerial, washerWIP_uri, controllerCIP_uri });
+
+		// create electricPanel component
+
 		super.deploy();
 	}
 

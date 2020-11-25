@@ -20,6 +20,7 @@ import main.java.interfaces.WasherCI;
 import main.java.interfaces.WasherImplementationI;
 import main.java.ports.ControllerOutboundPort;
 import main.java.ports.WasherInboundPort;
+import main.java.utils.Log;
 import main.java.utils.WasherModes;
 
 @OfferedInterfaces(offered = { WasherCI.class })
@@ -100,12 +101,18 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	 * @throws Exception
 	 */
 
-	protected Washer(String reflectionPortURI, String serialNumber, String wipURI, String cip_URI) throws Exception {
+	protected Washer(String reflectionPortURI, boolean toogleTracing, String serialNumber, String wipURI,
+			String cip_URI) throws Exception {
 		super(reflectionPortURI, 1, 0);
 		myUri = reflectionPortURI;
 		this.serialNumber = serialNumber;
 		this.cip_uri = cip_URI;
 		initialise(wipURI);
+		if (toogleTracing) {
+			this.tracer.get().setTitle("Washer component");
+			this.tracer.get().setRelativePosition(0, 3);
+			this.toggleTracing();
+		}
 	}
 
 	// -------------------------------------------------------------------------
@@ -184,23 +191,29 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 
 	@Override
 	public boolean isTurnedOn() throws Exception {
-		return this.isOn.get();
+		boolean res = this.isOn.get();
+		Log.printAndLog(this, "isTurnedOn() service result : " + res);
+		return res;
 	}
 
 	@Override
 	public void setProgramTemperature(int temperature) throws Exception {
 		this.programTemperature.set(temperature);
+		Log.printAndLog(this, "setProgramTemperature(" + temperature + ") service called");
 	}
 
 	@Override
 	public int getProgramTemperature() throws Exception {
-		return this.programTemperature.get();
+		int res = this.programTemperature.get();
+		Log.printAndLog(this, "getProgramTemperature() service result : " + res);
+		return res;
 	}
 
 	@Override
 	public boolean turnOn() throws Exception {
 		boolean succeed = false;
 		succeed = this.isOn.compareAndSet(false, true);
+		Log.printAndLog(this, "turnOn() service result : " + succeed);
 		return succeed;
 	}
 
@@ -208,6 +221,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	public boolean turnOff() throws Exception {
 		boolean succeed = false;
 		succeed = this.isOn.compareAndSet(true, false);
+		Log.printAndLog(this, "turnOff() service result : " + succeed);
 		return succeed;
 	}
 
@@ -221,7 +235,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndIncrement());
 			}
 		}
-
+		Log.printAndLog(this, "upMode() service result : " + succeed);
 		return succeed;
 	}
 
@@ -235,39 +249,50 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndDecrement());
 			}
 		}
-
+		Log.printAndLog(this, "downMode() service result : " + succeed);
 		return succeed;
 	}
 
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
 		boolean succeed = this.mode.compareAndSet(this.mode.get(), modeIndex);
+		Log.printAndLog(this, "setMode(" + modeIndex + ") service result : " + succeed);
 		return succeed;
 	}
 
 	@Override
 	public int currentMode() throws Exception {
-		return this.mode.get();
+		int res = this.mode.get();
+		Log.printAndLog(this, "currentMode() service result : " + res);
+		return res;
 	}
 
 	@Override
 	public boolean hasPlan() throws Exception {
-		return this.hasPlan.get();
+		boolean res = this.hasPlan.get();
+		Log.printAndLog(this, "hasPlan() service result : " + res);
+		return res;
 	}
 
 	@Override
 	public LocalTime startTime() throws Exception {
-		return this.lastStartTime.get();
+		LocalTime res = this.lastStartTime.get();
+		Log.printAndLog(this, "startTime() service result : " + res);
+		return res;
 	}
 
 	@Override
 	public Duration duration() throws Exception {
-		return this.durationLastPlanned.get();
+		Duration res = this.durationLastPlanned.get();
+		Log.printAndLog(this, "duration() service result : " + res);
+		return res;
 	}
 
 	@Override
 	public LocalTime deadline() throws Exception {
-		return this.deadlineTime.get();
+		LocalTime res = this.deadlineTime.get();
+		Log.printAndLog(this, "deadline() service result : " + res);
+		return res;
 	}
 
 	@Override
@@ -275,6 +300,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		boolean succeed = false;
 		succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(),
 				this.lastStartTime.get().plusHours(d.toHours()));
+		Log.printAndLog(this, "postpone(" + d + ") service result : " + succeed);
 		return succeed;
 	}
 
@@ -287,6 +313,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 			succeed = this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), null);
 			succeed = this.deadlineTime.compareAndSet(this.deadlineTime.get(), null);
 		}
+		Log.printAndLog(this, "cancel() service result : " + succeed);
 		return succeed;
 	}
 
