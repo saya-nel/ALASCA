@@ -1,12 +1,73 @@
 <control-adapter
     type="suspension"
     uid="1A10000"
-    offered="interfaces.FridgeCI">
+    offered="main.java.interfaces.FridgeCI">
     <consumption nominal="2000" />
-    <startTime>
-        <required>interfaces.FridgeCI</required>
+    <on>
+        <required>main.java.interfaces.FridgeCI</required>
         <body equipmentRef="fridge">
-            fridge.switchOn();
+            return true;
         </body>
-    </startTime>
+    </on>
+    <off>
+        <required>main.java.interfaces.FridgeCI</required>
+        <body equipmentRef="fridge">
+            return true;
+        </body>
+    </off>
+
+    <mode-control numberOfModes="2">
+        <upMode>
+            <required>main.java.interfaces.FridgeCI</required>
+            <body equipmentRef="fridge">
+                return fridge.upMode();
+            </body>
+        </upMode>
+        <downMode>
+            <required>main.java.interfaces.FridgeCI</required>
+            <body equipmentRef="fridge">
+                return fridge.downMode();
+            </body>
+        </downMode>
+        <setMode>
+            <required>main.java.interfaces.FridgeCI</required>
+            <parameter name="newMode"/>
+            <body equipmentRef="fridge">
+                return fridge.setMode(newMode);
+            </body>
+        </setMode>
+        <currentMode>
+            <required>main.java.interfaces.FridgeCI</required>
+            <body equipmentRef="fridge">
+                return fridge.currentMode();
+            </body>
+        </currentMode>
+    </mode-control>
+
+        <suspended>
+            <required>main.java.interfaces.FridgeCI</required>
+            <body equipmentRef="fridge">
+                return fridge.suspended();
+            </body>
+        </suspended>
+        <suspend>
+            <required>main.java.interfaces.FridgeCI</required>
+            <body equipmentRef="fridge">
+                return fridge.suspend();
+            </body>
+        </suspend>
+        <resume>
+            <required>main.java.interfaces.FridgeCI</required>
+            <body equipmentRef="fridge">
+                return fridge.resume();
+            </body>
+        </resume>
+        <emergency>
+            <required>main.java.interfaces.FridgeCI</required>
+            <body equipmentRef="fridge">
+                return fridge.emergency();
+            </body>
+        </emergency>
+
+
 </control-adapter>

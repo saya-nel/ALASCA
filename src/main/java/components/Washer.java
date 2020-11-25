@@ -133,15 +133,13 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	protected void initialise(String washerInboundPortURI) throws Exception {
 		assert washerInboundPortURI != null : new PreconditionException("washerInboundPortUri != null");
 		assert !washerInboundPortURI.isEmpty() : new PreconditionException("washerInboundPortURI.isEmpty()");
-		this.mode = new AtomicInteger();
-		this.isOn = new AtomicBoolean();
-		this.hasPlan = new AtomicBoolean();
-		this.setMode(0);
-		this.turnOn();
-		this.deadlineTime = null;
-		this.durationLastPlanned = null;
-		this.postponeDur = null;
-		this.lastStartTime = null;
+		this.mode = new AtomicInteger(0);
+		this.isOn = new AtomicBoolean(true);
+		this.hasPlan = new AtomicBoolean(false);
+		this.deadlineTime = new AtomicReference<>(null);
+		this.durationLastPlanned = new AtomicReference<>(null);
+		this.lastStartTime = new AtomicReference<>(null);
+		this.postponeDur = new AtomicReference<>(null);
 		this.hasPlan.set(false);
 		this.wip = new WasherInboundPort(washerInboundPortURI, this);
 		this.wip.publishPort();
@@ -228,27 +226,25 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public boolean upMode() throws Exception {
 		boolean succeed = false;
-		synchronized (this.lastStartTime) {
-			if (this.mode.get() == WasherModes.PERFORMANCE.ordinal()) // wheel restaure to 0
-				succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.ECO.ordinal());
-			else {
-				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndIncrement());
-			}
-		}
+		Log.printAndLog(this, "current mode: " + this.mode.get());
+		int expected = this.mode.get();
+		Log.printAndLog(this, "current mode: " + this.mode.get());
+		succeed = this.mode.compareAndSet(expected, this.mode.getAndAdd(1) % 3);
 		Log.printAndLog(this, "upMode() service result : " + succeed);
+
 		return succeed;
 	}
 
 	@Override
 	public boolean downMode() throws Exception {
 		boolean succeed = false;
-		synchronized (this.lastStartTime) {
+
 			if (this.mode.get() == WasherModes.ECO.ordinal()) // wheel restaure to 0
 				succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
 			else {
 				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.getAndDecrement());
 			}
-		}
+
 		Log.printAndLog(this, "downMode() service result : " + succeed);
 		return succeed;
 	}

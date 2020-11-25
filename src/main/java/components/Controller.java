@@ -158,7 +158,6 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
 		// TODO connector generation here
 		Class<?> generatedConnector = generateConnector(serial_number, XMLFile);
-		System.out.println(generatedConnector);
 		if (generatedConnector == null) {
 			System.out.println("generated connector is null");
 			return false;
@@ -261,7 +260,6 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) node;
-					System.out.println("element "+ eElement.getTagName() );
 					if(eElement.getTagName().equals("mode-control"))
 					{//methods in mode control balise
 						NodeList nd = node.getChildNodes();
@@ -328,7 +326,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		String body2 = req + " " + nameEquipment + " = " + "(" + req + ") this.offering;";
 		String body3 = body2 + body;
 		String function = prototypeFunction + "{\n" + body3 + "}";
-		System.out.println("function: " + function);
+		//System.out.println("function: " + function);
 		CtMethod m = CtMethod.make(function, cc);
 		cc.addMethod(m);
 		//return cc;
