@@ -254,6 +254,11 @@ public class Controller extends AbstractComponent implements ControllerImplement
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) node;
 					String functionName = eElement.getTagName();
+					//String parameter = "";
+					//System.out.println(eElement.getChildNodes().item(0).getAttributes());
+					//if(  != null)
+					//	parameter = eElement.getElementsByTagName("parameter").item(0).getTextContent();
+					//	System.out.println("parameter: "+ eElement.getElementsByTagName("parameter").item(0).getTextContent());
 					switch (functionName) {
 					case "currentMode":
 						prototypeFunction = "public int currentMode() throws Exception ";
@@ -267,6 +272,15 @@ public class Controller extends AbstractComponent implements ControllerImplement
 					case "duration":
 						prototypeFunction = "public java.time.Duration duration() throws Exception";
 						break;
+					case "setMode":
+						prototypeFunction = "public boolean setMode(int "+eElement.getElementsByTagName("parameter")
+								.item(0).getAttributes().getNamedItem("name").getTextContent() + ") throws Exception";
+						break;
+					case "postpone":
+						prototypeFunction = "public boolean postpone(java.time.Duration "+eElement.getElementsByTagName("parameter")
+								.item(0).getAttributes().getNamedItem("name").getTextContent() + ")throws Exception";
+						break;
+
 					default:
 						prototypeFunction = "public boolean " + functionName + "() throws Exception";
 					}

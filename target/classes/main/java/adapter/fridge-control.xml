@@ -1,0 +1,12 @@
+<control-adapter
+    type="suspension"
+    uid="1A10000"
+    offered="interfaces.FridgeCI">
+    <consumption nominal="2000" />
+    <startTime>
+        <required>interfaces.FridgeCI</required>
+        <body equipmentRef="fridge">
+            fridge.switchOn();
+        </body>
+    </startTime>
+</control-adapter>
