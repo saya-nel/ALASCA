@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import main.java.interfaces.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,10 +22,6 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import main.java.interfaces.ControllerCI;
-import main.java.interfaces.ControllerImplementationI;
-import main.java.interfaces.PlanningEquipmentControlCI;
-import main.java.interfaces.SuspensionEquipmentControlCI;
 import main.java.ports.ControllerInboundPort;
 import main.java.ports.PlanningEquipmentControlOutboundPort;
 import main.java.ports.StandardEquipmentControlOutboundPort;
@@ -36,7 +33,7 @@ import main.java.ports.SuspensionEquipmentControlOutboundPort;
  *
  */
 @OfferedInterfaces(offered = { ControllerCI.class })
-@RequiredInterfaces(required = { SuspensionEquipmentControlCI.class, PlanningEquipmentControlCI.class })
+@RequiredInterfaces(required = {StandardEquipmentControlCI.class , SuspensionEquipmentControlCI.class, PlanningEquipmentControlCI.class })
 public class Controller extends AbstractComponent implements ControllerImplementationI {
 
 	/**

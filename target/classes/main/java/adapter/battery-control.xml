@@ -61,5 +61,5 @@
         <body equipmentRef="battery">
             return battery.postpone(d);
         </body>
-    </postpone> 
+    </postpone>
 </control-adapter>
