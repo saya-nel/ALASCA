@@ -1,6 +1,7 @@
 package main.java.components;
 
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
@@ -8,6 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import fr.sorbonne_u.components.connectors.ConnectorI;
 import main.java.interfaces.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -132,7 +134,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
 			try {
 				// wait for components to register
-				Thread.sleep(2000);
+				Thread.sleep(5000);
 				// iter on planning equipments
 				for (PlanningEquipmentControlOutboundPort plecop : this.plecops) {
 					plecop.upMode();
@@ -155,11 +157,13 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
 		// TODO connector generation here
 		Class<?> generatedConnector = generateConnector(serial_number, XMLFile);
-		if (generatedConnector == null)
+		System.out.println(generatedConnector);
+		if (generatedConnector == null) {
+			System.out.println("generated connector is null");
 			return false;
-
+		}
 		// connector is generated, we can register the component
-
+		System.out.println("generated connector cannonical name: "+generatedConnector.getCanonicalName());
 		// get the equipment type dans create is port in the associated list
 		String equipmentType = getEquipmentType(XMLFile);
 		if (equipmentType == null)
@@ -175,7 +179,9 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			PlanningEquipmentControlOutboundPort plecop = new PlanningEquipmentControlOutboundPort(this);
 			plecop.publishPort();
 			plecops.add(plecop);
+			System.out.println("avant connection avec le nouveau connecteur");
 			this.doPortConnection(plecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
+			System.out.println("apres connection avec le nouveau connecteur");
 			break;
 		default:
 			StandardEquipmentControlOutboundPort stecop = new StandardEquipmentControlOutboundPort(this);
@@ -218,8 +224,9 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			ClassPool classPool = ClassPool.getDefault();
 			CtClass cc = classPool.makeClass(serial_number + "_connector");
 
+			CtClass cs = classPool.get("fr.sorbonne_u.components.connectors.AbstractConnector");
 			// extends abstractConnector
-			cc.setSuperclass(classPool.get("fr.sorbonne_u.components.connectors.AbstractConnector"));
+			cc.setSuperclass(cs);
 
 			// parse xml
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -229,16 +236,19 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			// Détermination du type d'équipement interface à implémenter
 			String typeEquipment = doc.getElementsByTagName("control-adapter").item(0).getAttributes()
 					.getNamedItem("type").getTextContent();
-
+			CtClass cii;
 			switch (typeEquipment) {
 			case "suspension":
-				cc.setInterfaces(new CtClass[] { classPool.get("main.java.interfaces.SuspensionEquipmentControlCI") });
+				cii = classPool.get("main.java.interfaces.SuspensionEquipmentControlCI");
+				cc.setInterfaces(new CtClass[] { cii});
 				break;
 			case "planning":
-				cc.setInterfaces(new CtClass[] { classPool.get("main.java.interfaces.PlanningEquipmentControlCI") });
+				cii = classPool.get("main.java.interfaces.PlanningEquipmentControlCI");
+				cc.setInterfaces(new CtClass[] { cii });
 				break;
 			default:
-				cc.setInterfaces(new CtClass[] { classPool.get("main.java.interfaces.StandardEquipmentControlCI") });
+				cii = classPool.get("main.java.interfaces.StandardEquipmentControlCI");
+				cc.setInterfaces(new CtClass[] { cii });
 			}
 			System.out.println("type : " + typeEquipment);
 
@@ -251,14 +261,9 @@ public class Controller extends AbstractComponent implements ControllerImplement
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) node;
 					String functionName = eElement.getTagName();
-					//String parameter = "";
-					//System.out.println(eElement.getChildNodes().item(0).getAttributes());
-					//if(  != null)
-					//	parameter = eElement.getElementsByTagName("parameter").item(0).getTextContent();
-					//	System.out.println("parameter: "+ eElement.getElementsByTagName("parameter").item(0).getTextContent());
 					switch (functionName) {
 					case "currentMode":
-						prototypeFunction = "public int currentMode() throws Exception ";
+						prototypeFunction = "public int currentMode() throws Exception";
 						break;
 					case "emergency":
 						prototypeFunction = "public double emergency() throws Exception";
@@ -294,8 +299,12 @@ public class Controller extends AbstractComponent implements ControllerImplement
 					cc.addMethod(m);
 				}
 			}
+			cc.writeFile("src/main/java/generatedClasses");
+			cs.detach();
+			cii.detach();
 			Class<?> ret = cc.toClass();
 			cc.detach();
+
 			return ret;
 		} catch (Exception e) {
 			e.printStackTrace();

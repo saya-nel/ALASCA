@@ -144,6 +144,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		this.setMode(BatteryState.SLEEPING.ordinal());
 		this.hasPlan = new AtomicBoolean(false);
 		this.maximumEnergy = maximumEnergy;
+		this.deadlineTime = new AtomicReference<>();
 		this.bip = new BatteryInboundPort(batteryInboundPortURI, this);
 		this.bip.publishPort();
 		this.cop = new ControllerOutboundPort(this);

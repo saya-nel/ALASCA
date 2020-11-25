@@ -3,25 +3,31 @@
         uid="1A10000"
         offered="main.java.interfaces.BatteryCI">
     <consumption nominal="200"/>
-
-       <upMode>
-           <required>main.java.interfaces.BatteryCI</required>
-           <body equipmentRef="battery">
-               return battery.upMode();
-           </body>
-       </upMode>
+    <on>
+        <required>main.java.interfaces.BatteryCI</required>
+        <body equipmentRef="battery">
+            return true;
+        </body>
+    </on>
+    <off>
+        <required>main.java.interfaces.BatteryCI</required>
+        <body equipmentRef="battery">
+            return true;
+        </body>
+    </off>
+    <upMode>
+       <required>main.java.interfaces.BatteryCI</required>
+       <body equipmentRef="battery">
+           return battery.upMode();
+        </body>
+    </upMode>
        <downMode>
            <required>main.java.interfaces.BatteryCI</required>
            <body equipmentRef="battery">
                return battery.downMode();
            </body>
        </downMode>
-       <currentMode>
-           <required>main.java.interfaces.BatteryCI</required>
-           <body equipmentRef="battery">
-                return battery.currentMode();
-           </body>
-       </currentMode>
+
 
        <setMode>
            <required>main.java.interfaces.BatteryCI</required>
@@ -30,7 +36,12 @@
                return battery.setMode(newMode);
            </body>
        </setMode>
-
+    <currentMode>
+        <required>main.java.interfaces.BatteryCI</required>
+        <body equipmentRef="battery">
+            return battery.currentMode();
+        </body>
+    </currentMode>
     <hasPlan>
         <required>main.java.interfaces.BatteryCI</required>
         <body equipmentRef="battery">
@@ -43,18 +54,13 @@
             return battery.startTime();
         </body>
     </startTime>
-    <deadline>
+    <duration>
         <required>main.java.interfaces.BatteryCI</required>
         <body equipmentRef="battery">
-            return battery.deadline();
+            return battery.duration();
         </body>
-    </deadline>
-    <cancel>
-        <required>main.java.interfaces.BatteryCI</required>
-        <body equipmentRef="battery">
-            return battery.cancel();
-        </body>
-    </cancel>
+    </duration>
+
     <postpone>
         <required>main.java.interfaces.BatteryCI</required>
         <parameter name="d"/>
@@ -62,4 +68,10 @@
             return battery.postpone(d);
         </body>
     </postpone>
+    <cancel>
+        <required>main.java.interfaces.BatteryCI</required>
+        <body equipmentRef="battery">
+            return battery.cancel();
+        </body>
+    </cancel>
 </control-adapter>
