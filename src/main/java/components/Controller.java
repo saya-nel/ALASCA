@@ -282,7 +282,9 @@ public class Controller extends AbstractComponent implements ControllerImplement
 						prototypeFunction = "public boolean postpone(java.time.Duration "+eElement.getElementsByTagName("parameter")
 								.item(0).getAttributes().getNamedItem("name").getTextContent() + ")throws Exception";
 						break;
-
+					case "deadline":
+						prototypeFunction = "public java.time.LocalTime deadline() throws Exception";
+						break;
 					default:
 						prototypeFunction = "public boolean " + functionName + "() throws Exception";
 					}

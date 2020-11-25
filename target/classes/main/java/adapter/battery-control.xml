@@ -60,7 +60,12 @@
             return battery.duration();
         </body>
     </duration>
-
+    <deadline>
+        <required>main.java.interfaces.BatteryCI</required>
+        <body equipmentRef="battery">
+            return battery.deadline();
+        </body>
+    </deadline>
     <postpone>
         <required>main.java.interfaces.BatteryCI</required>
         <parameter name="d"/>
