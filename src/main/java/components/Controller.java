@@ -53,11 +53,11 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	private ControllerInboundPort cip;
 
 	// ports used for controlling standard devices
-	private List<StandardEquipmentControlOutboundPort> stecops;
+	private Vector<StandardEquipmentControlOutboundPort> stecops;
 	// ports used for controlling standard devices
-	private List<PlanningEquipmentControlOutboundPort> plecops;
+	private Vector<PlanningEquipmentControlOutboundPort> plecops;
 	// ports used for controlling standard devices
-	private List<SuspensionEquipmentControlOutboundPort> suecops;
+	private Vector<SuspensionEquipmentControlOutboundPort> suecops;
 
 	// uri of component
 	private String myURI;
@@ -135,7 +135,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
 			try {
 				// wait for components to register
-				Thread.sleep(5000);
+				Thread.sleep(4000);
 				// iter on planning equipments
 				for (PlanningEquipmentControlOutboundPort plecop : this.plecops) {
 					plecop.upMode();

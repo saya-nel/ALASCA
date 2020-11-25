@@ -150,7 +150,7 @@ public class CVM extends AbstractCVM {
 		try {
 			CVM c = new CVM();
 			c.startStandardLifeCycle(10000L);
-			Thread.sleep(10000L);
+			Thread.sleep(3000L);
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();

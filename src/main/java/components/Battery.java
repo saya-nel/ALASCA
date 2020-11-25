@@ -224,7 +224,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		if (this.operatingMode.get() == BatteryState.SLEEPING.ordinal()) {// return to 0
 			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.RECHARGING.ordinal());
 		} else {
-			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.incrementAndGet());
+			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.get() +1);
 		}
 		Log.printAndLog(this, "upMode() service result : " + succeed);
 		return succeed;
@@ -239,7 +239,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		if (this.operatingMode.get() == BatteryState.RECHARGING.ordinal()) {
 			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.SLEEPING.ordinal());
 		} else {
-			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.decrementAndGet());
+			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.get() - 1);
 		}
 		Log.printAndLog(this, "downMode() service result : " + succeed);
 		return succeed;
