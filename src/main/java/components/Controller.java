@@ -10,6 +10,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import fr.sorbonne_u.components.connectors.ConnectorI;
+import javassist.CannotCompileException;
 import main.java.interfaces.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -253,52 +254,27 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			System.out.println("type : " + typeEquipment);
 
 			NodeList nodeList = doc.getElementsByTagName("control-adapter").item(0).getChildNodes();
+
 			for (int i = 2; i < nodeList.getLength(); i++) {
 				// method
-				String prototypeFunction;
 				Node node = nodeList.item(i);
 
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) node;
-					String functionName = eElement.getTagName();
-					switch (functionName) {
-					case "currentMode":
-						prototypeFunction = "public int currentMode() throws Exception";
-						break;
-					case "emergency":
-						prototypeFunction = "public double emergency() throws Exception";
-						break;
-					case "startTime":
-						prototypeFunction = "public java.time.LocalTime startTime() throws Exception";
-						break;
-					case "duration":
-						prototypeFunction = "public java.time.Duration duration() throws Exception";
-						break;
-					case "setMode":
-						prototypeFunction = "public boolean setMode(int "+eElement.getElementsByTagName("parameter")
-								.item(0).getAttributes().getNamedItem("name").getTextContent() + ") throws Exception";
-						break;
-					case "postpone":
-						prototypeFunction = "public boolean postpone(java.time.Duration "+eElement.getElementsByTagName("parameter")
-								.item(0).getAttributes().getNamedItem("name").getTextContent() + ")throws Exception";
-						break;
-					case "deadline":
-						prototypeFunction = "public java.time.LocalTime deadline() throws Exception";
-						break;
-					default:
-						prototypeFunction = "public boolean " + functionName + "() throws Exception";
+					System.out.println("element "+ eElement.getTagName() );
+					if(eElement.getTagName().equals("mode-control"))
+					{//methods in mode control balise
+						NodeList nd = node.getChildNodes();
+						for(int j=0; j<nd.getLength();j++){
+							if(nd.item(j).getNodeType() == Node.ELEMENT_NODE)
+							{
+								Controller.generateSourceOneMethod(cc,nd.item(j));
+							}
+						}
 					}
-
-					String body = eElement.getElementsByTagName("body").item(0).getTextContent();
-					String req = eElement.getElementsByTagName("required").item(0).getTextContent();
-					String nameEquipment = eElement.getElementsByTagName("body").item(0).getAttributes()
-							.getNamedItem("equipmentRef").getTextContent();
-					String body2 = req + " " + nameEquipment + " = " + "(" + req + ") this.offering;";
-					String body3 = body2 + body;
-					String function = prototypeFunction + "{\n" + body3 + "}";
-					System.out.println("function: " + function);
-					CtMethod m = CtMethod.make(function, cc);
-					cc.addMethod(m);
+					else {//methods not in mode control balise
+						Controller.generateSourceOneMethod(cc, node);
+					}
 				}
 			}
 			cc.writeFile("src/main/java/generatedClasses");
@@ -313,5 +289,48 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			return null;
 		}
 	}
+	private static void generateSourceOneMethod(CtClass cc,Node node) throws CannotCompileException {
+		Element eElement = (Element) node;
+		String prototypeFunction = "";
+		String functionName = eElement.getTagName();
+		switch (functionName) {
+			case "currentMode":
+				prototypeFunction = "public int currentMode() throws Exception";
+				break;
+			case "emergency":
+				prototypeFunction = "public double emergency() throws Exception";
+				break;
+			case "startTime":
+				prototypeFunction = "public java.time.LocalTime startTime() throws Exception";
+				break;
+			case "duration":
+				prototypeFunction = "public java.time.Duration duration() throws Exception";
+				break;
+			case "setMode":
+				prototypeFunction = "public boolean setMode(int "+eElement.getElementsByTagName("parameter")
+						.item(0).getAttributes().getNamedItem("name").getTextContent() + ") throws Exception";
+				break;
+			case "postpone":
+				prototypeFunction = "public boolean postpone(java.time.Duration "+eElement.getElementsByTagName("parameter")
+						.item(0).getAttributes().getNamedItem("name").getTextContent() + ")throws Exception";
+				break;
+			case "deadline":
+				prototypeFunction = "public java.time.LocalTime deadline() throws Exception";
+				break;
+			default:
+				prototypeFunction = "public boolean " + functionName + "() throws Exception";
+		}
 
+		String body = eElement.getElementsByTagName("body").item(0).getTextContent();
+		String req = eElement.getElementsByTagName("required").item(0).getTextContent();
+		String nameEquipment = eElement.getElementsByTagName("body").item(0).getAttributes()
+				.getNamedItem("equipmentRef").getTextContent();
+		String body2 = req + " " + nameEquipment + " = " + "(" + req + ") this.offering;";
+		String body3 = body2 + body;
+		String function = prototypeFunction + "{\n" + body3 + "}";
+		System.out.println("function: " + function);
+		CtMethod m = CtMethod.make(function, cc);
+		cc.addMethod(m);
+		//return cc;
+	}
 }

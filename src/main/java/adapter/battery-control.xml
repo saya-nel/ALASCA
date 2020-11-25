@@ -15,33 +15,39 @@
             return true;
         </body>
     </off>
-    <upMode>
-       <required>main.java.interfaces.BatteryCI</required>
-       <body equipmentRef="battery">
-           return battery.upMode();
-        </body>
-    </upMode>
-       <downMode>
-           <required>main.java.interfaces.BatteryCI</required>
-           <body equipmentRef="battery">
-               return battery.downMode();
-           </body>
-       </downMode>
+
+    <mode-control numberOfModes="3">
+        <upMode>
+            <required>main.java.interfaces.BatteryCI</required>
+            <body equipmentRef="battery">
+                return battery.upMode();
+            </body>
+        </upMode>
+        <downMode>
+            <required>main.java.interfaces.BatteryCI</required>
+            <body equipmentRef="battery">
+                return battery.downMode();
+            </body>
+        </downMode>
+        <setMode>
+            <required>main.java.interfaces.BatteryCI</required>
+            <parameter name="newMode"/>
+            <body equipmentRef="battery">
+                return battery.setMode(newMode);
+            </body>
+        </setMode>
+        <currentMode>
+            <required>main.java.interfaces.BatteryCI</required>
+            <body equipmentRef="battery">
+                return battery.currentMode();
+            </body>
+        </currentMode>
+
+    </mode-control>
 
 
-       <setMode>
-           <required>main.java.interfaces.BatteryCI</required>
-           <parameter name="newMode"/>
-           <body equipmentRef="battery">
-               return battery.setMode(newMode);
-           </body>
-       </setMode>
-    <currentMode>
-        <required>main.java.interfaces.BatteryCI</required>
-        <body equipmentRef="battery">
-            return battery.currentMode();
-        </body>
-    </currentMode>
+
+
     <hasPlan>
         <required>main.java.interfaces.BatteryCI</required>
         <body equipmentRef="battery">
