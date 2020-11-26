@@ -1,6 +1,7 @@
 package main.java.interfaces;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
@@ -81,5 +82,13 @@ public interface BatteryImplementationI {
 	 * @see interfaces.PlanningEquipmentControlCI#cancel()
 	 */
 	public boolean cancel() throws Exception;
+
+	/**
+	 * planify event
+	 * @param durationLastPlanned			duration of the event
+	 * @param deadline						deadline of the event
+	 * @return								true if the plan has been successfully added
+	 */
+	public boolean planifyEvent(Duration durationLastPlanned,LocalTime deadline) throws Exception;
 
 }

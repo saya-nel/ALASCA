@@ -344,4 +344,17 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		return succeed;
 	}
 
+	@Override
+	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) {
+		boolean succeed = false;
+		synchronized (this.lastStartTime)
+		{
+			succeed = true;
+			succeed &= this.hasPlan.compareAndSet(false, true);
+			succeed &= this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), durationLastPlanned);
+			succeed &= this.deadlineTime.compareAndSet(this.deadlineTime.get(), deadline);
+		}
+		return succeed;
+	}
+
 }

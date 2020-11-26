@@ -2,6 +2,7 @@ package main.java.tests;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
+import main.java.components.Battery;
 import main.java.components.Controller;
 import main.java.components.Washer;
 
@@ -30,6 +31,9 @@ public class CVMUnitTest extends AbstractCVM {
 	protected final static String PETROLGENERATOR_INBOUND_PORT_URI = "pgip-URI";
 	protected final static String FRIDGE_INBOUND_PORT_URI = "fridgeip-URI";
 
+	//Serial numbers
+	protected final static String WASHER_SERIAL_NB = "washer_serial_number";
+	protected final static String BATTERY_SERIAL_NB = "battery_serial_number";
 	public CVMUnitTest() throws Exception {
 	}
 
@@ -76,13 +80,17 @@ public class CVMUnitTest extends AbstractCVM {
 		 * new Object[] { FRIDGE_INBOUND_PORT_URI});
 		 * 
 		 */
-		// Washer
-		AbstractComponent.createComponent(Washer.class.getCanonicalName(), new Object[] { WASHER_URI,
-				"WASHER_SERIAL_NUMBER", WASHER_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI });
-//		// Controller
+
+//		 Controller
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
-				new Object[] { CONTROLLER_URI, true, new String[] { CONTROLLER_INBOUND_PORT_URI }, new String[] {} });
+				new Object[] { CONTROLLER_URI, false, CONTROLLER_INBOUND_PORT_URI});
 //
+		// Washer
+		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
+				new Object[] { BATTERY_URI, false, BATTERY_SERIAL_NB, BATTERY_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, (float) 2000 });
+
+		AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
+				new Object[] {BATTERY_INBOUND_PORT_URI});
 //		//TODO Resoudre problème sur ControllerUnitTest Creation composant pose probleme
 		// AbstractComponent.createComponent(ControllerUnitTest.class.getCanonicalName(),
 		// new Object[] { CONTROLLER_INBOUND_PORT_URI});
@@ -92,7 +100,7 @@ public class CVMUnitTest extends AbstractCVM {
 	public static void main(String[] args) {
 		try {
 			CVMUnitTest cvm = new CVMUnitTest();
-			cvm.startStandardLifeCycle(1000L);
+			cvm.startStandardLifeCycle(10000L);
 			Thread.sleep(700L);
 			System.exit(0);
 		} catch (Exception e) {
