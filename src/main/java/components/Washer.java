@@ -147,6 +147,12 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		this.cop.publishPort();
 	}
 
+	@Override
+	public synchronized void finalise() throws Exception {
+		this.cop.doDisconnection();
+		super.finalise();
+	}
+
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
 	 */
@@ -240,11 +246,11 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	public boolean downMode() throws Exception {
 		boolean succeed = false;
 
-			if (this.mode.get() == WasherModes.ECO.ordinal()) // wheel restore to 0
-				succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
-			else {
-				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.get() - 1);
-			}
+		if (this.mode.get() == WasherModes.ECO.ordinal()) // wheel restore to 0
+			succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
+		else {
+			succeed = this.mode.compareAndSet(this.mode.get(), this.mode.get() - 1);
+		}
 
 		Log.printAndLog(this, "downMode() service result : " + succeed);
 		return succeed;

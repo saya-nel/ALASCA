@@ -134,6 +134,12 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		this.fip.publishPort();
 	}
 
+	@Override
+	public synchronized void finalise() throws Exception {
+		this.cop.doDisconnection();
+		super.finalise();
+	}
+
 	/**
 	 * @see AbstractComponent#shutdown()
 	 */
