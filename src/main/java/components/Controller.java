@@ -137,10 +137,11 @@ public class Controller extends AbstractComponent implements ControllerImplement
 				// wait for components to register
 				Thread.sleep(4000);
 				// iter on planning equipments
-				for (PlanningEquipmentControlOutboundPort plecop : this.plecops) {
-					plecop.upMode();
-					plecop.downMode();
-				}
+				//for (PlanningEquipmentControlOutboundPort plecop : this.plecops) {
+				//	plecop.upMode();
+				//	plecop.downMode();
+				//	plecop.deadline();
+				//}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

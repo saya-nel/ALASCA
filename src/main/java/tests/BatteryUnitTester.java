@@ -140,12 +140,42 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	public void testDownMode() {
+		Log.printAndLog(this, "testDownMode()");
+		try{
+			int cur_value = this.bop.currentMode();
+			this.bop.downMode();
+			assertEquals(this.bop.currentMode(), Math.floorMod((cur_value -1), 3));
+		} catch(Exception e){
+			System.err.println("Error occured in test down mode");
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testSetMode() {
+		Log.printAndLog(this, "testSetMode()");
+		try{
+			int exp_value = (this.bop.currentMode() + 1)%3;
+			this.bop.setMode(exp_value);
+			assertEquals(exp_value, this.bop.currentMode());
+		} catch(Exception e){
+			System.err.println("Error occured in test down mode");
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+
 	/**
 	 * Run all the tests
 	 */
 	protected void runAllTests() {
 		this.testGetBatteryCharge();
 		this.testUpMode();
+		this.testDownMode();
+		this.testSetMode();
+
 		Log.printAndLog(this, "all tests passed");
 	}
 
