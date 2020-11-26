@@ -1,17 +1,13 @@
 package main.java.components;
 
 import java.io.StringReader;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Vector;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import fr.sorbonne_u.components.connectors.ConnectorI;
-import javassist.CannotCompileException;
-import main.java.interfaces.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,10 +17,16 @@ import org.xml.sax.InputSource;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
+import fr.sorbonne_u.components.connectors.AbstractConnector;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
+import main.java.interfaces.ControllerCI;
+import main.java.interfaces.ControllerImplementationI;
+import main.java.interfaces.PlanningEquipmentControlCI;
+import main.java.interfaces.StandardEquipmentControlCI;
+import main.java.interfaces.SuspensionEquipmentControlCI;
 import main.java.ports.ControllerInboundPort;
 import main.java.ports.PlanningEquipmentControlOutboundPort;
 import main.java.ports.StandardEquipmentControlOutboundPort;
@@ -36,7 +38,8 @@ import main.java.ports.SuspensionEquipmentControlOutboundPort;
  *
  */
 @OfferedInterfaces(offered = { ControllerCI.class })
-@RequiredInterfaces(required = {StandardEquipmentControlCI.class , SuspensionEquipmentControlCI.class, PlanningEquipmentControlCI.class })
+@RequiredInterfaces(required = { StandardEquipmentControlCI.class, SuspensionEquipmentControlCI.class,
+		PlanningEquipmentControlCI.class })
 public class Controller extends AbstractComponent implements ControllerImplementationI {
 
 	/**
@@ -59,19 +62,11 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// ports used for controlling standard devices
 	private Vector<SuspensionEquipmentControlOutboundPort> suecops;
 
-	// uri of component
-	private String myURI;
-
-	// mutex
-	private ReentrantLock mutex_register = new ReentrantLock();
-
 	public static final String REGISTERING_POOL = "registering-pool";
 
-	// TODO parametres a revoir, bizarre
 	protected Controller(String uri, boolean toogleTracing, String inboundPortRegisterURI) throws Exception {
 		super(uri, 1, 0);
 		assert uri != null;
-		this.myURI = uri;
 
 		this.createNewExecutorService(CONTROL_EXECUTOR_URI, 1, false);
 		this.createNewExecutorService(REGISTER_EXECUTOR_URI, 1, false);
@@ -157,13 +152,18 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	@Override
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
 		// TODO connector generation here
-		Class<?> generatedConnector = generateConnector(serial_number, XMLFile);
+		Class<?> generatedConnector;
+		try {
+			generatedConnector = generateConnector(serial_number, XMLFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 		if (generatedConnector == null) {
-			System.out.println("generated connector is null");
 			return false;
 		}
 		// connector is generated, we can register the component
-		System.out.println("generated connector cannonical name: "+generatedConnector.getCanonicalName());
+
 		// get the equipment type dans create is port in the associated list
 		String equipmentType = getEquipmentType(XMLFile);
 		if (equipmentType == null)
@@ -179,9 +179,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			PlanningEquipmentControlOutboundPort plecop = new PlanningEquipmentControlOutboundPort(this);
 			plecop.publishPort();
 			plecops.add(plecop);
-			System.out.println("avant connection avec le nouveau connecteur");
 			this.doPortConnection(plecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
-			System.out.println("apres connection avec le nouveau connecteur");
 			break;
 		default:
 			StandardEquipmentControlOutboundPort stecop = new StandardEquipmentControlOutboundPort(this);
@@ -211,124 +209,142 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		}
 	}
 
-	/**
-	 * Generate a connector Class from an xml string
-	 * 
-	 * @param serial_number
-	 * @param XMLFile
-	 * @return
-	 */
-	private Class<?> generateConnector(String serial_number, String XMLFile) {
-		try {
-			// Génération de classe
-			ClassPool classPool = ClassPool.getDefault();
-			CtClass cc = classPool.makeClass(serial_number + "_connector");
+	private Class<?> generateConnector(String serialNumber, String xmlFile) throws Exception {
+		String generatedClassName = serialNumber + "_connector";
+		Class<?> superClass = AbstractConnector.class;
+		Class<?> offeredInterface;
+		Class<?> connectorImplementedInterface;
+		HashMap<String, String> implementedMethodNames = new HashMap<>();
+		HashMap<String, String> notImplementedMethodBody = new HashMap<>();
 
-			CtClass cs = classPool.get("fr.sorbonne_u.components.connectors.AbstractConnector");
-			// extends abstractConnector
-			cc.setSuperclass(cs);
+		// on determine l'interface implémentée par le connecteur généré
+		String equipmentType = getEquipmentType(xmlFile);
+		switch (equipmentType) {
+		case "suspension":
+			connectorImplementedInterface = SuspensionEquipmentControlCI.class;
+			break;
+		case "planning":
+			connectorImplementedInterface = PlanningEquipmentControlCI.class;
+			break;
+		default:
+			connectorImplementedInterface = StandardEquipmentControlCI.class;
+		}
 
-			// parse xml
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(new InputSource(new StringReader(XMLFile)));
+		// on détermine l'interface offerte par le connecteur généré
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(new InputSource(new StringReader(xmlFile)));
 
-			// Détermination du type d'équipement interface à implémenter
-			String typeEquipment = doc.getElementsByTagName("control-adapter").item(0).getAttributes()
-					.getNamedItem("type").getTextContent();
-			CtClass cii;
-			switch (typeEquipment) {
-			case "suspension":
-				cii = classPool.get("main.java.interfaces.SuspensionEquipmentControlCI");
-				cc.setInterfaces(new CtClass[] { cii});
-				break;
-			case "planning":
-				cii = classPool.get("main.java.interfaces.PlanningEquipmentControlCI");
-				cc.setInterfaces(new CtClass[] { cii });
-				break;
-			default:
-				cii = classPool.get("main.java.interfaces.StandardEquipmentControlCI");
-				cc.setInterfaces(new CtClass[] { cii });
-			}
-			System.out.println("type : " + typeEquipment);
+		String offeredInterfaceName = doc.getElementsByTagName("control-adapter").item(0).getAttributes()
+				.getNamedItem("offered").getTextContent();
+		offeredInterface = Class.forName(offeredInterfaceName);
 
-			NodeList nodeList = doc.getElementsByTagName("control-adapter").item(0).getChildNodes();
-
-			for (int i = 2; i < nodeList.getLength(); i++) {
-				// method
-				Node node = nodeList.item(i);
-
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element eElement = (Element) node;
-					if(eElement.getTagName().equals("mode-control"))
-					{//methods in mode control balise
-						NodeList nd = node.getChildNodes();
-						for(int j=0; j<nd.getLength();j++){
-							if(nd.item(j).getNodeType() == Node.ELEMENT_NODE)
-							{
-								Controller.generateSourceOneMethod(cc,nd.item(j));
+		// on détermine la "traduction" du nom des méthodes entre ce qui est requis et
+		// ce qui est offert et le stocke dans methodNames
+		NodeList nodeList = doc.getElementsByTagName("control-adapter").item(0).getChildNodes();
+		for (int i = 2; i < nodeList.getLength(); i++) {
+			// method
+			Node node = nodeList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) node;
+				if (eElement.getTagName().equals("mode-control")) {// methods in mode control balise
+					NodeList nd = node.getChildNodes();
+					for (int j = 0; j < nd.getLength(); j++) {
+						if (nd.item(j).getNodeType() == Node.ELEMENT_NODE) {
+							eElement = (Element) nd.item(j);
+							String requiredMethodName = eElement.getTagName();
+							String body = eElement.getElementsByTagName("body").item(0).getTextContent();
+							int index = body.indexOf('.');
+							// body is calling a method
+							if (index != -1) {
+								int endIndex = body.indexOf('(');
+								String offeredMethodName = body.substring(index + 1, endIndex);
+								implementedMethodNames.put(requiredMethodName, offeredMethodName);
+							} else {
+								notImplementedMethodBody.put(requiredMethodName, body);
 							}
 						}
 					}
-					else {//methods not in mode control balise
-						Controller.generateSourceOneMethod(cc, node);
+				} else {
+					String requiredMethodName = eElement.getTagName();
+					String body = eElement.getElementsByTagName("body").item(0).getTextContent();
+					int index = body.indexOf('.');
+					// body is calling a method
+					if (index != -1) {
+						int endIndex = body.indexOf('(');
+						String offeredMethodName = body.substring(index + 1, endIndex);
+						implementedMethodNames.put(requiredMethodName, offeredMethodName);
+					} else {
+						notImplementedMethodBody.put(requiredMethodName, body);
 					}
 				}
 			}
-			cc.writeFile("src/main/java/generatedClasses");
-			cs.detach();
-			cii.detach();
-			Class<?> ret = cc.toClass();
-			cc.detach();
-
-			return ret;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
 		}
+		return makeConnectorClassJavassist(generatedClassName, superClass, connectorImplementedInterface,
+				offeredInterface, implementedMethodNames, notImplementedMethodBody);
 	}
-	private static void generateSourceOneMethod(CtClass cc,Node node) throws CannotCompileException {
-		Element eElement = (Element) node;
-		String prototypeFunction = "";
-		String functionName = eElement.getTagName();
-		switch (functionName) {
-			case "currentMode":
-				prototypeFunction = "public int currentMode() throws Exception";
-				break;
-			case "emergency":
-				prototypeFunction = "public double emergency() throws Exception";
-				break;
-			case "startTime":
-				prototypeFunction = "public java.time.LocalTime startTime() throws Exception";
-				break;
-			case "duration":
-				prototypeFunction = "public java.time.Duration duration() throws Exception";
-				break;
-			case "setMode":
-				prototypeFunction = "public boolean setMode(int "+eElement.getElementsByTagName("parameter")
-						.item(0).getAttributes().getNamedItem("name").getTextContent() + ") throws Exception";
-				break;
-			case "postpone":
-				prototypeFunction = "public boolean postpone(java.time.Duration "+eElement.getElementsByTagName("parameter")
-						.item(0).getAttributes().getNamedItem("name").getTextContent() + ")throws Exception";
-				break;
-			case "deadline":
-				prototypeFunction = "public java.time.LocalTime deadline() throws Exception";
-				break;
-			default:
-				prototypeFunction = "public boolean " + functionName + "() throws Exception";
-		}
 
-		String body = eElement.getElementsByTagName("body").item(0).getTextContent();
-		String req = eElement.getElementsByTagName("required").item(0).getTextContent();
-		String nameEquipment = eElement.getElementsByTagName("body").item(0).getAttributes()
-				.getNamedItem("equipmentRef").getTextContent();
-		String body2 = req + " " + nameEquipment + " = " + "(" + req + ") this.offering;";
-		String body3 = body2 + body;
-		String function = prototypeFunction + "{\n" + body3 + "}";
-		//System.out.println("function: " + function);
-		CtMethod m = CtMethod.make(function, cc);
-		cc.addMethod(m);
-		//return cc;
+	public Class<?> makeConnectorClassJavassist(String connectorCanonicalClassName, Class<?> connectorSuperclass,
+			Class<?> connectorImplementedInterface, Class<?> offeredInterface, HashMap<String, String> methodNamesMap,
+			HashMap<String, String> notImplementedMethodBody) throws Exception {
+		ClassPool pool = ClassPool.getDefault();
+		CtClass cs = pool.get(connectorSuperclass.getCanonicalName());
+		CtClass cii = pool.get(connectorImplementedInterface.getCanonicalName());
+		CtClass oi = pool.get(offeredInterface.getCanonicalName());
+		CtClass connectorCtClass = pool.makeClass(connectorCanonicalClassName);
+		connectorCtClass.setSuperclass(cs);
+		Method[] methodsToImplement = connectorImplementedInterface.getMethods();
+
+		for (int i = 0; i < methodsToImplement.length; i++) {
+			String source = "public ";
+			source += methodsToImplement[i].getReturnType().getName() + " ";
+			source += methodsToImplement[i].getName() + "(";
+			Class<?>[] pt = methodsToImplement[i].getParameterTypes();
+			String callParam = "";
+			for (int j = 0; j < pt.length; j++) {
+				String pName = "aaa" + j;
+				source += pt[j].getCanonicalName() + " " + pName;
+				callParam += pName;
+				if (j < pt.length - 1) {
+					source += ", ";
+					callParam += ", ";
+				}
+			}
+			source += ")";
+			Class<?>[] et = methodsToImplement[i].getExceptionTypes();
+			if (et != null && et.length > 0) {
+				source += "throws ";
+				for (int z = 0; z < et.length; z++) {
+					source += et[z].getCanonicalName();
+					if (z < et.length - 1)
+						source += ",";
+				}
+			}
+			// si la méthode est implémenté par le composant
+			if (methodNamesMap.containsKey(methodsToImplement[i].getName())) {
+				source += "\n{return ((";
+				source += offeredInterface.getCanonicalName() + ")this.offering).";
+				source += methodNamesMap.get(methodsToImplement[i].getName());
+				source += "(" + callParam + ") ;\n}";
+			}
+			// la méthode n'est pas implémenté par le composant
+			else if (notImplementedMethodBody.containsKey(methodsToImplement[i].getName())) {
+				source += "\n{";
+				source += notImplementedMethodBody.get(methodsToImplement[i].getName());
+				source += "\n}";
+			} else {
+				throw new Exception("The xml file for the connector : " + connectorCanonicalClassName
+						+ " need to implements all the methods (" + methodsToImplement[i].getName() + " is missing).");
+			}
+			CtMethod theCtMethod = CtMethod.make(source, connectorCtClass);
+			connectorCtClass.addMethod(theCtMethod);
+		}
+		connectorCtClass.setInterfaces(new CtClass[] { cii });
+		cii.detach();
+		cs.detach();
+		oi.detach();
+		Class<?> ret = connectorCtClass.toClass();
+		connectorCtClass.detach();
+		return ret;
 	}
 }
