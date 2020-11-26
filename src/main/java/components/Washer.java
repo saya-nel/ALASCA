@@ -18,8 +18,7 @@ import main.java.connectors.ControllerConnector;
 import main.java.interfaces.ControllerCI;
 import main.java.interfaces.WasherCI;
 import main.java.interfaces.WasherImplementationI;
-import main.java.ports.ControllerOutboundPort;
-import main.java.ports.WasherInboundPort;
+import main.java.ports.*;
 import main.java.utils.Log;
 import main.java.utils.WasherModes;
 
@@ -174,6 +173,14 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 			throw new ComponentStartException(e);
 		}
 	}
+
+	@Override
+	public synchronized void finalise() throws Exception {
+		this.cop.doDisconnection();
+		super.finalise();
+	}
+
+
 
 	@Override
 	public synchronized void execute() throws Exception {
