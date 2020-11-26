@@ -111,4 +111,9 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).cancel());
 	}
 
+	@Override
+	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception{
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).planifyEvent(durationLastPlanned, deadline));
+	}
+
 }

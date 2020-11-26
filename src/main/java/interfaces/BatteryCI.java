@@ -82,8 +82,8 @@ public interface BatteryCI extends BatteryImplementationI, OfferedCI, RequiredCI
 	public boolean cancel() throws Exception;
 
 	/**
-	 * @see main.java.interfaces.BatteryImplementationI#planifyEvent(Duration, LocalTime) 
+	 * @see main.java.interfaces.BatteryImplementationI#planifyEvent(Duration, LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned,LocalTime deadline);
+	public boolean planifyEvent(Duration durationLastPlanned,LocalTime deadline) throws Exception;
 }

@@ -7,10 +7,14 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import main.java.connectors.BatteryConnector;
 import main.java.connectors.ControlBatteryConnector;
 import main.java.interfaces.BatteryCI;
 import main.java.ports.BatteryOutboundPort;
 import main.java.utils.Log;
+
+import java.time.Duration;
+import java.time.LocalTime;
 
 /**
  * Tester for the Battery component
@@ -74,7 +78,7 @@ public class BatteryUnitTester extends AbstractComponent {
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.bop.getPortURI(), bipURI, ControlBatteryConnector.class.getCanonicalName());
+			this.doPortConnection(this.bop.getPortURI(), bipURI, BatteryConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -166,16 +170,91 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	public void testPlanifyTest() {
+		Log.printAndLog(this, "testPlanifyTest()");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			this.bop.planifyEvent(d, deadline);
+			assertTrue(this.bop.hasPlan());
 
+		} catch(Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testCancel() {
+		Log.printAndLog(this, "testCancel()");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			this.bop.planifyEvent(d, deadline);
+			assertTrue(this.bop.hasPlan());
+			this.bop.cancel();
+			assertTrue(!this.bop.hasPlan());
+			assertEquals(this.bop.deadline(), null);
+			assertEquals(this.bop.startTime(), null);
+			assertEquals(this.bop.duration(), null);
+
+		} catch(Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testPostpone() {
+		Log.printAndLog(this, "testPostpone");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			Duration postponeDuration = Duration.ofHours(4);
+			this.bop.planifyEvent(d, deadline);
+			this.bop.postpone(postponeDuration);
+		} catch(Exception e){
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testDuration() {
+		Log.printAndLog(this, "testDuration");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			this.bop.planifyEvent(d,deadline);
+			assertEquals(d,this.bop.duration());
+		}catch(Exception e){
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testDeadline() {
+		Log.printAndLog(this, "testDeadline");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			this.bop.planifyEvent(d, deadline);
+			assertEquals(deadline, this.bop.deadline());
+		} catch(Exception e){
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
 	/**
 	 * Run all the tests
 	 */
 	protected void runAllTests() {
-		this.testGetBatteryCharge();
+		//this.testGetBatteryCharge();
 		this.testUpMode();
 		this.testDownMode();
 		this.testSetMode();
-
+		this.testPlanifyTest();
+		this.testCancel();
+		this.testDuration();
+		this.testDeadline();
+		//this.testPostpone();
 		Log.printAndLog(this, "all tests passed");
 	}
 

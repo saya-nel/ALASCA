@@ -89,6 +89,6 @@ public interface BatteryImplementationI {
 	 * @param deadline						deadline of the event
 	 * @return								true if the plan has been successfully added
 	 */
-	public boolean planifyEvent(Duration durationLastPlanned,LocalTime deadline);
+	public boolean planifyEvent(Duration durationLastPlanned,LocalTime deadline) throws Exception;
 
 }
