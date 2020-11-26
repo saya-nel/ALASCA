@@ -1,33 +1,55 @@
 package main.java.connectors;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
-import main.java.interfaces.BatteryCI;
-import main.java.interfaces.PlanningEquipmentControlCI;
+import main.java.interfaces.WasherCI;
 
 import java.time.Duration;
 import java.time.LocalTime;
-/**
- * Connector between a unit test and the Battery, TODO : this class should be
- *
- * @author Bello Memmi
- *
- */
-public class BatteryConnector extends AbstractConnector implements BatteryCI {
 
-    /**
-     * @see interfaces.BatteryImplementationI#getBatteryCharge()
-     */
-    public float getBatteryCharge() throws Exception {
-        return ((BatteryCI) super.offering).getBatteryCharge();
+public class WasherConnector extends AbstractConnector implements WasherCI {
+
+
+    @Override
+    public boolean isTurnedOn() throws Exception {
+        return ((WasherCI) this.offering).isTurnedOn();
     }
 
+    @Override
+    public void setProgramTemperature(int temperature) throws Exception {
+
+    }
+
+    @Override
+    public int getProgramTemperature() throws Exception {
+        return ((WasherCI) this.offering).getProgramTemperature();
+    }
+
+    @Override
+    public void setProgramDuration(int duration) throws Exception {
+
+    }
+
+    @Override
+    public int getProgramDuration() throws Exception {
+        return ((WasherCI) this.offering).getProgramDuration();
+    }
+
+    @Override
+    public boolean turnOn() throws Exception {
+        return ((WasherCI) this.offering).turnOn();
+    }
+
+    @Override
+    public boolean turnOff() throws Exception {
+        return ((WasherCI) this.offering).turnOff();
+    }
 
     /**
      * @see interfaces.StandardEquipmentControlCI#upMode()
      */
     @Override
     public boolean upMode() throws Exception {
-        return ((BatteryCI) this.offering).upMode();
+        return ((WasherCI) this.offering).upMode();
     }
 
     /**
@@ -35,7 +57,7 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
      */
     @Override
     public boolean downMode() throws Exception {
-        return ((BatteryCI) this.offering).downMode();
+        return ((WasherCI) this.offering).downMode();
     }
 
     /**
@@ -43,7 +65,7 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
      */
     @Override
     public boolean setMode(int modeIndex) throws Exception {
-        return ((BatteryCI) this.offering).setMode(modeIndex);
+        return ((WasherCI) this.offering).setMode(modeIndex);
     }
 
     /**
@@ -51,7 +73,7 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
      */
     @Override
     public int currentMode() throws Exception {
-        return ((BatteryCI) this.offering).currentMode();
+        return ((WasherCI) this.offering).currentMode();
     }
 
     /**
@@ -59,7 +81,7 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
      */
     @Override
     public boolean hasPlan() throws Exception {
-        return ((BatteryCI) this.offering).hasPlan();
+        return ((WasherCI) this.offering).hasPlan();
     }
 
     /**
@@ -67,7 +89,7 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
      */
     @Override
     public LocalTime startTime() throws Exception {
-        return ((BatteryCI) this.offering).startTime();
+        return ((WasherCI) this.offering).startTime();
     }
 
     /**
@@ -75,7 +97,7 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
      */
     @Override
     public Duration duration() throws Exception {
-        return ((BatteryCI) this.offering).duration();
+        return ((WasherCI) this.offering).duration();
     }
 
     /**
@@ -83,7 +105,7 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
      */
     @Override
     public LocalTime deadline() throws Exception {
-        return ((BatteryCI) this.offering).deadline();
+        return ((WasherCI) this.offering).deadline();
     }
 
     /**
@@ -91,7 +113,7 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
      */
     @Override
     public boolean postpone(Duration d) throws Exception {
-        return ((BatteryCI) this.offering).postpone(d);
+        return ((WasherCI) this.offering).postpone(d);
     }
 
     /**
@@ -99,12 +121,11 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
      */
     @Override
     public boolean cancel() throws Exception {
-        return ((BatteryCI) this.offering).cancel();
+        return ((WasherCI) this.offering).cancel();
     }
 
     @Override
     public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-        return ((BatteryCI) this.offering).planifyEvent(durationLastPlanned, deadline);
+        return ((WasherCI) this.offering).planifyEvent(durationLastPlanned, deadline);
     }
-
 }

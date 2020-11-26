@@ -8,9 +8,8 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import main.java.connectors.BatteryConnector;
-import main.java.connectors.ControlBatteryConnector;
 import main.java.interfaces.BatteryCI;
-import main.java.ports.BatteryOutboundPort;
+import main.java.ports.ControlBatteryOutboundPort;
 import main.java.utils.Log;
 
 import java.time.Duration;
@@ -28,7 +27,7 @@ public class BatteryUnitTester extends AbstractComponent {
 	/**
 	 * Battery outbound port for BatteryUnitTester
 	 */
-	protected BatteryOutboundPort bop;
+	protected ControlBatteryOutboundPort bop;
 
 	/**
 	 * Battery inbound port to connect to URI
@@ -59,7 +58,7 @@ public class BatteryUnitTester extends AbstractComponent {
 	 */
 	protected void initialise(String bipURI) throws Exception {
 		this.bipURI = bipURI;
-		this.bop = new BatteryOutboundPort(this);
+		this.bop = new ControlBatteryOutboundPort(this);
 		this.bop.publishPort();
 
 		this.tracer.get().setTitle("Battery tester component");
@@ -246,14 +245,15 @@ public class BatteryUnitTester extends AbstractComponent {
 	 * Run all the tests
 	 */
 	protected void runAllTests() {
-		//this.testGetBatteryCharge();
+		this.testGetBatteryCharge();
 		this.testUpMode();
 		this.testDownMode();
 		this.testSetMode();
-		this.testPlanifyTest();
 		this.testCancel();
 		this.testDuration();
 		this.testDeadline();
+		this.testPlanifyTest();
+
 		//this.testPostpone();
 		Log.printAndLog(this, "all tests passed");
 	}

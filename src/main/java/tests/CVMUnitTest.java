@@ -85,12 +85,21 @@ public class CVMUnitTest extends AbstractCVM {
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
 				new Object[] { CONTROLLER_URI, false, CONTROLLER_INBOUND_PORT_URI});
 //
-		// Washer
+		// Battery
+
 		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
 				new Object[] { BATTERY_URI, false, BATTERY_SERIAL_NB, BATTERY_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, (float) 2000 });
-
 		AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
 				new Object[] {BATTERY_INBOUND_PORT_URI});
+
+
+		//Washer
+		/*
+		AbstractComponent.createComponent(Washer.class.getCanonicalName(),
+				new Object[] {WASHER_URI, false, WASHER_SERIAL_NB, WASHER_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI});
+		AbstractComponent.createComponent(WasherUnitTester.class.getCanonicalName(),
+				new Object[] {WASHER_INBOUND_PORT_URI});
+		*/
 //		//TODO Resoudre problème sur ControllerUnitTest Creation composant pose probleme
 		// AbstractComponent.createComponent(ControllerUnitTest.class.getCanonicalName(),
 		// new Object[] { CONTROLLER_INBOUND_PORT_URI});

@@ -169,4 +169,9 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	public boolean cancel() throws Exception {
 		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).cancel());
 	}
+
+	@Override
+	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).planifyEvent(durationLastPlanned, deadline));
+	}
 }

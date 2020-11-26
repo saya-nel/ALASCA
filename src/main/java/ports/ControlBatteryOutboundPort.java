@@ -15,7 +15,7 @@ import main.java.interfaces.BatteryCI;
  * @author Bello Memmi
  *
  */
-public class BatteryOutboundPort extends AbstractOutboundPort implements BatteryCI {
+public class ControlBatteryOutboundPort extends AbstractOutboundPort implements BatteryCI {
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,11 +25,11 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 * @param owner owner component
 	 * @throws Exception
 	 */
-	public BatteryOutboundPort(ComponentI owner) throws Exception {
+	public ControlBatteryOutboundPort(ComponentI owner) throws Exception {
 		super(BatteryCI.class, owner);
 	}
 
-	public BatteryOutboundPort(String inbound_uri, ComponentI owner) throws Exception {
+	public ControlBatteryOutboundPort(String inbound_uri, ComponentI owner) throws Exception {
 		super(inbound_uri, BatteryCI.class, owner);
 	}
 

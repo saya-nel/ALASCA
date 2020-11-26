@@ -122,4 +122,20 @@ public interface WasherImplementationI {
 	 */
 	public boolean cancel() throws Exception;
 
+	/**
+	 *
+	 *
+	 * Planify
+	 *
+	 *
+	 */
+
+	/**
+	 * Add an event
+	 * @param durationLastPlanned   		duration of program
+	 * @param deadline						deadline of program
+	 * @return								true if success
+	 * @throws Exception
+	 */
+	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception ;
 }

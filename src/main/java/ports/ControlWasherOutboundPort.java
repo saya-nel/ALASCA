@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.connectors.ControlWasherConnector;
+import main.java.connectors.WasherConnector;
+import main.java.interfaces.BatteryCI;
 import main.java.interfaces.WasherCI;
 
 /**
@@ -17,12 +19,12 @@ import main.java.interfaces.WasherCI;
  */
 public class ControlWasherOutboundPort extends AbstractOutboundPort implements WasherCI {
 
-	private static final long serialVersionUID = 1L;
-
 	public ControlWasherOutboundPort(ComponentI owner) throws Exception {
 		super(WasherCI.class, owner);
 	}
-
+	public ControlWasherOutboundPort(String inbound_uri, ComponentI owner) throws Exception {
+		super(inbound_uri, WasherCI.class, owner);
+	}
 	/**
 	 * @see interfaces.WasherImplementationI#isTurnedOn()
 	 */
@@ -157,5 +159,10 @@ public class ControlWasherOutboundPort extends AbstractOutboundPort implements W
 	@Override
 	public boolean cancel() throws Exception {
 		return ((ControlWasherConnector) this.getConnector()).cancel();
+	}
+
+	@Override
+	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
+		return ((WasherConnector) this.getConnector()).planifyEvent(durationLastPlanned, deadline);
 	}
 }

@@ -9,9 +9,13 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import main.java.connectors.ControlWasherConnector;
+import main.java.connectors.WasherConnector;
 import main.java.interfaces.WasherCI;
 import main.java.ports.ControlWasherOutboundPort;
 import main.java.utils.Log;
+
+import java.time.Duration;
+import java.time.LocalTime;
 
 /**
  * Tester for the Washer component
@@ -58,7 +62,7 @@ public class WasherUnitTester extends AbstractComponent {
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.wop.getPortURI(), wipURI, ControlWasherConnector.class.getCanonicalName());
+			this.doPortConnection(this.wop.getPortURI(), wipURI, WasherConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -99,98 +103,114 @@ public class WasherUnitTester extends AbstractComponent {
 	// TESTS
 	// -------------------------------------------------------------------------
 
-	/**
-	 * Test the isTurnedOn method
-	 */
-	private void testIsTurnedOn() {
-		Log.printAndLog(this, "test isTurnedOn()");
+	public void testUpMode() {
+		Log.printAndLog(this, "testUpMode()");
 		try {
-			assertFalse(wop.isTurnedOn());
+			int cur_value = this.wop.currentMode();
+			this.wop.upMode();
+			assertEquals(this.wop.currentMode(), (cur_value + 1) % 3);
 		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
 
-	/**
-	 * Test the turnOn method
-	 */
-	private void testTurnOn() {
-		Log.printAndLog(this, "test turnOnWasher()");
-		try {
-			wop.turnOn();
-			assertTrue(wop.isTurnedOn());
-		} catch (Exception e) {
+
+
+	public void testDownMode() {
+		Log.printAndLog(this, "testDownMode()");
+		try{
+			int cur_value = this.wop.currentMode();
+			this.wop.downMode();
+			assertEquals(this.wop.currentMode(), Math.floorMod((cur_value -1), 3));
+		} catch(Exception e){
+			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
 
-	/**
-	 * Test the turnOff method
-	 */
-	private void testTurnOff() {
-		Log.printAndLog(this, "test turnOff()");
-		try {
-			wop.turnOff();
-			assertFalse(wop.isTurnedOn());
-		} catch (Exception e) {
+	public void testSetMode() {
+		Log.printAndLog(this, "testSetMode()");
+		try{
+			int exp_value = (this.wop.currentMode() + 1)%3;
+			this.wop.setMode(exp_value);
+			assertEquals(exp_value, this.wop.currentMode());
+		} catch(Exception e){
+			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
 
-	/**
-	 * Test the getProgramTemperature method
-	 */
-	private void testGetProgramTemperature() {
-		Log.printAndLog(this, "test getRequestedTemperature()");
-		try {
-			assertEquals(30, wop.getProgramTemperature());
-		} catch (Exception e) {
+	public void testPlanifyTest() {
+		Log.printAndLog(this, "testPlanifyTest()");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			this.wop.planifyEvent(d, deadline);
+			assertTrue(this.wop.hasPlan());
+
+		} catch(Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
 
-	/**
-	 * Test the setProgramTemperature method
-	 */
-	private void testSetProgramTemperature() {
-		Log.printAndLog(this, "test setProgramTemperature()");
-		try {
-			wop.setProgramTemperature(50);
-			assertEquals(50, wop.getProgramTemperature());
-			wop.setProgramTemperature(30);
-		} catch (Exception e) {
+	public void testCancel() {
+		Log.printAndLog(this, "testCancel()");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			this.wop.planifyEvent(d, deadline);
+			assertTrue(this.wop.hasPlan());
+			this.wop.cancel();
+			assertTrue(!this.wop.hasPlan());
+			assertEquals(this.wop.deadline(), null);
+			assertEquals(this.wop.startTime(), null);
+			assertEquals(this.wop.duration(), null);
+
+		} catch(Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
 
-	/**
-	 * Test the setProgramDuration method
-	 */
-	private void testSetProgramDuration() {
-		Log.printAndLog(this, "test setProgramDuration()");
-		try {
-			wop.setProgramDuration(20);
-			assertEquals(20, wop.getProgramDuration());
-			wop.setProgramDuration(60);
-		} catch (Exception e) {
+	public void testPostpone() {
+		Log.printAndLog(this, "testPostpone");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			Duration postponeDuration = Duration.ofHours(4);
+			this.wop.planifyEvent(d, deadline);
+			this.wop.postpone(postponeDuration);
+		} catch(Exception e){
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
 
-	/**
-	 * Test the getProgramDuration method
-	 */
-	private void testGetProgramDuration() {
-		Log.printAndLog(this, "test getProgramDuration()");
-		try {
-			assertEquals(60, wop.getProgramDuration());
-		} catch (Exception e) {
+	public void testDuration() {
+		Log.printAndLog(this, "testDuration");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			this.wop.planifyEvent(d,deadline);
+			assertEquals(d,this.wop.duration());
+		}catch(Exception e){
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testDeadline() {
+		Log.printAndLog(this, "testDeadline");
+		try{
+			Duration d = Duration.ofHours(1);
+			LocalTime deadline = LocalTime.now().plusHours(3);
+			this.wop.planifyEvent(d, deadline);
+			assertEquals(deadline, this.wop.deadline());
+		} catch(Exception e){
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -200,14 +220,14 @@ public class WasherUnitTester extends AbstractComponent {
 	 * Run all the tests
 	 */
 	private void runAllTests() {
-		testIsTurnedOn();
-		testTurnOn();
-		testTurnOff();
-		testGetProgramTemperature();
-		testSetProgramTemperature();
-		testSetProgramDuration();
-		testGetProgramDuration();
+		this.testUpMode();
+		this.testDownMode();
+		this.testSetMode();
+		this.testPlanifyTest();
+		this.testCancel();
+		this.testDuration();
+		this.testDeadline();
 
-		Log.printAndLog(this, "all tests passed");
+		Log.printAndLog(this, "all tests Washer passed");
 	}
 }

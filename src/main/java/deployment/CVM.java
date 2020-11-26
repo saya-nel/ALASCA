@@ -125,16 +125,16 @@ public class CVM extends AbstractCVM {
 				new Object[] { controllerURI, true, controllerCIP_uri });
 
 		// create Battery component
-		//AbstractComponent.createComponent(Battery.class.getCanonicalName(),
-		//		new Object[] { batteryURI, true, batterySerial, batteryBIP_uri, controllerCIP_uri, (float) 2000 });
+		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
+				new Object[] { batteryURI, true, batterySerial, batteryBIP_uri, controllerCIP_uri, (float) 2000 });
 
 		// create Fridge component
 //		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
 //				new Object[] { fridgeUri, true, fridgeSerial, fridgeFIP_uri, controllerCIP_uri });
 
 		// create Washer component
-		AbstractComponent.createComponent(Washer.class.getCanonicalName(),
-				new Object[] { washerUri, true, washerSerial, washerWIP_uri, controllerCIP_uri });
+		//AbstractComponent.createComponent(Washer.class.getCanonicalName(),
+		//		new Object[] { washerUri, true, washerSerial, washerWIP_uri, controllerCIP_uri });
 
 		// create electricPanel component
 
