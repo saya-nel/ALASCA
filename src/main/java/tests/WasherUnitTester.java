@@ -101,9 +101,34 @@ public class WasherUnitTester extends AbstractComponent {
 	// TESTS
 	// -------------------------------------------------------------------------
 
+	public void testOn() {
+		Log.printAndLog(this, "testOn()");
+		try {
+			this.wop.turnOn();
+			assertTrue(this.wop.isTurnedOn());
+		} catch (Exception e)
+		{
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+
+	}
+
+	public void testOff() {
+		Log.printAndLog(this, "testOff()");
+		try {
+			this.wop.turnOff();
+			assertTrue(!this.wop.isTurnedOn());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+
+	}
 	public void testUpMode() {
 		Log.printAndLog(this, "testUpMode()");
 		try {
+			this.wop.turnOn();
 			int cur_value = this.wop.currentMode();
 			this.wop.upMode();
 			assertEquals(this.wop.currentMode(), (cur_value + 1) % 3);
@@ -216,6 +241,7 @@ public class WasherUnitTester extends AbstractComponent {
 	 * Run all the tests
 	 */
 	private void runAllTests() {
+
 		this.testUpMode();
 		this.testDownMode();
 		this.testSetMode();

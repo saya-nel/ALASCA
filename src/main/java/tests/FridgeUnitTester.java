@@ -146,12 +146,99 @@ public class FridgeUnitTester extends AbstractComponent {
 	}
 
 	/**
+	 *
+	 * TEST STANDARDS EQUIPMENTS METHODS
+	 *
+	 */
+	public void testUpMode() {
+		Log.printAndLog(this, "testUpMode()");
+		try {
+			int cur_value = this.fop.currentMode();
+			this.fop.upMode();
+			assertEquals(this.fop.currentMode(), (cur_value + 1) % 3);
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+
+	public void testDownMode() {
+		Log.printAndLog(this, "testDownMode()");
+		try {
+			int cur_value = this.fop.currentMode();
+			this.fop.downMode();
+			assertEquals(this.fop.currentMode(), Math.floorMod((cur_value - 1), 3));
+		} catch (Exception e) {
+			System.err.println("Error occured in test down mode");
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testSetMode() {
+		Log.printAndLog(this, "testSetMode()");
+		try {
+			int exp_value = (this.fop.currentMode() + 1) % 3;
+			this.fop.setMode(exp_value);
+			assertEquals(exp_value, this.fop.currentMode());
+		} catch (Exception e) {
+			System.err.println("Error occured in test down mode");
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+	/**
+	 *
+	 * TEST SUSPENSIBLE METHODS
+	 *
+	 */
+	public void testSuspend() {
+		Log.printAndLog(this, "testSuspend()");
+		try {
+			this.fop.suspend();
+			assertTrue(this.fop.suspended());
+		} catch (Exception e) {
+			System.err.println("Error occured in test down mode");
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testResume() {
+		Log.printAndLog(this, "testResume()");
+		try {
+			this.fop.resume();
+			assertTrue(!this.fop.suspended());
+		} catch (Exception e) {
+			System.err.println("Error occured in test down mode");
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testEmergency() {
+		Log.printAndLog(this, "testEmergency()");
+		try {
+			this.fop.suspend();
+			this.fop.emergency();
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+	}
+	/**
 	 * Run all the tests
 	 */
 	protected void runAllTests() {
 		this.testGetCurrentTemperature();
 		this.testGetRequestedTemperature();
 		this.testSetRequestedTemperature();
+		this.testUpMode();
+		this.testDownMode();
+		this.testSetMode();
+		this.testSuspend();//ordre important
+		this.testResume();
+		this.testEmergency();
 		Log.printAndLog(this, "all test passed");
 	}
 }

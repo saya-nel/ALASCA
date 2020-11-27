@@ -40,10 +40,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 * Requested Temperature for the fridge
 	 */
 	protected float requestedTemperature;
-	/**
-	 * Actual state of the fridge
-	 */
-	protected boolean isOn;
+
 	/**
 	 * current temperature inside of fridge pas sûr de l'utilité intégré à la
 	 * simulation
@@ -76,7 +73,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	/**
 	 * Current mode of the Fridge
 	 */
-	protected FridgeMode mode;
+	protected AtomicReference<FridgeMode> mode;
 
 	/**
 	 * @param uri    of the component
@@ -90,7 +87,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		this.serialNumber = serialNumber;
 		this.passive = new AtomicBoolean(false);
 		this.lastSuspensionTime = new AtomicReference<>();
-		this.mode = FridgeMode.NORMAL;
+		this.mode = new AtomicReference<>(FridgeMode.NORMAL);
 		this.cop = new ControllerOutboundPort(this);
 		this.cop.publishPort();
 		this.cip_URI = cip_URI;
@@ -129,7 +126,6 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		assert fridgeInboundPortURI != null : new PreconditionException("fridgeInboundPortURI != null");
 		assert !fridgeInboundPortURI.isEmpty() : new PreconditionException("!fridgeInboundPortURI.isEmpty()");
 		this.currentTemperature = 20;
-		this.isOn = false;
 		this.requestedTemperature = 10;
 		this.fip = new FridgeInboundPort(fridgeInboundPortURI, this);
 		this.fip.publishPort();
@@ -220,9 +216,10 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	@Override
 	public boolean upMode() throws Exception {
-		mode = FridgeMode.NORMAL;
+		boolean succeed = false;
+		succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[(this.mode.get().ordinal() + 1) %2]);
 		Log.printAndLog(this, "upMode() service result : " + true);
-		return true;
+		return succeed;
 	}
 
 	/**
@@ -230,7 +227,9 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	@Override
 	public boolean downMode() throws Exception {
-		mode = FridgeMode.ECO;
+		boolean succeed = false;
+		succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[
+												Math.floorMod(this.mode.get().ordinal() - 1,2)]);
 		Log.printAndLog(this, "downmode() service result : " + true);
 		return true;
 	}
@@ -240,23 +239,22 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
-		boolean res = false;
+		boolean succeed = false;
 		try {
-			mode = FridgeMode.values()[modeIndex];
-			res = true;
+			succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[modeIndex]);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Log.printAndLog(this, "setMode(" + modeIndex + ") service result : " + res);
-		return res;
+		Log.printAndLog(this, "setMode(" + modeIndex + ") service result : " + succeed);
+		return succeed;
 	}
 
 	/**
-	 * @see main.java.FridgeImplementationI#currentMode()
+	 * @see main.java.interfaces.FridgeImplementationI#currentMode()
 	 */
 	@Override
 	public int currentMode() throws Exception {
-		int res = mode.ordinal();
+		int res = this.mode.get().ordinal();
 		Log.printAndLog(this, "currentMode() service result : " + res);
 		return res;
 	}

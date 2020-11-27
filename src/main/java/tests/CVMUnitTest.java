@@ -3,6 +3,7 @@ package main.java.tests;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.Battery;
+import main.java.components.Fridge;
 
 /**
  * CVM for running components testers
@@ -72,21 +73,21 @@ public class CVMUnitTest extends AbstractCVM {
 		 * getCanonicalName(), new Object[] { PETROLGENERATOR_INBOUND_PORT_URI });
 		 */
 		// Fridge
-		/*
-		 * AbstractComponent.createComponent(Fridge.class.getCanonicalName(), new
-		 * Object[] { FRIDGE_URI, FRIDGE_INBOUND_PORT_URI});
-		 * AbstractComponent.createComponent(FridgeUnitTester.class.getCanonicalName(),
-		 * new Object[] { FRIDGE_INBOUND_PORT_URI});
-		 * 
-		 */
+
+		 AbstractComponent.createComponent(Fridge.class.getCanonicalName(), new
+		 Object[] { FRIDGE_URI, false, "FRIDGE_NB", FRIDGE_INBOUND_PORT_URI, ""});
+		 AbstractComponent.createComponent(FridgeUnitTester.class.getCanonicalName(),
+				 new Object[] { FRIDGE_INBOUND_PORT_URI});
+
+
 
 		// Battery
-
+		/*
 		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
 				new Object[] { BATTERY_URI, false, BATTERY_SERIAL_NB, BATTERY_INBOUND_PORT_URI, "", (float) 2000 });
 		AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
 				new Object[] { BATTERY_INBOUND_PORT_URI });
-
+		*/
 		// Washer
 		/*
 		 * AbstractComponent.createComponent(Washer.class.getCanonicalName(), new
