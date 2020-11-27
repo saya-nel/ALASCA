@@ -12,7 +12,7 @@ import main.java.interfaces.SolarPanelsCI;
 public class SolarPanelsConnector extends AbstractConnector implements SolarPanelsCI {
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#turnOn()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
@@ -20,13 +20,16 @@ public class SolarPanelsConnector extends AbstractConnector implements SolarPane
 	}
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#turnOff()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception {
 		((SolarPanelsCI) this.offering).turnOff();
 	}
 
+	/**
+	 * @see main.java.interfaces.SolarPanelsImplementationI#isTurnedOn()
+	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {
 		return ((SolarPanelsCI) this.offering).isTurnedOn();

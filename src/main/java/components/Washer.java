@@ -176,12 +176,19 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		}
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
+	 */
 	@Override
 	public synchronized void finalise() throws Exception {
-		this.cop.doDisconnection();
+		if (cop.connected())
+			this.cop.doDisconnection();
 		super.finalise();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
+	 */
 	@Override
 	public synchronized void execute() throws Exception {
 		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/washer-control.xml"));
@@ -194,6 +201,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	// Component services implementation
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#isTurnedOn()
+	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {
 		boolean res = this.isOn.get();
@@ -201,12 +211,18 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return res;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#setProgramTemperature(int)
+	 */
 	@Override
 	public void setProgramTemperature(int temperature) throws Exception {
 		this.programTemperature.set(temperature);
 		Log.printAndLog(this, "setProgramTemperature(" + temperature + ") service called");
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#getProgramDuration()
+	 */
 	@Override
 	public int getProgramTemperature() throws Exception {
 		int res = this.programTemperature.get();
@@ -214,6 +230,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return res;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#turnOn()
+	 */
 	@Override
 	public boolean turnOn() throws Exception {
 		boolean succeed = false;
@@ -222,6 +241,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return succeed;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#turnOff()
+	 */
 	@Override
 	public boolean turnOff() throws Exception {
 		boolean succeed = false;
@@ -230,6 +252,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return succeed;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#upMode()
+	 */
 	@Override
 	public boolean upMode() throws Exception {
 		boolean succeed = false;
@@ -243,6 +268,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return succeed;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#downMode()
+	 */
 	@Override
 	public boolean downMode() throws Exception {
 		boolean succeed = false;
@@ -257,6 +285,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return succeed;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#setMode(int)
+	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
 		boolean succeed = this.mode.compareAndSet(this.mode.get(), modeIndex);
@@ -264,6 +295,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return succeed;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#currentMode()
+	 */
 	@Override
 	public int currentMode() throws Exception {
 		int res = this.mode.get();
@@ -271,6 +305,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return res;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#hasPlan()
+	 */
 	@Override
 	public boolean hasPlan() throws Exception {
 		boolean res = this.hasPlan.get();
@@ -278,6 +315,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return res;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#startTime()
+	 */
 	@Override
 	public LocalTime startTime() throws Exception {
 		LocalTime res = this.lastStartTime.get();
@@ -285,6 +325,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return res;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#duration()
+	 */
 	@Override
 	public Duration duration() throws Exception {
 		Duration res = this.durationLastPlanned.get();
@@ -292,6 +335,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return res;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#deadline()
+	 */
 	@Override
 	public LocalTime deadline() throws Exception {
 		LocalTime res = this.deadlineTime.get();
@@ -299,6 +345,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return res;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#postpone(Duration)
+	 */
 	@Override
 	public boolean postpone(Duration d) throws Exception {
 		boolean succeed = false;
@@ -308,6 +357,9 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return succeed;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#cancel()
+	 */
 	@Override
 	public boolean cancel() throws Exception {
 		boolean succeed = false;
@@ -321,6 +373,10 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		return succeed;
 	}
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#planifyEvent(Duration,
+	 *      LocalTime)
+	 */
 	@Override
 	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) {
 		boolean succeed = false;

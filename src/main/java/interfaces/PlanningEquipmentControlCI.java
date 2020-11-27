@@ -3,6 +3,12 @@ package main.java.interfaces;
 import java.time.Duration;
 import java.time.LocalTime;
 
+/**
+ * Component interface for planning components
+ * 
+ * @author Bello Memmi
+ *
+ */
 public interface PlanningEquipmentControlCI extends StandardEquipmentControlCI {
 	/**
 	 * return true if the equipment currently has a planned program.

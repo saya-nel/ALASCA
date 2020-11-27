@@ -16,103 +16,103 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
 public interface WasherCI extends WasherImplementationI, RequiredCI, OfferedCI {
 
 	/**
-	 * @see interfaces.WasherImplementationI#isTurnedOn()
+	 * @see main.java.interfaces.WasherImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#setProgramTemperature(int)
+	 * @see main.java.interfaces.WasherImplementationI#setProgramTemperature(int)
 	 */
 	@Override
 	public void setProgramTemperature(int temperature) throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#getProgramTemperature()
+	 * @see main.java.interfaces.WasherImplementationI#getProgramTemperature()
 	 */
 	@Override
 	public int getProgramTemperature() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#setProgramDuration(int)
+	 * @see main.java.interfaces.WasherImplementationI#setProgramDuration(int)
 	 */
 	@Override
 	public void setProgramDuration(int duration) throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#getProgramDuration()
+	 * @see main.java.interfaces.WasherImplementationI#getProgramDuration()
 	 */
 	@Override
 	public int getProgramDuration() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#turnOn()
+	 * @see main.java.interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
 	public boolean turnOn() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#turnOff()
+	 * @see main.java.interfaces.WasherImplementationI#turnOff()
 	 */
 	@Override
 	public boolean turnOff() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#upMode()
+	 * @see main.java.interfaces.WasherImplementationI#upMode()
 	 */
 	@Override
 	public boolean upMode() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#downMode()
+	 * @see main.java.interfaces.WasherImplementationI#downMode()
 	 */
 	@Override
 	public boolean downMode() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#setMode(int)
+	 * @see main.java.interfaces.WasherImplementationI#setMode(int)
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#currentMode()
+	 * @see main.java.interfaces.WasherImplementationI#currentMode()
 	 */
 	@Override
 	public int currentMode() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#hasPlan()
+	 * @see main.java.interfaces.WasherImplementationI#hasPlan()
 	 */
 	@Override
 	public boolean hasPlan() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#startTime()
+	 * @see main.java.interfaces.WasherImplementationI#startTime()
 	 */
 	@Override
 	public LocalTime startTime() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#duration()
+	 * @see main.java.interfaces.WasherImplementationI#duration()
 	 */
 	@Override
 	public Duration duration() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#deadline()
+	 * @see main.java.interfaces.WasherImplementationI#deadline()
 	 */
 	@Override
 	public LocalTime deadline() throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#postpone(Duration)
+	 * @see main.java.interfaces.WasherImplementationI#postpone(Duration)
 	 */
 	@Override
 	public boolean postpone(Duration d) throws Exception;
 
 	/**
-	 * @see interfaces.WasherImplementationI#cancel()
+	 * @see main.java.interfaces.WasherImplementationI#cancel()
 	 */
 	@Override
 	public boolean cancel() throws Exception;

@@ -169,9 +169,13 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		}
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
+	 */
 	@Override
 	public synchronized void finalise() throws Exception {
-		this.cop.doDisconnection();
+		if (cop.connected())
+			this.cop.doDisconnection();
 		super.finalise();
 	}
 
@@ -207,7 +211,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
+	 * @see main.java.interfaces.BatteryImplementationI#getBatteryCharge()
 	 */
 	@Override
 	public float getBatteryCharge() throws Exception {
@@ -217,7 +221,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#upMode()
+	 * @see main.java.interfaces.BatteryImplementationI#upMode()
 	 */
 	@Override
 	public boolean upMode() throws Exception {
@@ -330,7 +334,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#cancel()
+	 * @see main.java.interfaces.BatteryImplementationI#cancel()
 	 */
 	@Override
 	public boolean cancel() throws Exception {
@@ -345,6 +349,10 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		return succeed;
 	}
 
+	/**
+	 * @see main.java.interfaces.BatteryImplementationI#planifyEvent(Duration,
+	 *      LocalTime)
+	 */
 	@Override
 	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) {
 		boolean succeed = false;

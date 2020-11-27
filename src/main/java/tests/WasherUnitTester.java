@@ -1,21 +1,19 @@
 package main.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.Duration;
+import java.time.LocalTime;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import main.java.connectors.ControlWasherConnector;
 import main.java.connectors.WasherConnector;
 import main.java.interfaces.WasherCI;
-import main.java.ports.ControlWasherOutboundPort;
+import main.java.ports.WasherOutboundPort;
 import main.java.utils.Log;
-
-import java.time.Duration;
-import java.time.LocalTime;
 
 /**
  * Tester for the Washer component
@@ -29,7 +27,7 @@ public class WasherUnitTester extends AbstractComponent {
 	/**
 	 * Washer outbound port for WasherUnitTester
 	 */
-	protected ControlWasherOutboundPort wop;
+	protected WasherOutboundPort wop;
 
 	/**
 	 * Washer inbound port to connect to URI
@@ -43,7 +41,7 @@ public class WasherUnitTester extends AbstractComponent {
 
 	private void initialise(String wipURI) throws Exception {
 		this.wipURI = wipURI;
-		this.wop = new ControlWasherOutboundPort(this);
+		this.wop = new WasherOutboundPort(this);
 		this.wop.publishPort();
 
 		this.tracer.get().setTitle("Washer tester component");
@@ -115,15 +113,13 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
-
-
 	public void testDownMode() {
 		Log.printAndLog(this, "testDownMode()");
-		try{
+		try {
 			int cur_value = this.wop.currentMode();
 			this.wop.downMode();
-			assertEquals(this.wop.currentMode(), Math.floorMod((cur_value -1), 3));
-		} catch(Exception e){
+			assertEquals(this.wop.currentMode(), Math.floorMod((cur_value - 1), 3));
+		} catch (Exception e) {
 			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
@@ -132,11 +128,11 @@ public class WasherUnitTester extends AbstractComponent {
 
 	public void testSetMode() {
 		Log.printAndLog(this, "testSetMode()");
-		try{
-			int exp_value = (this.wop.currentMode() + 1)%3;
+		try {
+			int exp_value = (this.wop.currentMode() + 1) % 3;
 			this.wop.setMode(exp_value);
 			assertEquals(exp_value, this.wop.currentMode());
-		} catch(Exception e){
+		} catch (Exception e) {
 			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
@@ -145,13 +141,13 @@ public class WasherUnitTester extends AbstractComponent {
 
 	public void testPlanifyTest() {
 		Log.printAndLog(this, "testPlanifyTest()");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
 			this.wop.planifyEvent(d, deadline);
 			assertTrue(this.wop.hasPlan());
 
-		} catch(Exception e) {
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -159,7 +155,7 @@ public class WasherUnitTester extends AbstractComponent {
 
 	public void testCancel() {
 		Log.printAndLog(this, "testCancel()");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
 			this.wop.planifyEvent(d, deadline);
@@ -170,7 +166,7 @@ public class WasherUnitTester extends AbstractComponent {
 			assertEquals(this.wop.startTime(), null);
 			assertEquals(this.wop.duration(), null);
 
-		} catch(Exception e) {
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -178,13 +174,13 @@ public class WasherUnitTester extends AbstractComponent {
 
 	public void testPostpone() {
 		Log.printAndLog(this, "testPostpone");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
 			Duration postponeDuration = Duration.ofHours(4);
 			this.wop.planifyEvent(d, deadline);
 			this.wop.postpone(postponeDuration);
-		} catch(Exception e){
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -192,12 +188,12 @@ public class WasherUnitTester extends AbstractComponent {
 
 	public void testDuration() {
 		Log.printAndLog(this, "testDuration");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
-			this.wop.planifyEvent(d,deadline);
-			assertEquals(d,this.wop.duration());
-		}catch(Exception e){
+			this.wop.planifyEvent(d, deadline);
+			assertEquals(d, this.wop.duration());
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -205,12 +201,12 @@ public class WasherUnitTester extends AbstractComponent {
 
 	public void testDeadline() {
 		Log.printAndLog(this, "testDeadline");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
 			this.wop.planifyEvent(d, deadline);
 			assertEquals(deadline, this.wop.deadline());
-		} catch(Exception e){
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");

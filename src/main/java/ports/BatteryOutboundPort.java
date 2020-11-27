@@ -4,30 +4,38 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import main.java.components.Battery;
+import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.interfaces.BatteryCI;
 
 /**
- * 
- * Battery inbound port for Battery component interface
+ * Outbound port of Battery component for battery component interface
  * 
  * @author Bello Memmi
  *
  */
-public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI {
+public class BatteryOutboundPort extends AbstractOutboundPort implements BatteryCI {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Constructor of the BatteryInboundPort
+	 * Constructor of ControlBatteryOutboundPort
 	 * 
-	 * @param uri   reflexion uri of the port
 	 * @param owner owner component
 	 * @throws Exception
 	 */
-	public BatteryInboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, BatteryCI.class, owner);
+	public BatteryOutboundPort(ComponentI owner) throws Exception {
+		super(BatteryCI.class, owner);
+	}
+
+	/**
+	 * Constructor of the ControlBatteryOutboundPort
+	 * 
+	 * @param inbound_uri reflexion uri of the port
+	 * @param owner       owner component
+	 * @throws Exception
+	 */
+	public BatteryOutboundPort(String inbound_uri, ComponentI owner) throws Exception {
+		super(inbound_uri, BatteryCI.class, owner);
 	}
 
 	/**
@@ -35,7 +43,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public float getBatteryCharge() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).getBatteryCharge());
+		return ((BatteryCI) this.getConnector()).getBatteryCharge();
 	}
 
 	/**
@@ -43,15 +51,15 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public boolean upMode() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).upMode());
+		return ((BatteryCI) this.getConnector()).upMode();
 	}
 
 	/**
-	 * @see main.java.interfaces.BatteryImplementationI#upMode()
+	 * @see main.java.interfaces.BatteryImplementationI#downMode()
 	 */
 	@Override
 	public boolean downMode() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).downMode());
+		return ((BatteryCI) this.getConnector()).downMode();
 	}
 
 	/**
@@ -59,7 +67,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).setMode(modeIndex));
+		return ((BatteryCI) this.getConnector()).setMode(modeIndex);
 	}
 
 	/**
@@ -67,7 +75,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public int currentMode() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).currentMode());
+		return ((BatteryCI) this.getConnector()).currentMode();
 	}
 
 	/**
@@ -75,7 +83,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public boolean hasPlan() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).hasPlan());
+		return ((BatteryCI) this.getConnector()).hasPlan();
 	}
 
 	/**
@@ -83,7 +91,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public LocalTime startTime() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).startTime());
+		return ((BatteryCI) this.getConnector()).startTime();
 	}
 
 	/**
@@ -91,7 +99,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public Duration duration() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).duration());
+		return ((BatteryCI) this.getConnector()).duration();
 	}
 
 	/**
@@ -99,7 +107,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public LocalTime deadline() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).deadline());
+		return ((BatteryCI) this.getConnector()).deadline();
 	}
 
 	/**
@@ -107,7 +115,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public boolean postpone(Duration d) throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).postpone(d));
+		return ((BatteryCI) this.getConnector()).postpone(d);
 	}
 
 	/**
@@ -115,7 +123,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public boolean cancel() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).cancel());
+		return ((BatteryCI) this.getConnector()).cancel();
 	}
 
 	/**
@@ -124,8 +132,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 */
 	@Override
 	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-		return this.getOwner()
-				.handleRequestSync(owner -> ((Battery) owner).planifyEvent(durationLastPlanned, deadline));
+		return ((BatteryCI) this.getConnector()).planifyEvent(durationLastPlanned, deadline);
 	}
 
 }

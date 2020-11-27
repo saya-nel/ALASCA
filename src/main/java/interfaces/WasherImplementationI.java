@@ -57,32 +57,32 @@ public interface WasherImplementationI {
 	 */
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#on()
+	 * @see main.java.interfaces.StandardEquipmentControlCI#on()
 	 */
 	public boolean turnOn() throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#off()
+	 * @see main.java.interfaces.StandardEquipmentControlCI#off()
 	 */
 	public boolean turnOff() throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#upMode()
+	 * @see main.java.interfaces.StandardEquipmentControlCI#upMode()
 	 */
 	public boolean upMode() throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#downMode()
+	 * @see main.java.interfaces.StandardEquipmentControlCI#downMode()
 	 */
 	public boolean downMode() throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#setMode(int)
+	 * @see main.java.interfaces.StandardEquipmentControlCI#setMode(int)
 	 */
 	public boolean setMode(int modeIndex) throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#currentMode()
+	 * @see main.java.interfaces.StandardEquipmentControlCI#currentMode()
 	 */
 	public int currentMode() throws Exception;
 
@@ -93,32 +93,32 @@ public interface WasherImplementationI {
 	 */
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#hasPlan()
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#hasPlan()
 	 */
 	public boolean hasPlan() throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#startTime()
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#startTime()
 	 */
 	public LocalTime startTime() throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#duration()
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#duration()
 	 */
 	public Duration duration() throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#deadline()
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#deadline()
 	 */
 	public LocalTime deadline() throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#postpone(Duration)
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#postpone(Duration)
 	 */
 	public boolean postpone(Duration d) throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#cancel()
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#cancel()
 	 */
 	public boolean cancel() throws Exception;
 
@@ -132,10 +132,11 @@ public interface WasherImplementationI {
 
 	/**
 	 * Add an event
-	 * @param durationLastPlanned   		duration of program
-	 * @param deadline						deadline of program
-	 * @return								true if success
+	 * 
+	 * @param durationLastPlanned duration of program
+	 * @param deadline            deadline of program
+	 * @return true if success
 	 * @throws Exception
 	 */
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception ;
+	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception;
 }

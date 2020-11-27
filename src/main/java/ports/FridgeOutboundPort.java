@@ -1,37 +1,35 @@
 package main.java.ports;
 
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import main.java.components.Fridge;
+import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.interfaces.FridgeCI;
 
 /**
- * Fridge inbound port for the fridge component interface
- * 
+ * Outbound port of Fridge component interface
+ *
  * @author Bello Memmi
  *
  */
-public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
+public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * FridgeInboundPort constructor
+	 * Constructor of Fridge inbound port
 	 * 
-	 * @param uri   reflexion uri of the port
-	 * @param owner owner component
+	 * @param owner owner of the component
 	 * @throws Exception
 	 */
-	public FridgeInboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, FridgeCI.class, owner);
+	public FridgeOutboundPort(ComponentI owner) throws Exception {
+		super(FridgeCI.class, owner);
 	}
 
 	/**
-	 * @see main.java.interfaces.FridgeImplementationI#getCurrentTemperature()
+	 * @see main.java.interfaces.FridgeImplementationI#getRequestedTemperature()
 	 */
 	@Override
 	public float getRequestedTemperature() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getRequestedTemperature());
+		return ((FridgeCI) this.getConnector()).getRequestedTemperature();
 	}
 
 	/**
@@ -39,13 +37,7 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public void setRequestedTemperature(float temp) throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Fridge) owner).setRequestedTemperature(temp);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		((FridgeCI) this.getConnector()).setRequestedTemperature(temp);
 	}
 
 	/**
@@ -53,7 +45,7 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public float getCurrentTemperature() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getCurrentTemperature());
+		return ((FridgeCI) this.getConnector()).getCurrentTemperature();
 	}
 
 	/**
@@ -61,7 +53,7 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public boolean upMode() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).upMode());
+		return ((FridgeCI) this.getConnector()).upMode();
 	}
 
 	/**
@@ -69,7 +61,7 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public boolean downMode() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).downMode());
+		return ((FridgeCI) this.getConnector()).downMode();
 	}
 
 	/**
@@ -77,7 +69,7 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).setMode(modeIndex));
+		return ((FridgeCI) this.getConnector()).setMode(modeIndex);
 	}
 
 	/**
@@ -85,7 +77,7 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public int currentMode() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).currentMode());
+		return ((FridgeCI) this.getConnector()).currentMode();
 	}
 
 	/**
@@ -93,7 +85,7 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public boolean suspended() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).suspended());
+		return ((FridgeCI) this.getConnector()).suspended();
 	}
 
 	/**
@@ -101,7 +93,7 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public boolean suspend() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).suspend());
+		return ((FridgeCI) this.getConnector()).suspend();
 	}
 
 	/**
@@ -109,7 +101,7 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public boolean resume() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).resume());
+		return ((FridgeCI) this.getConnector()).resume();
 	}
 
 	/**
@@ -117,6 +109,6 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	 */
 	@Override
 	public double emergency() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).emergency());
+		return ((FridgeCI) this.getConnector()).emergency();
 	}
 }

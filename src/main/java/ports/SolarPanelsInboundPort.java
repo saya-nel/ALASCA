@@ -28,7 +28,7 @@ public class SolarPanelsInboundPort extends AbstractInboundPort implements Solar
 	}
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#turnOn()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
@@ -42,7 +42,7 @@ public class SolarPanelsInboundPort extends AbstractInboundPort implements Solar
 	}
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#turnOff()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception {
@@ -56,7 +56,7 @@ public class SolarPanelsInboundPort extends AbstractInboundPort implements Solar
 	}
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#isTurnedOn()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {

@@ -4,29 +4,39 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import main.java.components.Washer;
+import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.interfaces.WasherCI;
 
 /**
- * inbound port for the washer component interface
+ *
+ * Outbound port for the washer component interface
  *
  * @author Bello Memmi
  *
  */
-public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
+public class WasherOutboundPort extends AbstractOutboundPort implements WasherCI {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * constructor of the WasherInboundPort
+	 * Constructor of the WasherOutboundPort
 	 * 
-	 * @param uri   reflexion uri of the port
 	 * @param owner owner component
 	 * @throws Exception
 	 */
-	public WasherInboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri, WasherCI.class, owner);
+	public WasherOutboundPort(ComponentI owner) throws Exception {
+		super(WasherCI.class, owner);
+	}
+
+	/**
+	 * Constructor of the WasherOutboundPort
+	 * 
+	 * @param inbound_uri reflexion uri of the port
+	 * @param owner       owner component
+	 * @throws Exception
+	 */
+	public WasherOutboundPort(String inbound_uri, ComponentI owner) throws Exception {
+		super(inbound_uri, WasherCI.class, owner);
 	}
 
 	/**
@@ -34,7 +44,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).isTurnedOn());
+		return ((WasherCI) this.getConnector()).isTurnedOn();
 	}
 
 	/**
@@ -42,13 +52,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public void setProgramTemperature(int temperature) throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Washer) owner).setProgramTemperature(temperature);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		((WasherCI) this.getConnector()).setProgramTemperature(temperature);
 	}
 
 	/**
@@ -56,7 +60,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public int getProgramTemperature() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).getProgramTemperature());
+		return ((WasherCI) this.getConnector()).getProgramTemperature();
 	}
 
 	/**
@@ -64,13 +68,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public void setProgramDuration(int duration) throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Washer) owner).setProgramDuration(duration);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		((WasherCI) this.getConnector()).setProgramDuration(duration);
 	}
 
 	/**
@@ -78,7 +76,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public int getProgramDuration() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).getProgramDuration());
+		return ((WasherCI) this.getConnector()).getProgramDuration();
 	}
 
 	/**
@@ -86,7 +84,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public boolean turnOn() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).turnOn());
+		return ((WasherCI) this.getConnector()).turnOn();
 	}
 
 	/**
@@ -94,7 +92,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public boolean turnOff() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).turnOff());
+		return ((WasherCI) this.getConnector()).turnOff();
 	}
 
 	/**
@@ -102,7 +100,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public boolean upMode() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).upMode());
+		return ((WasherCI) this.getConnector()).upMode();
 	}
 
 	/**
@@ -110,7 +108,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public boolean downMode() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).downMode());
+		return ((WasherCI) this.getConnector()).downMode();
 	}
 
 	/**
@@ -118,7 +116,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).setMode(modeIndex));
+		return ((WasherCI) this.getConnector()).setMode(modeIndex);
 	}
 
 	/**
@@ -126,15 +124,15 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public int currentMode() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).currentMode());
+		return ((WasherCI) this.getConnector()).currentMode();
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#hashPlan()
+	 * @see main.java.interfaces.WasherImplementationI#hasPlan()
 	 */
 	@Override
 	public boolean hasPlan() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).hasPlan());
+		return ((WasherCI) this.getConnector()).hasPlan();
 	}
 
 	/**
@@ -142,7 +140,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public LocalTime startTime() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).startTime());
+		return ((WasherCI) this.getConnector()).startTime();
 	}
 
 	/**
@@ -150,7 +148,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public Duration duration() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).duration());
+		return ((WasherCI) this.getConnector()).duration();
 	}
 
 	/**
@@ -158,7 +156,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public LocalTime deadline() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).deadline());
+		return ((WasherCI) this.getConnector()).deadline();
 	}
 
 	/**
@@ -166,7 +164,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public boolean postpone(Duration d) throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).postpone(d));
+		return ((WasherCI) this.getConnector()).postpone(d);
 	}
 
 	/**
@@ -174,7 +172,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public boolean cancel() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).cancel());
+		return ((WasherCI) this.getConnector()).cancel();
 	}
 
 	/**
@@ -183,6 +181,6 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 */
 	@Override
 	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).planifyEvent(durationLastPlanned, deadline));
+		return ((WasherCI) this.getConnector()).planifyEvent(durationLastPlanned, deadline);
 	}
 }

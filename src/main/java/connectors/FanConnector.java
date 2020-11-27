@@ -13,7 +13,7 @@ import main.java.utils.FanLevel;
 public class FanConnector extends AbstractConnector implements FanCI {
 
 	/**
-	 * @see interfaces.FanImplementationI#turnOn()
+	 * @see main.java.interfaces.FanImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
@@ -21,7 +21,7 @@ public class FanConnector extends AbstractConnector implements FanCI {
 	}
 
 	/**
-	 * @see interfaces.FanImplementationI#turnOff()
+	 * @see main.java.interfaces.FanImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception {
@@ -29,7 +29,7 @@ public class FanConnector extends AbstractConnector implements FanCI {
 	}
 
 	/**
-	 * @see interfaces.FanImplementationI#adjustPower(FanLevel)
+	 * @see main.java.interfaces.FanImplementationI#adjustPower(FanLevel)
 	 */
 	@Override
 	public void adjustPower(FanLevel level) throws Exception {
@@ -37,7 +37,7 @@ public class FanConnector extends AbstractConnector implements FanCI {
 	}
 
 	/**
-	 * @see interfaces.FanImplementationI#isTurnedOn()
+	 * @see main.java.interfaces.FanImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {
@@ -45,7 +45,7 @@ public class FanConnector extends AbstractConnector implements FanCI {
 	}
 
 	/**
-	 * @see interfaces.FanImplementationI#getFanLevel()
+	 * @see main.java.interfaces.FanImplementationI#getFanLevel()
 	 */
 	@Override
 	public FanLevel getFanLevel() throws Exception {

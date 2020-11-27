@@ -13,19 +13,19 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
 public interface SolarPanelsCI extends SolarPanelsImplementationI, OfferedCI, RequiredCI {
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#turnOn()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception;
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#turnOff()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception;
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#isTurnedOn()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception;

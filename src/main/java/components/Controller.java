@@ -96,6 +96,9 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		this.suecops = new Vector<>();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
+	 */
 	@Override
 	public synchronized void finalise() throws Exception {
 		for (StandardEquipmentControlOutboundPort stecop : this.stecops)
@@ -126,16 +129,24 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		super.shutdown();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
+	 */
 	@Override
 	public synchronized void execute() throws Exception {
 		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
 			try {
 				// wait for components to register
-				Thread.sleep(4000);
+				Thread.sleep(2000);
 				// iter on planning equipments
 				for (PlanningEquipmentControlOutboundPort plecop : plecops) {
 					plecop.upMode();
 					plecop.downMode();
+				}
+				for (SuspensionEquipmentControlOutboundPort suecop : suecops) {
+					suecop.suspend();
+					suecop.suspended();
+					suecop.resume();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -148,7 +159,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see ControllerImplementationI#register(String,String, String)
+	 * @see main.java.interfaces.ControllerImplementationI#register(String,String,
+	 *      String)
 	 */
 	@Override
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {

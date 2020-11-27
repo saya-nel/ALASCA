@@ -4,6 +4,12 @@ import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.interfaces.ControllerCI;
 
+/**
+ * Outbound port for the controller component interface
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class ControllerOutboundPort extends AbstractOutboundPort implements ControllerCI {
 
 	private static final long serialVersionUID = 1L;
@@ -20,6 +26,13 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 		assert uri != null && owner != null;
 	}
 
+	/**
+	 * Constructor of the controller outbound port
+	 * 
+	 * @param uri   reflexion uri of the port
+	 * @param owner owner component
+	 * @throws Exception
+	 */
 	public ControllerOutboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri, ControllerCI.class, owner);
 		assert uri != null && owner != null;

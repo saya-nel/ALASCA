@@ -2,56 +2,41 @@ package main.java.connectors;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 import main.java.interfaces.FridgeCI;
-import main.java.interfaces.SuspensionEquipmentControlCI;
 
 /**
- * Connector between the Controller and the Fridge, TODO : this class should be
- * auto-generated in the future.
+ * Connector for the FridgeCI component interface
  * 
  * @author Bello Memmi
  *
  */
-public class ControlFridgeConnector extends AbstractConnector implements SuspensionEquipmentControlCI {
+public class FridgeConnector extends AbstractConnector implements FridgeCI {
 
 	/**
-	 * @see interfaces.FridgeImplementationI#getRequestedTemperature()
+	 * @see main.java.interfaces.FridgeImplementationI#getRequestedTemperature()
 	 */
+	@Override
 	public float getRequestedTemperature() throws Exception {
 		return ((FridgeCI) this.offering).getRequestedTemperature();
 	}
 
 	/**
-	 * @see interfaces.FridgeImplementationI#setRequestedTemperature(float)
+	 * @see main.java.interfaces.FridgeImplementationI#setRequestedTemperature(float)
 	 */
+	@Override
 	public void setRequestedTemperature(float temp) throws Exception {
 		((FridgeCI) this.offering).setRequestedTemperature(temp);
 	}
 
 	/**
-	 * @see interfaces.FridgeImplementationI#getCurrentTemperature()
+	 * @see main.java.interfaces.FridgeImplementationI#getCurrentTemperature()
 	 */
+	@Override
 	public float getCurrentTemperature() throws Exception {
 		return ((FridgeCI) this.offering).getCurrentTemperature();
 	}
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#on()
-	 */
-	@Override
-	public boolean on() throws Exception {
-		return false;
-	}
-
-	/**
-	 * @see interfaces.PlanningEquipmentControlCI#off()
-	 */
-	@Override
-	public boolean off() throws Exception {
-		return false;
-	}
-
-	/**
-	 * @see interfaces.PlanningEquipmentControlCI#upMode()
+	 * @see main.java.interfaces.FridgeImplementationI#upMode()
 	 */
 	@Override
 	public boolean upMode() throws Exception {
@@ -59,7 +44,7 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	}
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#downMode()
+	 * @see main.java.interfaces.FridgeImplementationI#downMode()
 	 */
 	@Override
 	public boolean downMode() throws Exception {
@@ -67,7 +52,7 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	}
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#setMode(int)
+	 * @see main.java.interfaces.FridgeImplementationI#setMode(int)
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
@@ -75,7 +60,7 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	}
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#currentMode()
+	 * @see main.java.interfaces.FridgeImplementationI#currentMode()
 	 */
 	@Override
 	public int currentMode() throws Exception {
@@ -83,15 +68,15 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	}
 
 	/**
-	 * @see interfaces.SuspensionEquipmentControlCI#suspended()
+	 * @see main.java.interfaces.FridgeImplementationI#suspended()
 	 */
 	@Override
 	public boolean suspended() throws Exception {
-		return ((FridgeCI) this.offering).upMode();
+		return ((FridgeCI) this.offering).suspended();
 	}
 
 	/**
-	 * @see interfaces.SuspensionEquipmentControlCI#suspend()
+	 * @see main.java.interfaces.FridgeImplementationI#suspend()
 	 */
 	@Override
 	public boolean suspend() throws Exception {
@@ -99,7 +84,7 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	}
 
 	/**
-	 * @see interfaces.SuspensionEquipmentControlCI#resume()
+	 * @see main.java.interfaces.FridgeImplementationI#resume()
 	 */
 	@Override
 	public boolean resume() throws Exception {
@@ -107,7 +92,7 @@ public class ControlFridgeConnector extends AbstractConnector implements Suspens
 	}
 
 	/**
-	 * @see interfaces.SuspensionEquipmentControlCI#emergency()
+	 * @see main.java.interfaces.FridgeImplementationI#emergency()
 	 */
 	@Override
 	public double emergency() throws Exception {

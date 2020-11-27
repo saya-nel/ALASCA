@@ -11,7 +11,7 @@ import main.java.interfaces.ControllerCI;
 public class ControllerConnector extends AbstractConnector implements ControllerCI {
 
 	/**
-	 * @see interfaces.ControllerCI#register(String, String)
+	 * @see main.java.interfaces.ControllerCI#register(String, String)
 	 */
 	@Override
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {

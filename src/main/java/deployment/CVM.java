@@ -4,6 +4,10 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.Battery;
 import main.java.components.Controller;
+import main.java.components.Fan;
+import main.java.components.Fridge;
+import main.java.components.PetrolGenerator;
+import main.java.components.SolarPanels;
 import main.java.components.Washer;
 
 /**
@@ -110,15 +114,15 @@ public class CVM extends AbstractCVM {
 		// create components that arn't connected to controller :
 
 		// create Fan component
-//		AbstractComponent.createComponent(Fan.class.getCanonicalName(), new Object[] { fanURI, fanFIP_uri });
-//
-//		// create PetrolGenerator component
-//		AbstractComponent.createComponent(PetrolGenerator.class.getCanonicalName(),
-//				new Object[] { petrolGeneratorURI, petrolGeneratorPGIP_uri, (float) 2000 });
-//
-//		// create SolarPanels component
-//		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),
-//				new Object[] { solarPanelsURI, solarPanelsSPIP_uri });
+		AbstractComponent.createComponent(Fan.class.getCanonicalName(), new Object[] { fanURI, fanFIP_uri });
+
+		// create PetrolGenerator component
+		AbstractComponent.createComponent(PetrolGenerator.class.getCanonicalName(),
+				new Object[] { petrolGeneratorURI, petrolGeneratorPGIP_uri, (float) 2000 });
+
+		// create SolarPanels component
+		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),
+				new Object[] { solarPanelsURI, solarPanelsSPIP_uri });
 
 		// create the controller and components that are connected to controller :
 
@@ -131,8 +135,8 @@ public class CVM extends AbstractCVM {
 				new Object[] { batteryURI, true, batterySerial, batteryBIP_uri, controllerCIP_uri, (float) 2000 });
 
 		// create Fridge component
-//		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
-//				new Object[] { fridgeUri, true, fridgeSerial, fridgeFIP_uri, controllerCIP_uri });
+		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
+				new Object[] { fridgeUri, true, fridgeSerial, fridgeFIP_uri, controllerCIP_uri });
 
 		// create Washer component
 		AbstractComponent.createComponent(Washer.class.getCanonicalName(),

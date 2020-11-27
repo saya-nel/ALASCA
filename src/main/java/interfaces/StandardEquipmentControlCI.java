@@ -3,6 +3,12 @@ package main.java.interfaces;
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 
+/**
+ * Component interface for standard component
+ * 
+ * @author Bello Memmi
+ *
+ */
 public interface StandardEquipmentControlCI extends RequiredCI, OfferedCI {
 	/**
 	 * switch on the equipment, returning true if the operation succeeded or false

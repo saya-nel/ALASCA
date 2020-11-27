@@ -60,7 +60,7 @@ public class ControllerUnitTest extends AbstractComponent {
 	 */
 
 	/**
-	 * @see AbstractComponent#start()
+	 * @see fr.sorbonne_u.components.AbstractComponent#start()
 	 */
 	@Override
 	public synchronized void start() throws ComponentStartException {
@@ -73,7 +73,7 @@ public class ControllerUnitTest extends AbstractComponent {
 	}
 
 	/**
-	 * @see AbstractComponent#execute()
+	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
 	 */
 	@Override
 	public synchronized void execute() throws Exception {
@@ -82,7 +82,7 @@ public class ControllerUnitTest extends AbstractComponent {
 	}
 
 	/**
-	 * @see AbstractComponent#finalise()
+	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
 	 */
 	@Override
 	public synchronized void finalise() throws Exception {
@@ -90,6 +90,9 @@ public class ControllerUnitTest extends AbstractComponent {
 		super.finalise();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
+	 */
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
 		try {

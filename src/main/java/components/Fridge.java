@@ -93,6 +93,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		this.mode = FridgeMode.NORMAL;
 		this.cop = new ControllerOutboundPort(this);
 		this.cop.publishPort();
+		this.cip_URI = cip_URI;
 		this.initialise(fipURI);
 		if (toogleTracing) {
 			this.tracer.get().setTitle("Fridge component");
@@ -134,18 +135,23 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		this.fip.publishPort();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
+	 */
 	@Override
 	public synchronized void finalise() throws Exception {
-		this.cop.doDisconnection();
+		if (cop.connected())
+			this.cop.doDisconnection();
 		super.finalise();
 	}
 
 	/**
-	 * @see AbstractComponent#shutdown()
+	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
 	 */
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
 		try {
+			this.cop.unpublishPort();
 			this.fip.unpublishPort();
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e);
@@ -167,6 +173,9 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		}
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
+	 */
 	@Override
 	public synchronized void execute() throws Exception {
 		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/fridge-control.xml"));
@@ -180,7 +189,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	// ----------------------------------------------------------------------------
 
 	/**
-	 * @see FridgeImplementationI#getRequestedTemperature()
+	 * @see main.java.interfaces.FridgeImplementationI#getRequestedTemperature()
 	 */
 	@Override
 	public float getRequestedTemperature() throws Exception {
@@ -189,7 +198,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see interfaces.FridgeImplementationI#setRequestedTemperature(float)
+	 * @see main.java.interfaces.FridgeImplementationI#setRequestedTemperature(float)
 	 */
 	@Override
 	public void setRequestedTemperature(float temp) throws Exception {
@@ -198,7 +207,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#getCurrentTemperature()
+	 * @see main.java.interfaces.FridgeImplementationI#getCurrentTemperature()
 	 */
 	@Override
 	public float getCurrentTemperature() throws Exception {
@@ -207,7 +216,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#upMode()
+	 * @see main.java.interfaces.FridgeImplementationI#upMode()
 	 */
 	@Override
 	public boolean upMode() throws Exception {
@@ -217,7 +226,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#downMode()
+	 * @see main.java.interfaces.FridgeImplementationI#downMode()
 	 */
 	@Override
 	public boolean downMode() throws Exception {
@@ -227,7 +236,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#setMode(int)
+	 * @see main.java.interfaces.FridgeImplementationI#setMode(int)
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
@@ -243,7 +252,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#currentMode()
+	 * @see main.java.FridgeImplementationI#currentMode()
 	 */
 	@Override
 	public int currentMode() throws Exception {
@@ -253,7 +262,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#suspended()
+	 * @see main.java.interfaces.FridgeImplementationI#suspended()
 	 */
 	@Override
 	public boolean suspended() throws Exception {
@@ -263,7 +272,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#suspend()
+	 * @see main.java.interfaces.FridgeImplementationI#suspend()
 	 */
 	@Override
 	public boolean suspend() throws Exception {
@@ -279,7 +288,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#resume()
+	 * @see main.java.interfaces.FridgeImplementationI#resume()
 	 */
 	@Override
 	public boolean resume() throws Exception {
@@ -295,7 +304,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	}
 
 	/**
-	 * @see FridgeImplementationI#emergency()
+	 * @see main.java.interfaces.FridgeImplementationI#emergency()
 	 */
 	@Override
 	public double emergency() throws Exception {

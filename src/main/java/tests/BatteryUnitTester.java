@@ -3,17 +3,17 @@ package main.java.tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Duration;
+import java.time.LocalTime;
+
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import main.java.connectors.BatteryConnector;
 import main.java.interfaces.BatteryCI;
-import main.java.ports.ControlBatteryOutboundPort;
+import main.java.ports.BatteryOutboundPort;
 import main.java.utils.Log;
-
-import java.time.Duration;
-import java.time.LocalTime;
 
 /**
  * Tester for the Battery component
@@ -27,7 +27,7 @@ public class BatteryUnitTester extends AbstractComponent {
 	/**
 	 * Battery outbound port for BatteryUnitTester
 	 */
-	protected ControlBatteryOutboundPort bop;
+	protected BatteryOutboundPort bop;
 
 	/**
 	 * Battery inbound port to connect to URI
@@ -58,7 +58,7 @@ public class BatteryUnitTester extends AbstractComponent {
 	 */
 	protected void initialise(String bipURI) throws Exception {
 		this.bipURI = bipURI;
-		this.bop = new ControlBatteryOutboundPort(this);
+		this.bop = new BatteryOutboundPort(this);
 		this.bop.publishPort();
 
 		this.tracer.get().setTitle("Battery tester component");
@@ -145,11 +145,11 @@ public class BatteryUnitTester extends AbstractComponent {
 
 	public void testDownMode() {
 		Log.printAndLog(this, "testDownMode()");
-		try{
+		try {
 			int cur_value = this.bop.currentMode();
 			this.bop.downMode();
-			assertEquals(this.bop.currentMode(), Math.floorMod((cur_value -1), 3));
-		} catch(Exception e){
+			assertEquals(this.bop.currentMode(), Math.floorMod((cur_value - 1), 3));
+		} catch (Exception e) {
 			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
@@ -158,11 +158,11 @@ public class BatteryUnitTester extends AbstractComponent {
 
 	public void testSetMode() {
 		Log.printAndLog(this, "testSetMode()");
-		try{
-			int exp_value = (this.bop.currentMode() + 1)%3;
+		try {
+			int exp_value = (this.bop.currentMode() + 1) % 3;
 			this.bop.setMode(exp_value);
 			assertEquals(exp_value, this.bop.currentMode());
-		} catch(Exception e){
+		} catch (Exception e) {
 			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
@@ -171,13 +171,13 @@ public class BatteryUnitTester extends AbstractComponent {
 
 	public void testPlanifyTest() {
 		Log.printAndLog(this, "testPlanifyTest()");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
 			this.bop.planifyEvent(d, deadline);
 			assertTrue(this.bop.hasPlan());
 
-		} catch(Exception e) {
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -185,7 +185,7 @@ public class BatteryUnitTester extends AbstractComponent {
 
 	public void testCancel() {
 		Log.printAndLog(this, "testCancel()");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
 			this.bop.planifyEvent(d, deadline);
@@ -196,7 +196,7 @@ public class BatteryUnitTester extends AbstractComponent {
 			assertEquals(this.bop.startTime(), null);
 			assertEquals(this.bop.duration(), null);
 
-		} catch(Exception e) {
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -204,13 +204,13 @@ public class BatteryUnitTester extends AbstractComponent {
 
 	public void testPostpone() {
 		Log.printAndLog(this, "testPostpone");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
 			Duration postponeDuration = Duration.ofHours(4);
 			this.bop.planifyEvent(d, deadline);
 			this.bop.postpone(postponeDuration);
-		} catch(Exception e){
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -218,12 +218,12 @@ public class BatteryUnitTester extends AbstractComponent {
 
 	public void testDuration() {
 		Log.printAndLog(this, "testDuration");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
-			this.bop.planifyEvent(d,deadline);
-			assertEquals(d,this.bop.duration());
-		}catch(Exception e){
+			this.bop.planifyEvent(d, deadline);
+			assertEquals(d, this.bop.duration());
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -231,16 +231,17 @@ public class BatteryUnitTester extends AbstractComponent {
 
 	public void testDeadline() {
 		Log.printAndLog(this, "testDeadline");
-		try{
+		try {
 			Duration d = Duration.ofHours(1);
 			LocalTime deadline = LocalTime.now().plusHours(3);
 			this.bop.planifyEvent(d, deadline);
 			assertEquals(deadline, this.bop.deadline());
-		} catch(Exception e){
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
+
 	/**
 	 * Run all the tests
 	 */
@@ -254,7 +255,7 @@ public class BatteryUnitTester extends AbstractComponent {
 		this.testDeadline();
 		this.testPlanifyTest();
 
-		//this.testPostpone();
+		// this.testPostpone();
 		Log.printAndLog(this, "all tests passed");
 	}
 

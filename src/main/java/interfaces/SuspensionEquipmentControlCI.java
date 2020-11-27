@@ -1,5 +1,11 @@
 package main.java.interfaces;
 
+/**
+ * Component interface for suspension components
+ * 
+ * @author Bello Memmi
+ *
+ */
 public interface SuspensionEquipmentControlCI extends StandardEquipmentControlCI {
 	/**
 	 * return true if the equipment has been suspended.

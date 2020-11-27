@@ -5,7 +5,7 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.interfaces.SolarPanelsCI;
 
 /**
- * Outbound port for SolarPanels component
+ * Outbound port for SolarPanels component interface
  * 
  * @author Bello Memmi
  *
@@ -25,7 +25,7 @@ public class SolarPanelsOutboundPort extends AbstractOutboundPort implements Sol
 	}
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#turnOn()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
@@ -33,13 +33,16 @@ public class SolarPanelsOutboundPort extends AbstractOutboundPort implements Sol
 	}
 
 	/**
-	 * @see interfaces.SolarPanelsImplementationI#turnOff()
+	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception {
 		((SolarPanelsCI) this.getConnector()).turnOff();
 	}
 
+	/**
+	 * @see main.java.interfaces.SolarPanelsImplementationI#isTurnedOn()
+	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {
 		return ((SolarPanelsCI) this.getConnector()).isTurnedOn();

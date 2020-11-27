@@ -7,9 +7,9 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import main.java.connectors.ControlFridgeConnector;
+import main.java.connectors.FridgeConnector;
 import main.java.interfaces.FridgeCI;
-import main.java.ports.ControlFridgeOutboundPort;
+import main.java.ports.FridgeOutboundPort;
 import main.java.utils.Log;
 
 /**
@@ -23,7 +23,7 @@ public class FridgeUnitTester extends AbstractComponent {
 	/**
 	 * Fridge outbound port for FridgeUnitTester
 	 */
-	protected ControlFridgeOutboundPort fop;
+	protected FridgeOutboundPort fop;
 
 	/**
 	 * Fridge inbound port to connect to URI
@@ -48,7 +48,7 @@ public class FridgeUnitTester extends AbstractComponent {
 	 */
 	protected void initialise(String fipURI) throws Exception {
 		this.fipURI = fipURI;
-		this.fop = new ControlFridgeOutboundPort(this);
+		this.fop = new FridgeOutboundPort(this);
 		this.fop.publishPort();
 		this.tracer.get().setTitle("Fridge tester component");
 		this.tracer.get().setRelativePosition(0, 0);
@@ -59,20 +59,20 @@ public class FridgeUnitTester extends AbstractComponent {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see AbstractComponent#start()
+	 * @see fr.sorbonne_u.components.AbstractComponent#start()
 	 */
 	@Override
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.fop.getPortURI(), this.fipURI, ControlFridgeConnector.class.getCanonicalName());
+			this.doPortConnection(this.fop.getPortURI(), this.fipURI, FridgeConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
 	}
 
 	/**
-	 * @see AbstractComponent#execute()
+	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
 	 */
 	@Override
 	public synchronized void execute() throws Exception {
@@ -81,7 +81,7 @@ public class FridgeUnitTester extends AbstractComponent {
 	}
 
 	/**
-	 * @see AbstractComponent#finalise()
+	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
 	 */
 	@Override
 	public synchronized void finalise() throws Exception {
@@ -90,7 +90,7 @@ public class FridgeUnitTester extends AbstractComponent {
 	}
 
 	/**
-	 * @see AbstractComponent#shutdown()
+	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
 	 */
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {

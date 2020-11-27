@@ -5,7 +5,7 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.interfaces.PetrolGeneratorCI;
 
 /**
- * Outbound port for PetrolGenerator component
+ * Outbound port for PetrolGenerator component interface
  * 
  * @author Bello Memmi
  *
@@ -25,7 +25,7 @@ public class PetrolGeneratorOutboundPort extends AbstractOutboundPort implements
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#getMaxLevel()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#getMaxLevel()
 	 */
 	@Override
 	public float getMaxLevel() throws Exception {
@@ -33,7 +33,7 @@ public class PetrolGeneratorOutboundPort extends AbstractOutboundPort implements
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#getPetrolLevel()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#getPetrolLevel()
 	 */
 	@Override
 	public float getPetrolLevel() throws Exception {
@@ -41,7 +41,7 @@ public class PetrolGeneratorOutboundPort extends AbstractOutboundPort implements
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#addPetrol(float)
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#addPetrol(float)
 	 */
 	@Override
 	public void addPetrol(float quantity) throws Exception {
@@ -49,7 +49,7 @@ public class PetrolGeneratorOutboundPort extends AbstractOutboundPort implements
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#turnOn()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
@@ -57,7 +57,7 @@ public class PetrolGeneratorOutboundPort extends AbstractOutboundPort implements
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#turnOff()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception {
@@ -65,7 +65,7 @@ public class PetrolGeneratorOutboundPort extends AbstractOutboundPort implements
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#isTurnedOn()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {

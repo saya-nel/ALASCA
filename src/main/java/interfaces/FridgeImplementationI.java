@@ -36,22 +36,22 @@ public interface FridgeImplementationI {
 	 */
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#upMode()
+	 * @see main.java.interfaces.StandardEquipmentControlCI#upMode()
 	 */
 	public boolean upMode() throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#downMode()
+	 * @see main.java.interfaces.StandardEquipmentControlCI#downMode()
 	 */
 	public boolean downMode() throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#setMode(int)
+	 * @see main.java.interfaces.StandardEquipmentControlCI#setMode(int)
 	 */
 	public boolean setMode(int modeIndex) throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#currentMode()
+	 * @see main.java.interfaces.StandardEquipmentControlCI#currentMode()
 	 */
 	public int currentMode() throws Exception;
 
@@ -62,22 +62,22 @@ public interface FridgeImplementationI {
 	 */
 
 	/**
-	 * @see interfaces.SuspensionEquipmentControlCI#suspended()
+	 * @see main.java.interfaces.SuspensionEquipmentControlCI#suspended()
 	 */
 	public boolean suspended() throws Exception;
 
 	/**
-	 * @see interfaces.SuspensionEquipmentControlCI#suspend()
+	 * @see main.java.interfaces.SuspensionEquipmentControlCI#suspend()
 	 */
 	public boolean suspend() throws Exception;
 
 	/**
-	 * @see interfaces.SuspensionEquipmentControlCI#resume()
+	 * @see main.java.interfaces.SuspensionEquipmentControlCI#resume()
 	 */
 	public boolean resume() throws Exception;
 
 	/**
-	 * @see interfaces.SuspensionEquipmentControlCI#emergency()
+	 * @see main.java.interfaces.SuspensionEquipmentControlCI#emergency()
 	 */
 	public double emergency() throws Exception;
 }

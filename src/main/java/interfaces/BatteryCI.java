@@ -16,74 +16,75 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
 public interface BatteryCI extends BatteryImplementationI, OfferedCI, RequiredCI {
 
 	/**
-	 * @see interfaces.BatteryImplementationI#getBatteryCharge()
+	 * @see main.java.interfaces.BatteryImplementationI#getBatteryCharge()
 	 */
 	@Override
 	public float getBatteryCharge() throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#upMode()
+	 * @see main.java.interfaces.BatteryImplementationI#upMode()
 	 */
 	@Override
 	public boolean upMode() throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#downMode()
+	 * @see main.java.interfaces.BatteryImplementationI#downMode()
 	 */
 	@Override
 	public boolean downMode() throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#setMode(int)
+	 * @see main.java.interfaces.BatteryImplementationI#setMode(int)
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#currentMode()
+	 * @see main.java.interfaces.BatteryImplementationI#currentMode()
 	 */
 	@Override
 	public int currentMode() throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#hasPlan()
+	 * @see main.java.interfaces.BatteryImplementationI#hasPlan()
 	 */
 	@Override
 	public boolean hasPlan() throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#startTime()
+	 * @see main.java.interfaces.BatteryImplementationI#startTime()
 	 */
 	@Override
 	public LocalTime startTime() throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#duration()
+	 * @see main.java.interfaces.BatteryImplementationI#duration()
 	 */
 	@Override
 	public Duration duration() throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#deadline()
+	 * @see main.java.interfaces.BatteryImplementationI#deadline()
 	 */
 	@Override
 	public LocalTime deadline() throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#postpone(Duration)
+	 * @see main.java.interfaces.BatteryImplementationI#postpone(Duration)
 	 */
 	@Override
 	public boolean postpone(Duration d) throws Exception;
 
 	/**
-	 * @see interfaces.BatteryImplementationI#cancel()
+	 * @see main.java.interfaces.BatteryImplementationI#cancel()
 	 */
 	@Override
 	public boolean cancel() throws Exception;
 
 	/**
-	 * @see main.java.interfaces.BatteryImplementationI#planifyEvent(Duration, LocalTime)
+	 * @see main.java.interfaces.BatteryImplementationI#planifyEvent(Duration,
+	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned,LocalTime deadline) throws Exception;
+	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception;
 }

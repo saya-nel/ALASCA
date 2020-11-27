@@ -1,131 +1,161 @@
 package main.java.connectors;
 
-import fr.sorbonne_u.components.connectors.AbstractConnector;
-import main.java.interfaces.WasherCI;
-
 import java.time.Duration;
 import java.time.LocalTime;
 
+import fr.sorbonne_u.components.connectors.AbstractConnector;
+import main.java.interfaces.WasherCI;
+
+/**
+ * Connector for the WasherCI component interface
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class WasherConnector extends AbstractConnector implements WasherCI {
 
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#isTurnedOn()
+	 */
+	@Override
+	public boolean isTurnedOn() throws Exception {
+		return ((WasherCI) this.offering).isTurnedOn();
+	}
 
-    @Override
-    public boolean isTurnedOn() throws Exception {
-        return ((WasherCI) this.offering).isTurnedOn();
-    }
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#setProgramTemperature(int)
+	 */
+	@Override
+	public void setProgramTemperature(int temperature) throws Exception {
+		((WasherCI) this.offering).setProgramTemperature(temperature);
+	}
 
-    @Override
-    public void setProgramTemperature(int temperature) throws Exception {
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#getProgramTemperature()
+	 */
+	@Override
+	public int getProgramTemperature() throws Exception {
+		return ((WasherCI) this.offering).getProgramTemperature();
+	}
 
-    }
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#setProgramDuration(int)
+	 */
+	@Override
+	public void setProgramDuration(int duration) throws Exception {
+		((WasherCI) this.offering).setProgramDuration(duration);
+	}
 
-    @Override
-    public int getProgramTemperature() throws Exception {
-        return ((WasherCI) this.offering).getProgramTemperature();
-    }
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#getProgramDuration()
+	 */
+	@Override
+	public int getProgramDuration() throws Exception {
+		return ((WasherCI) this.offering).getProgramDuration();
+	}
 
-    @Override
-    public void setProgramDuration(int duration) throws Exception {
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#turnOn()
+	 */
+	@Override
+	public boolean turnOn() throws Exception {
+		return ((WasherCI) this.offering).turnOn();
+	}
 
-    }
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#turnOff()
+	 */
+	@Override
+	public boolean turnOff() throws Exception {
+		return ((WasherCI) this.offering).turnOff();
+	}
 
-    @Override
-    public int getProgramDuration() throws Exception {
-        return ((WasherCI) this.offering).getProgramDuration();
-    }
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#upMode()
+	 */
+	@Override
+	public boolean upMode() throws Exception {
+		return ((WasherCI) this.offering).upMode();
+	}
 
-    @Override
-    public boolean turnOn() throws Exception {
-        return ((WasherCI) this.offering).turnOn();
-    }
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#downMode()
+	 */
+	@Override
+	public boolean downMode() throws Exception {
+		return ((WasherCI) this.offering).downMode();
+	}
 
-    @Override
-    public boolean turnOff() throws Exception {
-        return ((WasherCI) this.offering).turnOff();
-    }
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#setMode(int)
+	 */
+	@Override
+	public boolean setMode(int modeIndex) throws Exception {
+		return ((WasherCI) this.offering).setMode(modeIndex);
+	}
 
-    /**
-     * @see interfaces.StandardEquipmentControlCI#upMode()
-     */
-    @Override
-    public boolean upMode() throws Exception {
-        return ((WasherCI) this.offering).upMode();
-    }
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#currentMode()
+	 */
+	@Override
+	public int currentMode() throws Exception {
+		return ((WasherCI) this.offering).currentMode();
+	}
 
-    /**
-     * @see interfaces.StandardEquipmentControlCI#downMode()
-     */
-    @Override
-    public boolean downMode() throws Exception {
-        return ((WasherCI) this.offering).downMode();
-    }
+	/**
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#hasPlan()
+	 */
+	@Override
+	public boolean hasPlan() throws Exception {
+		return ((WasherCI) this.offering).hasPlan();
+	}
 
-    /**
-     * @see interfaces.StandardEquipmentControlCI#setMode(int)
-     */
-    @Override
-    public boolean setMode(int modeIndex) throws Exception {
-        return ((WasherCI) this.offering).setMode(modeIndex);
-    }
+	/**
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#startTime()
+	 */
+	@Override
+	public LocalTime startTime() throws Exception {
+		return ((WasherCI) this.offering).startTime();
+	}
 
-    /**
-     * @see interfaces.StandardEquipmentControlCI#currentMode()
-     */
-    @Override
-    public int currentMode() throws Exception {
-        return ((WasherCI) this.offering).currentMode();
-    }
+	/**
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#duration()
+	 */
+	@Override
+	public Duration duration() throws Exception {
+		return ((WasherCI) this.offering).duration();
+	}
 
-    /**
-     * @see interfaces.PlanningEquipmentControlCI#hasPlan()
-     */
-    @Override
-    public boolean hasPlan() throws Exception {
-        return ((WasherCI) this.offering).hasPlan();
-    }
+	/**
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#deadline()
+	 */
+	@Override
+	public LocalTime deadline() throws Exception {
+		return ((WasherCI) this.offering).deadline();
+	}
 
-    /**
-     * @see interfaces.PlanningEquipmentControlCI#startTime()
-     */
-    @Override
-    public LocalTime startTime() throws Exception {
-        return ((WasherCI) this.offering).startTime();
-    }
+	/**
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#postpone(Duration)
+	 */
+	@Override
+	public boolean postpone(Duration d) throws Exception {
+		return ((WasherCI) this.offering).postpone(d);
+	}
 
-    /**
-     * @see interfaces.PlanningEquipmentControlCI#duration()
-     */
-    @Override
-    public Duration duration() throws Exception {
-        return ((WasherCI) this.offering).duration();
-    }
+	/**
+	 * @see main.java.interfaces.PlanningEquipmentControlCI#cancel()
+	 */
+	@Override
+	public boolean cancel() throws Exception {
+		return ((WasherCI) this.offering).cancel();
+	}
 
-    /**
-     * @see interfaces.PlanningEquipmentControlCI#deadline()
-     */
-    @Override
-    public LocalTime deadline() throws Exception {
-        return ((WasherCI) this.offering).deadline();
-    }
-
-    /**
-     * @see interfaces.PlanningEquipmentControlCI#postpone(Duration)
-     */
-    @Override
-    public boolean postpone(Duration d) throws Exception {
-        return ((WasherCI) this.offering).postpone(d);
-    }
-
-    /**
-     * @see interfaces.PlanningEquipmentControlCI#cancel()
-     */
-    @Override
-    public boolean cancel() throws Exception {
-        return ((WasherCI) this.offering).cancel();
-    }
-
-    @Override
-    public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-        return ((WasherCI) this.offering).planifyEvent(durationLastPlanned, deadline);
-    }
+	/**
+	 * @see main.java.interfaces.WasherImplementationI#planifyEvent(Duration,
+	 *      LocalTime)
+	 */
+	@Override
+	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
+		return ((WasherCI) this.offering).planifyEvent(durationLastPlanned, deadline);
+	}
 }

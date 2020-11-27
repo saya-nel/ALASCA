@@ -12,37 +12,37 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
 public interface PetrolGeneratorCI extends PetrolGeneratorImplementationI, RequiredCI, OfferedCI {
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#getMaxLevel()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#getMaxLevel()
 	 */
 	@Override
 	public float getMaxLevel() throws Exception;
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#getPetrolLevel()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#getPetrolLevel()
 	 */
 	@Override
 	public float getPetrolLevel() throws Exception;
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#addPetrol(float)
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#addPetrol(float)
 	 */
 	@Override
 	public void addPetrol(float quantity) throws Exception;
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#turnOn()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception;
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#turnOff()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception;
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#isTurnedOn()
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception;
