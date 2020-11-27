@@ -31,6 +31,7 @@ import main.java.ports.ControllerInboundPort;
 import main.java.ports.PlanningEquipmentControlOutboundPort;
 import main.java.ports.StandardEquipmentControlOutboundPort;
 import main.java.ports.SuspensionEquipmentControlOutboundPort;
+import main.java.utils.Log;
 
 /**
  *
@@ -57,9 +58,9 @@ public class Controller extends AbstractComponent implements ControllerImplement
 
 	// ports used for controlling standard devices
 	private Vector<StandardEquipmentControlOutboundPort> stecops;
-	// ports used for controlling standard devices
+	// ports used for controlling planning devices
 	private Vector<PlanningEquipmentControlOutboundPort> plecops;
-	// ports used for controlling standard devices
+	// ports used for controlling suspensible devices
 	private Vector<SuspensionEquipmentControlOutboundPort> suecops;
 
 	public static final String REGISTERING_POOL = "registering-pool";
@@ -132,7 +133,10 @@ public class Controller extends AbstractComponent implements ControllerImplement
 				// wait for components to register
 				Thread.sleep(4000);
 				// iter on planning equipments
-
+				for (PlanningEquipmentControlOutboundPort plecop : plecops) {
+					plecop.upMode();
+					plecop.downMode();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -153,7 +157,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		try {
 			generatedConnector = generateConnector(serial_number, XMLFile);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.printAndLog(this, e.getMessage());
 			return false;
 		}
 		if (generatedConnector == null) {
@@ -185,6 +189,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 			this.doPortConnection(stecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
 			break;
 		}
+		Log.printAndLog(this, "Equipment : " + serial_number + " is registered.");
 		return true;
 	}
 

@@ -18,7 +18,8 @@ import main.java.connectors.ControllerConnector;
 import main.java.interfaces.ControllerCI;
 import main.java.interfaces.WasherCI;
 import main.java.interfaces.WasherImplementationI;
-import main.java.ports.*;
+import main.java.ports.ControllerOutboundPort;
+import main.java.ports.WasherInboundPort;
 import main.java.utils.Log;
 import main.java.utils.WasherModes;
 
@@ -166,9 +167,10 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public synchronized void start() throws ComponentStartException {
 		super.start();
-		try {// port écoute des register
-			this.doPortConnection(this.cop.getPortURI(), this.cip_uri, ControllerConnector.class.getCanonicalName());
-
+		try {
+			if (cip_uri.length() > 0)
+				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
+						ControllerConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -179,8 +181,6 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		this.cop.doDisconnection();
 		super.finalise();
 	}
-
-
 
 	@Override
 	public synchronized void execute() throws Exception {
@@ -247,11 +247,11 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	public boolean downMode() throws Exception {
 		boolean succeed = false;
 
-			if (this.mode.get() == WasherModes.ECO.ordinal()) // wheel restore to 0
-				succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
-			else {
-				succeed = this.mode.compareAndSet(this.mode.get(), this.mode.get() - 1);
-			}
+		if (this.mode.get() == WasherModes.ECO.ordinal()) // wheel restore to 0
+			succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
+		else {
+			succeed = this.mode.compareAndSet(this.mode.get(), this.mode.get() - 1);
+		}
 
 		Log.printAndLog(this, "downMode() service result : " + succeed);
 		return succeed;
@@ -324,8 +324,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	@Override
 	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) {
 		boolean succeed = false;
-		synchronized (this.lastStartTime)
-		{
+		synchronized (this.lastStartTime) {
 			succeed = true;
 			succeed &= this.hasPlan.compareAndSet(false, true);
 			succeed &= this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), durationLastPlanned);

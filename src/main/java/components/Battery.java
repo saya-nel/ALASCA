@@ -3,7 +3,6 @@ package main.java.components;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -162,7 +161,9 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			this.doPortConnection(this.cop.getPortURI(), this.cip_uri, ControllerConnector.class.getCanonicalName());
+			if (cip_uri.length() > 0)
+				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
+						ControllerConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -224,7 +225,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		if (this.operatingMode.get() == BatteryState.SLEEPING.ordinal()) {// return to 0
 			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.RECHARGING.ordinal());
 		} else {
-			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.get() +1);
+			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.get() + 1);
 		}
 		Log.printAndLog(this, "upMode() service result : " + succeed);
 		return succeed;
@@ -347,8 +348,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	@Override
 	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) {
 		boolean succeed = false;
-		synchronized (this.lastStartTime)
-		{
+		synchronized (this.lastStartTime) {
 			succeed = true;
 			succeed &= this.hasPlan.compareAndSet(false, true);
 			succeed &= this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), durationLastPlanned);
