@@ -41,7 +41,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	/**
 	 * Serial number for registering on controller
 	 */
-	protected String serialNumber = "SERIALNUMBER";
+	protected String serialNumber;
 
 	/**
 	 * Actual charge of battery in mA/h
@@ -111,7 +111,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		this.initialise(bipURI, maxEnergy);
 		if (toogleTracing) {
 			this.tracer.get().setTitle("Battery component");
-			this.tracer.get().setRelativePosition(0, 1);
+			this.tracer.get().setRelativePosition(1, 1);
 			this.toggleTracing();
 		}
 	}
@@ -161,11 +161,9 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
-			Log.printAndLog(this, "try to connect to controller");
 			if (cip_uri.length() > 0)
 				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
 						ControllerConnector.class.getCanonicalName());
-			Log.printAndLog(this, "connected");
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -200,7 +198,6 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 */
 	@Override
 	public synchronized void execute() throws Exception {
-		Log.printAndLog(this, "try to register to controller");
 		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
 		String xmlFile = new String(encoded, "UTF-8");
 		boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(), xmlFile);

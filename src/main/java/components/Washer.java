@@ -110,7 +110,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		initialise(wipURI);
 		if (toogleTracing) {
 			this.tracer.get().setTitle("Washer component");
-			this.tracer.get().setRelativePosition(0, 3);
+			this.tracer.get().setRelativePosition(1, 3);
 			this.toggleTracing();
 		}
 	}

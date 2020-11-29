@@ -108,14 +108,34 @@ public class DistributedCVM extends AbstractDistributedCVM {
 		super(args, xLayout, yLayout);
 	}
 
+	@Override
+	public void initialise() throws Exception {
+		System.out.println("init");
+		// ---------------------------------------------------------------------
+		// Configuration phase
+		// ---------------------------------------------------------------------
+
+		// debugging mode configuration; comment and uncomment the line to see
+		// the difference
+//		AbstractCVM.DEBUG_MODE.add(CVMDebugModes.LIFE_CYCLE);
+//		AbstractCVM.DEBUG_MODE.add(CVMDebugModes.INTERFACES);
+//		AbstractCVM.DEBUG_MODE.add(CVMDebugModes.PORTS);
+//		AbstractCVM.DEBUG_MODE.add(CVMDebugModes.CONNECTING);
+//		AbstractCVM.DEBUG_MODE.add(CVMDebugModes.CALLING);
+//		AbstractCVM.DEBUG_MODE.add(CVMDebugModes.EXECUTOR_SERVICES);
+
+		super.initialise();
+		// any other application-specific initialisation must be put here
+
+	}
+
 	/**
-	 * Create and deploy components
+	 * Créer les composants appropriés selon la jvm sur laquelle on se trouve
 	 * 
-	 * @see fr.sorbonne_u.components.cvm.AbstractCVM#deploy()
+	 * @see fr.sorbonne_u.components.cvm.AbstractDistributedCVM#instantiateAndPublish()
 	 */
 	@Override
-	public void deploy() throws Exception {
-
+	public void instantiateAndPublish() throws Exception {
 		if (thisJVMURI.equals(JVM1_URI)) {
 
 			// create Controller component
@@ -150,8 +170,7 @@ public class DistributedCVM extends AbstractDistributedCVM {
 		} else {
 			System.out.println("Unknown jvm uri : " + thisJVMURI);
 		}
-
-		super.deploy();
+		super.instantiateAndPublish();
 	}
 
 	/**
@@ -161,9 +180,9 @@ public class DistributedCVM extends AbstractDistributedCVM {
 	 */
 	public static void main(String[] args) {
 		try {
-			DistributedCVM c = new DistributedCVM(args, 2, 5);
-			c.startStandardLifeCycle(10000L);
-			Thread.sleep(3000L);
+			DistributedCVM da = new DistributedCVM(args, 2, 5);
+			da.startStandardLifeCycle(15000L);
+			Thread.sleep(10000L);
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();

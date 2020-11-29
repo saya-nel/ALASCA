@@ -94,7 +94,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		this.initialise(fipURI);
 		if (toogleTracing) {
 			this.tracer.get().setTitle("Fridge component");
-			this.tracer.get().setRelativePosition(0, 2);
+			this.tracer.get().setRelativePosition(1, 2);
 			this.toggleTracing();
 		}
 

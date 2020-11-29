@@ -75,7 +75,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		initialise(inboundPortRegisterURI);
 		if (toogleTracing) {
 			this.tracer.get().setTitle("Controller component");
-			this.tracer.get().setRelativePosition(0, 0);
+			this.tracer.get().setRelativePosition(1, 0);
 			this.toggleTracing();
 		}
 	}
@@ -137,9 +137,8 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
 			try {
 				// wait for components to register
-				Thread.sleep(2000);
+				Thread.sleep(4000);
 				// iter on planning equipments
-				Log.printAndLog(this, "tests start");
 				for (PlanningEquipmentControlOutboundPort plecop : plecops) {
 					plecop.upMode();
 					plecop.downMode();
@@ -149,7 +148,6 @@ public class Controller extends AbstractComponent implements ControllerImplement
 					suecop.suspended();
 					suecop.resume();
 				}
-				Log.printAndLog(this, "tests end");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
