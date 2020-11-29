@@ -151,7 +151,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		this.bip = new BatteryInboundPort(batteryInboundPortURI, this);
 		this.bip.publishPort();
 		this.cop = new ControllerOutboundPort(this);
-		this.cop.publishPort();
+		this.cop.localPublishPort();
 	}
 
 	/**
@@ -161,9 +161,11 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	public synchronized void start() throws ComponentStartException {
 		super.start();
 		try {
+			Log.printAndLog(this, "try to connect to controller");
 			if (cip_uri.length() > 0)
 				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
 						ControllerConnector.class.getCanonicalName());
+			Log.printAndLog(this, "connected");
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
 		}
@@ -198,7 +200,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 */
 	@Override
 	public synchronized void execute() throws Exception {
-
+		Log.printAndLog(this, "try to register to controller");
 		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
 		String xmlFile = new String(encoded, "UTF-8");
 		boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(), xmlFile);

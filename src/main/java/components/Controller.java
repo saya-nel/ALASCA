@@ -139,6 +139,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 				// wait for components to register
 				Thread.sleep(2000);
 				// iter on planning equipments
+				Log.printAndLog(this, "tests start");
 				for (PlanningEquipmentControlOutboundPort plecop : plecops) {
 					plecop.upMode();
 					plecop.downMode();
@@ -148,6 +149,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 					suecop.suspended();
 					suecop.resume();
 				}
+				Log.printAndLog(this, "tests end");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -164,7 +166,7 @@ public class Controller extends AbstractComponent implements ControllerImplement
 	 */
 	@Override
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {
-		// TODO connector generation here
+		Log.printAndLog(this, "try to register equipment : " + serial_number);
 		Class<?> generatedConnector;
 		try {
 			generatedConnector = generateConnector(serial_number, XMLFile);
@@ -184,19 +186,19 @@ public class Controller extends AbstractComponent implements ControllerImplement
 		switch (equipmentType) {
 		case "suspension":
 			SuspensionEquipmentControlOutboundPort suecop = new SuspensionEquipmentControlOutboundPort(this);
-			suecop.publishPort();
+			suecop.localPublishPort();
 			suecops.add(suecop);
 			this.doPortConnection(suecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
 			break;
 		case "planning":
 			PlanningEquipmentControlOutboundPort plecop = new PlanningEquipmentControlOutboundPort(this);
-			plecop.publishPort();
+			plecop.localPublishPort();
 			plecops.add(plecop);
 			this.doPortConnection(plecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
 			break;
 		default:
 			StandardEquipmentControlOutboundPort stecop = new StandardEquipmentControlOutboundPort(this);
-			stecop.publishPort();
+			stecop.localPublishPort();
 			stecops.add(stecop);
 			this.doPortConnection(stecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
 			break;

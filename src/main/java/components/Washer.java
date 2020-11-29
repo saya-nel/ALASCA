@@ -144,7 +144,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		this.wip = new WasherInboundPort(washerInboundPortURI, this);
 		this.wip.publishPort();
 		this.cop = new ControllerOutboundPort(this);
-		this.cop.publishPort();
+		this.cop.localPublishPort();
 	}
 
 	/**

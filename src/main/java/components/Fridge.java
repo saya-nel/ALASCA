@@ -89,7 +89,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 		this.lastSuspensionTime = new AtomicReference<>();
 		this.mode = new AtomicReference<>(FridgeMode.NORMAL);
 		this.cop = new ControllerOutboundPort(this);
-		this.cop.publishPort();
+		this.cop.localPublishPort();
 		this.cip_URI = cip_URI;
 		this.initialise(fipURI);
 		if (toogleTracing) {
@@ -217,7 +217,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	@Override
 	public boolean upMode() throws Exception {
 		boolean succeed = false;
-		succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[(this.mode.get().ordinal() + 1) %2]);
+		succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[(this.mode.get().ordinal() + 1) % 2]);
 		Log.printAndLog(this, "upMode() service result : " + true);
 		return succeed;
 	}
@@ -228,8 +228,8 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	@Override
 	public boolean downMode() throws Exception {
 		boolean succeed = false;
-		succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[
-												Math.floorMod(this.mode.get().ordinal() - 1,2)]);
+		succeed = this.mode.compareAndSet(this.mode.get(),
+				FridgeMode.values()[Math.floorMod(this.mode.get().ordinal() - 1, 2)]);
 		Log.printAndLog(this, "downmode() service result : " + true);
 		return true;
 	}
