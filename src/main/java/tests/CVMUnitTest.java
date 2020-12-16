@@ -3,7 +3,11 @@ package main.java.tests;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.Battery;
+import main.java.components.Fan;
 import main.java.components.Fridge;
+import main.java.components.PetrolGenerator;
+import main.java.components.SolarPanels;
+import main.java.components.Washer;
 
 /**
  * CVM for running components testers
@@ -44,58 +48,41 @@ public class CVMUnitTest extends AbstractCVM {
 	public void deploy() throws Exception {
 
 		// Battery
-		// AbstractComponent.createComponent(Battery.class.getCanonicalName(),
-		// new Object[] { BATTERY_URI,true, "serial_number_battery",
-		// BATTERY_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, (float) 10000 });
-		// AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
-		// new Object[] { BATTERY_INBOUND_PORT_URI });
-		/*
-		 * // Fan AbstractComponent.createComponent(Fan.class.getCanonicalName(), new
-		 * Object[] { FAN_URI, FAN_INBOUND_PORT_URI });
-		 * AbstractComponent.createComponent(FanUnitTester.class.getCanonicalName(), new
-		 * Object[] { FAN_INBOUND_PORT_URI });
-		 * 
-		 * // SolarPanels
-		 * AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(), new
-		 * Object[] { SOLARPANELS_URI, SOLARPANELS_INBOUND_PORT_URI });
-		 * AbstractComponent.createComponent(SolarPanelsUnitTester.class.
-		 * getCanonicalName(), new Object[] { SOLARPANELS_INBOUND_PORT_URI });
-		 * 
-		 * // Washer AbstractComponent.createComponent(Washer.class.getCanonicalName(),
-		 * new Object[] { WASHER_URI, WASHER_INBOUND_PORT_URI });
-		 * AbstractComponent.createComponent(WasherUnitTester.class.getCanonicalName(),
-		 * new Object[] { WASHER_INBOUND_PORT_URI });
-		 * 
-		 * // Petrol Generator
-		 * AbstractComponent.createComponent(PetrolGenerator.class.getCanonicalName(),
-		 * new Object[] { PETROLGENERATOR_URI, PETROLGENERATOR_INBOUND_PORT_URI, (float)
-		 * 1000 }); AbstractComponent.createComponent(PetrolGeneratorUnitTester.class.
-		 * getCanonicalName(), new Object[] { PETROLGENERATOR_INBOUND_PORT_URI });
-		 */
-		// Fridge
-
-		 AbstractComponent.createComponent(Fridge.class.getCanonicalName(), new
-		 Object[] { FRIDGE_URI, false, "FRIDGE_NB", FRIDGE_INBOUND_PORT_URI, ""});
-		 AbstractComponent.createComponent(FridgeUnitTester.class.getCanonicalName(),
-				 new Object[] { FRIDGE_INBOUND_PORT_URI});
-
-
-
-		// Battery
-		/*
 		AbstractComponent.createComponent(Battery.class.getCanonicalName(),
-				new Object[] { BATTERY_URI, false, BATTERY_SERIAL_NB, BATTERY_INBOUND_PORT_URI, "", (float) 2000 });
+				new Object[] { BATTERY_URI, false, "", BATTERY_INBOUND_PORT_URI, "", (float) 10000 });
 		AbstractComponent.createComponent(BatteryUnitTester.class.getCanonicalName(),
 				new Object[] { BATTERY_INBOUND_PORT_URI });
-		*/
+
+		// Fan
+		AbstractComponent.createComponent(Fan.class.getCanonicalName(), new Object[] { FAN_URI, FAN_INBOUND_PORT_URI });
+		AbstractComponent.createComponent(FanUnitTester.class.getCanonicalName(),
+				new Object[] { FAN_INBOUND_PORT_URI });
+
+		// SolarPanels
+		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),
+				new Object[] { SOLARPANELS_URI, SOLARPANELS_INBOUND_PORT_URI });
+		AbstractComponent.createComponent(SolarPanelsUnitTester.class.getCanonicalName(),
+				new Object[] { SOLARPANELS_INBOUND_PORT_URI });
+
 		// Washer
-		/*
-		 * AbstractComponent.createComponent(Washer.class.getCanonicalName(), new
-		 * Object[] {WASHER_URI, false, WASHER_SERIAL_NB, WASHER_INBOUND_PORT_URI,
-		 * CONTROLLER_INBOUND_PORT_URI});
-		 * AbstractComponent.createComponent(WasherUnitTester.class.getCanonicalName(),
-		 * new Object[] {WASHER_INBOUND_PORT_URI});
-		 */
+		AbstractComponent.createComponent(Washer.class.getCanonicalName(),
+				new Object[] { WASHER_URI, false, "", WASHER_INBOUND_PORT_URI, "" });
+		AbstractComponent.createComponent(WasherUnitTester.class.getCanonicalName(),
+				new Object[] { WASHER_INBOUND_PORT_URI });
+
+		// Petrol Generator
+		AbstractComponent.createComponent(PetrolGenerator.class.getCanonicalName(),
+				new Object[] { PETROLGENERATOR_URI, PETROLGENERATOR_INBOUND_PORT_URI, (float) 1000 });
+		AbstractComponent.createComponent(PetrolGeneratorUnitTester.class.getCanonicalName(),
+				new Object[] { PETROLGENERATOR_INBOUND_PORT_URI });
+
+		// Fridge
+
+		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
+				new Object[] { FRIDGE_URI, false, "", FRIDGE_INBOUND_PORT_URI, "" });
+		AbstractComponent.createComponent(FridgeUnitTester.class.getCanonicalName(),
+				new Object[] { FRIDGE_INBOUND_PORT_URI });
+
 //		//TODO Resoudre problème sur ControllerUnitTest Creation composant pose probleme
 		// AbstractComponent.createComponent(ControllerUnitTest.class.getCanonicalName(),
 		// new Object[] { CONTROLLER_INBOUND_PORT_URI});
