@@ -1,7 +1,7 @@
 <deployment>
    <hosts>
     <host name="localhost"
-          dir="/home/pablo/Dropbox/Cours/m2/alasca/ALASCA"/>
+          dir="/home/furax/Documents/m2/alasca/project2/ALASCA"/>
   </hosts>
   <cyclicBarrier   hostname="localhost" port="55253"/>
   <globalRegistry  hostname="localhost" port="55252"/>

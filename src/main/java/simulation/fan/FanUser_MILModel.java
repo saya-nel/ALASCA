@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
+import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
@@ -15,6 +16,11 @@ import main.java.simulation.fan.events.SetMid;
 import main.java.simulation.fan.events.TurnOff;
 import main.java.simulation.fan.events.TurnOn;
 
+@ModelExternalEvents(exported = {TurnOn.class,
+								TurnOff.class,
+								SetHigh.class,
+								SetMid.class,
+								SetLow.class})
 public class FanUser_MILModel extends AtomicModel {
 
 	private static final long serialVersionUID = 1L;

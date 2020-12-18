@@ -38,7 +38,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>BatteryLevel</code> implements an event carrying a battery
+ * The class <code>BatteryLevel</code>@ implements an event carrying a battery
  * level reading (similar to a sensor reading).
  *
  * <p><strong>Description</strong></p>
