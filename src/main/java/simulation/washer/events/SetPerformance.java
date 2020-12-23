@@ -42,7 +42,7 @@ public class SetPerformance extends AbstractWasherEvent {
 		assert model instanceof WasherElectricity_MILModel;
 
 		WasherElectricity_MILModel m = (WasherElectricity_MILModel) model;
-		if (m.isOn() && m.getLevel() != WasherModes.PERFORMANCE) {
+		if (m.isOn() && m.getMode() != WasherModes.PERFORMANCE) {
 			m.setMode(WasherModes.PERFORMANCE);
 			m.toggleConsumptionHasChanged();
 		}

@@ -1,16 +1,16 @@
-package main.java.simulation.washer.events;
+package main.java.simulation.fridge.events;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.washer.WasherElectricity_MILModel;
-import main.java.utils.WasherModes;
+import main.java.simulation.fridge.FridgeElectricity_MILModel;
+import main.java.utils.FridgeMode;
 
-public class SetStd extends AbstractWasherEvent {
+public class SetNormal extends AbstractFridgeEvent {
 
 	private static final long serialVersionUID = 1L;
 
-	public SetStd(Time timeOfOccurrence) {
+	public SetNormal(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
 
@@ -19,7 +19,7 @@ public class SetStd extends AbstractWasherEvent {
 	 */
 	@Override
 	public String eventAsString() {
-		return "SetStd(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+		return "SetNormal(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
 	}
 
 	/**
@@ -27,11 +27,7 @@ public class SetStd extends AbstractWasherEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		if (e instanceof TurnOff) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	/**
@@ -39,11 +35,11 @@ public class SetStd extends AbstractWasherEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof WasherElectricity_MILModel;
+		assert model instanceof FridgeElectricity_MILModel;
 
-		WasherElectricity_MILModel m = (WasherElectricity_MILModel) model;
-		if (m.isOn() && m.getMode() != WasherModes.STD) {
-			m.setMode(WasherModes.STD);
+		FridgeElectricity_MILModel m = (FridgeElectricity_MILModel) model;
+		if (m.getMode() != FridgeMode.NORMAL) {
+			m.setMode(FridgeMode.NORMAL);
 			m.toggleConsumptionHasChanged();
 		}
 	}

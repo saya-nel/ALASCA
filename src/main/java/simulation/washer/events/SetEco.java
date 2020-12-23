@@ -42,7 +42,7 @@ public class SetEco extends AbstractWasherEvent {
 		assert model instanceof WasherElectricity_MILModel;
 
 		WasherElectricity_MILModel m = (WasherElectricity_MILModel) model;
-		if (m.isOn() && m.getLevel() != WasherModes.ECO) {
+		if (m.isOn() && m.getMode() != WasherModes.ECO) {
 			m.setMode(WasherModes.ECO);
 			m.toggleConsumptionHasChanged();
 		}
