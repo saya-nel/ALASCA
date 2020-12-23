@@ -1,24 +1,23 @@
-package main.java.simulation.petrol_generator.events;
+package main.java.simulation.solarPanels.events;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
-import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.fan.events.TurnOff;
-import main.java.simulation.petrol_generator.PetrolGeneratorElectricity_MILModel;
+import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
+import main.java.simulation.solarPanels.SolarPanelsElectricity_MILModel;
 
-public class TurnOn extends AbstractPetrolGeneratorEvent{
+public class TurnOn extends AbstractSolarPanelEvent{
     public TurnOn(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }
+
     /**
      * @see fr.sorbonne_u.devs_simulation.models.events.Event#eventAsString()
      */
     @Override
     public String eventAsString() {
-        return "TurnOn petrol generator(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+        return "Turn solar panel(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
     }
-
     /**
      * @see fr.sorbonne_u.devs_simulation.es.events.ES_Event#hasPriorityOver(fr.sorbonne_u.devs_simulation.models.events.EventI)
      */
@@ -36,9 +35,9 @@ public class TurnOn extends AbstractPetrolGeneratorEvent{
      */
     @Override
     public void executeOn(AtomicModel model) {
-        assert model instanceof PetrolGeneratorElectricity_MILModel;
+        assert model instanceof SolarPanelsElectricity_MILModel;
 
-        PetrolGeneratorElectricity_MILModel m = (PetrolGeneratorElectricity_MILModel) model;
+        SolarPanelsElectricity_MILModel m = (SolarPanelsElectricity_MILModel) model;
         m.turnOn();
         m.toggleConsumptionHasChanged();
 

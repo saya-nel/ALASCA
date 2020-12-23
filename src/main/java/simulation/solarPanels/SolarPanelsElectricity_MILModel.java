@@ -1,4 +1,4 @@
-package main.java.simulation.petrol_generator;
+package main.java.simulation.solarPanels;
 
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
@@ -9,34 +9,26 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.battery.events.AbstractBatteryEvent;
-import main.java.simulation.petrol_generator.events.*;
-import main.java.utils.BatteryState;
+import main.java.simulation.solarPanels.events.AbstractSolarPanelEvent;
+import main.java.simulation.solarPanels.events.IsTurnedOn;
+import main.java.simulation.solarPanels.events.TurnOff;
+import main.java.simulation.solarPanels.events.TurnOn;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@ModelExternalEvents(imported = {TurnOff.class, AddPetrol.class, GetPetrolLevel.class, IsTurnedOn.class, TurnOn.class, GetMaxLevel.class})
-public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
-    public static final double DRAINING_MODE_CONSUMPTION = 50; //supposed to be consumption of oil
+@ModelExternalEvents(imported = {TurnOff.class, TurnOn.class , IsTurnedOn.class})
+public class SolarPanelsElectricity_MILModel extends AtomicHIOA {
+    public static final double DRAINING_MODE_CONSUMPTION = 50; //supposed to vary according to weather
     public static final double TENSION = 220;
     @ExportedVariable(type = Double.class)
     protected final Value<Double> currentIntensity = new Value<>(this, 0.0, 0);
-    public float currentPetrolLevel = 0;
-    protected float maximumPetrolLevel = 50; //50 liters max
-    protected boolean consumptionHasChanged = false;
     protected boolean isOn = false;
-    public PetrolGeneratorElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
+    protected boolean consumptionHasChanged = false;
+
+    public SolarPanelsElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
             throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
-    }
-
-    public float getMaximumPetrolLevel() {
-        return maximumPetrolLevel;
-    }
-
-    public float getCurrentPetrolLevel() {
-        return currentPetrolLevel;
     }
 
     public boolean getIsOn() {
@@ -46,15 +38,13 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
     public void turnOn() {
         isOn = true;
     }
+
     public void turnOff() {
         isOn = false;
     }
+
     public void toggleConsumptionHasChanged() {
         this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
-    }
-
-    public void addOneLPetrol(){
-        this.currentPetrolLevel+=1;
     }
     // -------------------------------------------------------------------------
     // DEVS simulation protocol
@@ -76,7 +66,6 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
     public void initialiseState() {
         this.isOn = false;
         this.consumptionHasChanged = false;
-        this.currentPetrolLevel = 0;
         super.initialiseState();
     }
 
@@ -117,7 +106,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
         ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
         assert currentEvents != null && currentEvents.size() == 1;
         Event ce = (Event) currentEvents.get(0);
-        assert ce instanceof AbstractPetrolGeneratorEvent;
+        assert ce instanceof AbstractSolarPanelEvent;
         ce.executeOn(this);
         super.userDefinedExternalTransition(elapsedTime);
     }

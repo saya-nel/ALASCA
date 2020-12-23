@@ -1,24 +1,21 @@
-package main.java.simulation.petrol_generator.events;
+package main.java.simulation.petrolGenerator.events;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.fan.FanElectricity_MILModel;
 import main.java.simulation.fan.events.TurnOff;
-import main.java.simulation.petrol_generator.PetrolGeneratorElectricity_MILModel;
-import main.java.utils.FanLevel;
+import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
 
-public class GetPetrolLevel extends AbstractPetrolGeneratorEvent {
-    public GetPetrolLevel(Time timeOfOccurrence) {
+public class TurnOn extends AbstractPetrolGeneratorEvent{
+    public TurnOn(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }
-
     /**
      * @see fr.sorbonne_u.devs_simulation.models.events.Event#eventAsString()
      */
     @Override
     public String eventAsString() {
-        return "GetPetrolLevel(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+        return "TurnOn petrol generator(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
     }
 
     /**
@@ -41,7 +38,7 @@ public class GetPetrolLevel extends AbstractPetrolGeneratorEvent {
         assert model instanceof PetrolGeneratorElectricity_MILModel;
 
         PetrolGeneratorElectricity_MILModel m = (PetrolGeneratorElectricity_MILModel) model;
-        m.getCurrentPetrolLevel();
+        m.turnOn();
         m.toggleConsumptionHasChanged();
 
     }

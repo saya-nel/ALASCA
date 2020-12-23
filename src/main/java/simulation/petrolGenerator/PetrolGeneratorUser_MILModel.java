@@ -1,4 +1,4 @@
-package main.java.simulation.petrol_generator;
+package main.java.simulation.petrolGenerator;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
@@ -6,7 +6,7 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.petrol_generator.events.*;
+import main.java.simulation.petrolGenerator.events.*;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;

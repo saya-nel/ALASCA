@@ -1,13 +1,12 @@
-package main.java.simulation.petrol_generator.events;
+package main.java.simulation.petrolGenerator.events;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.fan.events.TurnOff;
-import main.java.simulation.petrol_generator.PetrolGeneratorElectricity_MILModel;
+import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
 
-public class GetMaxLevel extends AbstractPetrolGeneratorEvent{
-    public GetMaxLevel(Time timeOfOccurrence) {
+public class TurnOff extends AbstractPetrolGeneratorEvent{
+    public TurnOff(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }
 
@@ -16,7 +15,7 @@ public class GetMaxLevel extends AbstractPetrolGeneratorEvent{
      */
     @Override
     public String eventAsString() {
-        return "GetMaxPetrolLevel(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+        return "TurnOff petrol generator(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
     }
 
     /**
@@ -24,12 +23,13 @@ public class GetMaxLevel extends AbstractPetrolGeneratorEvent{
      */
     @Override
     public boolean hasPriorityOver(EventI e) {
-        if (e instanceof TurnOff) {
+        if (e instanceof TurnOn) {
             return true;
         } else {
             return false;
         }
     }
+
     /**
      * @see fr.sorbonne_u.devs_simulation.models.events.Event#executeOn(fr.sorbonne_u.devs_simulation.models.AtomicModel)
      */
@@ -38,7 +38,7 @@ public class GetMaxLevel extends AbstractPetrolGeneratorEvent{
         assert model instanceof PetrolGeneratorElectricity_MILModel;
 
         PetrolGeneratorElectricity_MILModel m = (PetrolGeneratorElectricity_MILModel) model;
-        m.getMaximumPetrolLevel();
+        m.turnOff();
         m.toggleConsumptionHasChanged();
 
     }
