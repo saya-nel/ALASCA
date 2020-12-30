@@ -16,11 +16,7 @@ import main.java.simulation.fan.events.SetMid;
 import main.java.simulation.fan.events.TurnOff;
 import main.java.simulation.fan.events.TurnOn;
 
-@ModelExternalEvents(exported = {TurnOn.class,
-								TurnOff.class,
-								SetHigh.class,
-								SetMid.class,
-								SetLow.class})
+@ModelExternalEvents(exported = { TurnOn.class, TurnOff.class, SetHigh.class, SetMid.class, SetLow.class })
 public class FanUser_MILModel extends AtomicModel {
 
 	private static final long serialVersionUID = 1L;
@@ -50,6 +46,8 @@ public class FanUser_MILModel extends AtomicModel {
 				this.currentEvent = new SetHigh(t);
 			} else if (c.equals(SetHigh.class)) {
 				this.currentEvent = new TurnOff(t);
+			} else if (c.equals(TurnOff.class)) {
+				this.currentEvent = new TurnOn(t);
 			}
 		}
 		return this.currentEvent;

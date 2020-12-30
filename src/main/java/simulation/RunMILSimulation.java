@@ -19,6 +19,7 @@ import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
+import main.java.simulation.battery.BatteryElectricity_MILModel;
 import main.java.simulation.controller.Controller_MILModel;
 import main.java.simulation.fan.FanElectricity_MILModel;
 import main.java.simulation.fan.FanUser_MILModel;
@@ -27,9 +28,15 @@ import main.java.simulation.fan.events.SetLow;
 import main.java.simulation.fan.events.SetMid;
 import main.java.simulation.fan.events.TurnOff;
 import main.java.simulation.fan.events.TurnOn;
+import main.java.simulation.fridge.FridgeElectricity_MILModel;
 import main.java.simulation.panel.PanelElectricity_MILModel;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
+import main.java.simulation.panel.events.ProductionLevel;
+import main.java.simulation.panel.events.ProductionLevelRequest;
+import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
+import main.java.simulation.solarPanels.SolarPanelsElectricity_MILModel;
+import main.java.simulation.washer.WasherElectricity_MILModel;
 
 public class RunMILSimulation {
 
@@ -38,6 +45,16 @@ public class RunMILSimulation {
 
 			String fanURI = "fanURI";
 			String fanUserURI = "fanUserURI";
+
+			String batteryURI = "batteryURI";
+
+			String fridgeURI = "fridgeURI";
+
+			String petrolGeneratorURI = "petrolGeneratorURI";
+
+			String solarPanelsURI = "solarPanelsURI";
+
+			String washerURI = "washerURI";
 
 			String panelURI = "panelURI";
 
@@ -51,13 +68,35 @@ public class RunMILSimulation {
 			// fan
 			atomicModelDescriptors.put(fanURI, AtomicHIOA_Descriptor.create(FanElectricity_MILModel.class, fanURI,
 					TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
-
 			atomicModelDescriptors.put(fanUserURI, AtomicModelDescriptor.create(FanUser_MILModel.class, fanUserURI,
 					TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
 
-			// electric pannel
+			// battery
+			atomicModelDescriptors.put(batteryURI, AtomicHIOA_Descriptor.create(BatteryElectricity_MILModel.class,
+					batteryURI, TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
+
+			// fridge
+			atomicModelDescriptors.put(fridgeURI, AtomicHIOA_Descriptor.create(FridgeElectricity_MILModel.class,
+					fridgeURI, TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
+
+			// petrolGenerator
+			atomicModelDescriptors.put(petrolGeneratorURI,
+					AtomicHIOA_Descriptor.create(PetrolGeneratorElectricity_MILModel.class, petrolGeneratorURI,
+							TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
+
+			// solarPanels
+			atomicModelDescriptors.put(solarPanelsURI,
+					AtomicHIOA_Descriptor.create(SolarPanelsElectricity_MILModel.class, solarPanelsURI,
+							TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
+
+			// washer
+			atomicModelDescriptors.put(washerURI, AtomicHIOA_Descriptor.create(WasherElectricity_MILModel.class,
+					washerURI, TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
+
+			// electric panel
 			atomicModelDescriptors.put(panelURI, AtomicHIOA_Descriptor.create(PanelElectricity_MILModel.class, panelURI,
 					TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
+
 			// controller
 			atomicModelDescriptors.put(controllerURI, AtomicModelDescriptor.create(Controller_MILModel.class,
 					controllerURI, TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -68,9 +107,22 @@ public class RunMILSimulation {
 
 			// the set of submodels of the coupled model, given by their URIs
 			Set<String> submodels = new HashSet<String>();
+			// fan
 			submodels.add(fanURI);
 			submodels.add(fanUserURI);
+			// battery
+			submodels.add(batteryURI);
+			// fridge
+			submodels.add(fridgeURI);
+			// petrolGenerator
+			submodels.add(petrolGeneratorURI);
+			// solarPanels
+			submodels.add(solarPanelsURI);
+			// washer
+			submodels.add(washerURI);
+			// electric panel
 			submodels.add(panelURI);
+			// controller
 			submodels.add(controllerURI);
 
 			// event exchanging connections between exporting and importing
@@ -90,9 +142,13 @@ public class RunMILSimulation {
 			// sending by electric panel
 			connections.put(new EventSource(panelURI, ConsumptionLevel.class),
 					new EventSink[] { new EventSink(controllerURI, ConsumptionLevel.class) });
+			connections.put(new EventSource(panelURI, ProductionLevel.class),
+					new EventSink[] { new EventSink(controllerURI, ProductionLevel.class) });
 			// sending by controller
 			connections.put(new EventSource(controllerURI, ConsumptionLevelRequest.class),
 					new EventSink[] { new EventSink(panelURI, ConsumptionLevelRequest.class) });
+			connections.put(new EventSource(controllerURI, ProductionLevelRequest.class),
+					new EventSink[] { new EventSink(panelURI, ProductionLevelRequest.class) });
 
 			// variable sharing bindings between exporting and importing
 			// HIOA models
@@ -101,11 +157,29 @@ public class RunMILSimulation {
 			VariableSource source = new VariableSource("currentIntensity", Double.class, fanURI);
 			VariableSink[] sinks = new VariableSink[] { new VariableSink("fanIntensity", Double.class, panelURI) };
 			bindings.put(source, sinks);
-			// autres simus ici
-//			source = new VariableSource("currentIntensity", Double.class, BoilerMILModel.URI);
-//			sinks = new VariableSink[] {
-//					new VariableSink("boilerIntensity", Double.class, PanelElectricity_MILModel.URI) };
-//			bindings.put(source, sinks);
+			// battery
+			source = new VariableSource("currentIntensity", Double.class, batteryURI);
+			sinks = new VariableSink[] { new VariableSink("batteryIntensity", Double.class, panelURI) };
+			bindings.put(source, sinks);
+			source = new VariableSource("currentProduction", Double.class, batteryURI);
+			sinks = new VariableSink[] { new VariableSink("batteryProduction", Double.class, panelURI) };
+			bindings.put(source, sinks);
+			// fridge
+			source = new VariableSource("currentIntensity", Double.class, fridgeURI);
+			sinks = new VariableSink[] { new VariableSink("fridgeIntensity", Double.class, panelURI) };
+			bindings.put(source, sinks);
+			// petrolGenerator
+			source = new VariableSource("currentProduction", Double.class, petrolGeneratorURI);
+			sinks = new VariableSink[] { new VariableSink("petrolGeneratorProduction", Double.class, panelURI) };
+			bindings.put(source, sinks);
+			// solarPanels
+			source = new VariableSource("currentProduction", Double.class, solarPanelsURI);
+			sinks = new VariableSink[] { new VariableSink("solarPanelsProduction", Double.class, panelURI) };
+			bindings.put(source, sinks);
+			// washer
+			source = new VariableSource("currentIntensity", Double.class, washerURI);
+			sinks = new VariableSink[] { new VariableSink("washerIntensity", Double.class, panelURI) };
+			bindings.put(source, sinks);
 
 			// creation of the coupled model descriptor
 			coupledModelDescriptors.put(controllerCoupledURI,

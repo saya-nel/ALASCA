@@ -114,6 +114,7 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 				break;
 			case MID:
 				this.currentIntensity.v = MID_MODE_CONSUMPTION / TENSION;
+				break;
 			case HIGH:
 				this.currentIntensity.v = HIGH_MODE_CONSUMPTION / TENSION;
 			}
@@ -131,6 +132,8 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
+		System.out.println("Fan executing the external event " + ce.getClass().getSimpleName() + "("
+				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		assert ce instanceof AbstractFanEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

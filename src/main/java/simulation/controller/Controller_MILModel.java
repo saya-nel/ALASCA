@@ -11,8 +11,10 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
 import main.java.simulation.panel.events.ProductionLevel;
+import main.java.simulation.panel.events.ProductionLevelRequest;
 
-@ModelExternalEvents(exported = { ConsumptionLevelRequest.class }, imported = { ConsumptionLevel.class })
+@ModelExternalEvents(exported = { ConsumptionLevelRequest.class, ProductionLevelRequest.class }, imported = {
+		ConsumptionLevel.class, ProductionLevel.class })
 public class Controller_MILModel extends AtomicModel {
 
 	// -------------------------------------------------------------------------
@@ -86,12 +88,12 @@ public class Controller_MILModel extends AtomicModel {
 			assert (event instanceof ConsumptionLevel || event instanceof ProductionLevel);
 			if (event instanceof ConsumptionLevel) {
 				ConsumptionLevel ce = (ConsumptionLevel) event;
-				System.out.println("HEM receiving the external event " + ce.getClass().getSimpleName() + "("
+				System.out.println("Controller receiving the external event " + ce.getClass().getSimpleName() + "("
 						+ ce.getTimeOfOccurrence().getSimulatedTime() + ", " + ce.getConsumptionLevel() + ")");
 				consumptionLevel = ce.getConsumptionLevel();
 			} else if (event instanceof ProductionLevel) {
 				ProductionLevel pe = (ProductionLevel) event;
-				System.out.println("HEM receiving the external event " + pe.getClass().getSimpleName() + "("
+				System.out.println("Controller receiving the external event " + pe.getClass().getSimpleName() + "("
 						+ pe.getTimeOfOccurrence().getSimulatedTime() + ", " + pe.getProductionLevel() + ")");
 				productionLevel = pe.getProductionLevel();
 			}

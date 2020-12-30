@@ -18,7 +18,8 @@ import main.java.simulation.panel.events.ConsumptionLevelRequest;
 import main.java.simulation.panel.events.ProductionLevel;
 import main.java.simulation.panel.events.ProductionLevelRequest;
 
-@ModelExternalEvents(imported = { ConsumptionLevelRequest.class }, exported = { ConsumptionLevel.class })
+@ModelExternalEvents(imported = { ConsumptionLevelRequest.class, ProductionLevelRequest.class }, exported = {
+		ConsumptionLevel.class, ProductionLevel.class })
 public class PanelElectricity_MILModel extends AtomicHIOA {
 
 	// -------------------------------------------------------------------------
@@ -144,7 +145,6 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-
 		if (!this.requestReceived) {
 			// no request received, hence this is a computation step
 			// compute the new global electricity consumption
@@ -156,6 +156,17 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 			// the next planned computation
 			this.nextStep = this.standardStep;
 		} else {
+			// TODO : ici prof ne fait pas le calcul, mais vu que panel step = 1 et
+			// controller step = 1, alors panel ne fait jamais le calcul, on le refait donc
+			// ici, a voir si meilleur façon de gérer ça car ca fonctionne sans dans
+			// l'exemple video du prof et avec des steps 1 / 1
+			// compute the new global electricity consumption
+			this.currentIntensity.v = fanIntensity.v + fridgeIntensity.v + batteryIntensity.v + washerIntensity.v;
+			this.currentIntensity.time = this.getCurrentStateTime();
+			// compute the new global electricity production
+			this.currentProduction.v = batteryProduction.v + solarPanelsProduction.v + petrolGeneratorProduction.v;
+			this.currentProduction.time = this.getCurrentStateTime();
+
 			// a request has been received before the next computation
 			assert elapsedTime.lessThanOrEqual(this.standardStep);
 			// the event has already been output, simply replan the next
