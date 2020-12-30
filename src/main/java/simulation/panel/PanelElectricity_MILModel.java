@@ -8,12 +8,15 @@ import fr.sorbonne_u.devs_simulation.hioa.annotations.ImportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
+import fr.sorbonne_u.devs_simulation.models.events.Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
+import main.java.simulation.panel.events.ProductionLevel;
+import main.java.simulation.panel.events.ProductionLevelRequest;
 
 @ModelExternalEvents(imported = { ConsumptionLevelRequest.class }, exported = { ConsumptionLevel.class })
 public class PanelElectricity_MILModel extends AtomicHIOA {
@@ -27,8 +30,6 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 	protected static final double STEP_LENGTH = 1.0;
 
 	protected final Duration standardStep;
-
-	// TODO : pour le moment que la consommation, modéliser la production ensuite
 
 	/** current intensity in amperes; intensity is power/tension. */
 	@ExportedVariable(type = Double.class)
@@ -45,6 +46,18 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 
 	@ImportedVariable(type = Double.class)
 	protected Value<Double> washerIntensity;
+
+	@ExportedVariable(type = Double.class)
+	protected final Value<Double> currentProduction = new Value<Double>(this, 0.0, 0);
+
+	@ImportedVariable(type = Double.class)
+	protected Value<Double> batteryProduction;
+
+	@ImportedVariable(type = Double.class)
+	protected Value<Double> solarPanelsProduction;
+
+	@ImportedVariable(type = Double.class)
+	protected Value<Double> petrolGeneratorProduction;
 
 	/**
 	 * time interval until the next global electricity consumption computation.
@@ -77,6 +90,7 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 	protected void initialiseVariables(Time startTime) {
 		// initial intensity, before the first computation
 		this.currentIntensity.v = 0.0;
+		this.currentProduction.v = 0.0;
 		super.initialiseVariables(startTime);
 	}
 
@@ -99,9 +113,10 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 	public ArrayList<EventI> output() {
 		if (this.requestReceived) {
 			// when a request has been received, output a ConsumptionLevel
-			// event with the current global electricity consumption.
+			// event with the current global electricity consumption and production
 			ArrayList<EventI> ret = new ArrayList<EventI>();
 			ret.add(new ConsumptionLevel(this.getTimeOfNextEvent(), this.currentIntensity.v));
+			ret.add(new ProductionLevel(this.getTimeOfNextEvent(), this.currentProduction.v));
 			return ret;
 		} else {
 			// otherwise, no output event.
@@ -135,6 +150,9 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 			// compute the new global electricity consumption
 			this.currentIntensity.v = fanIntensity.v + fridgeIntensity.v + batteryIntensity.v + washerIntensity.v;
 			this.currentIntensity.time = this.getCurrentStateTime();
+			// compute the new global electricity production
+			this.currentProduction.v = batteryProduction.v + solarPanelsProduction.v + petrolGeneratorProduction.v;
+			this.currentProduction.time = this.getCurrentStateTime();
 			// the next planned computation
 			this.nextStep = this.standardStep;
 		} else {
@@ -158,11 +176,13 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 		// and for the panel model, there will be exactly one by
 		// construction which is a consumption level request.
 		assert currentEvents != null && currentEvents.size() == 1;
-		// The received event can only be a ConsumptionLevelRequest, as this
+		// The received event can only be a ConsumptionLevelRequest or
+		// ProductionLevelRequest, as this
 		// is the only imported event by this model.
-		assert currentEvents.get(0) instanceof ConsumptionLevelRequest;
+		assert ((currentEvents.get(0) instanceof ConsumptionLevelRequest)
+				|| (currentEvents.get(0) instanceof ProductionLevelRequest));
 
-		ConsumptionLevelRequest ce = (ConsumptionLevelRequest) currentEvents.get(0);
+		Event ce = (Event) currentEvents.get(0);
 		System.out.println("Panel receiving the external event " + ce.getClass().getSimpleName() + "("
 				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 

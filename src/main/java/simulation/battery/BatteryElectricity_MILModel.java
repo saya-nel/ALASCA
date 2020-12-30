@@ -29,6 +29,9 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<>(this, 0.0, 0);
 
+	@ExportedVariable(type = Double.class)
+	protected final Value<Double> currentProduction = new Value<>(this, 0.0, 0);
+
 	protected BatteryState currentState = BatteryState.SLEEPING;
 	protected boolean consumptionHasChanged = false;
 
@@ -58,6 +61,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	@Override
 	protected void initialiseVariables(Time startTime) {
 		this.currentIntensity.v = 0.0;
+		this.currentProduction.v = 0.0;
 		super.initialiseVariables(startTime);
 	}
 
@@ -97,10 +101,10 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 			this.currentIntensity.v = 0.;
 			break;
 		case DRAINING:
-			this.currentIntensity.v = DRAINING_MODE_CONSUMPTION / TENSION;
+			this.currentIntensity.v = 0.;
 			break;
 		case RECHARGING:
-			this.currentIntensity.v = 0.;
+			this.currentIntensity.v = DRAINING_MODE_CONSUMPTION / TENSION;
 			break;
 		}
 		this.currentIntensity.time = this.getCurrentStateTime();

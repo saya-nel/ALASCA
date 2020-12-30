@@ -10,6 +10,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
+import main.java.simulation.panel.events.ProductionLevel;
 
 @ModelExternalEvents(exported = { ConsumptionLevelRequest.class }, imported = { ConsumptionLevel.class })
 public class Controller_MILModel extends AtomicModel {
@@ -73,23 +74,32 @@ public class Controller_MILModel extends AtomicModel {
 	public void userDefinedExternalTransition(Duration elapsedTime) {
 		// get the vector of current external events
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
-		// when this method is called, there is at least one external event,
-		// and for the panel model, there will be exactly one by
-		// construction which is a consumption level request.
-		assert currentEvents != null && currentEvents.size() == 1;
+		// when this method is called, there is at least one external event
+		assert currentEvents != null && currentEvents.size() >= 1;
 		// The received event can only be a ConsumptionLevel, as this is the
 		// only imported event by this model.
-		assert currentEvents.get(0) instanceof ConsumptionLevel;
 
-		ConsumptionLevel ce = (ConsumptionLevel) currentEvents.get(0);
-		System.out.println("HEM receiving the external event " + ce.getClass().getSimpleName() + "("
-				+ ce.getTimeOfOccurrence().getSimulatedTime() + ", " + ce.getConsumptionLevel() + ")");
+		double consumptionLevel = 0.;
+		double productionLevel = 0.;
 
-		// TODO : ici d'autre cas devront être gérés, quand on reçoit un evenement de
-		// consomation, on doit regarder le niveau de consommation par rapport au niveau
-		// d'energie dispo et interagir avec les appareils controlable si necessaire (ex
-		// : changer le mode d'un appareil en eco si pas assez d'energie, ou l'arreter),
-		// on fait cela en envoyer un evenement a l'appareil concerné
+		for (EventI event : currentEvents) {
+			assert (event instanceof ConsumptionLevel || event instanceof ProductionLevel);
+			if (event instanceof ConsumptionLevel) {
+				ConsumptionLevel ce = (ConsumptionLevel) event;
+				System.out.println("HEM receiving the external event " + ce.getClass().getSimpleName() + "("
+						+ ce.getTimeOfOccurrence().getSimulatedTime() + ", " + ce.getConsumptionLevel() + ")");
+				consumptionLevel = ce.getConsumptionLevel();
+			} else if (event instanceof ProductionLevel) {
+				ProductionLevel pe = (ProductionLevel) event;
+				System.out.println("HEM receiving the external event " + pe.getClass().getSimpleName() + "("
+						+ pe.getTimeOfOccurrence().getSimulatedTime() + ", " + pe.getProductionLevel() + ")");
+				productionLevel = pe.getProductionLevel();
+			}
+		}
+
+		// TODO : ici on utilise consumptionLevel / productionLevel et en fonction de
+		// leurs valeurs on envoie des evenements aux composants simulés, on pourait par
+		// exemple demander a un composant de s'arreter, ou de passer en eco, etc.
 
 		super.userDefinedExternalTransition(elapsedTime);
 	}
