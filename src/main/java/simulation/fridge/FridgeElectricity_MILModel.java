@@ -31,6 +31,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 
 	protected FridgeMode currentMode = FridgeMode.ECO;
 	protected boolean consumptionHasChanged = false;
+	protected float requestedTemperature = 0;
 
 	public FridgeElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
@@ -49,6 +50,12 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
 	}
 
+	public void lowerRequestedTemperature(){
+		this.requestedTemperature--;
+	}
+	public void upperRequestedTemperature(){
+		this.requestedTemperature++;
+	}
 	// -------------------------------------------------------------------------
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
