@@ -26,8 +26,8 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	private static final long serialVersionUID = 1L;
 
 	public static final double ECO_MODE_CONSUMPTION = 20;
-	public static final double STD_MODE_CONSUMPTION = 40;
-	public static final double PERFORMANCE_MODE_CONSUMPTION = 60;
+	public static final double STD_MODE_CONSUMPTION = 22;
+	public static final double PERFORMANCE_MODE_CONSUMPTION = 23;
 	public static final double TENSION = 220;
 
 	@ExportedVariable(type = Double.class)

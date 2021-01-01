@@ -22,8 +22,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final double ECO_MODE_CONSUMPTION = 20;
-	public static final double NORMAL_MODE_CONSUMPTION = 40;
+	public static final double ECO_MODE_CONSUMPTION = 15;
+	public static final double NORMAL_MODE_CONSUMPTION = 20;
 	public static final double TENSION = 220;
 
 	@ExportedVariable(type = Double.class)

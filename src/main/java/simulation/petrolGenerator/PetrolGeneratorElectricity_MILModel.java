@@ -26,7 +26,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final double DRAINING_MODE_PRODUCTION = -50;
+	protected static final double GENERATING = 5;
 
 	public static final double TENSION = 220;
 
@@ -121,7 +121,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
 		if (this.isOn) {
-			this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
+			this.currentProduction.v = GENERATING / TENSION;
 		} else {
 			this.currentProduction.v = 0.;
 		}

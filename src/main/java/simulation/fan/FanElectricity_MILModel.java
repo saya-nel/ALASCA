@@ -25,9 +25,9 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final double LOW_MODE_CONSUMPTION = 20;
-	public static final double MID_MODE_CONSUMPTION = 40;
-	public static final double HIGH_MODE_CONSUMPTION = 60;
+	public static final double LOW_MODE_CONSUMPTION = 4;
+	public static final double MID_MODE_CONSUMPTION = 5;
+	public static final double HIGH_MODE_CONSUMPTION = 6;
 	public static final double TENSION = 220;
 
 	@ExportedVariable(type = Double.class)
