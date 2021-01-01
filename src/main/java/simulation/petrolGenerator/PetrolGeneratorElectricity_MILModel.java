@@ -26,7 +26,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final double DRAINING_MODE_PRODUCTION = 50;
+	public static final double DRAINING_MODE_PRODUCTION = -50;
 
 	public static final double TENSION = 220;
 
