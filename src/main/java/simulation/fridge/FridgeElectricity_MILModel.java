@@ -17,21 +17,46 @@ import main.java.simulation.fridge.events.SetEco;
 import main.java.simulation.fridge.events.SetNormal;
 import main.java.utils.FridgeMode;
 
+/**
+ * The class <code>FridgeElectricity_MILModel</code> defines a MIL model
+ * of the electricity consumption of a Fridge.
+ * <p><string>Description</string></p>
+ * <p>
+ *     The fridge can change mode and it changes the consumption.
+ * </p>
+ * </p>
+ * @author Bello Memmi
+ */
 @ModelExternalEvents(imported = { SetEco.class, SetNormal.class })
 public class FridgeElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
-
+	/** energy generated during eco mode		 						*/
 	public static final double ECO_MODE_CONSUMPTION = 15;
+	/** energy generated during normal mode		 						*/
 	public static final double NORMAL_MODE_CONSUMPTION = 20;
+	/** tension same for all the house 									*/
 	public static final double TENSION = 220;
-
+	/** current intensity in Amperes; intensity is power/tension. 		*/
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
 
+	/**
+	 * temps of fridge variable ?
+	 */
+	@ExportedVariable(type = Double.class)
+	protected final Value<Double> currentTemp = new Value<Double>(this, 0.0,0);
+
+
+	/** current mode of the fridge										*/
 	protected FridgeMode currentMode = FridgeMode.ECO;
+	/** true when the electricity consumption of the washer has
+	 * changed after executing an external event (when
+	 * <code>currentState</code> changes 								*/
 	protected boolean consumptionHasChanged = false;
+	/** requested temperature										*/
 	protected float requestedTemperature = 0;
+
 
 	public FridgeElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {

@@ -28,6 +28,7 @@ import main.java.utils.WasherModes;
  *     The washer can change mode, switch on, off and it changes the consumption.
  * </p>
  * </p>
+ * @author Bello Memmi
  */
 @ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetEco.class, SetStd.class, SetPerformance.class })
 public class WasherElectricity_MILModel extends AtomicHIOA {

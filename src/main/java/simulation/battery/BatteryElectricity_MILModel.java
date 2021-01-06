@@ -25,6 +25,7 @@ import main.java.utils.BatteryState;
  *     The battery can change mode and it changes the consumption.
  * </p>
  * </p>
+ * @author Bello Memmi
  */
 @ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class })
 public class BatteryElectricity_MILModel extends AtomicHIOA {
