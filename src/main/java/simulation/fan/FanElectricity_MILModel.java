@@ -27,6 +27,7 @@ import main.java.utils.FanLevel;
  *     The fan can change mode be switched on or off and it changes the consumption.
  * </p>
  * </p>
+ * @author 	Bello Memmi
  */
 @ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class })
 public class FanElectricity_MILModel extends AtomicHIOA {

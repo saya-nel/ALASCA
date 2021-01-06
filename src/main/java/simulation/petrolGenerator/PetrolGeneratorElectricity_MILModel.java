@@ -28,6 +28,7 @@ import main.java.simulation.petrolGenerator.events.TurnOn;
  *     The petrol generator can be switched on/off and it changes the consumption.
  * </p>
  * </p>
+ * @author 	Bello Memmi
  */
 @ModelExternalEvents(imported = { TurnOff.class, AddPetrol.class, GetPetrolLevel.class, IsTurnedOn.class, TurnOn.class,
 		GetMaxLevel.class })
@@ -149,7 +150,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	 * pre	true		// no precondition.
 	 * post	true		// no postcondition.
 	 * </pre>
-	 *
+	 * @author 	Bello Memmi
 	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
