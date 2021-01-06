@@ -23,10 +23,10 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final double DRAINING_MODE_CONSUMPTION = 5;
-	//pas sur négatif
+	public static final double DRAINING_MODE_PRODUCTION = 5;
 
-	public static final double SLEEPING_MODE_PRODUCTION = 0;
+	public static final double RECHARGING_MODE_CONSUMPTION = 8;
+
 	public static final double TENSION = 220;
 
 	@ExportedVariable(type = Double.class)
@@ -102,13 +102,14 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		switch (this.currentState) {
 		case SLEEPING:
 			this.currentIntensity.v = 0.;
+			this.currentProduction.v = 0.;
 			break;
 		case DRAINING:
 			this.currentIntensity.v = 0.;
-			this.currentProduction.v = DRAINING_MODE_CONSUMPTION / TENSION;
+			this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
 			break;
 		case RECHARGING:
-			this.currentIntensity.v = DRAINING_MODE_CONSUMPTION / TENSION;
+			this.currentIntensity.v = RECHARGING_MODE_CONSUMPTION / TENSION;
 			this.currentProduction.v = 0.;
 			break;
 		}
