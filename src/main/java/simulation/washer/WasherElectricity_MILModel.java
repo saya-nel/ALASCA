@@ -1,6 +1,7 @@
 package main.java.simulation.washer;
 
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
@@ -12,6 +13,7 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
+import main.java.simulation.utils.WasherSimProgram;
 import main.java.simulation.washer.events.AbstractWasherEvent;
 import main.java.simulation.washer.events.SetEco;
 import main.java.simulation.washer.events.SetPerformance;
@@ -53,7 +55,8 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	 * changed after executing an external event (when
 	 * <code>currentState</code> changes 								*/
 	protected boolean consumptionHasChanged = false;
-
+	/** task to do 														*/
+	protected WasherSimProgram program = null;
 	/**
 	 * Create a Washer MIL model instance.
 	 * <p><strong>Contract</strong></p>
@@ -126,6 +129,10 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 		this.isOn = (this.isOn) ? false : true;
 	}
 
+	public void planifyEvent(Time beginProgram, Duration durationProgram){
+		this.program = new WasherSimProgram(beginProgram, durationProgram);
+	}
+
 	/**
 	 * toggle the value of the state of the model telling whether the
 	 * electricity consumption level has just changed or not; when it changes
@@ -138,7 +145,6 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	 * pre	true		// no precondition.
 	 * post	true		// no postcondition.
 	 * </pre>
-	 *
 	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
@@ -189,15 +195,25 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		if (this.isOn) {
+
+		// switch off the washer after it finished the program
+		if (this.program.getBeginProgram().add(this.program.getDurationProgram()).greaterThanOrEqual(this.getCurrentStateTime())) {
+			this.isOn = false;
+			this.program = null;
+			this.currentIntensity.v = 0.;
+		}
+		// the program is running
+		else if (this.getCurrentStateTime().greaterThanOrEqual(this.program.getBeginProgram()))
+		{
+			this.isOn=true;
 			switch (this.currentMode) {
-			case ECO:
-				this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
-				break;
-			case STD:
-				this.currentIntensity.v = STD_MODE_CONSUMPTION / TENSION;
-			case PERFORMANCE:
-				this.currentIntensity.v = PERFORMANCE_MODE_CONSUMPTION / TENSION;
+				case ECO:
+					this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
+					break;
+				case STD:
+					this.currentIntensity.v = STD_MODE_CONSUMPTION / TENSION;
+				case PERFORMANCE:
+					this.currentIntensity.v = PERFORMANCE_MODE_CONSUMPTION / TENSION;
 			}
 		} else {
 			this.currentIntensity.v = 0.;
