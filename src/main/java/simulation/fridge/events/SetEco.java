@@ -6,10 +6,36 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.simulation.fridge.FridgeElectricity_MILModel;
 import main.java.utils.FridgeMode;
 
+/**
+ * The class <code>SetEco</code> defines the MIL event of the Fridge being
+ * set to eco mode.
+ *
+ * <p><strong>Description</strong></p>
+ *
+ * <p><strong>Invariant</strong></p>
+ *
+ * <pre>
+ * invariant		true
+ * </pre>
+ *
+ * @author	Bello Memmi
+ */
 public class SetEco extends AbstractFridgeEvent {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * create a SetEco event.
+	 *
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 * pre	{@code timeOfOccurrence != null}
+	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
+	 * </pre>
+	 *
+	 * @param timeOfOccurrence	time of occurrence of the event.
+	 */
 	public SetEco(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
