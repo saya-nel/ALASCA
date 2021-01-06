@@ -50,10 +50,11 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
 	}
 
-	public void lowerRequestedTemperature(){
+	public void lowerRequestedTemperature() {
 		this.requestedTemperature--;
 	}
-	public void upperRequestedTemperature(){
+
+	public void upperRequestedTemperature() {
 		this.requestedTemperature++;
 	}
 	// -------------------------------------------------------------------------

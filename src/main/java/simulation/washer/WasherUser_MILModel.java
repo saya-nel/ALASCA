@@ -22,9 +22,11 @@ public class WasherUser_MILModel extends AtomicModel {
 	private static final long serialVersionUID = 1L;
 
 	/** time interval between event outputs. */
-	protected static final double STEP = 10.0;
+	protected static final double STEP = 20.0;
+
 	/** the current event being output. */
 	protected AbstractWasherEvent currentEvent;
+
 	/** time interval between event outputs. */
 	protected Duration time2next;
 

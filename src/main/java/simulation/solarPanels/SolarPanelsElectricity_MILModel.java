@@ -62,7 +62,7 @@ public class SolarPanelsElectricity_MILModel extends AtomicHIOA {
 	 */
 	@Override
 	protected void initialiseVariables(Time startTime) {
-		this.currentProduction.v = 0.0;
+		this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
 		super.initialiseVariables(startTime);
 	}
 
@@ -71,7 +71,7 @@ public class SolarPanelsElectricity_MILModel extends AtomicHIOA {
 	 */
 	@Override
 	public void initialiseState() {
-		this.isOn = false;
+		this.isOn = true;
 		this.consumptionHasChanged = false;
 		super.initialiseState();
 	}

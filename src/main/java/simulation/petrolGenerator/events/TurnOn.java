@@ -6,40 +6,44 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.simulation.fan.events.TurnOff;
 import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
 
-public class TurnOn extends AbstractPetrolGeneratorEvent{
-    public TurnOn(Time timeOfOccurrence) {
-        super(timeOfOccurrence, null);
-    }
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.events.Event#eventAsString()
-     */
-    @Override
-    public String eventAsString() {
-        return "TurnOn petrol generator(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
-    }
+public class TurnOn extends AbstractPetrolGeneratorEvent {
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.es.events.ES_Event#hasPriorityOver(fr.sorbonne_u.devs_simulation.models.events.EventI)
-     */
-    @Override
-    public boolean hasPriorityOver(EventI e) {
-        if (e instanceof TurnOff) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.events.Event#executeOn(fr.sorbonne_u.devs_simulation.models.AtomicModel)
-     */
-    @Override
-    public void executeOn(AtomicModel model) {
-        assert model instanceof PetrolGeneratorElectricity_MILModel;
+	public TurnOn(Time timeOfOccurrence) {
+		super(timeOfOccurrence, null);
+	}
 
-        PetrolGeneratorElectricity_MILModel m = (PetrolGeneratorElectricity_MILModel) model;
-        m.turnOn();
-        m.toggleConsumptionHasChanged();
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.events.Event#eventAsString()
+	 */
+	@Override
+	public String eventAsString() {
+		return "TurnOn petrol generator(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+	}
 
-    }
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.es.events.ES_Event#hasPriorityOver(fr.sorbonne_u.devs_simulation.models.events.EventI)
+	 */
+	@Override
+	public boolean hasPriorityOver(EventI e) {
+		if (e instanceof TurnOff) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.events.Event#executeOn(fr.sorbonne_u.devs_simulation.models.AtomicModel)
+	 */
+	@Override
+	public void executeOn(AtomicModel model) {
+		assert model instanceof PetrolGeneratorElectricity_MILModel;
+
+		PetrolGeneratorElectricity_MILModel m = (PetrolGeneratorElectricity_MILModel) model;
+		m.turnOn();
+		m.toggleConsumptionHasChanged();
+
+	}
 }
