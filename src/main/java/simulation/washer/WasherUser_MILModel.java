@@ -16,6 +16,21 @@ import main.java.simulation.washer.events.SetStd;
 import main.java.simulation.washer.events.TurnOff;
 import main.java.simulation.washer.events.TurnOn;
 
+/**
+ *
+ * The class <code>WasherUser_MILModel</code> defines a very simple user model for
+ * the Washer
+ *
+ * <p>
+ * This model is meant to illustrate how to program user MIL models, sending events
+ * to other models to simulate
+ * </p>
+ * <p>
+ * Here, we simple ouptput events at a regularly rate and in a predefined cycle
+ * to test all of the different modes in the Washer
+ * </p>
+ * @author Bello Memmi
+ */
 @ModelExternalEvents(exported = { TurnOn.class, TurnOff.class, SetPerformance.class, SetStd.class, SetEco.class })
 public class WasherUser_MILModel extends AtomicModel {
 

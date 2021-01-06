@@ -2,7 +2,6 @@ package main.java.simulation.battery;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
@@ -18,6 +17,15 @@ import main.java.simulation.battery.events.SetRecharging;
 import main.java.simulation.battery.events.SetSleeping;
 import main.java.utils.BatteryState;
 
+/**
+ * The class <code>BatteryElectricity_MILModel</code> defines a MIL model
+ * of the electricity consumption of a Battery.
+ * <p><string>Description</string></p>
+ * <p>
+ *     The battery can change mode and it changes the consumption.
+ * </p>
+ * </p>
+ */
 @ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class })
 public class BatteryElectricity_MILModel extends AtomicHIOA {
 
