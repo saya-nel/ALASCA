@@ -3,13 +3,13 @@ package main.java.simulation.petrolGenerator.events;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
+import main.java.simulation.petrolGenerator.PetrolGeneratorUser_MILModel;
 
-public class AddPetrol extends AbstractPetrolGeneratorEvent {
+public class EmptyGenerator extends AbstractPetrolGeneratorEvent {
 
 	private static final long serialVersionUID = 1L;
 
-	public AddPetrol(Time timeOfOccurrence) {
+	public EmptyGenerator(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
 
@@ -18,7 +18,7 @@ public class AddPetrol extends AbstractPetrolGeneratorEvent {
 	 */
 	@Override
 	public String eventAsString() {
-		return "AddPetrol petrol generator(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+		return "EmptyGenerator(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
 	}
 
 	/**
@@ -26,25 +26,18 @@ public class AddPetrol extends AbstractPetrolGeneratorEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		if (e instanceof TurnOn) {
-			return true;
-		} else {
-			return false;
-		}
+		return true;
 	}
 
 	/**
 	 * @see fr.sorbonne_u.devs_simulation.models.events.Event#executeOn(fr.sorbonne_u.devs_simulation.models.AtomicModel)
 	 */
 	@Override
-	public void executeOn(AtomicModel model) {// add one liter of oil
-		assert model instanceof PetrolGeneratorElectricity_MILModel;
+	public void executeOn(AtomicModel model) {
+		assert model instanceof PetrolGeneratorUser_MILModel;
 
-		PetrolGeneratorElectricity_MILModel m = (PetrolGeneratorElectricity_MILModel) model;
-		if (m.getIsOn() && m.getCurrentPetrolLevel() + 1 <= m.getMaximumPetrolLevel()) {
-			m.addOneLPetrol();
-		}
-		m.toggleConsumptionHasChanged();
-
+		PetrolGeneratorUser_MILModel m = (PetrolGeneratorUser_MILModel) model;
+		m.receiveEmptyGenerator(this);
 	}
+
 }

@@ -13,57 +13,120 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.petrolGenerator.events.AbstractPetrolGeneratorEvent;
-import main.java.simulation.petrolGenerator.events.AddPetrol;
-import main.java.simulation.petrolGenerator.events.GetMaxLevel;
-import main.java.simulation.petrolGenerator.events.GetPetrolLevel;
-import main.java.simulation.petrolGenerator.events.IsTurnedOn;
+import main.java.simulation.petrolGenerator.events.EmptyGenerator;
+import main.java.simulation.petrolGenerator.events.FillAll;
 import main.java.simulation.petrolGenerator.events.TurnOff;
 import main.java.simulation.petrolGenerator.events.TurnOn;
 
-@ModelExternalEvents(imported = { TurnOff.class, AddPetrol.class, GetPetrolLevel.class, IsTurnedOn.class, TurnOn.class,
-		GetMaxLevel.class })
+/**
+ * Simulation of the petrolGenerator component, at the start he is turned off
+ * with 20 liters of petrol in. he produce electricity while he is turned on and
+ * get petrol. when he doesnt have petrol, he turn off. Then the user need to
+ * fill it and turn it on again.
+ * 
+ * @author Bello Memmi
+ *
+ */
+@ModelExternalEvents(imported = { TurnOff.class, TurnOn.class, FillAll.class }, exported = { EmptyGenerator.class })
 public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
 
+	// -------------------------------------------------------------------------
+	// Constants and variables
+	// -------------------------------------------------------------------------
+
+	/**
+	 * time interval between each reduction of petrol level
+	 */
+	protected static final double STEP_LENGTH = 1.0;
+	protected final Duration standardStep;
+
+	/**
+	 * Electricity produced when the petrol generator is on and get petrol
+	 */
 	protected static final double GENERATING = 5;
 
 	public static final double TENSION = 220;
 
+	/**
+	 * Current production of the generator
+	 */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentProduction = new Value<>(this, 0.0, 0);
 
-	// TODO : modeliser la consommation en petrol
+	/**
+	 * Current petrol level
+	 */
+	protected float currentPetrolLevel = 20;
 
-	protected float currentPetrolLevel = 0;
+	/**
+	 * Maximum petrol level when full filled
+	 */
+	protected float maximumPetrolLevel = 50;
 
-	protected float maximumPetrolLevel = 50; // 50 liters max
-
+	/**
+	 * Change when an event that can impact the production is received
+	 */
 	protected boolean consumptionHasChanged = false;
 
+	/**
+	 * True if the generator is on, false else
+	 */
 	protected boolean isOn = false;
+
+	protected boolean needToBeFilled = false;
+	protected boolean hasSendEmptyGenerator = false;
+
+	// -------------------------------------------------------------------------
+	// Constructors
+	// -------------------------------------------------------------------------
 
 	public PetrolGeneratorElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
+		this.standardStep = new Duration(STEP_LENGTH, simulatedTimeUnit);
 	}
 
+	// -------------------------------------------------------------------------
+	// Methods
+	// -------------------------------------------------------------------------
+
+	/**
+	 * @return the maximum petrol capacity of the generator
+	 */
 	public float getMaximumPetrolLevel() {
 		return maximumPetrolLevel;
 	}
 
+	/**
+	 * @return the current petrol level
+	 */
 	public float getCurrentPetrolLevel() {
 		return currentPetrolLevel;
 	}
 
+	/**
+	 * @return true if the generator is turned on, false else
+	 */
 	public boolean getIsOn() {
 		return isOn;
 	}
 
+	/**
+	 * Turn the generator on, work only if the generator get petrol
+	 */
 	public void turnOn() {
-		isOn = true;
+		if (currentPetrolLevel > 0) {
+			isOn = true;
+			needToBeFilled = false;
+			hasSendEmptyGenerator = false;
+		}
 	}
 
+	/**
+	 * Turn the generator off
+	 */
 	public void turnOff() {
 		isOn = false;
 	}
@@ -72,9 +135,20 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
 	}
 
+	/**
+	 * Add one litter of petrol to the generator
+	 */
 	public void addOneLPetrol() {
 		this.currentPetrolLevel += 1;
 	}
+
+	/**
+	 * Full fill the generator of petrol
+	 */
+	public void fillAll() {
+		this.currentPetrolLevel = maximumPetrolLevel;
+	}
+
 	// -------------------------------------------------------------------------
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
@@ -84,34 +158,49 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	 */
 	@Override
 	protected void initialiseVariables(Time startTime) {
-		this.currentProduction.v = 0.0;
 		super.initialiseVariables(startTime);
+		this.currentProduction.v = 0.0;
 	}
 
 	/**
+	 * At the start, the generator get 20 liters of petrol, and is on
+	 * 
 	 * @see fr.sorbonne_u.devs_simulation.models.Model#initialiseState()
 	 */
 	@Override
 	public void initialiseState() {
 		this.isOn = false;
 		this.consumptionHasChanged = false;
-		this.currentPetrolLevel = 0;
+		this.currentPetrolLevel = 20;
 		super.initialiseState();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
+	 */
 	@Override
 	public ArrayList<EventI> output() {
-		return null;
+		if (needToBeFilled && !hasSendEmptyGenerator) {
+			System.out.println("SEND EMPTY");
+			ArrayList<EventI> ret = new ArrayList<EventI>();
+			ret.add(new EmptyGenerator(this.getTimeOfNextEvent()));
+			hasSendEmptyGenerator = true;
+			return ret;
+		} else
+			return null;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
+	 */
 	@Override
 	public Duration timeAdvance() {
-		if (this.consumptionHasChanged) {
+		if (consumptionHasChanged) {
 			this.toggleConsumptionHasChanged();
 			return new Duration(0.0, this.getSimulatedTimeUnit());
-		} else {
-			return Duration.INFINITY;
-		}
+		} else if (needToBeFilled && !hasSendEmptyGenerator)
+			return new Duration(0.0, this.getSimulatedTimeUnit());
+		return standardStep;
 	}
 
 	/**
@@ -120,9 +209,23 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		if (this.isOn) {
+		if (this.isOn && currentPetrolLevel > 0)
+			this.currentPetrolLevel -= 1;
+		System.out.println("petrol level : " + currentPetrolLevel);
+		// if the generator is on and get petrol, he produce electicity
+		if (this.isOn && currentPetrolLevel > 0) {
 			this.currentProduction.v = GENERATING / TENSION;
-		} else {
+		}
+		// if the generator is on but dont have petrol, he turn off and dont produce
+		// electicity
+		else if (this.isOn && currentPetrolLevel <= 0 && !hasSendEmptyGenerator) {
+			this.currentProduction.v = 0.;
+			this.needToBeFilled = true;
+			this.hasSendEmptyGenerator = false;
+			this.turnOff();
+		}
+		// else the generator is off, he dont produce electicity
+		else {
 			this.currentProduction.v = 0.;
 		}
 		this.currentProduction.time = this.getCurrentStateTime();
@@ -136,6 +239,8 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
+		System.out.println("PetrolGenerator executing the external event " + ce.getClass().getSimpleName() + "("
+				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		assert ce instanceof AbstractPetrolGeneratorEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

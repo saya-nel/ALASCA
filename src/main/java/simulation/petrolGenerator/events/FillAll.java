@@ -5,11 +5,11 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
 
-public class IsTurnedOn extends AbstractPetrolGeneratorEvent {
+public class FillAll extends AbstractPetrolGeneratorEvent {
 
 	private static final long serialVersionUID = 1L;
 
-	public IsTurnedOn(Time timeOfOccurrence) {
+	public FillAll(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
 
@@ -18,7 +18,7 @@ public class IsTurnedOn extends AbstractPetrolGeneratorEvent {
 	 */
 	@Override
 	public String eventAsString() {
-		return "isTurnedOn petrol generator(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+		return "FillAll petrol generator(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
 	}
 
 	/**
@@ -26,11 +26,7 @@ public class IsTurnedOn extends AbstractPetrolGeneratorEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		if (e instanceof TurnOn) {
-			return true;
-		} else {
-			return false;
-		}
+		return true;
 	}
 
 	/**
@@ -41,8 +37,9 @@ public class IsTurnedOn extends AbstractPetrolGeneratorEvent {
 		assert model instanceof PetrolGeneratorElectricity_MILModel;
 
 		PetrolGeneratorElectricity_MILModel m = (PetrolGeneratorElectricity_MILModel) model;
-		m.getIsOn();
-		m.toggleConsumptionHasChanged();
-
+		if (m.getCurrentPetrolLevel() <= m.getMaximumPetrolLevel()) {
+			m.fillAll();
+		}
 	}
+
 }

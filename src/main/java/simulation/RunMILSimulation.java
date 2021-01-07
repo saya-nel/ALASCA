@@ -35,6 +35,9 @@ import main.java.simulation.panel.events.ConsumptionLevelRequest;
 import main.java.simulation.panel.events.ProductionLevel;
 import main.java.simulation.panel.events.ProductionLevelRequest;
 import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
+import main.java.simulation.petrolGenerator.PetrolGeneratorUser_MILModel;
+import main.java.simulation.petrolGenerator.events.EmptyGenerator;
+import main.java.simulation.petrolGenerator.events.FillAll;
 import main.java.simulation.solarPanels.SolarPanelsElectricity_MILModel;
 import main.java.simulation.washer.WasherElectricity_MILModel;
 
@@ -51,6 +54,7 @@ public class RunMILSimulation {
 			String fridgeURI = "fridgeURI";
 
 			String petrolGeneratorURI = "petrolGeneratorURI";
+			String petrolGeneratorUserURI = "petrolGeneratorUserURI";
 
 			String solarPanelsURI = "solarPanelsURI";
 
@@ -82,6 +86,9 @@ public class RunMILSimulation {
 			// petrolGenerator
 			atomicModelDescriptors.put(petrolGeneratorURI,
 					AtomicHIOA_Descriptor.create(PetrolGeneratorElectricity_MILModel.class, petrolGeneratorURI,
+							TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
+			atomicModelDescriptors.put(petrolGeneratorUserURI,
+					AtomicModelDescriptor.create(PetrolGeneratorUser_MILModel.class, petrolGeneratorUserURI,
 							TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
 
 			// solarPanels
@@ -116,6 +123,7 @@ public class RunMILSimulation {
 			submodels.add(fridgeURI);
 			// petrolGenerator
 			submodels.add(petrolGeneratorURI);
+			submodels.add(petrolGeneratorUserURI);
 			// solarPanels
 			submodels.add(solarPanelsURI);
 			// washer
@@ -139,6 +147,16 @@ public class RunMILSimulation {
 					new EventSink[] { new EventSink(fanURI, SetMid.class) });
 			connections.put(new EventSource(fanUserURI, SetHigh.class),
 					new EventSink[] { new EventSink(fanURI, SetHigh.class) });
+			// sending by petrolGenerator and petrolGeneratorUser
+			connections.put(new EventSource(petrolGeneratorURI, EmptyGenerator.class),
+					new EventSink[] { new EventSink(petrolGeneratorUserURI, EmptyGenerator.class) });
+			connections.put(
+					new EventSource(petrolGeneratorUserURI, main.java.simulation.petrolGenerator.events.TurnOn.class),
+					new EventSink[] { new EventSink(petrolGeneratorURI,
+							main.java.simulation.petrolGenerator.events.TurnOn.class) });
+			connections.put(new EventSource(petrolGeneratorUserURI, FillAll.class),
+					new EventSink[] { new EventSink(petrolGeneratorURI, FillAll.class) });
+
 			// sending by electric panel
 			connections.put(new EventSource(panelURI, ConsumptionLevel.class),
 					new EventSink[] { new EventSink(controllerURI, ConsumptionLevel.class) });
@@ -195,9 +213,9 @@ public class RunMILSimulation {
 			// simulation run, after creating the simulation models from the
 			// architecture
 			SimulationEngine se = architecture.constructSimulator();
-			SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 0L;
+			SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 80L;
 			se.doStandAloneSimulation(0.0, 5000.0);
-			// Thread.sleep(10000L);
+//			Thread.sleep(10000L);
 			System.exit(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

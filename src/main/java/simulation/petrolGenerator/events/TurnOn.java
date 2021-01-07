@@ -3,7 +3,6 @@ package main.java.simulation.petrolGenerator.events;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.fan.events.TurnOff;
 import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
 
 public class TurnOn extends AbstractPetrolGeneratorEvent {
@@ -27,11 +26,7 @@ public class TurnOn extends AbstractPetrolGeneratorEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		if (e instanceof TurnOff) {
-			return true;
-		} else {
-			return false;
-		}
+		return true;
 	}
 
 	/**
@@ -44,6 +39,5 @@ public class TurnOn extends AbstractPetrolGeneratorEvent {
 		PetrolGeneratorElectricity_MILModel m = (PetrolGeneratorElectricity_MILModel) model;
 		m.turnOn();
 		m.toggleConsumptionHasChanged();
-
 	}
 }
