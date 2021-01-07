@@ -2,6 +2,7 @@ package main.java.simulation.fan;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
@@ -17,81 +18,99 @@ import main.java.simulation.fan.events.SetLow;
 import main.java.simulation.fan.events.SetMid;
 import main.java.simulation.fan.events.TurnOff;
 import main.java.simulation.fan.events.TurnOn;
+import main.java.simulation.utils.FileLogger;
 import main.java.utils.FanLevel;
 
 /**
- * The class <code>FanElectricity_MILModel</code> defines a MIL model
- * of the electricity consumption of a Fan.
- * <p><string>Description</string></p>
+ * The class <code>FanElectricity_MILModel</code> defines a MIL model of the
+ * electricity consumption of a Fan.
  * <p>
- *     The fan can change mode be switched on or off and it changes the consumption.
+ * <string>Description</string>
+ * </p>
+ * <p>
+ * The fan can change mode be switched on or off and it changes the consumption.
  * </p>
  * </p>
- * @author 	Bello Memmi
+ * 
+ * @author Bello Memmi
  */
 @ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class })
 public class FanElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
-	/** energy generated during low mode 								*/
+	/** energy generated during low mode */
 	public static final double LOW_MODE_CONSUMPTION = 4;
-	/** energy generated during medium mode 							*/
+	/** energy generated during medium mode */
 	public static final double MID_MODE_CONSUMPTION = 5;
-	/** energy generated during high mode 								*/
+	/** energy generated during high mode */
 	public static final double HIGH_MODE_CONSUMPTION = 6;
-	/** tension same for all the house 									*/
+	/** tension same for all the house */
 	public static final double TENSION = 220;
-	/** current intensity in Amperes; intensity is power/tension. 		*/
+	/** current intensity in Amperes; intensity is power/tension. */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
-	/** indicating whether the fan is on 								*/
+	/** indicating whether the fan is on */
 	protected boolean isOn = false;
-	/** current level of the Fan										*/
+	/** current level of the Fan */
 	protected FanLevel currentLevel = FanLevel.LOW;
-	/** true when the electricity consumption of the battery has
-	 * changed after executing an external event (when
-	 * <code>currentState</code> changes 								*/
+	/**
+	 * true when the electricity consumption of the battery has changed after
+	 * executing an external event (when <code>currentState</code> changes
+	 */
 	protected boolean consumptionHasChanged = false;
 
 	/**
 	 * Create a Fan MIL model instance.
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 *     pre 	true //no precondition
 	 *     post	true // no postcondition
 	 * </pre>
-	 * @param uri					URI of the model.
-	 * @param simulatedTimeUnit		time unit used for the simulation time.
-	 * @param simulationEngine		simulation engine to which the model is attached.
+	 * 
+	 * @param uri               URI of the model.
+	 * @param simulatedTimeUnit time unit used for the simulation time.
+	 * @param simulationEngine  simulation engine to which the model is attached.
 	 * @throws Exception
 	 */
 	public FanElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
+		this.setLogger(new FileLogger("fanElectricity.log"));
 	}
+
 	/**
 	 * set the level of the Fan
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 *     pre 		state != null
 	 *     post 	true			//no post condition
 	 * </pre>
-	 * @param level 	the new level
+	 * 
+	 * @param level the new level
 	 */
 	public void setLevel(FanLevel level) {
 		currentLevel = level;
 	}
+
 	/**
 	 * return the state of the Fan.
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
+	 * 
 	 * <pre>
 	 *     pre 	true 	// no precondition
 	 *     post	{@code ret != null}
 	 * </pre>
-	 * @return	the level of the Fan.
+	 * 
+	 * @return the level of the Fan.
 	 */
 	public FanLevel getLevel() {
 		return currentLevel;
@@ -99,12 +118,16 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 
 	/**
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
+	 * 
 	 * <pre>
 	 *     pre 	true 	// no precondition
 	 *     post	{@code ret != null}
 	 * </pre>
-	 * @return	true if the Fan is on.
+	 * 
+	 * @return true if the Fan is on.
 	 */
 	public boolean isOn() {
 		return isOn;
@@ -112,11 +135,15 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 
 	/**
 	 * switch on the fan if it is off or switch off if it is on
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
+	 * 
 	 * <pre>
 	 *     pre 	true 	// no precondition
 	 *     post	{@code ret != null}
 	 * </pre>
+	 * 
 	 * @return
 	 */
 	public void toggleIsOn() {
@@ -124,12 +151,14 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 	}
 
 	/**
-	 * toggle the value of the state of the model telling whether the
-	 * electricity consumption level has just changed or not; when it changes
-	 * after receiving an external event, an immediate internal transition
-	 * is triggered to update the level of electricity consumption.
+	 * toggle the value of the state of the model telling whether the electricity
+	 * consumption level has just changed or not; when it changes after receiving an
+	 * external event, an immediate internal transition is triggered to update the
+	 * level of electricity consumption.
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 * pre	true		// no precondition.
@@ -210,7 +239,7 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		System.out.println("Fan executing the external event " + ce.getClass().getSimpleName() + "("
+		this.logger.logMessage("", "Fan executing the external event " + ce.getClass().getSimpleName() + "("
 				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		assert ce instanceof AbstractFanEvent;
 		ce.executeOn(this);

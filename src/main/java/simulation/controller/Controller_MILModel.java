@@ -12,6 +12,7 @@ import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
 import main.java.simulation.panel.events.ProductionLevel;
 import main.java.simulation.panel.events.ProductionLevelRequest;
+import main.java.simulation.utils.FileLogger;
 
 @ModelExternalEvents(exported = { ConsumptionLevelRequest.class, ProductionLevelRequest.class }, imported = {
 		ConsumptionLevel.class, ProductionLevel.class })
@@ -41,6 +42,7 @@ public class Controller_MILModel extends AtomicModel {
 	public Controller_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
 		this.standardStep = new Duration(STEP_LENGTH, simulatedTimeUnit);
+		this.setLogger(new FileLogger("controller.log"));
 	}
 
 	// -------------------------------------------------------------------------
@@ -88,13 +90,13 @@ public class Controller_MILModel extends AtomicModel {
 			assert (event instanceof ConsumptionLevel || event instanceof ProductionLevel);
 			if (event instanceof ConsumptionLevel) {
 				ConsumptionLevel ce = (ConsumptionLevel) event;
-				System.out.println("Controller receiving the external event " + ce.getClass().getSimpleName() + "("
-						+ ce.getTimeOfOccurrence().getSimulatedTime() + ", " + ce.getConsumptionLevel() + ")");
+				this.logger.logMessage("", "Controller receiving the external event " + ce.getClass().getSimpleName()
+						+ "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ", " + ce.getConsumptionLevel() + ")");
 				consumptionLevel = ce.getConsumptionLevel();
 			} else if (event instanceof ProductionLevel) {
 				ProductionLevel pe = (ProductionLevel) event;
-				System.out.println("Controller receiving the external event " + pe.getClass().getSimpleName() + "("
-						+ pe.getTimeOfOccurrence().getSimulatedTime() + ", " + pe.getProductionLevel() + ")");
+				this.logger.logMessage("", "Controller receiving the external event " + pe.getClass().getSimpleName()
+						+ "(" + pe.getTimeOfOccurrence().getSimulatedTime() + ", " + pe.getProductionLevel() + ")");
 				productionLevel = pe.getProductionLevel();
 			}
 		}

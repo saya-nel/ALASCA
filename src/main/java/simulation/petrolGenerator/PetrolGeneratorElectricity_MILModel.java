@@ -17,6 +17,7 @@ import main.java.simulation.petrolGenerator.events.EmptyGenerator;
 import main.java.simulation.petrolGenerator.events.FillAll;
 import main.java.simulation.petrolGenerator.events.TurnOff;
 import main.java.simulation.petrolGenerator.events.TurnOn;
+import main.java.simulation.utils.FileLogger;
 
 /**
  * Simulation of the petrolGenerator component, at the start he is turned off
@@ -46,7 +47,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	 * Electricity produced when the petrol generator is on and get petrol
 	 */
 	protected static final double GENERATING = 5;
-	/** tension same for all the house 												*/
+	/** tension same for all the house */
 	public static final double TENSION = 220;
 
 	/**
@@ -86,6 +87,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
 		this.standardStep = new Duration(STEP_LENGTH, simulatedTimeUnit);
+		this.setLogger(new FileLogger("petrolGeneratorElectricity.log"));
 	}
 
 	// -------------------------------------------------------------------------
@@ -132,18 +134,21 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	}
 
 	/**
-	 * toggle the value of the state of the model telling whether the
-	 * electricity consumption level has just changed or not; when it changes
-	 * after receiving an external event, an immediate internal transition
-	 * is triggered to update the level of electricity consumption.
+	 * toggle the value of the state of the model telling whether the electricity
+	 * consumption level has just changed or not; when it changes after receiving an
+	 * external event, an immediate internal transition is triggered to update the
+	 * level of electricity consumption.
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 * pre	true		// no precondition.
 	 * post	true		// no postcondition.
 	 * </pre>
-	 * @author 	Bello Memmi
+	 * 
+	 * @author Bello Memmi
 	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
@@ -195,7 +200,6 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public ArrayList<EventI> output() {
 		if (needToBeFilled && !hasSendEmptyGenerator) {
-			System.out.println("SEND EMPTY");
 			ArrayList<EventI> ret = new ArrayList<EventI>();
 			ret.add(new EmptyGenerator(this.getTimeOfNextEvent()));
 			hasSendEmptyGenerator = true;
@@ -223,9 +227,10 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		if (this.isOn && currentPetrolLevel > 0)
+		if (this.isOn && currentPetrolLevel > 0) {
 			this.currentPetrolLevel -= 1;
-		System.out.println("petrol level : " + currentPetrolLevel);
+			this.logger.logMessage("", "current petrol level : " + this.currentPetrolLevel);
+		}
 		// if the generator is on and get petrol, he produce electicity
 		if (this.isOn && currentPetrolLevel > 0) {
 			this.currentProduction.v = GENERATING / TENSION;
@@ -253,7 +258,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		System.out.println("PetrolGenerator executing the external event " + ce.getClass().getSimpleName() + "("
+		this.logger.logMessage("", "PetrolGenerator executing the external event " + ce.getClass().getSimpleName() + "("
 				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		assert ce instanceof AbstractPetrolGeneratorEvent;
 		ce.executeOn(this);

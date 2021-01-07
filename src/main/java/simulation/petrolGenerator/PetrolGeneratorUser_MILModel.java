@@ -15,6 +15,7 @@ import main.java.simulation.petrolGenerator.events.EmptyGenerator;
 import main.java.simulation.petrolGenerator.events.FillAll;
 import main.java.simulation.petrolGenerator.events.TurnOff;
 import main.java.simulation.petrolGenerator.events.TurnOn;
+import main.java.simulation.utils.FileLogger;
 
 /**
  * The users actions that interacts with the simulated petrol generator
@@ -47,6 +48,7 @@ public class PetrolGeneratorUser_MILModel extends AtomicModel {
 	public PetrolGeneratorUser_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
+		this.setLogger(new FileLogger("petrolGeneratorUser.log"));
 	}
 
 	// -------------------------------------------------------------------------
@@ -105,7 +107,7 @@ public class PetrolGeneratorUser_MILModel extends AtomicModel {
 	}
 
 	/**
-	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
+	 * @see fr.sorsalutbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
 	 */
 	@Override
 	public ArrayList<EventI> output() {
@@ -133,8 +135,8 @@ public class PetrolGeneratorUser_MILModel extends AtomicModel {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		System.out.println("PetrolGeneratorUser executing the external event " + ce.getClass().getSimpleName() + "("
-				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("", "PetrolGeneratorUser executing the external event " + ce.getClass().getSimpleName()
+				+ "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		assert ce instanceof AbstractPetrolGeneratorEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

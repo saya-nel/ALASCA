@@ -16,6 +16,7 @@ import main.java.simulation.solarPanels.events.AbstractSolarPanelEvent;
 import main.java.simulation.solarPanels.events.IsTurnedOn;
 import main.java.simulation.solarPanels.events.TurnOff;
 import main.java.simulation.solarPanels.events.TurnOn;
+import main.java.simulation.utils.FileLogger;
 
 @ModelExternalEvents(imported = { TurnOff.class, TurnOn.class, IsTurnedOn.class })
 public class SolarPanelsElectricity_MILModel extends AtomicHIOA {
@@ -36,6 +37,7 @@ public class SolarPanelsElectricity_MILModel extends AtomicHIOA {
 	public SolarPanelsElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
+		this.setLogger(new FileLogger("solarPanelsElectricity.log"));
 	}
 
 	public boolean getIsOn() {
@@ -114,6 +116,8 @@ public class SolarPanelsElectricity_MILModel extends AtomicHIOA {
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
 		assert ce instanceof AbstractSolarPanelEvent;
+		this.logger.logMessage("", "SolarPanels executing the external event " + ce.getClass().getSimpleName() + "("
+				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);
 	}

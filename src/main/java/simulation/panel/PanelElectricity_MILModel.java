@@ -17,6 +17,7 @@ import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
 import main.java.simulation.panel.events.ProductionLevel;
 import main.java.simulation.panel.events.ProductionLevelRequest;
+import main.java.simulation.utils.FileLogger;
 
 @ModelExternalEvents(imported = { ConsumptionLevelRequest.class, ProductionLevelRequest.class }, exported = {
 		ConsumptionLevel.class, ProductionLevel.class })
@@ -78,6 +79,7 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
 		this.standardStep = new Duration(STEP_LENGTH, simulatedTimeUnit);
+		this.setLogger(new FileLogger("panelElectricity.log"));
 	}
 
 	// -------------------------------------------------------------------------
@@ -198,7 +200,7 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 				|| (currentEvents.get(0) instanceof ProductionLevelRequest));
 
 		Event ce = (Event) currentEvents.get(0);
-		System.out.println("Panel receiving the external event " + ce.getClass().getSimpleName() + "("
+		this.logger.logMessage("", "Panel receiving the external event " + ce.getClass().getSimpleName() + "("
 				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 
 		// this will trigger an immediate internal transition and the ouput
