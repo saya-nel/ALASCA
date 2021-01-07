@@ -5,10 +5,37 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.simulation.fridge.FridgeElectricity_MILModel;
 
+
+/**
+ * The class <code>LowerRequestedTemperature</code> defines the MIL event of the fridge being
+ * lowered the requested temperature from 1 degree.
+ *
+ * <p><strong>Description</strong></p>
+ *
+ * <p><strong>Invariant</strong></p>
+ *
+ * <pre>
+ * invariant		true
+ * </pre>
+ *
+ * @author	Bello Memmi
+ */
 public class LowerRequestedTemperature extends AbstractFridgeEvent {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * create a LowerRequestedTemperature event.
+	 *
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 * pre	{@code timeOfOccurrence != null}
+	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
+	 * </pre>
+	 *
+	 * @param timeOfOccurrence	time of occurrence of the event.
+	 */
 	public LowerRequestedTemperature(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}

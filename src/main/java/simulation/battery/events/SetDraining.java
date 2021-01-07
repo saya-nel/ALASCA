@@ -6,10 +6,36 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.simulation.battery.BatteryElectricity_MILModel;
 import main.java.utils.BatteryState;
 
+/**
+ * The class <code>SetDraining</code> defines the MIL event of the battery being
+ * set to drainging mode.
+ *
+ * <p><strong>Description</strong></p>
+ *
+ * <p><strong>Invariant</strong></p>
+ *
+ * <pre>
+ * invariant		true
+ * </pre>
+ *
+ * @author	Bello Memmi
+ */
 public class SetDraining extends AbstractBatteryEvent {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * create a SetDraining event.
+	 *
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 * pre	{@code timeOfOccurrence != null}
+	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
+	 * </pre>
+	 *
+	 * @param timeOfOccurrence	time of occurrence of the event.
+	 */
 	public SetDraining(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}

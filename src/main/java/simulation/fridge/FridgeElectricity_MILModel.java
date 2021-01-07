@@ -17,43 +17,131 @@ import main.java.simulation.fridge.events.SetEco;
 import main.java.simulation.fridge.events.SetNormal;
 import main.java.utils.FridgeMode;
 
+/**
+ * The class <code>FridgeElectricity_MILModel</code> defines a MIL model
+ * of the electricity consumption of a Fridge.
+ * <p><string>Description</string></p>
+ * <p>
+ *     The fridge can change mode and it changes the consumption.
+ * </p>
+ * </p>
+ * @author Bello Memmi
+ */
 @ModelExternalEvents(imported = { SetEco.class, SetNormal.class })
 public class FridgeElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
-
+	/** energy generated during eco mode		 						*/
 	public static final double ECO_MODE_CONSUMPTION = 15;
+	/** energy generated during normal mode		 						*/
 	public static final double NORMAL_MODE_CONSUMPTION = 20;
+	/** tension same for all the house 									*/
 	public static final double TENSION = 220;
-
+	/** current intensity in Amperes; intensity is power/tension. 		*/
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
 
+	/**
+	 * temps of fridge variable ?
+	 */
+	@ExportedVariable(type = Double.class)
+	protected final Value<Double> currentTemp = new Value<Double>(this, 0.0,0);
+
+
+	/** current mode of the fridge										*/
 	protected FridgeMode currentMode = FridgeMode.ECO;
+	/** true when the electricity consumption of the washer has
+	 * changed after executing an external event (when
+	 * <code>currentState</code> changes 								*/
 	protected boolean consumptionHasChanged = false;
+	/** requested temperature										*/
 	protected float requestedTemperature = 0;
 
+	/**
+	 * Create a Fridge MIL model instance.
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 *     pre 	true //no precondition
+	 *     post	true // no postcondition
+	 * </pre>
+	 * @param uri					URI of the model.
+	 * @param simulatedTimeUnit		time unit used for the simulation time.
+	 * @param simulationEngine		simulation engine to which the model is attached.
+	 * @throws Exception
+	 */
 	public FridgeElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
 	}
 
+	/**
+	 * set the mode of the Fridge
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 *     pre 		state != null
+	 *     post 	true			//no post condition
+	 * </pre>
+	 * @param mode 	the new mode
+	 */
 	public void setMode(FridgeMode mode) {
 		currentMode = mode;
 	}
 
+	/**
+	 * return the mode of the fridge.
+	 *
+	 * <p><strong>Contract</strong></p>
+	 * <pre>
+	 *     pre 	true 	// no precondition
+	 *     post	{@code ret != null}
+	 * </pre>
+	 * @return	the state of the Fridge.
+	 */
 	public FridgeMode getMode() {
 		return currentMode;
 	}
 
+	/**
+	 * toggle the value of the state of the model telling whether the
+	 * electricity consumption level has just changed or not; when it changes
+	 * after receiving an external event, an immediate internal transition
+	 * is triggered to update the level of electricity consumption.
+	 *
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 * pre	true		// no precondition.
+	 * post	true		// no postcondition.
+	 * </pre>
+	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
 	}
 
+	/**
+	 * lower 1 degre the requested temperature
+	 * <p><strong>Contract</strong></p>
+	 * <pre>
+	 *     pre 	true 	// no precondition
+	 *     post	true 	// no postcondition
+	 * </pre>
+	 * @return
+	 */
 	public void lowerRequestedTemperature() {
 		this.requestedTemperature--;
 	}
 
+	/**
+	 * upper 1 degre the requested temperature
+	 * <p><strong>Contract</strong></p>
+	 * <pre>
+	 *     pre 	true 	// no precondition
+	 *     post	true 	// no postcondition
+	 * </pre>
+	 * @return
+	 */
 	public void upperRequestedTemperature() {
 		this.requestedTemperature++;
 	}

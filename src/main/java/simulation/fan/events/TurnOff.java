@@ -5,10 +5,35 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.simulation.fan.FanElectricity_MILModel;
 
+/**
+ * The class <code>TurnOff</code> defines the MIL event of the fan being
+ * switched off.
+ *
+ * <p><strong>Description</strong></p>
+ *
+ * <p><strong>Invariant</strong></p>
+ *
+ * <pre>
+ * invariant		true
+ * </pre>
+ *
+ * @author	Bello Memmi
+ */
 public class TurnOff extends AbstractFanEvent {
 
 	private static final long serialVersionUID = 1L;
-
+	/**
+	 * create a TurnOff event.
+	 *
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 * pre	{@code timeOfOccurrence != null}
+	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
+	 * </pre>
+	 *
+	 * @param timeOfOccurrence	time of occurrence of the event.
+	 */
 	public TurnOff(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}

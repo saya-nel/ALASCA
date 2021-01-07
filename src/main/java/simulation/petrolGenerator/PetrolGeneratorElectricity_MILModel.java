@@ -46,7 +46,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	 * Electricity produced when the petrol generator is on and get petrol
 	 */
 	protected static final double GENERATING = 5;
-
+	/** tension same for all the house 												*/
 	public static final double TENSION = 220;
 
 	/**
@@ -131,6 +131,20 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		isOn = false;
 	}
 
+	/**
+	 * toggle the value of the state of the model telling whether the
+	 * electricity consumption level has just changed or not; when it changes
+	 * after receiving an external event, an immediate internal transition
+	 * is triggered to update the level of electricity consumption.
+	 *
+	 * <p><strong>Contract</strong></p>
+	 *
+	 * <pre>
+	 * pre	true		// no precondition.
+	 * post	true		// no postcondition.
+	 * </pre>
+	 * @author 	Bello Memmi
+	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
 	}
