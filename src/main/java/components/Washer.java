@@ -259,7 +259,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 	public boolean upMode() throws Exception {
 		boolean succeed = false;
 		if (this.mode.get() == WasherModes.PERFORMANCE.ordinal()) // wheel restore to 0
-			succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.ECO.ordinal());
+			succeed =  false;//this.mode.compareAndSet(this.mode.get(), WasherModes.ECO.ordinal());
 		else {
 			succeed = this.mode.compareAndSet(this.mode.get(), this.mode.get() + 1);
 		}
@@ -276,7 +276,7 @@ public class Washer extends AbstractComponent implements WasherImplementationI {
 		boolean succeed = false;
 
 		if (this.mode.get() == WasherModes.ECO.ordinal()) // wheel restore to 0
-			succeed = this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
+			succeed = false;//this.mode.compareAndSet(this.mode.get(), WasherModes.PERFORMANCE.ordinal());
 		else {
 			succeed = this.mode.compareAndSet(this.mode.get(), this.mode.get() - 1);
 		}

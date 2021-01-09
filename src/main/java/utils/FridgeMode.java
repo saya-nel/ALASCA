@@ -8,5 +8,5 @@ package main.java.utils;
  *
  */
 public enum FridgeMode {
-	NORMAL, ECO
+	ECO, NORMAL
 }

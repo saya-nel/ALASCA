@@ -225,8 +225,8 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	@Override
 	public boolean upMode() throws Exception {
 		boolean succeed = false;
-		if (this.operatingMode.get() == BatteryState.SLEEPING.ordinal()) {// return to 0
-			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.RECHARGING.ordinal());
+		if (this.operatingMode.get() == BatteryState.RECHARGING.ordinal()) {// return to 0
+			succeed = false;//this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.RECHARGING.ordinal());
 		} else {
 			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.get() + 1);
 		}
@@ -240,8 +240,8 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	@Override
 	public boolean downMode() throws Exception {
 		boolean succeed = false;
-		if (this.operatingMode.get() == BatteryState.RECHARGING.ordinal()) {
-			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.SLEEPING.ordinal());
+		if (this.operatingMode.get() == BatteryState.DRAINING.ordinal()) {
+			succeed = false;//this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.SLEEPING.ordinal());
 		} else {
 			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.get() - 1);
 		}

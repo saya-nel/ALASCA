@@ -6,5 +6,5 @@ package main.java.utils;
  * @author Bello Memmi
  */
 public enum BatteryState {
-	RECHARGING, DRAINING, SLEEPING;
+	DRAINING, SLEEPING, RECHARGING;
 }

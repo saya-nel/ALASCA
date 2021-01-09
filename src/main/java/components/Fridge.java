@@ -217,7 +217,10 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	@Override
 	public boolean upMode() throws Exception {
 		boolean succeed = false;
-		succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[(this.mode.get().ordinal() + 1) % 2]);
+		if(this.mode.get() == FridgeMode.NORMAL)
+			succeed=false;
+		else
+			succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[(this.mode.get().ordinal() + 1) % 2]);
 		Log.printAndLog(this, "upMode() service result : " + true);
 		return succeed;
 	}
@@ -228,8 +231,11 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	@Override
 	public boolean downMode() throws Exception {
 		boolean succeed = false;
-		succeed = this.mode.compareAndSet(this.mode.get(),
-				FridgeMode.values()[Math.floorMod(this.mode.get().ordinal() - 1, 2)]);
+		if(this.mode.get() == FridgeMode.ECO)
+			succeed=false;
+		else
+			succeed = this.mode.compareAndSet(this.mode.get(),
+				FridgeMode.values()[this.mode.get().ordinal() - 1]);
 		Log.printAndLog(this, "downmode() service result : " + true);
 		return true;
 	}
