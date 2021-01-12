@@ -20,7 +20,9 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
 import main.java.simulation.battery.BatteryElectricity_MILModel;
+import main.java.simulation.battery.events.EmptyPlan;
 import main.java.simulation.controller.Controller_MILModel;
+import main.java.simulation.controller.events.PlanBatteryRecharge;
 import main.java.simulation.fan.FanElectricity_MILModel;
 import main.java.simulation.fan.FanUser_MILModel;
 import main.java.simulation.fan.events.SetHigh;
@@ -190,6 +192,12 @@ public class RunMILSimulation {
 					new EventSink[] { new EventSink(petrolGeneratorURI, FillAll.class) });
 
 
+			//battery
+			connections.put(new EventSource(batteryURI, EmptyPlan.class),
+					new EventSink[] { new EventSink(controllerURI, EmptyPlan.class)});
+
+			connections.put(new EventSource(controllerURI, PlanBatteryRecharge.class),
+					new EventSink[] { new EventSink(batteryURI, PlanBatteryRecharge.class )});
 
 
 			// sending by electric panel

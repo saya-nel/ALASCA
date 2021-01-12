@@ -1,6 +1,7 @@
 package main.java.simulation.controller;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
@@ -9,13 +10,14 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.battery.events.EmptyPlan;
+import main.java.simulation.controller.events.PlanBatteryRecharge;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
 import main.java.simulation.panel.events.ProductionLevel;
 import main.java.simulation.panel.events.ProductionLevelRequest;
 import main.java.simulation.utils.FileLogger;
 
-@ModelExternalEvents(exported = { ConsumptionLevelRequest.class, ProductionLevelRequest.class }, imported = {
+@ModelExternalEvents(exported = { ConsumptionLevelRequest.class, ProductionLevelRequest.class, PlanBatteryRecharge.class }, imported = {
 		ConsumptionLevel.class, ProductionLevel.class, /** ajout d'une tache gérée par le controller simulé*/ EmptyPlan.class })
 public class Controller_MILModel extends AtomicModel {
 
@@ -36,6 +38,10 @@ public class Controller_MILModel extends AtomicModel {
 	 */
 	protected final Duration standardStep;
 
+	/**
+	 * true if the controller has sent the event
+	 */
+	protected boolean batteryRecharge = false;
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
@@ -58,7 +64,13 @@ public class Controller_MILModel extends AtomicModel {
 		// Each time the method is called (just before internal transitions)
 		// a ConsumptionLevelRequest is output towards the electric panel.
 		ArrayList<EventI> ret = new ArrayList<EventI>();
+
 		ret.add(new ConsumptionLevelRequest(this.getTimeOfNextEvent()));
+		if (this.batteryRecharge)
+		{
+			this.batteryRecharge = false;
+			ret.add(new PlanBatteryRecharge(this.getTimeOfNextEvent()));
+		}
 		return ret;
 	}
 
@@ -88,7 +100,7 @@ public class Controller_MILModel extends AtomicModel {
 		double productionLevel = 0.;
 
 		for (EventI event : currentEvents) {
-			assert (event instanceof ConsumptionLevel || event instanceof ProductionLevel);
+			assert (event instanceof ConsumptionLevel || event instanceof ProductionLevel || event instanceof EmptyPlan);
 			if (event instanceof ConsumptionLevel) {
 				ConsumptionLevel ce = (ConsumptionLevel) event;
 				/*this.logger.logMessage("", "Controller receiving the external event " + ce.getClass().getSimpleName()
@@ -104,9 +116,9 @@ public class Controller_MILModel extends AtomicModel {
 			} else if (event instanceof  EmptyPlan) {
 				EmptyPlan ep = (EmptyPlan) event;
 				this.logger.logMessage("", "Controller receiving the external event" +
-						"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4 " + ep.getClass().getSimpleName()
-						+"(" + ep.getTimeOfOccurrence().getSimulatedTime() + ", "+ ")");
-
+						ep.getClass().getSimpleName()
+						+"(" + ep.getTimeOfOccurrence().getSimulatedTime() + ")");
+				this.batteryRecharge = true;
 			}
 
 		}

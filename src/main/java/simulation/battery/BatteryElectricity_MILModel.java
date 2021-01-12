@@ -13,6 +13,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.battery.events.*;
+import main.java.simulation.controller.events.PlanBatteryRecharge;
 import main.java.simulation.utils.FileLogger;
 import main.java.simulation.utils.SimProgram;
 import main.java.utils.BatteryState;
@@ -30,7 +31,7 @@ import main.java.utils.BatteryState;
  * 
  * @author Bello Memmi
  */
-@ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class }, exported = { EmptyBattery.class, EmptyPlan.class })
+@ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class, PlanBatteryRecharge.class }, exported = { EmptyBattery.class, EmptyPlan.class })
 public class BatteryElectricity_MILModel extends AtomicHIOA {
 
 	// TODO : ajouté la gestion de la recharge planifiable pour la batterie
@@ -82,9 +83,9 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	/**
 		program the recharging
 	 */
-	protected SimProgram program = null;
+	protected SimProgram program;
 
-	protected boolean hasSendEmptyPlan = false;
+	protected boolean hasSendEmptyPlan;
 
 	/**
 	 * Create a battery MIL model instance.
@@ -183,6 +184,10 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		this.currentPowerLevel = this.maximumPowerLevel;
 		this.consumptionHasChanged = false;
 		this.currentState = BatteryState.DRAINING;
+		this.hasSendEmptyPlan = false;
+		//Duration d = new Duration(2, this.getSimulatedTimeUnit());
+		//Time t = new Time(5, this.getSimulatedTimeUnit());
+		this.program = null;//new SimProgram(t, d);
 		super.initialiseVariables(startTime);
 	}
 
@@ -201,7 +206,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 			hasSendEmptyBattery = true;
 			return ret;
 		}
-		if(program!=null && !hasSendEmptyPlan){
+		if(program==null && !hasSendEmptyPlan){
 			ret.add(new EmptyPlan(this.getTimeOfNextEvent()));
 			hasSendEmptyPlan = true;
 			return ret;
@@ -241,6 +246,8 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 			this.program = null;
 			this.currentProduction.v = 0.;
 			this.currentIntensity.v = 0.;
+			this.consumptionHasChanged = true;
+			this.hasSendEmptyPlan=  false;
 		}
 		// pass the battery to recharging mode
 		else if(this.program!=null &&
@@ -248,6 +255,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 			this.currentState = BatteryState.RECHARGING;
 			this.currentProduction.v = 0.;
 			this.currentIntensity.v = this.RECHARGING_MODE_CONSUMPTION;
+			this.consumptionHasChanged = true;
 		}
 		// no new program event otherwise
 
@@ -298,6 +306,12 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		this.logger.logMessage("", this.getCurrentStateTime() + "BatteryElectricity executing the external event "
 				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		ce.executeOn(this);
+		if (ce instanceof PlanBatteryRecharge){
+			Duration d = new Duration(2, this.getSimulatedTimeUnit());
+			Time t = new Time(5, this.getSimulatedTimeUnit());
+			this.planifyEvent(t, d);
+		}
+
 		super.userDefinedExternalTransition(elapsedTime);
 	}
 }
