@@ -271,8 +271,8 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		this.logger.logMessage("", "Washer executing the external event " + ce.getClass().getSimpleName() + "("
-				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("", this.getCurrentStateTime() + " Washer executing the external event "
+				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		assert ce instanceof AbstractWasherEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

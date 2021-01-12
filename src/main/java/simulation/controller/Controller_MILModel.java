@@ -95,8 +95,10 @@ public class Controller_MILModel extends AtomicModel {
 				consumptionLevel = ce.getConsumptionLevel();
 			} else if (event instanceof ProductionLevel) {
 				ProductionLevel pe = (ProductionLevel) event;
-				this.logger.logMessage("", "Controller receiving the external event " + pe.getClass().getSimpleName()
-						+ "(" + pe.getTimeOfOccurrence().getSimulatedTime() + ", " + pe.getProductionLevel() + ")");
+				this.logger.logMessage("",
+						this.getCurrentStateTime() + " Controller receiving the external event "
+								+ pe.getClass().getSimpleName() + "(" + pe.getTimeOfOccurrence().getSimulatedTime()
+								+ ", " + pe.getProductionLevel() + ")");
 				productionLevel = pe.getProductionLevel();
 			}
 		}

@@ -226,7 +226,8 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		if (this.isOn && currentPetrolLevel > 0) {
 			this.currentProduction.v = GENERATING / TENSION;
 			this.currentPetrolLevel -= 1;
-			this.logger.logMessage("", "current petrol level : " + this.currentPetrolLevel);
+			this.logger.logMessage("",
+					this.getCurrentStateTime() + "current petrol level : " + this.currentPetrolLevel);
 		}
 		// if the generator is on but dont have petrol, he turn off and dont produce
 		// electicity
@@ -251,8 +252,8 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		this.logger.logMessage("", "PetrolGenerator executing the external event " + ce.getClass().getSimpleName() + "("
-				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("", this.getCurrentStateTime() + " PetrolGenerator executing the external event "
+				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		assert ce instanceof AbstractPetrolGeneratorEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

@@ -135,8 +135,8 @@ public class PetrolGeneratorUser_MILModel extends AtomicModel {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		this.logger.logMessage("", "PetrolGeneratorUser executing the external event " + ce.getClass().getSimpleName()
-				+ "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("", this.getCurrentStateTime() + " PetrolGeneratorUser executing the external event "
+				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		assert ce instanceof AbstractPetrolGeneratorEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

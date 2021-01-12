@@ -36,6 +36,8 @@ import main.java.utils.BatteryState;
 @ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class })
 public class BatteryElectricity_MILModel extends AtomicHIOA {
 
+	// TODO : ajouté la gestion de la recharge planifiable pour la batterie
+
 	private static final long serialVersionUID = 1L;
 
 	// -------------------------------------------------------------------------
@@ -219,7 +221,8 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 			if (currentPowerLevel > 0) {
 				// the battery loose power
 				this.currentPowerLevel -= 1;
-				this.logger.logMessage("", "current power level : " + this.currentPowerLevel);
+				this.logger.logMessage("",
+						this.getCurrentStateTime() + " : current power level : " + this.currentPowerLevel);
 				this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
 			} else if (currentPowerLevel <= 0 && !hasSendEmptyBattery) {
 				this.currentProduction.v = 0.;
@@ -256,8 +259,8 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
 		assert ce instanceof AbstractBatteryEvent;
-		this.logger.logMessage("", "BatteryElectricity executing the external event " + ce.getClass().getSimpleName()
-				+ "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("", this.getCurrentStateTime() + "BatteryElectricity executing the external event "
+				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);
 	}

@@ -34,6 +34,8 @@ import main.java.utils.FridgeMode;
 @ModelExternalEvents(imported = { SetEco.class, SetNormal.class })
 public class FridgeElectricity_MILModel extends AtomicHIOA {
 
+	// TODO : gérer consommation suspensible
+
 	private static final long serialVersionUID = 1L;
 	/** energy generated during eco mode */
 	public static final double ECO_MODE_CONSUMPTION = 15;
@@ -232,8 +234,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
 		assert ce instanceof AbstractFridgeEvent;
-		this.logger.logMessage("", "Fridge executing the external event " + ce.getClass().getSimpleName() + "("
-				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("", this.getCurrentStateTime() + " Fridge executing the external event "
+				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);
 	}

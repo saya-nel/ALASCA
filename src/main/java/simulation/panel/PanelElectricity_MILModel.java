@@ -155,10 +155,12 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 			// compute the new global electricity production
 			this.currentProduction.v = batteryProduction.v + solarPanelsProduction.v + petrolGeneratorProduction.v;
 			this.currentProduction.time = this.getCurrentStateTime();
-			System.out.println("fridge cons : " + fridgeIntensity.v + ", fan cons : " + fanIntensity.v
-					+ ", washer cons : " + washerIntensity.v + ", battery cons : " + batteryIntensity.v);
-			System.out.println("petrolgenerator prod : " + petrolGeneratorProduction.v + ", battery prod : "
-					+ batteryProduction.v + ", sp prod : " + solarPanelsProduction.v);
+			this.logger.logMessage("",
+					this.getCurrentStateTime() + " CONSUMPTIONS : fridge : " + fridgeIntensity.v + ", fan : "
+							+ fanIntensity.v + ", washer : " + washerIntensity.v + ", battery : " + batteryIntensity.v);
+			this.logger.logMessage("",
+					this.getCurrentStateTime() + " PRODUCTIONS : petrolgenerator : " + petrolGeneratorProduction.v
+							+ ", battery : " + batteryProduction.v + ", solarPanels : " + solarPanelsProduction.v);
 			// the next planned computation
 			this.nextStep = this.standardStep;
 		} else {
@@ -172,10 +174,12 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 			// compute the new global electricity production
 			this.currentProduction.v = batteryProduction.v + solarPanelsProduction.v + petrolGeneratorProduction.v;
 			this.currentProduction.time = this.getCurrentStateTime();
-			System.out.println("fridge cons : " + fridgeIntensity.v + ", fan cons : " + fanIntensity.v
-					+ ", washer cons : " + washerIntensity.v + ", battery cons : " + batteryIntensity.v);
-			System.out.println("petrolgenerator prod : " + petrolGeneratorProduction.v + ", battery prod : "
-					+ batteryProduction.v + ", sp prod : " + solarPanelsProduction.v);
+			this.logger.logMessage("",
+					this.getCurrentStateTime() + " CONSUMPTIONS : fridge : " + fridgeIntensity.v + ", fan : "
+							+ fanIntensity.v + ", washer : " + washerIntensity.v + ", battery : " + batteryIntensity.v);
+			this.logger.logMessage("",
+					this.getCurrentStateTime() + " PRODUCTIONS : petrolgenerator : " + petrolGeneratorProduction.v
+							+ ", battery : " + batteryProduction.v + ", solarPanels : " + solarPanelsProduction.v);
 
 			// a request has been received before the next computation
 			assert elapsedTime.lessThanOrEqual(this.standardStep);
@@ -204,8 +208,8 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 				|| (currentEvents.get(0) instanceof ProductionLevelRequest));
 
 		Event ce = (Event) currentEvents.get(0);
-		this.logger.logMessage("", "Panel receiving the external event " + ce.getClass().getSimpleName() + "("
-				+ ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("", this.getCurrentStateTime() + " Panel receiving the external event "
+				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
 
 		// this will trigger an immediate internal transition and the ouput
 		// of the ConsumptionLevel event.
