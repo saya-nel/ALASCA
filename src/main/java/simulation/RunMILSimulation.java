@@ -43,6 +43,7 @@ import main.java.simulation.petrolGenerator.events.EmptyGenerator;
 import main.java.simulation.petrolGenerator.events.FillAll;
 import main.java.simulation.solarPanels.SolarPanelsElectricity_MILModel;
 import main.java.simulation.washer.WasherElectricity_MILModel;
+import main.java.simulation.washer.WasherUser_MILModel;
 
 public class RunMILSimulation {
 
@@ -63,6 +64,7 @@ public class RunMILSimulation {
 			String solarPanelsURI = "solarPanelsURI";
 
 			String washerURI = "washerURI";
+			String washerUserURI = "washerUserURI";
 
 			String panelURI = "panelURI";
 
@@ -105,6 +107,8 @@ public class RunMILSimulation {
 			// washer
 			atomicModelDescriptors.put(washerURI, AtomicHIOA_Descriptor.create(WasherElectricity_MILModel.class,
 					washerURI, TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
+			atomicModelDescriptors.put(washerUserURI, AtomicModelDescriptor.create(WasherUser_MILModel.class,
+					washerUserURI, TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
 
 			// electric panel
 			atomicModelDescriptors.put(panelURI, AtomicHIOA_Descriptor.create(PanelElectricity_MILModel.class, panelURI,
@@ -135,6 +139,7 @@ public class RunMILSimulation {
 			submodels.add(solarPanelsURI);
 			// washer
 			submodels.add(washerURI);
+			submodels.add(washerUserURI);
 			// electric panel
 			submodels.add(panelURI);
 			// controller
@@ -160,6 +165,19 @@ public class RunMILSimulation {
 					new EventSink[] { new EventSink(fridgeURI, SetEco.class) });
 			connections.put(new EventSource(fridgeUserURI, SetNormal.class),
 					new EventSink[] { new EventSink(fridgeURI, SetNormal.class) });
+
+			// sending by washerUser
+			connections.put(new EventSource(washerUserURI, main.java.simulation.washer.events.SetEco.class),
+					new EventSink[] { new EventSink(washerURI, main.java.simulation.washer.events.SetEco.class) });
+			connections.put(new EventSource(washerUserURI, main.java.simulation.washer.events.SetStd.class),
+					new EventSink[] { new EventSink(washerURI, main.java.simulation.washer.events.SetStd.class) });
+			connections.put(new EventSource(washerUserURI, main.java.simulation.washer.events.SetPerformance.class),
+					new EventSink[] {
+							new EventSink(washerURI, main.java.simulation.washer.events.SetPerformance.class) });
+			connections.put(new EventSource(washerUserURI, main.java.simulation.washer.events.TurnOn.class),
+					new EventSink[] { new EventSink(washerURI, main.java.simulation.washer.events.TurnOn.class) });
+			connections.put(new EventSource(washerUserURI, main.java.simulation.washer.events.TurnOff.class),
+					new EventSink[] { new EventSink(washerURI, main.java.simulation.washer.events.TurnOff.class) });
 
 			// sending by petrolGenerator and petrolGeneratorUser
 			connections.put(new EventSource(petrolGeneratorURI, EmptyGenerator.class),

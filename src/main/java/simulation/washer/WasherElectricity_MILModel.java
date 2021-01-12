@@ -186,6 +186,9 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	@Override
 	protected void initialiseVariables(Time startTime) {
 		this.currentIntensity.v = 0.0;
+		this.isOn = false;
+		this.currentMode = WasherModes.ECO;
+		this.consumptionHasChanged = false;
 		super.initialiseVariables(startTime);
 	}
 
@@ -194,9 +197,6 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	 */
 	@Override
 	public void initialiseState() {
-		this.isOn = false;
-		this.currentMode = WasherModes.ECO;
-		this.consumptionHasChanged = false;
 		super.initialiseState();
 	}
 
@@ -223,15 +223,31 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 		super.userDefinedInternalTransition(elapsedTime);
 
 		// switch off the washer after it finished the program
-		if (this.program.getBeginProgram().add(this.program.getDurationProgram())
+		if (this.isOn && this.program != null && this.program.getBeginProgram().add(this.program.getDurationProgram())
 				.greaterThanOrEqual(this.getCurrentStateTime())) {
 			this.isOn = false;
 			this.program = null;
 			this.currentIntensity.v = 0.;
+			// TODO : gérer l'envoie d'un evenement comme quoi le washer c'est eteind, de la
+			// meme façon que petrol generator / battery
 		}
-		// the program is running
-		else if (this.getCurrentStateTime().greaterThanOrEqual(this.program.getBeginProgram())) {
+		// if the washer isnt already on and have a defined program which need to start
+		// now
+		else if (!this.isOn && this.program != null
+				&& this.getCurrentStateTime().greaterThanOrEqual(this.program.getBeginProgram())) {
 			this.isOn = true;
+			switch (this.currentMode) {
+			case ECO:
+				this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
+				break;
+			case STD:
+				this.currentIntensity.v = STD_MODE_CONSUMPTION / TENSION;
+			case PERFORMANCE:
+				this.currentIntensity.v = PERFORMANCE_MODE_CONSUMPTION / TENSION;
+			}
+		}
+		// the washer is runing
+		else if (this.isOn) {
 			switch (this.currentMode) {
 			case ECO:
 				this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
