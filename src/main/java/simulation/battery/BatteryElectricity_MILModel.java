@@ -169,16 +169,13 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		this.currentIntensity.v = 0.0;
 		this.currentProduction.v = 0.0;
 		this.currentPowerLevel = this.maximumPowerLevel;
+		this.consumptionHasChanged = false;
 		this.currentState = BatteryState.DRAINING;
 		super.initialiseVariables(startTime);
 	}
 
-	/**
-	 * @see fr.sorbonne_u.devs_simulation.models.Model#initialiseState()
-	 */
 	@Override
 	public void initialiseState() {
-		logger.logMessage("", "init state");
 		this.consumptionHasChanged = false;
 		super.initialiseState();
 	}
@@ -201,6 +198,10 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 			return new Duration(0.0, this.getSimulatedTimeUnit());
 		} else if (this.needToBeRefilled && !hasSendEmptyBattery) {
 			return new Duration(0.0, this.getSimulatedTimeUnit());
+		}
+		// TODO : pourquoi petrol generator bug si j'enleve ça ???
+		else if (this.needToBeRefilled && this.hasSendEmptyBattery) {
+			return Duration.INFINITY;
 		} else {
 			return standardStep;
 		}
@@ -243,6 +244,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		}
 
 		this.currentIntensity.time = this.getCurrentStateTime();
+		this.currentProduction.time = this.getCurrentStateTime();
 	}
 
 	/**

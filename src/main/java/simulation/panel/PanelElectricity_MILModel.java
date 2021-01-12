@@ -155,6 +155,8 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 			// compute the new global electricity production
 			this.currentProduction.v = batteryProduction.v + solarPanelsProduction.v + petrolGeneratorProduction.v;
 			this.currentProduction.time = this.getCurrentStateTime();
+			System.out.println("fridge cons : " + fridgeIntensity.v + ", fan cons : " + fanIntensity.v
+					+ ", washer cons : " + washerIntensity.v + ", battery cons : " + batteryIntensity.v);
 			System.out.println("petrolgenerator prod : " + petrolGeneratorProduction.v + ", battery prod : "
 					+ batteryProduction.v + ", sp prod : " + solarPanelsProduction.v);
 			// the next planned computation
@@ -170,6 +172,8 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 			// compute the new global electricity production
 			this.currentProduction.v = batteryProduction.v + solarPanelsProduction.v + petrolGeneratorProduction.v;
 			this.currentProduction.time = this.getCurrentStateTime();
+			System.out.println("fridge cons : " + fridgeIntensity.v + ", fan cons : " + fanIntensity.v
+					+ ", washer cons : " + washerIntensity.v + ", battery cons : " + batteryIntensity.v);
 			System.out.println("petrolgenerator prod : " + petrolGeneratorProduction.v + ", battery prod : "
 					+ batteryProduction.v + ", sp prod : " + solarPanelsProduction.v);
 

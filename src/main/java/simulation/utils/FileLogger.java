@@ -27,9 +27,10 @@ public class FileLogger extends StandardLogger {
 	public void logMessage(String modelURI, String message) {
 		assert modelURI != null;
 		assert !modelURI.contains(separator);
+
+		String toWrite = System.currentTimeMillis() + this.separator + modelURI + this.separator + message + "\n";
+		System.out.print(toWrite);
 		try {
-			String toWrite = System.currentTimeMillis() + this.separator + modelURI + this.separator + message + "\n";
-			System.out.print(toWrite);
 			writer.append(toWrite);
 			writer.flush();
 		} catch (IOException e) {

@@ -179,7 +179,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 	 */
 	@Override
 	protected void initialiseVariables(Time startTime) {
-		this.currentIntensity.v = 0.0;
+		this.currentMode = FridgeMode.ECO;
+		this.consumptionHasChanged = false;
 		super.initialiseVariables(startTime);
 	}
 
@@ -188,8 +189,6 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 	 */
 	@Override
 	public void initialiseState() {
-		this.currentMode = FridgeMode.ECO;
-		this.consumptionHasChanged = false;
 		super.initialiseState();
 	}
 

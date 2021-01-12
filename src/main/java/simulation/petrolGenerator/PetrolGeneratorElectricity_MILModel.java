@@ -179,19 +179,10 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	protected void initialiseVariables(Time startTime) {
 		super.initialiseVariables(startTime);
 		this.currentProduction.v = 0.0;
-	}
-
-	/**
-	 * At the start, the generator get 20 liters of petrol, and is on
-	 * 
-	 * @see fr.sorbonne_u.devs_simulation.models.Model#initialiseState()
-	 */
-	@Override
-	public void initialiseState() {
 		this.isOn = false;
 		this.consumptionHasChanged = false;
+		this.hasSendEmptyGenerator = false;
 		this.currentPetrolLevel = 20;
-		super.initialiseState();
 	}
 
 	/**
@@ -216,8 +207,11 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		if (consumptionHasChanged) {
 			this.toggleConsumptionHasChanged();
 			return new Duration(0.0, this.getSimulatedTimeUnit());
-		} else if (needToBeFilled && !hasSendEmptyGenerator)
+		} else if (needToBeFilled && !hasSendEmptyGenerator) {
 			return new Duration(0.0, this.getSimulatedTimeUnit());
+		} else if (needToBeFilled && hasSendEmptyGenerator) {
+
+		}
 		return standardStep;
 	}
 
@@ -227,13 +221,12 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		if (this.isOn && currentPetrolLevel > 0) {
-			this.currentPetrolLevel -= 1;
-			this.logger.logMessage("", "current petrol level : " + this.currentPetrolLevel);
-		}
-		// if the generator is on and get petrol, he produce electicity
+		// if the generator is on and get petrol, he produce electicity and consumes
+		// petrol
 		if (this.isOn && currentPetrolLevel > 0) {
 			this.currentProduction.v = GENERATING / TENSION;
+			this.currentPetrolLevel -= 1;
+			this.logger.logMessage("", "current petrol level : " + this.currentPetrolLevel);
 		}
 		// if the generator is on but dont have petrol, he turn off and dont produce
 		// electicity

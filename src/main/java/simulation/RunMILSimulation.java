@@ -29,6 +29,9 @@ import main.java.simulation.fan.events.SetMid;
 import main.java.simulation.fan.events.TurnOff;
 import main.java.simulation.fan.events.TurnOn;
 import main.java.simulation.fridge.FridgeElectricity_MILModel;
+import main.java.simulation.fridge.FridgeUser_MILModel;
+import main.java.simulation.fridge.events.SetEco;
+import main.java.simulation.fridge.events.SetNormal;
 import main.java.simulation.panel.PanelElectricity_MILModel;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
@@ -52,6 +55,7 @@ public class RunMILSimulation {
 			String batteryURI = "batteryURI";
 
 			String fridgeURI = "fridgeURI";
+			String fridgeUserURI = "fridgeUserURI";
 
 			String petrolGeneratorURI = "petrolGeneratorURI";
 			String petrolGeneratorUserURI = "petrolGeneratorUserURI";
@@ -82,6 +86,8 @@ public class RunMILSimulation {
 			// fridge
 			atomicModelDescriptors.put(fridgeURI, AtomicHIOA_Descriptor.create(FridgeElectricity_MILModel.class,
 					fridgeURI, TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
+			atomicModelDescriptors.put(fridgeUserURI, AtomicModelDescriptor.create(FridgeUser_MILModel.class,
+					fridgeUserURI, TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
 
 			// petrolGenerator
 			atomicModelDescriptors.put(petrolGeneratorURI,
@@ -121,6 +127,7 @@ public class RunMILSimulation {
 			submodels.add(batteryURI);
 			// fridge
 			submodels.add(fridgeURI);
+			submodels.add(fridgeUserURI);
 			// petrolGenerator
 			submodels.add(petrolGeneratorURI);
 			submodels.add(petrolGeneratorUserURI);
@@ -147,6 +154,13 @@ public class RunMILSimulation {
 					new EventSink[] { new EventSink(fanURI, SetMid.class) });
 			connections.put(new EventSource(fanUserURI, SetHigh.class),
 					new EventSink[] { new EventSink(fanURI, SetHigh.class) });
+
+			// sending by fridgeUser
+			connections.put(new EventSource(fridgeUserURI, SetEco.class),
+					new EventSink[] { new EventSink(fridgeURI, SetEco.class) });
+			connections.put(new EventSource(fridgeUserURI, SetNormal.class),
+					new EventSink[] { new EventSink(fridgeURI, SetNormal.class) });
+
 			// sending by petrolGenerator and petrolGeneratorUser
 			connections.put(new EventSource(petrolGeneratorURI, EmptyGenerator.class),
 					new EventSink[] { new EventSink(petrolGeneratorUserURI, EmptyGenerator.class) });
@@ -213,7 +227,7 @@ public class RunMILSimulation {
 			// simulation run, after creating the simulation models from the
 			// architecture
 			SimulationEngine se = architecture.constructSimulator();
-			SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 80L;
+			SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 0L;
 			se.doStandAloneSimulation(0.0, 5000.0);
 //			Thread.sleep(10000L);
 			System.exit(0);
