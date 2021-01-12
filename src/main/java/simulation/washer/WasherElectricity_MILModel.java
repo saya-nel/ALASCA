@@ -13,7 +13,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.utils.FileLogger;
-import main.java.simulation.utils.WasherSimProgram;
+import main.java.simulation.utils.SimProgram;
 import main.java.simulation.washer.events.AbstractWasherEvent;
 import main.java.simulation.washer.events.SetEco;
 import main.java.simulation.washer.events.SetPerformance;
@@ -60,7 +60,7 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	 */
 	protected boolean consumptionHasChanged = false;
 	/** task to do */
-	protected WasherSimProgram program = null;
+	protected SimProgram program = null;
 
 	/**
 	 * Create a Washer MIL model instance.
@@ -154,7 +154,7 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	}
 
 	public void planifyEvent(Time beginProgram, Duration durationProgram) {
-		this.program = new WasherSimProgram(beginProgram, durationProgram);
+		this.program = new SimProgram(beginProgram, durationProgram);
 	}
 
 	/**

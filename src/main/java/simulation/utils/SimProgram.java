@@ -8,7 +8,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
  *
  * @author  Bello Memmi
  */
-public class WasherSimProgram {
+public class SimProgram {
 
     private Time beginProgram;
     private Duration durationProgram;
@@ -21,7 +21,7 @@ public class WasherSimProgram {
         this.durationProgram = durationProgram;
     }
 
-    public WasherSimProgram(Time beginProgram, Duration durationProgram){
+    public SimProgram(Time beginProgram, Duration durationProgram){
         this.beginProgram = beginProgram;
         this.durationProgram = durationProgram;
     }

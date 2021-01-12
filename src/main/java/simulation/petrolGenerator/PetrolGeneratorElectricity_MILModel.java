@@ -210,7 +210,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		} else if (needToBeFilled && !hasSendEmptyGenerator) {
 			return new Duration(0.0, this.getSimulatedTimeUnit());
 		} else if (needToBeFilled && hasSendEmptyGenerator) {
-
+			return Duration.INFINITY;
 		}
 		return standardStep;
 	}

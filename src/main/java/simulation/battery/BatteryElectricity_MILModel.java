@@ -12,12 +12,9 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.battery.events.AbstractBatteryEvent;
-import main.java.simulation.battery.events.EmptyBattery;
-import main.java.simulation.battery.events.SetDraining;
-import main.java.simulation.battery.events.SetRecharging;
-import main.java.simulation.battery.events.SetSleeping;
+import main.java.simulation.battery.events.*;
 import main.java.simulation.utils.FileLogger;
+import main.java.simulation.utils.SimProgram;
 import main.java.utils.BatteryState;
 
 /**
@@ -33,7 +30,7 @@ import main.java.utils.BatteryState;
  * 
  * @author Bello Memmi
  */
-@ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class })
+@ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class }, exported = { EmptyBattery.class, BatteryPlan.class })
 public class BatteryElectricity_MILModel extends AtomicHIOA {
 
 	// TODO : ajouté la gestion de la recharge planifiable pour la batterie
@@ -83,6 +80,13 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	protected boolean hasSendEmptyBattery = false;
 
 	/**
+		program the recharging
+	 */
+	protected SimProgram program = null;
+
+	protected boolean hasSendPlan = false;
+
+	/**
 	 * Create a battery MIL model instance.
 	 * <p>
 	 * <strong>Contract</strong>
@@ -104,6 +108,12 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		this.standardStep = new Duration(STEP_LENGTH, simulatedTimeUnit);
 		this.setLogger(new FileLogger("batteryElectricity.log"));
 	}
+
+
+	public void planifyEvent(Time beginProgram, Duration durationProgram) {
+		this.program = new SimProgram(beginProgram, durationProgram);
+	}
+
 
 	/**
 	 * set the state of the Battery
@@ -184,13 +194,20 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 
 	@Override
 	public ArrayList<EventI> output() {
+		ArrayList<EventI> ret = new ArrayList<EventI>();
 		if (needToBeRefilled && !hasSendEmptyBattery) {
-			ArrayList<EventI> ret = new ArrayList<EventI>();
+
 			ret.add(new EmptyBattery(this.getTimeOfNextEvent()));
 			hasSendEmptyBattery = true;
 			return ret;
-		} else
-			return null;
+		}
+		if(program!=null && !hasSendEmptyBattery){
+			ret.add(new BatteryPlan(this.getTimeOfNextEvent()));
+			hasSendPlan = true;
+			return ret;
+		}
+
+		return null;
 	}
 
 	@Override
@@ -215,6 +232,25 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
+
+		// if there is a recharging planification finished
+		if(this.program != null &&
+		this.program.getBeginProgram().add(this.program.getDurationProgram())
+		.greaterThanOrEqual(this.getCurrentStateTime())){
+			this.currentState = BatteryState.SLEEPING;
+			this.program = null;
+			this.currentProduction.v = 0.;
+			this.currentIntensity.v = 0.;
+		}
+		// pass the battery to recharging mode
+		else if(this.program!=null &&
+		this.getCurrentStateTime().greaterThanOrEqual(this.program.getBeginProgram())){
+			this.currentState = BatteryState.RECHARGING;
+			this.currentProduction.v = 0.;
+			this.currentIntensity.v = this.RECHARGING_MODE_CONSUMPTION;
+		}
+		// no new program event otherwise
+
 
 		// if the battery is draining, it loose power
 		if (this.currentState == BatteryState.DRAINING) {
