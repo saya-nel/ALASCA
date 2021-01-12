@@ -8,6 +8,7 @@ import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
+import main.java.simulation.battery.events.EmptyPlan;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
 import main.java.simulation.panel.events.ProductionLevel;
@@ -15,7 +16,7 @@ import main.java.simulation.panel.events.ProductionLevelRequest;
 import main.java.simulation.utils.FileLogger;
 
 @ModelExternalEvents(exported = { ConsumptionLevelRequest.class, ProductionLevelRequest.class }, imported = {
-		ConsumptionLevel.class, ProductionLevel.class })
+		ConsumptionLevel.class, ProductionLevel.class, /** ajout d'une tache gérée par le controller simulé*/ EmptyPlan.class })
 public class Controller_MILModel extends AtomicModel {
 
 	// -------------------------------------------------------------------------
@@ -90,17 +91,24 @@ public class Controller_MILModel extends AtomicModel {
 			assert (event instanceof ConsumptionLevel || event instanceof ProductionLevel);
 			if (event instanceof ConsumptionLevel) {
 				ConsumptionLevel ce = (ConsumptionLevel) event;
-				this.logger.logMessage("", "Controller receiving the external event " + ce.getClass().getSimpleName()
-						+ "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ", " + ce.getConsumptionLevel() + ")");
+				/*this.logger.logMessage("", "Controller receiving the external event " + ce.getClass().getSimpleName()
+						+ "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ", " + ce.getConsumptionLevel() + ")");*/
 				consumptionLevel = ce.getConsumptionLevel();
 			} else if (event instanceof ProductionLevel) {
 				ProductionLevel pe = (ProductionLevel) event;
-				this.logger.logMessage("",
+				/*this.logger.logMessage("",
 						this.getCurrentStateTime() + " Controller receiving the external event "
 								+ pe.getClass().getSimpleName() + "(" + pe.getTimeOfOccurrence().getSimulatedTime()
-								+ ", " + pe.getProductionLevel() + ")");
+								+ ", " + pe.getProductionLevel() + ")");*/
 				productionLevel = pe.getProductionLevel();
+			} else if (event instanceof  EmptyPlan) {
+				EmptyPlan ep = (EmptyPlan) event;
+				this.logger.logMessage("", "Controller receiving the external event" +
+						"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4 " + ep.getClass().getSimpleName()
+						+"(" + ep.getTimeOfOccurrence().getSimulatedTime() + ", "+ ")");
+
 			}
+
 		}
 
 		// TODO : ici on utilise consumptionLevel / productionLevel et en fonction de

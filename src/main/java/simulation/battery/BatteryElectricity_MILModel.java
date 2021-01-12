@@ -30,7 +30,7 @@ import main.java.utils.BatteryState;
  * 
  * @author Bello Memmi
  */
-@ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class }, exported = { EmptyBattery.class, BatteryPlan.class })
+@ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class }, exported = { EmptyBattery.class, EmptyPlan.class })
 public class BatteryElectricity_MILModel extends AtomicHIOA {
 
 	// TODO : ajouté la gestion de la recharge planifiable pour la batterie
@@ -84,7 +84,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	 */
 	protected SimProgram program = null;
 
-	protected boolean hasSendPlan = false;
+	protected boolean hasSendEmptyPlan = false;
 
 	/**
 	 * Create a battery MIL model instance.
@@ -201,9 +201,9 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 			hasSendEmptyBattery = true;
 			return ret;
 		}
-		if(program!=null && !hasSendEmptyBattery){
-			ret.add(new BatteryPlan(this.getTimeOfNextEvent()));
-			hasSendPlan = true;
+		if(program!=null && !hasSendEmptyPlan){
+			ret.add(new EmptyPlan(this.getTimeOfNextEvent()));
+			hasSendEmptyPlan = true;
 			return ret;
 		}
 

@@ -189,6 +189,9 @@ public class RunMILSimulation {
 			connections.put(new EventSource(petrolGeneratorUserURI, FillAll.class),
 					new EventSink[] { new EventSink(petrolGeneratorURI, FillAll.class) });
 
+
+
+
 			// sending by electric panel
 			connections.put(new EventSource(panelURI, ConsumptionLevel.class),
 					new EventSink[] { new EventSink(controllerURI, ConsumptionLevel.class) });
@@ -245,7 +248,7 @@ public class RunMILSimulation {
 			// simulation run, after creating the simulation models from the
 			// architecture
 			SimulationEngine se = architecture.constructSimulator();
-			SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 0L;
+			SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 1000L;
 			se.doStandAloneSimulation(0.0, 5000.0);
 //			Thread.sleep(10000L);
 			System.exit(0);
