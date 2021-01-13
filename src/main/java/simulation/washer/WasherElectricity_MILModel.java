@@ -48,12 +48,12 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	/** energy generated during performance mode */
 	public static final double PERFORMANCE_MODE_CONSUMPTION = 23;
 	/** tension same for all the house */
-	public static final double TENSION = 220;
+	public static final double TENSION = 15;
 	/** current intensity in Amperes; intensity is power/tension. */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
 	/** indicates whether the washer is on or not */
-	protected boolean isOn = false;
+	protected boolean isOn;
 	/** current state of the washer */
 	protected WasherModes currentMode = WasherModes.ECO;
 	/**
@@ -188,7 +188,7 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	@Override
 	protected void initialiseVariables(Time startTime) {
 		this.currentIntensity.v = 0.0;
-		this.isOn = false;
+		this.isOn = true;
 		this.currentMode = WasherModes.ECO;
 		this.consumptionHasChanged = false;
 		super.initialiseVariables(startTime);

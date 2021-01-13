@@ -67,11 +67,11 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	protected final Value<Double> currentProduction = new Value<>(this, 0.0, 0);
 
 	/** current state of the Battery */
-	protected BatteryState currentState = BatteryState.DRAINING;
+	protected BatteryState currentState;
 
 	// ah
-	protected float currentPowerLevel = 100;
-	protected float maximumPowerLevel = 100;
+	protected double currentPowerLevel = 100;
+	protected double maximumPowerLevel = 100;
 
 	/**
 	 * true when the electricity consumption of the battery has changed after
@@ -169,8 +169,8 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		this.currentIntensity.v = 0.0;
 		this.currentProduction.v = 0.0;
 		this.currentPowerLevel = this.maximumPowerLevel;
-		this.consumptionHasChanged = true;
-		this.currentState = BatteryState.SLEEPING;
+		this.consumptionHasChanged = false;
+		this.currentState = BatteryState.DRAINING;
 		super.initialiseVariables(startTime);
 	}
 
@@ -187,7 +187,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public Duration timeAdvance() {
 		if (this.consumptionHasChanged) {
-			this.logger.logMessage("", "cc2");
+			//this.logger.logMessage("", "cc2");
 			this.toggleConsumptionHasChanged();
 			return new Duration(0.0, this.getSimulatedTimeUnit());
 		} else {
@@ -201,9 +201,6 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		this.logger.logMessage("", "eee");
-
-		this.logger.logMessage("", "" + this.getCurrentStateTime());
 
 		// no new program event otherwise
 		// if the battery is draining, it loose power
@@ -212,8 +209,8 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 			if (currentPowerLevel - (DRAINING_MODE_PRODUCTION / 3600) > 0) {
 				// the battery loose power
 				this.currentPowerLevel -= DRAINING_MODE_PRODUCTION / 3600;
-				this.logger.logMessage("",
-						this.getCurrentStateTime() + " : current power level : " + this.currentPowerLevel);
+//				this.logger.logMessage("",
+//						this.getCurrentStateTime() + " : current power level : " + this.currentPowerLevel);
 				this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
 				this.currentIntensity.v  = 0.;
 			} else {
@@ -223,6 +220,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 				this.currentPowerLevel = 0;
 				this.toggleConsumptionHasChanged();
 			}
+			this.logger.logMessage("", "battery draining");
 		} else if (this.currentState == BatteryState.SLEEPING) {
 			this.currentProduction.v = 0.;
 			this.currentIntensity.v = 0.;
@@ -237,6 +235,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 				this.currentProduction.v = 0.;
 				this.toggleConsumptionHasChanged();
 			}
+			this.logger.logMessage("", "battery sleeping");
 		} else if (this.currentState == BatteryState.RECHARGING) {
 			this.currentProduction.v = 0.;
 			if (this.currentPowerLevel + (RECHARGING_MODE_CONSUMPTION / 3600) < maximumPowerLevel) {
@@ -250,7 +249,11 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 				this.currentPowerLevel = maximumPowerLevel;
 				toggleConsumptionHasChanged();
 			}
+			this.logger.logMessage("", "battery recharging");
 		}
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " : current power level : " + this.currentPowerLevel);
+
 		this.currentIntensity.time = this.getCurrentStateTime();
 		this.currentProduction.time = this.getCurrentStateTime();
 	}
@@ -263,9 +266,9 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		assert ce instanceof AbstractBatteryEvent;
 		this.logger.logMessage("", this.getCurrentStateTime() + "BatteryElectricity executing the external event "
 				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		assert ce instanceof AbstractBatteryEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);
 	}

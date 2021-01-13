@@ -46,7 +46,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	/** energy generated during normal mode */
 	public static final double NORMAL_MODE_CONSUMPTION = 20;
 	/** tension same for all the house */
-	public static final double TENSION = 220;
+	public static final double TENSION = 15;
 	/** current intensity in Amperes; intensity is power/tension. */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
@@ -257,12 +257,11 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 		super.initialiseVariables(startTime);
 	}
 
-	/**
-	 * @see fr.sorbonne_u.devs_simulation.models.Model#initialiseState()
-	 */
 	@Override
-	public void initialiseState() {
-		super.initialiseState();
+	public void			initialiseState(Time initialTime)
+	{
+		super.initialiseState(initialTime);
+		this.initialiseDerivatives();
 	}
 
 	@Override
@@ -272,11 +271,12 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	@Override
 	public Duration timeAdvance() {
-		if (this.consumptionHasChanged) {
-			this.toggleConsumptionHasChanged();
-			return new Duration(0.0, this.getSimulatedTimeUnit());
-		}
-		return this.integrationStep;
+//		if (this.consumptionHasChanged) {
+//			this.toggleConsumptionHasChanged();
+//			return new Duration(0.0, this.getSimulatedTimeUnit());
+//		}
+//		return this.integrationStep;
+		return Duration.INFINITY;
 	}
 
 	/**
@@ -313,9 +313,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 				this.currentIntensity.v = 0.;
 			}
 		}
-//		this.logger.logMessage("",
-//				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v);
-		// System.out.println("current temperature of the fridge "+this.currentTemp.v);
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v);
 		this.currentIntensity.time = this.getCurrentStateTime();
 	}
 
