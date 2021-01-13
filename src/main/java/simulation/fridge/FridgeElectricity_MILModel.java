@@ -38,6 +38,9 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	// TODO : gérer consommation suspensible
 
+	/** integration step for the differential equation(assumed in seconds).	*/
+	protected static final double	STEP = 1.0;
+
 	private static final long serialVersionUID = 1L;
 	/** energy generated during eco mode */
 	public static final double ECO_MODE_CONSUMPTION = 15;
@@ -49,11 +52,6 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
 
-	/**
-	 * temps of fridge variable ?
-	 */
-	@ExportedVariable(type = Double.class)
-	protected final Value<Double> currentTemp = new Value<Double>(this, 0.0, 0);
 
 	/** current mode of the fridge */
 	protected FridgeMode currentMode = FridgeMode.ECO;
@@ -76,6 +74,15 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	// -------------------------------------------------------------------------
 	// HIOA model variables
 	// -------------------------------------------------------------------------
+
+	protected final Duration 	integrationStep;
+
+	/**
+	 * temps of fridge variable ?
+	 */
+	@InternalVariable(type = Double.class)
+	protected final Value<Double> currentTemp = new Value<Double>(this, 20.0, 0);
+
 	/** the current evaporator refregirant liquid temperature. 					*/
 	@InternalVariable(type = Double.class)
 	protected final Value<Double>  	evaporatorTemp = new Value<Double>(this, -20.);
@@ -88,6 +95,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	protected double 				requestedTemperature = 0;
 	/** the tolerance on the target water temperature to get a control with hysteresis */
 	protected double 				targetTolerance = 3.0;
+
+	protected double EXTERNAL_TEMPERATURE = 25;
 
 	protected double FREEZE_TRANSFER_CONSTANT = 1000;
 
@@ -111,6 +120,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	public FridgeElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
+		this.integrationStep = new Duration(STEP, simulatedTimeUnit);
 		this.setLogger(new FileLogger("fridgeElectricity.log"));
 	}
 
@@ -243,6 +253,11 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 						(ECO_FREEZE_TEMP - this.evaporatorTemp.v)/
 								FREEZE_TRANSFER_CONSTANT;
 		}
+		else {
+			this.currentTempDerivative =
+					(EXTERNAL_TEMPERATURE - this.evaporatorTemp.v)/
+							FREEZE_TRANSFER_CONSTANT;
+		}
 
 	}
 
@@ -253,6 +268,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	protected void initialiseVariables(Time startTime) {
 		this.currentMode = FridgeMode.ECO;
 		this.consumptionHasChanged = false;
+		this.isSuspended = false;
+
 		super.initialiseVariables(startTime);
 	}
 
@@ -285,20 +302,28 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
+		this.currentTemp.v = this.currentTemp.v + this.currentTempDerivative*STEP;
+		this.currentTemp.time = this.getCurrentStateTime();
+		// compute consumption
 		switch (this.currentMode) {
 		case ECO:
 			this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
 			break;
 		case NORMAL:
 			this.currentIntensity.v = NORMAL_MODE_CONSUMPTION / TENSION;
+			break;
 		}
+		// if current temp > requested temp + target tolerance switch on the fridge
 		if(this.currentTemp.v > this.requestedTemperature + this.targetTolerance)
 			this.isSuspended = false;
-		if(this.currentTemp.v < this.requestedTemperature + this.targetTolerance)
+		// switch off the fridge otherwise
+		else
 			this.isSuspended = true;
-
-		if(this.isSuspended)
+		// change consumption if the fridge is suspended
+		if(this.isSuspended) {
 			this.currentIntensity.v = 0.;
+			this.consumptionHasChanged=true;
+		}
 		this.currentIntensity.time = this.getCurrentStateTime();
 	}
 

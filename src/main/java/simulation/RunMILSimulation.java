@@ -256,7 +256,7 @@ public class RunMILSimulation {
 			// simulation run, after creating the simulation models from the
 			// architecture
 			SimulationEngine se = architecture.constructSimulator();
-			SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 1000L;
+			SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 200L;
 			se.doStandAloneSimulation(0.0, 5000.0);
 //			Thread.sleep(10000L);
 			System.exit(0);
