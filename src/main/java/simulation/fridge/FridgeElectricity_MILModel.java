@@ -246,16 +246,16 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 		if (!this.isSuspended){
 			if(this.currentMode == FridgeMode.NORMAL)
 				this.currentTempDerivative =
-						(STANDARD_FREEZE_TEMP - this.evaporatorTemp.v)/
+						(STANDARD_FREEZE_TEMP - this.currentTemp.v)/
 								FREEZE_TRANSFER_CONSTANT;
 			else
 				this.currentTempDerivative =
-						(ECO_FREEZE_TEMP - this.evaporatorTemp.v)/
+						(ECO_FREEZE_TEMP - this.currentTemp.v)/
 								FREEZE_TRANSFER_CONSTANT;
 		}
 		else {
 			this.currentTempDerivative =
-					(EXTERNAL_TEMPERATURE - this.evaporatorTemp.v)/
+					(EXTERNAL_TEMPERATURE - this.currentTemp.v)/
 							FREEZE_TRANSFER_CONSTANT;
 		}
 	}
@@ -311,7 +311,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		this.currentTemp.v = this.currentTemp.v - this.currentTempDerivative*STEP;
+		this.currentTemp.v = this.currentTemp.v + this.currentTempDerivative*STEP;
 		this.currentTemp.time = this.getCurrentStateTime();
 		// compute consumption
 		switch (this.currentMode) {
