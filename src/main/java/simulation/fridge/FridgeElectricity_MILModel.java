@@ -81,10 +81,6 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@InternalVariable(type = Double.class)
 	protected final Value<Double> currentTemp = new Value<Double>(this, 20.0, 0);
 
-	/** the current evaporator refregirant liquid temperature. */
-	@InternalVariable(type = Double.class)
-	protected final Value<Double> evaporatorTemp = new Value<Double>(this, -20.);
-
 	protected final double STANDARD_FREEZE_TEMP = -20;
 	protected final double ECO_FREEZE_TEMP = -10;
 
@@ -292,8 +288,11 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 		this.currentTemp.v = this.currentTemp.v + this.currentTempDerivative * STEP;
 		this.currentTemp.time = this.getCurrentStateTime();
 
+		// if the fridge is in normal mode the tolerance is reduced
+		double effectiveTolerance = this.getMode()==FridgeMode.NORMAL?this.targetTolerance/2: this.targetTolerance;
+
 		// if current temp > requested temp + target tolerance switch on the fridge
-		if (this.currentTemp.v > this.requestedTemperature + this.targetTolerance) {
+		if (this.currentTemp.v > this.requestedTemperature + effectiveTolerance) {
 			if(this.isSuspended){
 				this.isSuspended = false;
 				consumptionHasChanged = true;
@@ -314,8 +313,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 				this.currentIntensity.v = 0.;
 			}
 		}
-		this.logger.logMessage("",
-				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v);
+//		this.logger.logMessage("",
+//				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v);
 		// System.out.println("current temperature of the fridge "+this.currentTemp.v);
 		this.currentIntensity.time = this.getCurrentStateTime();
 	}

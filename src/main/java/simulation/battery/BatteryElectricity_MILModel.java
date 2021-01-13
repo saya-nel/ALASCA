@@ -170,7 +170,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		this.currentProduction.v = 0.0;
 		this.currentPowerLevel = this.maximumPowerLevel;
 		this.consumptionHasChanged = true;
-		this.currentState = BatteryState.DRAINING;
+		this.currentState = BatteryState.SLEEPING;
 		super.initialiseVariables(startTime);
 	}
 
@@ -209,14 +209,18 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		// if the battery is draining, it loose power
 		if (this.currentState == BatteryState.DRAINING) {
 			this.logger.logMessage("", "cc3");
-			if (currentPowerLevel > 0) {
+			if (currentPowerLevel - (DRAINING_MODE_PRODUCTION / 3600) > 0) {
 				// the battery loose power
 				this.currentPowerLevel -= DRAINING_MODE_PRODUCTION / 3600;
 				this.logger.logMessage("",
 						this.getCurrentStateTime() + " : current power level : " + this.currentPowerLevel);
 				this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
-			} else if (currentPowerLevel <= 0) {
+				this.currentIntensity.v  = 0.;
+			} else {
 				this.currentState = BatteryState.SLEEPING;
+				this.currentIntensity.v = 0.;
+				this.currentProduction.v = 0.;
+				this.currentPowerLevel = 0;
 				this.toggleConsumptionHasChanged();
 			}
 		} else if (this.currentState == BatteryState.SLEEPING) {
@@ -225,18 +229,26 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 			if (this.currentPowerLevel >= maximumPowerLevel) {
 				this.currentState = BatteryState.DRAINING;
 				this.toggleConsumptionHasChanged();
-			} else if (this.currentPowerLevel <= 0) {
+				this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
+				this.currentIntensity.v  = 0.;
+			} else {
 				this.currentState = BatteryState.RECHARGING;
+				this.currentIntensity.v = RECHARGING_MODE_CONSUMPTION / TENSION;
+				this.currentProduction.v = 0.;
 				this.toggleConsumptionHasChanged();
 			}
 		} else if (this.currentState == BatteryState.RECHARGING) {
 			this.currentProduction.v = 0.;
-			if (this.currentPowerLevel < maximumPowerLevel) {
+			if (this.currentPowerLevel + (RECHARGING_MODE_CONSUMPTION / 3600) < maximumPowerLevel) {
 				this.currentIntensity.v = RECHARGING_MODE_CONSUMPTION / TENSION;
 				this.currentProduction.v = 0.;
 				this.currentPowerLevel += RECHARGING_MODE_CONSUMPTION / 3600;
 			} else {
 				this.currentState = BatteryState.SLEEPING;
+				this.currentIntensity.v = 0.;
+				this.currentProduction.v = 0.;
+				this.currentPowerLevel = maximumPowerLevel;
+				toggleConsumptionHasChanged();
 			}
 		}
 		this.currentIntensity.time = this.getCurrentStateTime();
