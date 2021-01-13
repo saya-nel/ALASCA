@@ -258,7 +258,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 					(EXTERNAL_TEMPERATURE - this.evaporatorTemp.v)/
 							FREEZE_TRANSFER_CONSTANT;
 		}
-
+		System.out.println("current Temperature Der "+this.currentTempDerivative);
+		System.out.println("target temperature: "+this.requestedTemperature);
 	}
 
 	/**
@@ -288,12 +289,17 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	@Override
 	public Duration timeAdvance() {
-		if (this.consumptionHasChanged) {
-			this.toggleConsumptionHasChanged();
-			return new Duration(0.0, this.getSimulatedTimeUnit());
-		} else {
-			return Duration.INFINITY;
-		}
+		return this.integrationStep;
+//		if (this.consumptionHasChanged && this.isSuspended){
+//			this.toggleConsumptionHasChanged();
+//			return this.integrationStep;
+//		}
+//		if (this.consumptionHasChanged) {
+//			this.toggleConsumptionHasChanged();
+//			return new Duration(0.0, this.getSimulatedTimeUnit());
+//		} else {
+//			return Duration.INFINITY;
+//		}
 	}
 
 	/**
@@ -302,7 +308,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		this.currentTemp.v = this.currentTemp.v + this.currentTempDerivative*STEP;
+		this.currentTemp.v = this.currentTemp.v - this.currentTempDerivative*STEP;
 		this.currentTemp.time = this.getCurrentStateTime();
 		// compute consumption
 		switch (this.currentMode) {
@@ -324,6 +330,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 			this.currentIntensity.v = 0.;
 			this.consumptionHasChanged=true;
 		}
+		this.logger.logMessage("", this.getCurrentStateTime()+" current temperature of the fridge "+this.currentTemp.v);
+		//System.out.println("current temperature of the fridge "+this.currentTemp.v);
 		this.currentIntensity.time = this.getCurrentStateTime();
 	}
 
