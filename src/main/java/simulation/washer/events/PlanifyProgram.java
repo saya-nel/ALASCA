@@ -3,6 +3,7 @@ package main.java.simulation.washer.events;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
+import main.java.simulation.utils.SimProgram;
 import main.java.simulation.washer.WasherElectricity_MILModel;
 
 // TODO : cette classe est inutilisable en l'état, il faut passer les deux duration directement quand on créer l'event
@@ -11,8 +12,11 @@ public class PlanifyProgram extends AbstractWasherEvent {
 
 	private static final long serialVersionUID = 1L;
 
-	public PlanifyProgram(Time timeOfOccurrence) {
+	protected SimProgram program = null;
+
+	public PlanifyProgram(Time timeOfOccurrence, SimProgram program) {
 		super(timeOfOccurrence, null);
+		this.program = program;
 	}
 
 	/**
@@ -20,7 +24,7 @@ public class PlanifyProgram extends AbstractWasherEvent {
 	 */
 	@Override
 	public String eventAsString() {
-		return "SetEco(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+		return "planifyProgramWasher(" + this.getTimeOfOccurrence().getSimulatedTime() + " "+this.program+")";
 	}
 
 	/**

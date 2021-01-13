@@ -246,7 +246,7 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 				this.currentIntensity.v = PERFORMANCE_MODE_CONSUMPTION / TENSION;
 			}
 		}
-		// the washer is runing
+		// the washer is running
 		else if (this.isOn) {
 			switch (this.currentMode) {
 			case ECO:

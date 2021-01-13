@@ -9,12 +9,8 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.washer.events.AbstractWasherEvent;
-import main.java.simulation.washer.events.SetEco;
-import main.java.simulation.washer.events.SetPerformance;
-import main.java.simulation.washer.events.SetStd;
-import main.java.simulation.washer.events.TurnOff;
-import main.java.simulation.washer.events.TurnOn;
+import main.java.simulation.utils.SimProgram;
+import main.java.simulation.washer.events.*;
 
 /**
  *
@@ -63,7 +59,12 @@ public class WasherUser_MILModel extends AtomicModel {
 				this.currentEvent = new SetPerformance(t);
 			} else if (c.equals(SetPerformance.class)) {
 				this.currentEvent = new TurnOff(t);
+			} else if (c.equals(PlanifyProgram.class)) {
+				this.currentEvent = new PlanifyProgram(t,
+						new SimProgram(this.getCurrentStateTime(),
+								new Duration(5,this.getSimulatedTimeUnit())));
 			}
+
 		}
 		return this.currentEvent;
 	}

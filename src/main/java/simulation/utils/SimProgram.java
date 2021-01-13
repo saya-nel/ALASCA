@@ -33,4 +33,9 @@ public class SimProgram {
     public void setBeginProgram(Time beginProgram) {
         this.beginProgram = beginProgram;
     }
+
+    public String toString() {
+        return "program begin in :"+ this.getBeginProgram() + " during: "+this.getDurationProgram();
+    }
+
 }
