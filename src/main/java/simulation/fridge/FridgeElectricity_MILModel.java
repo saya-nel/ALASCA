@@ -258,8 +258,6 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 					(EXTERNAL_TEMPERATURE - this.evaporatorTemp.v)/
 							FREEZE_TRANSFER_CONSTANT;
 		}
-		System.out.println("current Temperature Der "+this.currentTempDerivative);
-		System.out.println("target temperature: "+this.requestedTemperature);
 	}
 
 	/**
@@ -289,6 +287,11 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	@Override
 	public Duration timeAdvance() {
+		if(this.consumptionHasChanged)
+		{
+			this.toggleConsumptionHasChanged();
+			return new Duration(0.0, this.getSimulatedTimeUnit());
+		}
 		return this.integrationStep;
 //		if (this.consumptionHasChanged && this.isSuspended){
 //			this.toggleConsumptionHasChanged();

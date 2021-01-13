@@ -14,12 +14,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.utils.FileLogger;
 import main.java.simulation.utils.SimProgram;
-import main.java.simulation.washer.events.AbstractWasherEvent;
-import main.java.simulation.washer.events.SetEco;
-import main.java.simulation.washer.events.SetPerformance;
-import main.java.simulation.washer.events.SetStd;
-import main.java.simulation.washer.events.TurnOff;
-import main.java.simulation.washer.events.TurnOn;
+import main.java.simulation.washer.events.*;
 import main.java.utils.WasherModes;
 
 /**
@@ -35,7 +30,8 @@ import main.java.utils.WasherModes;
  * 
  * @author Bello Memmi
  */
-@ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetEco.class, SetStd.class, SetPerformance.class })
+@ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetEco.class, SetStd.class, SetPerformance.class, PlanifyProgram.class },
+exported = { PlanifyProgram.class })
 public class WasherElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
@@ -231,23 +227,12 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 			// TODO : gérer l'envoie d'un evenement comme quoi le washer c'est eteind, de la
 			// meme façon que petrol generator / battery
 		}
-		// if the washer isnt already on and have a defined program which need to start
+		// if the washer isnt already on and have a defined program which need to be started or currently running
 		// now
 		else if (!this.isOn && this.program != null
-				&& this.getCurrentStateTime().greaterThanOrEqual(this.program.getBeginProgram())) {
+				&& this.getCurrentStateTime().greaterThanOrEqual(this.program.getBeginProgram())
+				|| this.isOn) {
 			this.isOn = true;
-			switch (this.currentMode) {
-			case ECO:
-				this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
-				break;
-			case STD:
-				this.currentIntensity.v = STD_MODE_CONSUMPTION / TENSION;
-			case PERFORMANCE:
-				this.currentIntensity.v = PERFORMANCE_MODE_CONSUMPTION / TENSION;
-			}
-		}
-		// the washer is running
-		else if (this.isOn) {
 			switch (this.currentMode) {
 			case ECO:
 				this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;

@@ -27,7 +27,7 @@ import main.java.simulation.washer.events.*;
  * </p>
  * @author Bello Memmi
  */
-@ModelExternalEvents(exported = { TurnOn.class, TurnOff.class, SetPerformance.class, SetStd.class, SetEco.class })
+@ModelExternalEvents(exported = { TurnOn.class, TurnOff.class, SetPerformance.class, SetStd.class, SetEco.class, PlanifyProgram.class })
 public class WasherUser_MILModel extends AtomicModel {
 
 	private static final long serialVersionUID = 1L;
@@ -58,11 +58,12 @@ public class WasherUser_MILModel extends AtomicModel {
 			} else if (c.equals(SetStd.class)) {
 				this.currentEvent = new SetPerformance(t);
 			} else if (c.equals(SetPerformance.class)) {
-				this.currentEvent = new TurnOff(t);
-			} else if (c.equals(PlanifyProgram.class)) {
 				this.currentEvent = new PlanifyProgram(t,
 						new SimProgram(this.getCurrentStateTime(),
-								new Duration(5,this.getSimulatedTimeUnit())));
+								new Duration(2,this.getSimulatedTimeUnit())));
+			}
+			else if (c.equals(SetPerformance.class)) {
+				this.currentEvent = new TurnOff(t);
 			}
 
 		}
