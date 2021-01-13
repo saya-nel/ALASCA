@@ -223,6 +223,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		super.userDefinedInternalTransition(elapsedTime);
 		// if the generator is on and get petrol, he produce electicity and consumes
 		// petrol
+		this.logger.logMessage("", "" + this.getCurrentStateTime());
 		if (this.isOn && currentPetrolLevel > 0) {
 			this.currentProduction.v = GENERATING / TENSION;
 			this.currentPetrolLevel -= 1;

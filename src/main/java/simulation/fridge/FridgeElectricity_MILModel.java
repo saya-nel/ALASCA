@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.InternalVariable;
-import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithDE;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
@@ -38,8 +37,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	// TODO : gérer consommation suspensible
 
-	/** integration step for the differential equation(assumed in seconds).	*/
-	protected static final double	STEP = 1.0;
+	/** integration step for the differential equation(assumed in seconds). */
+	protected static final double STEP = 1.0;
 
 	private static final long serialVersionUID = 1L;
 	/** energy generated during eco mode */
@@ -51,7 +50,6 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	/** current intensity in Amperes; intensity is power/tension. */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
-
 
 	/** current mode of the fridge */
 	protected FridgeMode currentMode = FridgeMode.ECO;
@@ -75,7 +73,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	// HIOA model variables
 	// -------------------------------------------------------------------------
 
-	protected final Duration 	integrationStep;
+	protected final Duration integrationStep;
 
 	/**
 	 * temps of fridge variable ?
@@ -83,23 +81,25 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@InternalVariable(type = Double.class)
 	protected final Value<Double> currentTemp = new Value<Double>(this, 20.0, 0);
 
-	/** the current evaporator refregirant liquid temperature. 					*/
+	/** the current evaporator refregirant liquid temperature. */
 	@InternalVariable(type = Double.class)
-	protected final Value<Double>  	evaporatorTemp = new Value<Double>(this, -20.);
+	protected final Value<Double> evaporatorTemp = new Value<Double>(this, -20.);
 
-	protected final double 			STANDARD_FREEZE_TEMP = -20;
-	protected final double 			ECO_FREEZE_TEMP		= -10;
+	protected final double STANDARD_FREEZE_TEMP = -20;
+	protected final double ECO_FREEZE_TEMP = -10;
 
-	protected  double 				currentTempDerivative = 0.0;
+	protected double currentTempDerivative = 0.0;
 	/** requested temperature */
-	protected double 				requestedTemperature = 0;
-	/** the tolerance on the target water temperature to get a control with hysteresis */
-	protected double 				targetTolerance = 3.0;
+	protected double requestedTemperature = 0;
+	/**
+	 * the tolerance on the target water temperature to get a control with
+	 * hysteresis
+	 */
+	protected double targetTolerance = 3.0;
 
 	protected double EXTERNAL_TEMPERATURE = 25;
 
 	protected double FREEZE_TRANSFER_CONSTANT = 1000;
-
 
 	/**
 	 * Create a Fridge MIL model instance.
@@ -123,8 +123,6 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 		this.integrationStep = new Duration(STEP, simulatedTimeUnit);
 		this.setLogger(new FileLogger("fridgeElectricity.log"));
 	}
-
-
 
 	/**
 	 * set the mode of the Fridge
@@ -227,7 +225,6 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
 
-
 	/**
 	 * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithDE#initialiseDerivatives()
 	 */
@@ -240,23 +237,15 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	 * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithDE#computeDerivatives()
 	 */
 	@Override
-	public void computeDerivatives()
-	{
+	public void computeDerivatives() {
 		this.currentTempDerivative = 0.0;
-		if (!this.isSuspended){
-			if(this.currentMode == FridgeMode.NORMAL)
-				this.currentTempDerivative =
-						(STANDARD_FREEZE_TEMP - this.currentTemp.v)/
-								FREEZE_TRANSFER_CONSTANT;
+		if (!this.isSuspended) {
+			if (this.currentMode == FridgeMode.NORMAL)
+				this.currentTempDerivative = (STANDARD_FREEZE_TEMP - this.currentTemp.v) / FREEZE_TRANSFER_CONSTANT;
 			else
-				this.currentTempDerivative =
-						(ECO_FREEZE_TEMP - this.currentTemp.v)/
-								FREEZE_TRANSFER_CONSTANT;
-		}
-		else {
-			this.currentTempDerivative =
-					(EXTERNAL_TEMPERATURE - this.currentTemp.v)/
-							FREEZE_TRANSFER_CONSTANT;
+				this.currentTempDerivative = (ECO_FREEZE_TEMP - this.currentTemp.v) / FREEZE_TRANSFER_CONSTANT;
+		} else {
+			this.currentTempDerivative = (EXTERNAL_TEMPERATURE - this.currentTemp.v) / FREEZE_TRANSFER_CONSTANT;
 		}
 	}
 
@@ -287,22 +276,11 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	@Override
 	public Duration timeAdvance() {
-		if(this.consumptionHasChanged)
-		{
+		if (this.consumptionHasChanged) {
 			this.toggleConsumptionHasChanged();
 			return new Duration(0.0, this.getSimulatedTimeUnit());
 		}
 		return this.integrationStep;
-//		if (this.consumptionHasChanged && this.isSuspended){
-//			this.toggleConsumptionHasChanged();
-//			return this.integrationStep;
-//		}
-//		if (this.consumptionHasChanged) {
-//			this.toggleConsumptionHasChanged();
-//			return new Duration(0.0, this.getSimulatedTimeUnit());
-//		} else {
-//			return Duration.INFINITY;
-//		}
 	}
 
 	/**
@@ -311,7 +289,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		this.currentTemp.v = this.currentTemp.v + this.currentTempDerivative*STEP;
+		this.currentTemp.v = this.currentTemp.v + this.currentTempDerivative * STEP;
 		this.currentTemp.time = this.getCurrentStateTime();
 		// compute consumption
 		switch (this.currentMode) {
@@ -323,18 +301,19 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 			break;
 		}
 		// if current temp > requested temp + target tolerance switch on the fridge
-		if(this.currentTemp.v > this.requestedTemperature + this.targetTolerance)
+		if (this.currentTemp.v > this.requestedTemperature + this.targetTolerance)
 			this.isSuspended = false;
 		// switch off the fridge otherwise
 		else
 			this.isSuspended = true;
 		// change consumption if the fridge is suspended
-		if(this.isSuspended) {
+		if (this.isSuspended) {
 			this.currentIntensity.v = 0.;
-			this.consumptionHasChanged=true;
+			this.consumptionHasChanged = true;
 		}
-		this.logger.logMessage("", this.getCurrentStateTime()+" current temperature of the fridge "+this.currentTemp.v);
-		//System.out.println("current temperature of the fridge "+this.currentTemp.v);
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v);
+		// System.out.println("current temperature of the fridge "+this.currentTemp.v);
 		this.currentIntensity.time = this.getCurrentStateTime();
 	}
 
