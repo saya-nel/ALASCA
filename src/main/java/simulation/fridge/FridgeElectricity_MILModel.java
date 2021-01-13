@@ -293,9 +293,9 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 			this.currentIntensity.v = NORMAL_MODE_CONSUMPTION / TENSION;
 		}
 		if(this.currentTemp.v > this.requestedTemperature + this.targetTolerance)
-			this.isSuspended = true;
-		if(this.currentTemp.v < this.requestedTemperature + this.targetTolerance)
 			this.isSuspended = false;
+		if(this.currentTemp.v < this.requestedTemperature + this.targetTolerance)
+			this.isSuspended = true;
 
 		if(this.isSuspended)
 			this.currentIntensity.v = 0.;
