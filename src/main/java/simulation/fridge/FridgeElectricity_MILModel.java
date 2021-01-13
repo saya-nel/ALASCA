@@ -257,7 +257,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 		this.currentMode = FridgeMode.ECO;
 		this.consumptionHasChanged = false;
 		this.isSuspended = false;
-
+		this.currentTemp.v = EXTERNAL_TEMPERATURE;
 		super.initialiseVariables(startTime);
 	}
 
@@ -291,25 +291,28 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 		super.userDefinedInternalTransition(elapsedTime);
 		this.currentTemp.v = this.currentTemp.v + this.currentTempDerivative * STEP;
 		this.currentTemp.time = this.getCurrentStateTime();
-		// compute consumption
-		switch (this.currentMode) {
-		case ECO:
-			this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
-			break;
-		case NORMAL:
-			this.currentIntensity.v = NORMAL_MODE_CONSUMPTION / TENSION;
-			break;
-		}
+
 		// if current temp > requested temp + target tolerance switch on the fridge
-		if (this.currentTemp.v > this.requestedTemperature + this.targetTolerance)
-			this.isSuspended = false;
-		// switch off the fridge otherwise
-		else
-			this.isSuspended = true;
-		// change consumption if the fridge is suspended
-		if (this.isSuspended) {
-			this.currentIntensity.v = 0.;
-			this.consumptionHasChanged = true;
+		if (this.currentTemp.v > this.requestedTemperature + this.targetTolerance) {
+			if(this.isSuspended){
+				this.isSuspended = false;
+				consumptionHasChanged = true;
+				switch (this.currentMode) {
+					case ECO:
+						this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
+						break;
+					case NORMAL:
+						this.currentIntensity.v = NORMAL_MODE_CONSUMPTION / TENSION;
+						break;
+				}
+			}
+		}
+		else {
+			if(!this.isSuspended){
+				this.isSuspended = true;
+				consumptionHasChanged = true;
+				this.currentIntensity.v = 0.;
+			}
 		}
 		this.logger.logMessage("",
 				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v);
