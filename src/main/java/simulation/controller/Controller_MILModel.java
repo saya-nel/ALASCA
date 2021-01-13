@@ -103,15 +103,15 @@ public class Controller_MILModel extends AtomicModel {
 			assert (event instanceof ConsumptionLevel || event instanceof ProductionLevel || event instanceof EmptyPlan);
 			if (event instanceof ConsumptionLevel) {
 				ConsumptionLevel ce = (ConsumptionLevel) event;
-				/*this.logger.logMessage("", "Controller receiving the external event " + ce.getClass().getSimpleName()
-						+ "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ", " + ce.getConsumptionLevel() + ")");*/
+				this.logger.logMessage("", "Controller receiving the external event " + ce.getClass().getSimpleName()
+						+ "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ", " + ce.getConsumptionLevel() + ")");
 				consumptionLevel = ce.getConsumptionLevel();
 			} else if (event instanceof ProductionLevel) {
 				ProductionLevel pe = (ProductionLevel) event;
-				/*this.logger.logMessage("",
+				this.logger.logMessage("",
 						this.getCurrentStateTime() + " Controller receiving the external event "
 								+ pe.getClass().getSimpleName() + "(" + pe.getTimeOfOccurrence().getSimulatedTime()
-								+ ", " + pe.getProductionLevel() + ")");*/
+								+ ", " + pe.getProductionLevel() + ")");
 				productionLevel = pe.getProductionLevel();
 			} else if (event instanceof  EmptyPlan) {
 				EmptyPlan ep = (EmptyPlan) event;

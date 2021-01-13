@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
+import fr.sorbonne_u.devs_simulation.hioa.annotations.InternalVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
+import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithDE;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.Event;
@@ -32,7 +34,7 @@ import main.java.utils.FridgeMode;
  * @author Bello Memmi
  */
 @ModelExternalEvents(imported = { SetEco.class, SetNormal.class })
-public class FridgeElectricity_MILModel extends AtomicHIOA {
+public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	// TODO : gérer consommation suspensible
 
@@ -60,8 +62,35 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 	 * executing an external event (when <code>currentState</code> changes
 	 */
 	protected boolean consumptionHasChanged = false;
+
+	/**
+	 * true if the fridge is currently suspended
+	 */
+	protected boolean isSuspended = false;
+
+	/**
+	 * beginning's time of the suspension
+	 */
+	protected Time beginSuspension = null;
+
+	// -------------------------------------------------------------------------
+	// HIOA model variables
+	// -------------------------------------------------------------------------
+	/** the current evaporator refregirant liquid temperature. 					*/
+	@InternalVariable(type = Double.class)
+	protected final Value<Double>  	evaporatorTemp = new Value<Double>(this, -20.);
+
+	protected final double 			STANDARD_FREEZE_TEMP = -20;
+	protected final double 			ECO_FREEZE_TEMP		= -10;
+
+	protected  double 				currentTempDerivative = 0.0;
 	/** requested temperature */
-	protected float requestedTemperature = 0;
+	protected double 				requestedTemperature = 0;
+	/** the tolerance on the target water temperature to get a control with hysteresis */
+	protected double 				targetTolerance = 3.0;
+
+	protected double FREEZE_TRANSFER_CONSTANT = 1000;
+
 
 	/**
 	 * Create a Fridge MIL model instance.
@@ -84,6 +113,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 		super(uri, simulatedTimeUnit, simulationEngine);
 		this.setLogger(new FileLogger("fridgeElectricity.log"));
 	}
+
+
 
 	/**
 	 * set the mode of the Fridge
@@ -172,9 +203,48 @@ public class FridgeElectricity_MILModel extends AtomicHIOA {
 	public void upperRequestedTemperature() {
 		this.requestedTemperature++;
 	}
+
+	public void suspend() {
+		this.isSuspended = true;
+		this.beginSuspension = this.getCurrentStateTime();
+	}
+
+	public void resume() {
+		this.isSuspended = false;
+		this.beginSuspension = null;
+	}
 	// -------------------------------------------------------------------------
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
+
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithDE#initialiseDerivatives()
+	 */
+	@Override
+	protected void initialiseDerivatives() {
+		this.computeDerivatives();
+	}
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithDE#computeDerivatives()
+	 */
+	@Override
+	public void computeDerivatives()
+	{
+		this.currentTempDerivative = 0.0;
+		if (!this.isSuspended){
+			if(this.currentMode == FridgeMode.NORMAL)
+				this.currentTempDerivative =
+						(STANDARD_FREEZE_TEMP - this.evaporatorTemp.v)/
+								FREEZE_TRANSFER_CONSTANT;
+			else
+				this.currentTempDerivative =
+						(ECO_FREEZE_TEMP - this.evaporatorTemp.v)/
+								FREEZE_TRANSFER_CONSTANT;
+		}
+
+	}
 
 	/**
 	 * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseVariables(fr.sorbonne_u.devs_simulation.models.time.Time)
