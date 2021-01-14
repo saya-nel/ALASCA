@@ -91,7 +91,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	 * the tolerance on the target water temperature to get a control with
 	 * hysteresis
 	 */
-	protected double targetTolerance = 3.0;
+	protected double CRITICAL_TEMPERATURE = 15;
 
 	protected double EXTERNAL_TEMPERATURE = 25;
 
@@ -288,34 +288,32 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 		this.currentTemp.v = this.currentTemp.v + this.currentTempDerivative * STEP;
 		this.currentTemp.time = this.getCurrentStateTime();
 
-		// if the fridge is in normal mode the tolerance is reduced
-		double effectiveTolerance = this.getMode()==FridgeMode.NORMAL?this.targetTolerance/2: this.targetTolerance;
+		switch (this.currentMode) {
+		case ECO:
+			this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
+			break;
+		case NORMAL:
+			this.currentIntensity.v = NORMAL_MODE_CONSUMPTION / TENSION;
+			break;
+		}
 
-		// if current temp > requested temp + target tolerance switch on the fridge
-		if (this.currentTemp.v > this.requestedTemperature + effectiveTolerance) {
-			if(this.isSuspended){
-				this.isSuspended = false;
-				consumptionHasChanged = true;
-				switch (this.currentMode) {
-					case ECO:
-						this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
-						break;
-					case NORMAL:
-						this.currentIntensity.v = NORMAL_MODE_CONSUMPTION / TENSION;
-						break;
-				}
-			}
+		// if the fridge is suspended and the temperature of the fridge is greater or
+		// equal than the critical temperature
+		// we unsuspend it
+		if (this.isSuspended && this.currentTemp.v >= this.CRITICAL_TEMPERATURE) {
+			this.isSuspended = false;
+			consumptionHasChanged = true;
 		}
-		else {
-			if(!this.isSuspended){
-				this.isSuspended = true;
-				consumptionHasChanged = true;
-				this.currentIntensity.v = 0.;
-			}
+		// if the fridge is running and the temperature is lower than the requested
+		// temperature, we suspend it
+		else if (!this.isSuspended && this.currentTemp.v <= this.requestedTemperature) {
+			this.isSuspended = true;
+			consumptionHasChanged = true;
+			this.currentIntensity.v = 0.;
 		}
-//		this.logger.logMessage("",
-//				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v);
-		// System.out.println("current temperature of the fridge "+this.currentTemp.v);
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v);
+
 		this.currentIntensity.time = this.getCurrentStateTime();
 	}
 
