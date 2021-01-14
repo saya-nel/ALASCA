@@ -13,9 +13,7 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.fridge.events.AbstractFridgeEvent;
-import main.java.simulation.fridge.events.SetEco;
-import main.java.simulation.fridge.events.SetNormal;
+import main.java.simulation.fridge.events.*;
 import main.java.simulation.utils.FileLogger;
 import main.java.utils.FridgeMode;
 
@@ -32,7 +30,7 @@ import main.java.utils.FridgeMode;
  * 
  * @author Bello Memmi
  */
-@ModelExternalEvents(imported = { SetEco.class, SetNormal.class })
+@ModelExternalEvents(imported = { SetEco.class, SetNormal.class, UpperRequestedTemperature.class, LowerRequestedTemperature.class})
 public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	// TODO : gérer consommation suspensible
@@ -81,6 +79,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@InternalVariable(type = Double.class)
 	protected final Value<Double> currentTemp = new Value<Double>(this, 20.0, 0);
 
+	protected final double MINIMAL_FRIDGE_TEMP = -4;
+
 	protected final double STANDARD_FREEZE_TEMP = -20;
 	protected final double ECO_FREEZE_TEMP = -10;
 
@@ -91,7 +91,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	 * the tolerance on the target refregirant temperature to get a control with
 	 * hysteresis
 	 */
-	protected double CRITICAL_TEMPERATURE = 15;
+	protected double CRITICAL_TEMPERATURE = 15;//this.requestedTemperature + 5;
 
 	protected double EXTERNAL_TEMPERATURE = 25;
 
@@ -182,13 +182,16 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	 * 
 	 * <pre>
 	 *     pre 	true 	// no precondition
-	 *     post	true 	// no postcondition
+	 *     post	requestedTemperature>= -10 	// no postcondition
 	 * </pre>
 	 * 
 	 * @return
 	 */
 	public void lowerRequestedTemperature() {
-		this.requestedTemperature--;
+		if(this.requestedTemperature-1<=this.MINIMAL_FRIDGE_TEMP)
+			this.requestedTemperature=this.MINIMAL_FRIDGE_TEMP;
+		else
+			this.requestedTemperature--;
 	}
 
 	/**
@@ -204,8 +207,15 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	 * 
 	 * @return
 	 */
-	public void upperRequestedTemperature() {
-		this.requestedTemperature++;
+	public boolean upperRequestedTemperature() {
+		if(this.requestedTemperature+1>=EXTERNAL_TEMPERATURE){
+			this.requestedTemperature = EXTERNAL_TEMPERATURE;
+			return false;
+		}
+		else{
+			this.requestedTemperature++;
+			return true;
+		}
 	}
 
 	public void suspend() {
@@ -254,6 +264,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 		this.consumptionHasChanged = false;
 		this.isSuspended = false;
 		this.currentTemp.v = EXTERNAL_TEMPERATURE;
+		this.CRITICAL_TEMPERATURE = this.requestedTemperature + 5;
 		super.initialiseVariables(startTime);
 	}
 
@@ -270,12 +281,12 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	@Override
 	public Duration timeAdvance() {
-		return Duration.INFINITY;
-//		if (this.consumptionHasChanged) {
-//			this.toggleConsumptionHasChanged();
-//			return new Duration(0.0, this.getSimulatedTimeUnit());
-//		}
-//		return this.integrationStep;
+		//return Duration.INFINITY;
+		if (this.consumptionHasChanged) {
+			this.toggleConsumptionHasChanged();
+			return new Duration(0.0, this.getSimulatedTimeUnit());
+		}
+		return this.integrationStep;
 	}
 
 	/**
@@ -284,6 +295,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
+		this.CRITICAL_TEMPERATURE = this.requestedTemperature + 5;
 		this.currentTemp.v = this.currentTemp.v + this.currentTempDerivative * STEP;
 		this.currentTemp.time = this.getCurrentStateTime();
 
@@ -295,10 +307,12 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 			this.currentIntensity.v = NORMAL_MODE_CONSUMPTION / TENSION;
 			break;
 		}
+		// compute the critical temperature different whether the fridge is in normal mode or not
+		double critical_temp 		= this.currentMode==FridgeMode.NORMAL?this.CRITICAL_TEMPERATURE/2:this.CRITICAL_TEMPERATURE;
 		// if the fridge is suspended and the temperature of the fridge is greater or
 		// equal than the critical temperature
 		// we unsuspend it
-		if (this.isSuspended && this.currentTemp.v >= this.CRITICAL_TEMPERATURE) {
+		if (this.isSuspended && this.currentTemp.v >= critical_temp) {
 			this.isSuspended = false;
 			consumptionHasChanged = true;
 		}
@@ -310,8 +324,8 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 			this.currentIntensity.v = 0.;
 		}
 		this.logger.logMessage("",
-				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v);
-
+				this.getCurrentStateTime() + " current temperature of the fridge " + this.currentTemp.v
+						+ " current target temperature "+ this.requestedTemperature );
 		this.currentIntensity.time = this.getCurrentStateTime();
 	}
 

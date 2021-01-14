@@ -209,13 +209,13 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 
 	@Override
 	public Duration timeAdvance() {
-		return Duration.INFINITY;
-//		if (this.consumptionHasChanged) {
-//			this.toggleConsumptionHasChanged();
-//			return new Duration(0.0, this.getSimulatedTimeUnit());
-//		} else {
-//			return Duration.INFINITY;
-//		}
+
+		if (this.consumptionHasChanged) {
+			this.toggleConsumptionHasChanged();
+			return new Duration(0.0, this.getSimulatedTimeUnit());
+		} else {
+			return Duration.INFINITY;
+		}
 	}
 
 	/**

@@ -4,7 +4,6 @@ import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.simulation.fridge.FridgeElectricity_MILModel;
-
 /**
  * The class <code>UpperRequestedTemperature</code> defines the MIL event of the fridge being
  * lowered from 1 degree.
@@ -63,7 +62,8 @@ public class UpperRequestedTemperature extends AbstractFridgeEvent {
 		assert model instanceof FridgeElectricity_MILModel;
 
 		FridgeElectricity_MILModel m = (FridgeElectricity_MILModel) model;
-		m.upperRequestedTemperature();
-		m.toggleConsumptionHasChanged();
+		boolean res =m.upperRequestedTemperature();
+		if(res)
+			m.toggleConsumptionHasChanged();
 	}
 }

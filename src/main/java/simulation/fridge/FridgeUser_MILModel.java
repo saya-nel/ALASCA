@@ -9,11 +9,9 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.fridge.events.AbstractFridgeEvent;
-import main.java.simulation.fridge.events.SetEco;
-import main.java.simulation.fridge.events.SetNormal;
+import main.java.simulation.fridge.events.*;
 
-@ModelExternalEvents(exported = { SetEco.class, SetNormal.class })
+@ModelExternalEvents(exported = { SetEco.class, SetNormal.class, UpperRequestedTemperature.class, LowerRequestedTemperature.class})
 public class FridgeUser_MILModel extends AtomicModel {
 
 	private static final long serialVersionUID = 1L;
@@ -38,8 +36,12 @@ public class FridgeUser_MILModel extends AtomicModel {
 			if (c.equals(SetEco.class)) {
 				this.currentEvent = new SetNormal(t);
 			} else if (c.equals(SetNormal.class)) {
+				this.currentEvent = new UpperRequestedTemperature(t);
+			}
+			else if (c.equals(UpperRequestedTemperature.class)) {
 				this.currentEvent = new SetEco(t);
 			}
+
 		}
 		return this.currentEvent;
 	}
@@ -67,8 +69,8 @@ public class FridgeUser_MILModel extends AtomicModel {
 
 	@Override
 	public Duration timeAdvance() {
-		return Duration.INFINITY;
-//		return this.time2next;
+		//return Duration.INFINITY;
+		return this.time2next;
 	}
 
 }

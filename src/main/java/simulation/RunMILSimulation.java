@@ -30,8 +30,10 @@ import main.java.simulation.fan.events.TurnOff;
 import main.java.simulation.fan.events.TurnOn;
 import main.java.simulation.fridge.FridgeElectricity_MILModel;
 import main.java.simulation.fridge.FridgeUser_MILModel;
+import main.java.simulation.fridge.events.LowerRequestedTemperature;
 import main.java.simulation.fridge.events.SetEco;
 import main.java.simulation.fridge.events.SetNormal;
+import main.java.simulation.fridge.events.UpperRequestedTemperature;
 import main.java.simulation.panel.PanelElectricity_MILModel;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
@@ -165,6 +167,11 @@ public class RunMILSimulation {
 					new EventSink[] { new EventSink(fridgeURI, SetEco.class) });
 			connections.put(new EventSource(fridgeUserURI, SetNormal.class),
 					new EventSink[] { new EventSink(fridgeURI, SetNormal.class) });
+			// temperature requests fridgeUser
+			connections.put(new EventSource(fridgeUserURI, UpperRequestedTemperature.class),
+					new EventSink[] {new EventSink(fridgeURI, UpperRequestedTemperature.class)});
+			connections.put(new EventSource(fridgeUserURI, LowerRequestedTemperature.class),
+					new EventSink[] {new EventSink(fridgeURI, LowerRequestedTemperature.class)});
 
 			// sending by washerUser
 			connections.put(new EventSource(washerUserURI, main.java.simulation.washer.events.SetEco.class),
