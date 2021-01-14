@@ -46,7 +46,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	/** energy generated during normal mode */
 	public static final double NORMAL_MODE_CONSUMPTION = 20;
 	/** tension same for all the house */
-	public static final double TENSION = 220;
+	public static final double TENSION = 15;
 	/** current intensity in Amperes; intensity is power/tension. */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
@@ -257,12 +257,11 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 		super.initialiseVariables(startTime);
 	}
 
-	/**
-	 * @see fr.sorbonne_u.devs_simulation.models.Model#initialiseState()
-	 */
 	@Override
-	public void initialiseState() {
-		super.initialiseState();
+	public void			initialiseState(Time initialTime)
+	{
+		super.initialiseState(initialTime);
+		this.initialiseDerivatives();
 	}
 
 	@Override
