@@ -91,9 +91,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	 * the tolerance on the target refregirant temperature to get a control with
 	 * hysteresis
 	 */
-	protected double CRITICAL_TEMPERATURE = requestedTemperature+5;
-
-
+	protected double CRITICAL_TEMPERATURE = 15;
 
 	protected double EXTERNAL_TEMPERATURE = 25;
 
@@ -273,7 +271,6 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	@Override
 	public Duration timeAdvance() {
 		return Duration.INFINITY;
-//		logger.logMessage("", this.getCurrentStateTime() + " cc");
 //		if (this.consumptionHasChanged) {
 //			this.toggleConsumptionHasChanged();
 //			return new Duration(0.0, this.getSimulatedTimeUnit());
@@ -298,11 +295,10 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 			this.currentIntensity.v = NORMAL_MODE_CONSUMPTION / TENSION;
 			break;
 		}
-		double criticalTemperature = this.currentMode==FridgeMode.NORMAL?(CRITICAL_TEMPERATURE/2):CRITICAL_TEMPERATURE;
 		// if the fridge is suspended and the temperature of the fridge is greater or
 		// equal than the critical temperature
 		// we unsuspend it
-		if (this.isSuspended && this.currentTemp.v >= criticalTemperature) {
+		if (this.isSuspended && this.currentTemp.v >= this.CRITICAL_TEMPERATURE) {
 			this.isSuspended = false;
 			consumptionHasChanged = true;
 		}
