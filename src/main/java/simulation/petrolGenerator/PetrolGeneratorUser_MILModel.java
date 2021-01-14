@@ -124,6 +124,7 @@ public class PetrolGeneratorUser_MILModel extends AtomicModel {
 	 */
 	@Override
 	public Duration timeAdvance() {
+		// return Duration.INFINITY;
 		return this.time2next;
 	}
 

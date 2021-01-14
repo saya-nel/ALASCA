@@ -186,13 +186,13 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 
 	@Override
 	public Duration timeAdvance() {
-		if (this.consumptionHasChanged) {
-			//this.logger.logMessage("", "cc2");
-			this.toggleConsumptionHasChanged();
-			return new Duration(0.0, this.getSimulatedTimeUnit());
-		} else {
-			return standardStep;
-		}
+		return Duration.INFINITY;
+//		if (this.consumptionHasChanged) {
+//			this.toggleConsumptionHasChanged();
+//			return new Duration(0.0, this.getSimulatedTimeUnit());
+//		} else {
+//			return standardStep;
+//		}
 	}
 
 	/**
@@ -205,14 +205,11 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		// no new program event otherwise
 		// if the battery is draining, it loose power
 		if (this.currentState == BatteryState.DRAINING) {
-			this.logger.logMessage("", "cc3");
 			if (currentPowerLevel - (DRAINING_MODE_PRODUCTION / 3600) > 0) {
 				// the battery loose power
 				this.currentPowerLevel -= DRAINING_MODE_PRODUCTION / 3600;
-//				this.logger.logMessage("",
-//						this.getCurrentStateTime() + " : current power level : " + this.currentPowerLevel);
 				this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
-				this.currentIntensity.v  = 0.;
+				this.currentIntensity.v = 0.;
 			} else {
 				this.currentState = BatteryState.SLEEPING;
 				this.currentIntensity.v = 0.;
@@ -220,7 +217,6 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 				this.currentPowerLevel = 0;
 				this.toggleConsumptionHasChanged();
 			}
-			this.logger.logMessage("", "battery draining");
 		} else if (this.currentState == BatteryState.SLEEPING) {
 			this.currentProduction.v = 0.;
 			this.currentIntensity.v = 0.;
@@ -228,14 +224,13 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 				this.currentState = BatteryState.DRAINING;
 				this.toggleConsumptionHasChanged();
 				this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
-				this.currentIntensity.v  = 0.;
+				this.currentIntensity.v = 0.;
 			} else {
 				this.currentState = BatteryState.RECHARGING;
 				this.currentIntensity.v = RECHARGING_MODE_CONSUMPTION / TENSION;
 				this.currentProduction.v = 0.;
 				this.toggleConsumptionHasChanged();
 			}
-			this.logger.logMessage("", "battery sleeping");
 		} else if (this.currentState == BatteryState.RECHARGING) {
 			this.currentProduction.v = 0.;
 			if (this.currentPowerLevel + (RECHARGING_MODE_CONSUMPTION / 3600) < maximumPowerLevel) {
@@ -249,10 +244,8 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 				this.currentPowerLevel = maximumPowerLevel;
 				toggleConsumptionHasChanged();
 			}
-			this.logger.logMessage("", "battery recharging");
 		}
-		this.logger.logMessage("",
-				this.getCurrentStateTime() + " : current power level : " + this.currentPowerLevel);
+		this.logger.logMessage("", this.getCurrentStateTime() + " : current power level : " + this.currentPowerLevel);
 
 		this.currentIntensity.time = this.getCurrentStateTime();
 		this.currentProduction.time = this.getCurrentStateTime();

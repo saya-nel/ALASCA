@@ -8,7 +8,6 @@ import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.controller.events.PlanBatteryRecharge;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
 import main.java.simulation.panel.events.ProductionLevel;
@@ -36,10 +35,6 @@ public class Controller_MILModel extends AtomicModel {
 	 */
 	protected final Duration standardStep;
 
-	/**
-	 * true if the controller has sent the event
-	 */
-	protected boolean batteryRecharge = false;
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
@@ -62,12 +57,7 @@ public class Controller_MILModel extends AtomicModel {
 		// Each time the method is called (just before internal transitions)
 		// a ConsumptionLevelRequest is output towards the electric panel.
 		ArrayList<EventI> ret = new ArrayList<EventI>();
-
 		ret.add(new ConsumptionLevelRequest(this.getTimeOfNextEvent()));
-		if (this.batteryRecharge) {
-			this.batteryRecharge = false;
-			ret.add(new PlanBatteryRecharge(this.getTimeOfNextEvent()));
-		}
 		return ret;
 	}
 
@@ -76,8 +66,7 @@ public class Controller_MILModel extends AtomicModel {
 	 */
 	@Override
 	public Duration timeAdvance() {
-		// For this simple example model, consumption levels are requested at
-		// a fixed rate.
+		// return Duration.INFINITY;
 		return this.standardStep;
 	}
 

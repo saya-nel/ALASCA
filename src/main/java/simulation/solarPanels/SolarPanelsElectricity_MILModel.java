@@ -85,12 +85,13 @@ public class SolarPanelsElectricity_MILModel extends AtomicHIOA {
 
 	@Override
 	public Duration timeAdvance() {
-		if (this.consumptionHasChanged) {
-			this.toggleConsumptionHasChanged();
-			return new Duration(0.0, this.getSimulatedTimeUnit());
-		} else {
-			return Duration.INFINITY;
-		}
+		return Duration.INFINITY;
+//		if (this.consumptionHasChanged) {
+//			this.toggleConsumptionHasChanged();
+//			return new Duration(0.0, this.getSimulatedTimeUnit());
+//		} else {
+//			return Duration.INFINITY;
+//		}
 	}
 
 	/**

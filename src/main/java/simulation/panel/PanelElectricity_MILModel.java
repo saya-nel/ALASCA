@@ -16,11 +16,10 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.panel.events.ConsumptionLevel;
 import main.java.simulation.panel.events.ConsumptionLevelRequest;
 import main.java.simulation.panel.events.ProductionLevel;
-import main.java.simulation.panel.events.ProductionLevelRequest;
 import main.java.simulation.utils.FileLogger;
 
-@ModelExternalEvents(imported = { ConsumptionLevelRequest.class, ProductionLevelRequest.class }, exported = {
-		ConsumptionLevel.class, ProductionLevel.class })
+@ModelExternalEvents(imported = { ConsumptionLevelRequest.class }, exported = { ConsumptionLevel.class,
+		ProductionLevel.class })
 public class PanelElectricity_MILModel extends AtomicHIOA {
 
 	// -------------------------------------------------------------------------
@@ -132,12 +131,13 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 	 */
 	@Override
 	public Duration timeAdvance() {
+		// return Duration.INFINITY;
 		if (this.requestReceived) {
 			// trigger an immediate internal transition.
 			return Duration.zero(this.getSimulatedTimeUnit());
 		} else {
 			// wait until the next planned computation.
-			return this.nextStep;
+			return Duration.INFINITY;
 		}
 	}
 
@@ -147,47 +147,20 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		if (!this.requestReceived) {
-			// no request received, hence this is a computation step
-			// compute the new global electricity consumption
-			this.currentIntensity.v = fanIntensity.v + fridgeIntensity.v + batteryIntensity.v + washerIntensity.v;
-			this.currentIntensity.time = this.getCurrentStateTime();
-			// compute the new global electricity production
-			this.currentProduction.v = batteryProduction.v + solarPanelsProduction.v + petrolGeneratorProduction.v;
-			this.currentProduction.time = this.getCurrentStateTime();
-			this.logger.logMessage("",
-					this.getCurrentStateTime() + " CONSUMPTIONS : fridge : " + fridgeIntensity.v + ", fan : "
-							+ fanIntensity.v + ", washer : " + washerIntensity.v + ", battery : " + batteryIntensity.v);
-			this.logger.logMessage("",
-					this.getCurrentStateTime() + " PRODUCTIONS : petrolgenerator : " + petrolGeneratorProduction.v
-							+ ", battery : " + batteryProduction.v + ", solarPanels : " + solarPanelsProduction.v);
-			// the next planned computation
-			this.nextStep = this.standardStep;
-		} else {
-			// TODO : ici prof ne fait pas le calcul, mais vu que panel step = 1 et
-			// controller step = 1, alors panel ne fait jamais le calcul, on le refait donc
-			// ici, a voir si meilleur façon de gérer ça car ca fonctionne sans dans
-			// l'exemple video du prof et avec des steps 1 / 1
-			// compute the new global electricity consumption
-			this.currentIntensity.v = fanIntensity.v + fridgeIntensity.v + batteryIntensity.v + washerIntensity.v;
-			this.currentIntensity.time = this.getCurrentStateTime();
-			// compute the new global electricity production
-			this.currentProduction.v = batteryProduction.v + solarPanelsProduction.v + petrolGeneratorProduction.v;
-			this.currentProduction.time = this.getCurrentStateTime();
-			this.logger.logMessage("",
-					this.getCurrentStateTime() + " CONSUMPTIONS : fridge : " + fridgeIntensity.v + ", fan : "
-							+ fanIntensity.v + ", washer : " + washerIntensity.v + ", battery : " + batteryIntensity.v);
-			this.logger.logMessage("",
-					this.getCurrentStateTime() + " PRODUCTIONS : petrolgenerator : " + petrolGeneratorProduction.v
-							+ ", battery : " + batteryProduction.v + ", solarPanels : " + solarPanelsProduction.v);
-
-			// a request has been received before the next computation
-			assert elapsedTime.lessThanOrEqual(this.standardStep);
-			// the event has already been output, simply replan the next
-			// computation at its previously planned time.
-			this.nextStep = this.standardStep.subtract(elapsedTime);
-			this.requestReceived = false;
-		}
+		// compute the new global electricity consumption
+		this.currentIntensity.v = fanIntensity.v + fridgeIntensity.v + batteryIntensity.v + washerIntensity.v;
+		this.currentIntensity.time = this.getCurrentStateTime();
+		// compute the new global electricity production
+		this.currentProduction.v = batteryProduction.v + solarPanelsProduction.v + petrolGeneratorProduction.v;
+		this.currentProduction.time = this.getCurrentStateTime();
+		// logs
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " CONSUMPTIONS : fridge : " + fridgeIntensity.v + ", fan : "
+						+ fanIntensity.v + ", washer : " + washerIntensity.v + ", battery : " + batteryIntensity.v);
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " PRODUCTIONS : petrolgenerator : " + petrolGeneratorProduction.v
+						+ ", battery : " + batteryProduction.v + ", solarPanels : " + solarPanelsProduction.v);
+		this.requestReceived = false;
 	}
 
 	/**
@@ -201,11 +174,9 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 		// and for the panel model, there will be exactly one by
 		// construction which is a consumption level request.
 		assert currentEvents != null && currentEvents.size() == 1;
-		// The received event can only be a ConsumptionLevelRequest or
-		// ProductionLevelRequest, as this
+		// The received event can only be a ConsumptionLevelRequest
 		// is the only imported event by this model.
-		assert ((currentEvents.get(0) instanceof ConsumptionLevelRequest)
-				|| (currentEvents.get(0) instanceof ProductionLevelRequest));
+		assert ((currentEvents.get(0) instanceof ConsumptionLevelRequest));
 
 		Event ce = (Event) currentEvents.get(0);
 		this.logger.logMessage("", this.getCurrentStateTime() + " Panel receiving the external event "

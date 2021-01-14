@@ -258,8 +258,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	}
 
 	@Override
-	public void			initialiseState(Time initialTime)
-	{
+	public void initialiseState(Time initialTime) {
 		super.initialiseState(initialTime);
 		this.initialiseDerivatives();
 	}
@@ -271,11 +270,13 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 
 	@Override
 	public Duration timeAdvance() {
-		if (this.consumptionHasChanged) {
-			this.toggleConsumptionHasChanged();
-			return new Duration(0.0, this.getSimulatedTimeUnit());
-		}
-		return this.integrationStep;
+		return Duration.INFINITY;
+//		logger.logMessage("", this.getCurrentStateTime() + " cc");
+//		if (this.consumptionHasChanged) {
+//			this.toggleConsumptionHasChanged();
+//			return new Duration(0.0, this.getSimulatedTimeUnit());
+//		}
+//		return this.integrationStep;
 	}
 
 	/**

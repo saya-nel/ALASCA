@@ -76,7 +76,8 @@ public class FanUser_MILModel extends AtomicModel {
 
 	@Override
 	public Duration timeAdvance() {
-		return this.time2next;
+		return Duration.INFINITY;
+		// return this.time2next;
 	}
 
 }
