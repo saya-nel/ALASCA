@@ -20,7 +20,6 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
 import main.java.simulation.battery.BatteryElectricity_MILModel;
-import main.java.simulation.controller.Controller_MILModel;
 import main.java.simulation.fan.FanElectricity_MILModel;
 import main.java.simulation.fan.FanUser_MILModel;
 import main.java.simulation.fan.events.SetHigh;
@@ -30,15 +29,10 @@ import main.java.simulation.fan.events.TurnOff;
 import main.java.simulation.fan.events.TurnOn;
 import main.java.simulation.fridge.FridgeElectricity_MILModel;
 import main.java.simulation.fridge.FridgeUser_MILModel;
-import main.java.simulation.fridge.events.LowerRequestedTemperature;
 import main.java.simulation.fridge.events.SetEco;
 import main.java.simulation.fridge.events.SetNormal;
-import main.java.simulation.fridge.events.UpperRequestedTemperature;
+import main.java.simulation.fridge.events.SetRequestedTemperature;
 import main.java.simulation.panel.PanelElectricity_MILModel;
-import main.java.simulation.panel.events.ConsumptionLevel;
-import main.java.simulation.panel.events.ConsumptionLevelRequest;
-import main.java.simulation.panel.events.ProductionLevel;
-import main.java.simulation.panel.events.ProductionLevelRequest;
 import main.java.simulation.petrolGenerator.PetrolGeneratorElectricity_MILModel;
 import main.java.simulation.petrolGenerator.PetrolGeneratorUser_MILModel;
 import main.java.simulation.petrolGenerator.events.EmptyGenerator;
@@ -70,7 +64,6 @@ public class RunMILSimulation {
 
 			String panelURI = "panelURI";
 
-			String controllerURI = "controllerURI";
 			String controllerCoupledURI = "controllerCoupledURI";
 
 			// map that will contain the atomic model descriptors to construct
@@ -116,10 +109,6 @@ public class RunMILSimulation {
 			atomicModelDescriptors.put(panelURI, AtomicHIOA_Descriptor.create(PanelElectricity_MILModel.class, panelURI,
 					TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
 
-			// controller
-			atomicModelDescriptors.put(controllerURI, AtomicModelDescriptor.create(Controller_MILModel.class,
-					controllerURI, TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
-
 			// map that will contain the coupled model descriptors to construct
 			// the simulation architecture
 			Map<String, CoupledModelDescriptor> coupledModelDescriptors = new HashMap<>();
@@ -144,8 +133,6 @@ public class RunMILSimulation {
 			submodels.add(washerUserURI);
 			// electric panel
 			submodels.add(panelURI);
-			// controller
-			submodels.add(controllerURI);
 
 			// event exchanging connections between exporting and importing
 			// models
@@ -167,11 +154,8 @@ public class RunMILSimulation {
 					new EventSink[] { new EventSink(fridgeURI, SetEco.class) });
 			connections.put(new EventSource(fridgeUserURI, SetNormal.class),
 					new EventSink[] { new EventSink(fridgeURI, SetNormal.class) });
-			// temperature requests fridgeUser
-			connections.put(new EventSource(fridgeUserURI, UpperRequestedTemperature.class),
-					new EventSink[] {new EventSink(fridgeURI, UpperRequestedTemperature.class)});
-			connections.put(new EventSource(fridgeUserURI, LowerRequestedTemperature.class),
-					new EventSink[] {new EventSink(fridgeURI, LowerRequestedTemperature.class)});
+			connections.put(new EventSource(fridgeUserURI, SetRequestedTemperature.class),
+					new EventSink[] { new EventSink(fridgeURI, SetRequestedTemperature.class) });
 
 			// sending by washerUser
 			connections.put(new EventSource(washerUserURI, main.java.simulation.washer.events.SetEco.class),
@@ -197,15 +181,10 @@ public class RunMILSimulation {
 					new EventSink[] { new EventSink(petrolGeneratorURI, FillAll.class) });
 
 			// sending by electric panel
-			connections.put(new EventSource(panelURI, ConsumptionLevel.class),
-					new EventSink[] { new EventSink(controllerURI, ConsumptionLevel.class) });
-			connections.put(new EventSource(panelURI, ProductionLevel.class),
-					new EventSink[] { new EventSink(controllerURI, ProductionLevel.class) });
-			// sending by controller
-			connections.put(new EventSource(controllerURI, ConsumptionLevelRequest.class),
-					new EventSink[] { new EventSink(panelURI, ConsumptionLevelRequest.class) });
-			connections.put(new EventSource(controllerURI, ProductionLevelRequest.class),
-					new EventSink[] { new EventSink(panelURI, ProductionLevelRequest.class) });
+			// TODO : change controllerURI here, voir comment envoyés dans l'étape 3 au
+			// controlleur BCM
+//			connections.put(new EventSource(panelURI, ElectricityLevel.class),
+//					new EventSink[] { new EventSink(controllerURI, ElectricityLevel.class) });
 
 			// variable sharing bindings between exporting and importing
 			// HIOA models
@@ -252,8 +231,9 @@ public class RunMILSimulation {
 			// simulation run, after creating the simulation models from the
 			// architecture
 			SimulationEngine se = architecture.constructSimulator();
+//			se.setDebugLevel(2);
 			SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 0L;
-			se.doStandAloneSimulation(0.0, 5000.0);
+			se.doStandAloneSimulation(0.0, 5 * 3600.);
 //			Thread.sleep(10000L);
 			System.exit(0);
 		} catch (Exception e) {

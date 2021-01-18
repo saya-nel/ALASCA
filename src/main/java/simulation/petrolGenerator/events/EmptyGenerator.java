@@ -26,7 +26,7 @@ public class EmptyGenerator extends AbstractPetrolGeneratorEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		return true;
+		return false;
 	}
 
 	/**

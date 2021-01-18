@@ -26,11 +26,7 @@ public class TurnOff extends AbstractPetrolGeneratorEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		if (e instanceof TurnOn) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	/**

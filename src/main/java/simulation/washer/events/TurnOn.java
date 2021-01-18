@@ -26,7 +26,7 @@ public class TurnOn extends AbstractWasherEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		return true;
+		return false;
 	}
 
 	/**

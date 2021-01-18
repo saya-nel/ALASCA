@@ -13,9 +13,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.utils.FileLogger;
-import main.java.simulation.utils.SimProgram;
 import main.java.simulation.washer.events.AbstractWasherEvent;
-import main.java.simulation.washer.events.PlanifyProgram;
 import main.java.simulation.washer.events.SetEco;
 import main.java.simulation.washer.events.SetPerformance;
 import main.java.simulation.washer.events.SetStd;
@@ -36,8 +34,7 @@ import main.java.utils.WasherModes;
  * 
  * @author Bello Memmi
  */
-@ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetEco.class, SetStd.class, SetPerformance.class,
-		PlanifyProgram.class }, exported = { PlanifyProgram.class })
+@ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetEco.class, SetStd.class, SetPerformance.class })
 public class WasherElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
@@ -61,19 +58,9 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	 * executing an external event (when <code>currentState</code> changes
 	 */
 	protected boolean consumptionHasChanged = false;
-	/** task to do */
-	protected SimProgram program = null;
 
 	/**
 	 * Create a Washer MIL model instance.
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 *     pre 	true //no precondition
-	 *     post	true // no postcondition
-	 * </pre>
 	 * 
 	 * @param uri               URI of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation time.
@@ -88,14 +75,6 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 
 	/**
 	 * set the state of the Battery
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 *     pre 		state != null
-	 *     post 	true			//no post condition
-	 * </pre>
 	 * 
 	 * @param mode the new state
 	 */
@@ -105,15 +84,6 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 
 	/**
 	 * return the mode of the Washer.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 *     pre 	true 	// no precondition
-	 *     post	{@code ret != null}
-	 * </pre>
 	 * 
 	 * @return the state of the Washer.
 	 */
@@ -122,15 +92,6 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	}
 
 	/**
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 *     pre 	true 	// no precondition
-	 *     post	{@code ret != null}
-	 * </pre>
 	 * 
 	 * @return true if the washer is on.
 	 */
@@ -140,14 +101,6 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 
 	/**
 	 * switch on the washer if it is off or switch off if it is on
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 *     pre 	true 	// no precondition
-	 *     post	{@code ret != null}
-	 * </pre>
 	 * 
 	 * @return
 	 */
@@ -155,24 +108,11 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 		this.isOn = (this.isOn) ? false : true;
 	}
 
-	public void planifyEvent(Time beginProgram, Duration durationProgram) {
-		this.program = new SimProgram(beginProgram, durationProgram);
-	}
-
 	/**
 	 * toggle the value of the state of the model telling whether the electricity
 	 * consumption level has just changed or not; when it changes after receiving an
 	 * external event, an immediate internal transition is triggered to update the
 	 * level of electricity consumption.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
 	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
@@ -188,7 +128,7 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	@Override
 	protected void initialiseVariables(Time startTime) {
 		this.currentIntensity.v = 0.0;
-		this.isOn = true;
+		this.isOn = false;
 		this.currentMode = WasherModes.ECO;
 		this.consumptionHasChanged = false;
 		super.initialiseVariables(startTime);
@@ -209,7 +149,6 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 
 	@Override
 	public Duration timeAdvance() {
-
 		if (this.consumptionHasChanged) {
 			this.toggleConsumptionHasChanged();
 			return new Duration(0.0, this.getSimulatedTimeUnit());
@@ -224,22 +163,8 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		this.logger.logMessage("", "" + this.getCurrentStateTime());
-		// switch off the washer after it finished the program
-		if (this.isOn && this.program != null && this.program.getBeginProgram().add(this.program.getDurationProgram())
-				.greaterThanOrEqual(this.getCurrentStateTime())) {
-			this.isOn = false;
-			this.program = null;
-			this.currentIntensity.v = 0.;
-			// TODO : gérer l'envoie d'un evenement comme quoi le washer c'est eteind, de la
-			// meme façon que petrol generator / battery
-		}
-		// if the washer isnt already on and have a defined program which need to be
-		// started or currently running
-		// now
-		else if (!this.isOn && this.program != null
-				&& this.getCurrentStateTime().greaterThanOrEqual(this.program.getBeginProgram()) || this.isOn) {
-			this.isOn = true;
+
+		if (isOn) {
 			switch (this.currentMode) {
 			case ECO:
 				this.currentIntensity.v = ECO_MODE_CONSUMPTION / TENSION;
@@ -252,6 +177,7 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 		} else {
 			this.currentIntensity.v = 0.;
 		}
+
 		this.currentIntensity.time = this.getCurrentStateTime();
 	}
 
@@ -263,8 +189,8 @@ public class WasherElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		this.logger.logMessage("", this.getCurrentStateTime() + " Washer executing the external event "
-				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " Washer executing the external event " + ce.eventAsString());
 		assert ce instanceof AbstractWasherEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

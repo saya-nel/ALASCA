@@ -27,11 +27,7 @@ public class SetPerformance extends AbstractWasherEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		if (e instanceof TurnOff) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	/**

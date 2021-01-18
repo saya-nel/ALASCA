@@ -13,13 +13,11 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.panel.events.ConsumptionLevel;
-import main.java.simulation.panel.events.ConsumptionLevelRequest;
-import main.java.simulation.panel.events.ProductionLevel;
+import main.java.simulation.panel.events.ElectricityLevel;
+import main.java.simulation.panel.events.ElectricityLevelRequest;
 import main.java.simulation.utils.FileLogger;
 
-@ModelExternalEvents(imported = { ConsumptionLevelRequest.class }, exported = { ConsumptionLevel.class,
-		ProductionLevel.class })
+@ModelExternalEvents(imported = { ElectricityLevelRequest.class }, exported = { ElectricityLevel.class })
 public class PanelElectricity_MILModel extends AtomicHIOA {
 
 	// -------------------------------------------------------------------------
@@ -61,10 +59,6 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 	protected Value<Double> petrolGeneratorProduction;
 
 	/**
-	 * time interval until the next global electricity consumption computation.
-	 */
-	protected Duration nextStep;
-	/**
 	 * true if a request for the current value of the global electricity consumption
 	 * (through a ConsumptionLevelRequest event), false otherwise.
 	 */
@@ -104,7 +98,6 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 		// initially, no request has been received yet.
 		this.requestReceived = false;
 		// the first time interval until the first computation.
-		this.nextStep = this.standardStep;
 		super.initialiseState(initialTime);
 	}
 
@@ -114,11 +107,10 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public ArrayList<EventI> output() {
 		if (this.requestReceived) {
-			// when a request has been received, output a ConsumptionLevel
+			// when a request has been received, output a ElectricityLevel
 			// event with the current global electricity consumption and production
 			ArrayList<EventI> ret = new ArrayList<EventI>();
-			ret.add(new ConsumptionLevel(this.getTimeOfNextEvent(), this.currentIntensity.v));
-			ret.add(new ProductionLevel(this.getTimeOfNextEvent(), this.currentProduction.v));
+			ret.add(new ElectricityLevel(this.getTimeOfNextEvent(), this.currentIntensity.v, this.currentProduction.v));
 			return ret;
 		} else {
 			// otherwise, no output event.
@@ -137,7 +129,9 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 			return Duration.zero(this.getSimulatedTimeUnit());
 		} else {
 			// wait until the next planned computation.
-			return Duration.INFINITY;
+			// TODO : ici 1 pour le moment car aucune requete arrive, a modifier dans
+			// l'étape 3 avec Duration.INFINITY
+			return standardStep;
 		}
 	}
 
@@ -176,11 +170,11 @@ public class PanelElectricity_MILModel extends AtomicHIOA {
 		assert currentEvents != null && currentEvents.size() == 1;
 		// The received event can only be a ConsumptionLevelRequest
 		// is the only imported event by this model.
-		assert ((currentEvents.get(0) instanceof ConsumptionLevelRequest));
+		assert ((currentEvents.get(0) instanceof ElectricityLevelRequest));
 
 		Event ce = (Event) currentEvents.get(0);
-		this.logger.logMessage("", this.getCurrentStateTime() + " Panel receiving the external event "
-				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " Panel receiving the external event " + ce.eventAsString());
 
 		// this will trigger an immediate internal transition and the ouput
 		// of the ConsumptionLevel event.

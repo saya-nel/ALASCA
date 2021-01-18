@@ -46,7 +46,7 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	/**
 	 * Electricity produced when the petrol generator is on and get petrol
 	 */
-	protected static final double GENERATING = 5;
+	protected static final double GENERATING = 1700;
 	/** tension same for all the house */
 	public static final double TENSION = 220;
 
@@ -59,12 +59,14 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	/**
 	 * Current petrol level
 	 */
-	protected float currentPetrolLevel = 20;
+	protected float currentPetrolLevel = 5;
 
 	/**
 	 * Maximum petrol level when full filled
 	 */
-	protected float maximumPetrolLevel = 50;
+	protected float maximumPetrolLevel = 5;
+
+	protected final double PETROL_CONSUMPTION = 0.0005; // petrol consumed for 1 second
 
 	/**
 	 * Change when an event that can impact the production is received
@@ -155,13 +157,6 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	}
 
 	/**
-	 * Add one litter of petrol to the generator
-	 */
-	public void addOneLPetrol() {
-		this.currentPetrolLevel += 1;
-	}
-
-	/**
 	 * Full fill the generator of petrol
 	 */
 	public void fillAll() {
@@ -178,11 +173,6 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	@Override
 	protected void initialiseVariables(Time startTime) {
 		super.initialiseVariables(startTime);
-		this.currentProduction.v = 0.0;
-		this.isOn = false;
-		this.consumptionHasChanged = false;
-		this.hasSendEmptyGenerator = false;
-		this.currentPetrolLevel = 20;
 	}
 
 	/**
@@ -204,7 +194,6 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	 */
 	@Override
 	public Duration timeAdvance() {
-		// return Duration.INFINITY;
 		if (consumptionHasChanged) {
 			this.toggleConsumptionHasChanged();
 			return new Duration(0.0, this.getSimulatedTimeUnit());
@@ -212,8 +201,10 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 			return new Duration(0.0, this.getSimulatedTimeUnit());
 		} else if (needToBeFilled && hasSendEmptyGenerator) {
 			return Duration.INFINITY;
-		}
-		return standardStep;
+		} else if (isOn) {
+			return standardStep;
+		} else
+			return Duration.INFINITY;
 	}
 
 	/**
@@ -222,11 +213,14 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
+		if (this.currentPetrolLevel >= maximumPetrolLevel) {
+			needToBeFilled = false;
+		}
 		// if the generator is on and get petrol, he produce electicity and consumes
 		// petrol
 		if (this.isOn && currentPetrolLevel > 0) {
 			this.currentProduction.v = GENERATING / TENSION;
-			this.currentPetrolLevel -= 1;
+			this.currentPetrolLevel -= this.PETROL_CONSUMPTION;
 			this.logger.logMessage("",
 					this.getCurrentStateTime() + "current petrol level : " + this.currentPetrolLevel);
 		}
@@ -253,8 +247,8 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		this.logger.logMessage("", this.getCurrentStateTime() + " PetrolGenerator executing the external event "
-				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " PetrolGenerator executing the external event " + ce.eventAsString());
 		assert ce instanceof AbstractPetrolGeneratorEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

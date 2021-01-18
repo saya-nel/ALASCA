@@ -22,7 +22,7 @@ public class FanUser_MILModel extends AtomicModel {
 	private static final long serialVersionUID = 1L;
 
 	/** time interval between event outputs. */
-	protected static final double STEP = 10.0;
+	protected static final double STEP = 20.0;
 	/** the current event being output. */
 	protected AbstractFanEvent currentEvent;
 	/** time interval between event outputs. */
@@ -76,8 +76,10 @@ public class FanUser_MILModel extends AtomicModel {
 
 	@Override
 	public Duration timeAdvance() {
-		//return Duration.INFINITY;
-		return this.time2next;
+		if (this.currentEvent != null && this.currentEvent.getClass().equals(TurnOff.class))
+			return new Duration(6 * 3600, TimeUnit.SECONDS);
+		else
+			return this.time2next;
 	}
 
 }

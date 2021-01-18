@@ -5,19 +5,24 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.simulation.fan.FanElectricity_MILModel;
 import main.java.utils.FanLevel;
+
 /**
- * The class <code>SetLow</code> defines the MIL event of the fan being
- * set to low power mode.
+ * The class <code>SetLow</code> defines the MIL event of the fan being set to
+ * low power mode.
  *
- * <p><strong>Description</strong></p>
+ * <p>
+ * <strong>Description</strong>
+ * </p>
  *
- * <p><strong>Invariant</strong></p>
+ * <p>
+ * <strong>Invariant</strong>
+ * </p>
  *
  * <pre>
  * invariant		true
  * </pre>
  *
- * @author	Bello Memmi
+ * @author Bello Memmi
  */
 public class SetLow extends AbstractFanEvent {
 
@@ -26,14 +31,16 @@ public class SetLow extends AbstractFanEvent {
 	/**
 	 * create a SetLow event.
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 * pre	{@code timeOfOccurrence != null}
 	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
 	 * </pre>
 	 *
-	 * @param timeOfOccurrence	time of occurrence of the event.
+	 * @param timeOfOccurrence time of occurrence of the event.
 	 */
 	public SetLow(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
@@ -52,11 +59,7 @@ public class SetLow extends AbstractFanEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		if (e instanceof TurnOff) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	/**

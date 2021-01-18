@@ -9,15 +9,18 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.fridge.events.*;
+import main.java.simulation.fridge.events.AbstractFridgeEvent;
+import main.java.simulation.fridge.events.SetEco;
+import main.java.simulation.fridge.events.SetNormal;
+import main.java.simulation.fridge.events.SetRequestedTemperature;
 
-@ModelExternalEvents(exported = { SetEco.class, SetNormal.class, UpperRequestedTemperature.class, LowerRequestedTemperature.class})
+@ModelExternalEvents(exported = { SetEco.class, SetNormal.class, SetRequestedTemperature.class })
 public class FridgeUser_MILModel extends AtomicModel {
 
 	private static final long serialVersionUID = 1L;
 
 	/** time interval between event outputs. */
-	protected static final double STEP = 10.0;
+	protected static final double STEP = 60 * 60 * 6; // 5 hours
 	/** the current event being output. */
 	protected AbstractFridgeEvent currentEvent;
 	/** time interval between event outputs. */
@@ -29,16 +32,13 @@ public class FridgeUser_MILModel extends AtomicModel {
 
 	protected AbstractFridgeEvent getCurrentEventAndSetNext(Time t) {
 		if (this.currentEvent == null) {
-			this.currentEvent = new SetEco(t);
+			this.currentEvent = new SetRequestedTemperature(t, new SetRequestedTemperature.RequestedTemperature(6.));
 		} else {
 			@SuppressWarnings("unchecked")
 			Class<AbstractFridgeEvent> c = (Class<AbstractFridgeEvent>) this.currentEvent.getClass();
 			if (c.equals(SetEco.class)) {
 				this.currentEvent = new SetNormal(t);
 			} else if (c.equals(SetNormal.class)) {
-				this.currentEvent = new UpperRequestedTemperature(t);
-			}
-			else if (c.equals(UpperRequestedTemperature.class)) {
 				this.currentEvent = new SetEco(t);
 			}
 
@@ -69,8 +69,11 @@ public class FridgeUser_MILModel extends AtomicModel {
 
 	@Override
 	public Duration timeAdvance() {
-		//return Duration.INFINITY;
-		return this.time2next;
+		if (currentEvent == null) {
+			return new Duration(1., TimeUnit.SECONDS);
+		} else {
+			return this.time2next;
+		}
 	}
 
 }

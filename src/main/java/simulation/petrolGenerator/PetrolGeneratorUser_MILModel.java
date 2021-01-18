@@ -49,6 +49,7 @@ public class PetrolGeneratorUser_MILModel extends AtomicModel {
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
 		this.setLogger(new FileLogger("petrolGeneratorUser.log"));
+		setDebugLevel(2);
 	}
 
 	// -------------------------------------------------------------------------
@@ -71,8 +72,8 @@ public class PetrolGeneratorUser_MILModel extends AtomicModel {
 		if (this.currentEvent == null) {
 			this.currentEvent = new TurnOn(t);
 			// the next event will be a FillAll, from the moment when we can do it (when we
-			// receive EmptyGenerator, we wait 10 more second before doing it
-			this.time2next = new Duration(10., this.getSimulatedTimeUnit());
+			// receive EmptyGenerator, we wait 30 minutes before filling
+			this.time2next = new Duration(0.5 * 3600., this.getSimulatedTimeUnit());
 		} else {
 			@SuppressWarnings("unchecked")
 			Class<AbstractPetrolGeneratorEvent> c = (Class<AbstractPetrolGeneratorEvent>) this.currentEvent.getClass();
@@ -124,7 +125,6 @@ public class PetrolGeneratorUser_MILModel extends AtomicModel {
 	 */
 	@Override
 	public Duration timeAdvance() {
-		// return Duration.INFINITY;
 		return this.time2next;
 	}
 
@@ -136,8 +136,8 @@ public class PetrolGeneratorUser_MILModel extends AtomicModel {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		this.logger.logMessage("", this.getCurrentStateTime() + " PetrolGeneratorUser executing the external event "
-				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " PetrolGeneratorUser executing the external event " + ce.eventAsString());
 		assert ce instanceof AbstractPetrolGeneratorEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

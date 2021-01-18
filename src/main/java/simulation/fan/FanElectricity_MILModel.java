@@ -10,7 +10,6 @@ import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
-import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.fan.events.AbstractFanEvent;
 import main.java.simulation.fan.events.SetHigh;
@@ -39,11 +38,11 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
 	/** energy generated during low mode */
-	public static final double LOW_MODE_CONSUMPTION = 4;
+	public static final double LOW_MODE_CONSUMPTION = 20;
 	/** energy generated during medium mode */
-	public static final double MID_MODE_CONSUMPTION = 5;
+	public static final double MID_MODE_CONSUMPTION = 40;
 	/** energy generated during high mode */
-	public static final double HIGH_MODE_CONSUMPTION = 6;
+	public static final double HIGH_MODE_CONSUMPTION = 60;
 	/** tension same for all the house */
 	public static final double TENSION = 220;
 	/** current intensity in Amperes; intensity is power/tension. */
@@ -61,14 +60,6 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 
 	/**
 	 * Create a Fan MIL model instance.
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 *     pre 	true //no precondition
-	 *     post	true // no postcondition
-	 * </pre>
 	 * 
 	 * @param uri               URI of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation time.
@@ -83,14 +74,6 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 
 	/**
 	 * set the level of the Fan
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 *     pre 		state != null
-	 *     post 	true			//no post condition
-	 * </pre>
 	 * 
 	 * @param level the new level
 	 */
@@ -100,15 +83,6 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 
 	/**
 	 * return the state of the Fan.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 *     pre 	true 	// no precondition
-	 *     post	{@code ret != null}
-	 * </pre>
 	 * 
 	 * @return the level of the Fan.
 	 */
@@ -117,15 +91,6 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 	}
 
 	/**
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 *     pre 	true 	// no precondition
-	 *     post	{@code ret != null}
-	 * </pre>
 	 * 
 	 * @return true if the Fan is on.
 	 */
@@ -135,14 +100,6 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 
 	/**
 	 * switch on the fan if it is off or switch off if it is on
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 *     pre 	true 	// no precondition
-	 *     post	{@code ret != null}
-	 * </pre>
 	 * 
 	 * @return
 	 */
@@ -155,15 +112,6 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 	 * consumption level has just changed or not; when it changes after receiving an
 	 * external event, an immediate internal transition is triggered to update the
 	 * level of electricity consumption.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
 	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
@@ -173,26 +121,6 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
 
-	/**
-	 * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseVariables(fr.sorbonne_u.devs_simulation.models.time.Time)
-	 */
-	@Override
-	protected void initialiseVariables(Time startTime) {
-		this.currentIntensity.v = 0.0;
-		super.initialiseVariables(startTime);
-	}
-
-	/**
-	 * @see fr.sorbonne_u.devs_simulation.models.Model#initialiseState()
-	 */
-	@Override
-	public void initialiseState() {
-		this.isOn = false;
-		this.currentLevel = FanLevel.LOW;
-		this.consumptionHasChanged = false;
-		super.initialiseState();
-	}
-
 	@Override
 	public ArrayList<EventI> output() {
 		return null;
@@ -200,7 +128,6 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 
 	@Override
 	public Duration timeAdvance() {
-		//return Duration.INFINITY;
 		if (this.consumptionHasChanged) {
 			this.toggleConsumptionHasChanged();
 			return new Duration(0.0, this.getSimulatedTimeUnit());
@@ -240,8 +167,8 @@ public class FanElectricity_MILModel extends AtomicHIOA {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		Event ce = (Event) currentEvents.get(0);
-		this.logger.logMessage("", this.getCurrentStateTime() + " Fan executing the external event "
-				+ ce.getClass().getSimpleName() + "(" + ce.getTimeOfOccurrence().getSimulatedTime() + ")");
+		this.logger.logMessage("",
+				this.getCurrentStateTime() + " Fan executing the external event " + ce.eventAsString());
 		assert ce instanceof AbstractFanEvent;
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);

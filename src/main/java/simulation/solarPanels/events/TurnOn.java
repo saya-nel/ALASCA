@@ -26,11 +26,7 @@ public class TurnOn extends AbstractSolarPanelEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		if (e instanceof TurnOff) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	/**

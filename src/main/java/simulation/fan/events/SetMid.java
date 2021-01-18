@@ -7,18 +7,22 @@ import main.java.simulation.fan.FanElectricity_MILModel;
 import main.java.utils.FanLevel;
 
 /**
- * The class <code>SetMid</code> defines the MIL event of the fan being
- * set to medium power mode.
+ * The class <code>SetMid</code> defines the MIL event of the fan being set to
+ * medium power mode.
  *
- * <p><strong>Description</strong></p>
+ * <p>
+ * <strong>Description</strong>
+ * </p>
  *
- * <p><strong>Invariant</strong></p>
+ * <p>
+ * <strong>Invariant</strong>
+ * </p>
  *
  * <pre>
  * invariant		true
  * </pre>
  *
- * @author	Bello Memmi
+ * @author Bello Memmi
  */
 public class SetMid extends AbstractFanEvent {
 
@@ -27,14 +31,16 @@ public class SetMid extends AbstractFanEvent {
 	/**
 	 * create a SetMid event.
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 * pre	{@code timeOfOccurrence != null}
 	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
 	 * </pre>
 	 *
-	 * @param timeOfOccurrence	time of occurrence of the event.
+	 * @param timeOfOccurrence time of occurrence of the event.
 	 */
 	public SetMid(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
@@ -53,11 +59,7 @@ public class SetMid extends AbstractFanEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		if (e instanceof TurnOff) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	/**

@@ -13,12 +13,11 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.solarPanels.events.AbstractSolarPanelEvent;
-import main.java.simulation.solarPanels.events.IsTurnedOn;
 import main.java.simulation.solarPanels.events.TurnOff;
 import main.java.simulation.solarPanels.events.TurnOn;
 import main.java.simulation.utils.FileLogger;
 
-@ModelExternalEvents(imported = { TurnOff.class, TurnOn.class, IsTurnedOn.class })
+@ModelExternalEvents(imported = { TurnOff.class, TurnOn.class })
 public class SolarPanelsElectricity_MILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
@@ -85,7 +84,6 @@ public class SolarPanelsElectricity_MILModel extends AtomicHIOA {
 
 	@Override
 	public Duration timeAdvance() {
-		//return Duration.INFINITY;
 		if (this.consumptionHasChanged) {
 			this.toggleConsumptionHasChanged();
 			return new Duration(0.0, this.getSimulatedTimeUnit());

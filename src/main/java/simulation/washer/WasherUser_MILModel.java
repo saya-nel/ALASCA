@@ -9,9 +9,7 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.utils.SimProgram;
 import main.java.simulation.washer.events.AbstractWasherEvent;
-import main.java.simulation.washer.events.PlanifyProgram;
 import main.java.simulation.washer.events.SetEco;
 import main.java.simulation.washer.events.SetPerformance;
 import main.java.simulation.washer.events.SetStd;
@@ -34,14 +32,15 @@ import main.java.simulation.washer.events.TurnOn;
  * 
  * @author Bello Memmi
  */
-@ModelExternalEvents(exported = { TurnOn.class, TurnOff.class, SetPerformance.class, SetStd.class, SetEco.class,
-		PlanifyProgram.class })
+@ModelExternalEvents(exported = { TurnOn.class, TurnOff.class, SetPerformance.class, SetStd.class, SetEco.class })
 public class WasherUser_MILModel extends AtomicModel {
+
+	// TODO : a revoir
 
 	private static final long serialVersionUID = 1L;
 
 	/** time interval between event outputs. */
-	protected static final double STEP = 20.0;
+	protected static final double STEP = 60 * 60 * 4; // 4 hours
 
 	/** the current event being output. */
 	protected AbstractWasherEvent currentEvent;
@@ -65,11 +64,6 @@ public class WasherUser_MILModel extends AtomicModel {
 				this.currentEvent = new SetStd(t);
 			} else if (c.equals(SetStd.class)) {
 				this.currentEvent = new SetPerformance(t);
-			} else if (c.equals(SetPerformance.class)) {
-				this.currentEvent = new PlanifyProgram(t,
-						new SimProgram(this.getCurrentStateTime(), new Duration(2, this.getSimulatedTimeUnit())));
-			} else if (c.equals(SetPerformance.class)) {
-				this.currentEvent = new TurnOff(t);
 			}
 
 		}
@@ -99,7 +93,6 @@ public class WasherUser_MILModel extends AtomicModel {
 
 	@Override
 	public Duration timeAdvance() {
-		//return Duration.INFINITY;
 		return this.time2next;
 	}
 

@@ -6,18 +6,22 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.simulation.fan.FanElectricity_MILModel;
 
 /**
- * The class <code>TurnOn</code> defines the MIL event of the fan being
- * switched on.
+ * The class <code>TurnOn</code> defines the MIL event of the fan being switched
+ * on.
  *
- * <p><strong>Description</strong></p>
+ * <p>
+ * <strong>Description</strong>
+ * </p>
  *
- * <p><strong>Invariant</strong></p>
+ * <p>
+ * <strong>Invariant</strong>
+ * </p>
  *
  * <pre>
  * invariant		true
  * </pre>
  *
- * @author	Bello Memmi
+ * @author Bello Memmi
  */
 public class TurnOn extends AbstractFanEvent {
 
@@ -26,14 +30,16 @@ public class TurnOn extends AbstractFanEvent {
 	/**
 	 * create a TurnOn event.
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 * pre	{@code timeOfOccurrence != null}
 	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
 	 * </pre>
 	 *
-	 * @param timeOfOccurrence	time of occurrence of the event.
+	 * @param timeOfOccurrence time of occurrence of the event.
 	 */
 	public TurnOn(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
@@ -52,7 +58,7 @@ public class TurnOn extends AbstractFanEvent {
 	 */
 	@Override
 	public boolean hasPriorityOver(EventI e) {
-		return true;
+		return false;
 	}
 
 	/**
