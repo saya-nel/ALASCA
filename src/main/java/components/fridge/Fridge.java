@@ -26,6 +26,10 @@ import main.java.utils.Log;
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Fridge extends AbstractComponent implements FridgeImplementationI {
 
+	public static final String			SENSOR_INBOUND_PORT_URI =
+			"FRIDGE-SENSOR-IBP-URI";
+	public static final String			ACTUATOR_INBOUND_PORT_URI =
+			"FRIDGE-ACTUATOR-IBP-URI";
 	/**
 	 * Component URI
 	 */
@@ -75,6 +79,24 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	 */
 	protected AtomicReference<FridgeMode> mode;
 
+	public final static double MINIMAL_FRIDGE_TEMP = -4;
+
+	public final static double STANDARD_FREEZE_TEMP = -20;
+	public final static double ECO_FREEZE_TEMP = -10;
+
+	public double currentTempDerivative = 0.0;
+	/**
+	 * the tolerance on the target refregirant temperature to get a control with
+	 * hysteresis
+	 */
+	public final static double CRITICAL_TEMPERATURE = 9;// this.requestedTemperature + 5;
+
+	public final static double EXTERNAL_TEMPERATURE = 25;
+
+	public final static double FREEZE_TRANSFER_CONSTANT = 1000;
+
+	public final static double TRANSFER_OUTSIDE_CONSTANT = 100;
+
 	/**
 	 * @param uri    of the component
 	 * @param fipURI inbound port's uri
@@ -103,6 +125,8 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	// -------------------------------------------------------------------------
 	// Component life-cycle
 	// -------------------------------------------------------------------------
+
+
 
 	/**
 	 * Initialize the fridge component
@@ -184,6 +208,9 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	// Component services implementation
 	// ----------------------------------------------------------------------------
 
+	public FridgeMode getMode() {
+		return mode.get();
+	}
 	/**
 	 * @see main.java.interfaces.FridgeImplementationI#getRequestedTemperature()
 	 */
