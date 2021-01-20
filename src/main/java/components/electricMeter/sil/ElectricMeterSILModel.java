@@ -41,7 +41,7 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	 * consumption of all connected and switched on appliances, expressed in the
 	 * simulation time unit of the model.
 	 */
-	protected static final double STEP_LENGTH = 0.5;
+	protected static final double STEP_LENGTH = 1.;
 	/**
 	 * standard interval between electricity consumption level computations as
 	 * simulation duration, including the time unit.

@@ -28,7 +28,7 @@ public class FanUserSILModel extends AtomicModel {
 	public static final String URI = FanUserSILModel.class.getSimpleName();
 
 	/** time interval between event outputs. */
-	protected static final double STEP = 20.0;
+	protected static final double STEP = 2.0;
 	/** the current event being output. */
 	protected Fan.Operations currentOperation;
 	/** time interval between event outputs. */
@@ -132,10 +132,14 @@ public class FanUserSILModel extends AtomicModel {
 	 */
 	@Override
 	public Duration timeAdvance() {
+		if (this.currentOperation == null) {
+			return new Duration(0, TimeUnit.SECONDS);
+		}
 		if (this.currentOperation != null && this.currentOperation == Fan.Operations.TURN_OFF)
 			return new Duration(6 * 3600, TimeUnit.SECONDS);
-		else
+		else {
 			return this.time2next;
+		}
 	}
 
 	/**
@@ -146,7 +150,7 @@ public class FanUserSILModel extends AtomicModel {
 		super.userDefinedInternalTransition(elapsedTime);
 
 		this.currentOperation = this.getNextOperation();
-		StringBuffer message = new StringBuffer("executes ");
+		StringBuffer message = new StringBuffer(this.getCurrentStateTime() + " executes ");
 		message.append(this.currentOperation);
 		message.append(".\n");
 		this.logMessage(message.toString());

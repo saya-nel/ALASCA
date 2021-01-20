@@ -129,7 +129,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		Map<VariableSource, VariableSink[]> bindings = new HashMap<VariableSource, VariableSink[]>();
 		VariableSource source = new VariableSource("currentIntensity", Double.class, FanElectricalSILModel.URI);
 		VariableSink[] sinks = new VariableSink[] {
-				new VariableSink("hairDryerIntensity", Double.class, ElectricMeterSILModel.URI) };
+				new VariableSink("FanIntensity", Double.class, ElectricMeterSILModel.URI) };
 		bindings.put(source, sinks);
 
 		coupledModelDescriptors.put(ElectricMeterSILCoupledModel.URI,

@@ -151,7 +151,7 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 		this.sp.createSimulator();
 		this.sp.setSimulationRunParameters(new HashMap<String, Object>());
 		long realTimeOfStart = System.currentTimeMillis() + RunSILSimulation.DELAY_TO_START_SIMULATION;
-		this.sp.startRTSimulation(realTimeOfStart, 0.0, 10.1);
+		this.sp.startRTSimulation(realTimeOfStart, 0.0, RunSILSimulation.SIMULATION_DURATION);
 	}
 }
 // -----------------------------------------------------------------------------

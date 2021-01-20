@@ -170,6 +170,10 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	public void turnOn() throws Exception {
 		this.isOn = true;
 		this.logMessage("Fan turn on");
+
+		if (this.isSILSimulated) {
+			this.simulateOperation(Operations.TURN_ON);
+		}
 	}
 
 	/**
@@ -179,6 +183,10 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	public void turnOff() throws Exception {
 		this.isOn = false;
 		this.logMessage("Fan turn off");
+
+		if (this.isSILSimulated) {
+			this.simulateOperation(Operations.TURN_OFF);
+		}
 	}
 
 	/**
@@ -188,6 +196,22 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	public void adjustPower(FanLevel level) throws Exception {
 		this.currentLevel = level;
 		this.logMessage("new Fan level : " + level.name());
+
+		if (this.isSILSimulated) {
+			switch (level) {
+			case LOW:
+				this.simulateOperation(Operations.SET_LOW);
+				break;
+			case MID:
+				this.simulateOperation(Operations.SET_MID);
+				break;
+			case HIGH:
+				this.simulateOperation(Operations.SET_HIGH);
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
 	/**

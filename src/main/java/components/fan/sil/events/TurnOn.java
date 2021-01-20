@@ -3,7 +3,7 @@ package main.java.components.fan.sil.events;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.components.fan.sil.FanElectricity_MILModel;
+import main.java.components.fan.sil.FanElectricalSILModel;
 
 /**
  * The class <code>TurnOn</code> defines the MIL event of the fan being switched
@@ -66,9 +66,9 @@ public class TurnOn extends AbstractFanEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof FanElectricity_MILModel;
+		assert model instanceof FanElectricalSILModel;
 
-		FanElectricity_MILModel m = (FanElectricity_MILModel) model;
+		FanElectricalSILModel m = (FanElectricalSILModel) model;
 		if (!m.isOn()) {
 			m.toggleIsOn();
 			m.toggleConsumptionHasChanged();

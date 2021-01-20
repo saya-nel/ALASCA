@@ -14,14 +14,14 @@ import main.java.components.fan.Fan;
  */
 public class RunSILSimulation extends AbstractCVM {
 	/** acceleration factor for the real time execution. */
-	public static final double ACC_FACTOR = 2.0;
+	public static final double ACC_FACTOR = 10.0;
 	/**
 	 * delay to start the real time simulations on every model at the same moment
 	 * (the order is delivered to the models during this delay.
 	 */
 	public static final long DELAY_TO_START_SIMULATION = 1000L;
 	/** duration of the simulation. */
-	public static final double SIMULATION_DURATION = 10.5;
+	public static final double SIMULATION_DURATION = 100;
 	/** URI of the simulation architecture used in the execution. */
 	public static final String SIM_ARCHITECTURE_URI = "sil";
 	/** URI of the inbound port of the fan component. */

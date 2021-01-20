@@ -3,7 +3,7 @@ package main.java.components.fan.sil.events;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.components.fan.sil.FanElectricity_MILModel;
+import main.java.components.fan.sil.FanElectricalSILModel;
 import main.java.utils.FanLevel;
 
 /**
@@ -67,9 +67,9 @@ public class SetMid extends AbstractFanEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof FanElectricity_MILModel;
+		assert model instanceof FanElectricalSILModel;
 
-		FanElectricity_MILModel m = (FanElectricity_MILModel) model;
+		FanElectricalSILModel m = (FanElectricalSILModel) model;
 		if (m.isOn() && m.getLevel() != FanLevel.MID) {
 			m.setLevel(FanLevel.MID);
 			m.toggleConsumptionHasChanged();
