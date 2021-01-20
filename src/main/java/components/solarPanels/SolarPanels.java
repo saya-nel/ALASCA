@@ -1,4 +1,4 @@
-package main.java.components;
+package main.java.components.solarPanels;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;

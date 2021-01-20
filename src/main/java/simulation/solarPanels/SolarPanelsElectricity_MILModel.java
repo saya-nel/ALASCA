@@ -15,7 +15,7 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.solarPanels.events.AbstractSolarPanelEvent;
 import main.java.simulation.solarPanels.events.TurnOff;
 import main.java.simulation.solarPanels.events.TurnOn;
-import main.java.simulation.utils.FileLogger;
+import main.java.utils.FileLogger;
 
 @ModelExternalEvents(imported = { TurnOff.class, TurnOn.class })
 public class SolarPanelsElectricity_MILModel extends AtomicHIOA {

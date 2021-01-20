@@ -15,8 +15,8 @@ import main.java.simulation.battery.events.AbstractBatteryEvent;
 import main.java.simulation.battery.events.SetDraining;
 import main.java.simulation.battery.events.SetRecharging;
 import main.java.simulation.battery.events.SetSleeping;
-import main.java.simulation.utils.FileLogger;
 import main.java.utils.BatteryState;
+import main.java.utils.FileLogger;
 
 /**
  * The class <code>BatteryElectricity_MILModel</code> defines a MIL model of the

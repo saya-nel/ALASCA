@@ -2,12 +2,12 @@ package main.java.tests;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
-import main.java.components.Battery;
-import main.java.components.Fan;
-import main.java.components.Fridge;
-import main.java.components.PetrolGenerator;
-import main.java.components.SolarPanels;
-import main.java.components.Washer;
+import main.java.components.battery.Battery;
+import main.java.components.fan.Fan;
+import main.java.components.fridge.Fridge;
+import main.java.components.petrolGenerator.PetrolGenerator;
+import main.java.components.solarPanels.SolarPanels;
+import main.java.components.washer.Washer;
 
 /**
  * CVM for running components testers

@@ -1,4 +1,4 @@
-package main.java.simulation.fan;
+package main.java.components.fan.sil;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -11,14 +11,14 @@ import fr.sorbonne_u.devs_simulation.models.events.Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.fan.events.AbstractFanEvent;
-import main.java.simulation.fan.events.SetHigh;
-import main.java.simulation.fan.events.SetLow;
-import main.java.simulation.fan.events.SetMid;
-import main.java.simulation.fan.events.TurnOff;
-import main.java.simulation.fan.events.TurnOn;
-import main.java.simulation.utils.FileLogger;
+import main.java.components.fan.sil.events.AbstractFanEvent;
+import main.java.components.fan.sil.events.SetHigh;
+import main.java.components.fan.sil.events.SetLow;
+import main.java.components.fan.sil.events.SetMid;
+import main.java.components.fan.sil.events.TurnOff;
+import main.java.components.fan.sil.events.TurnOn;
 import main.java.utils.FanLevel;
+import main.java.utils.FileLogger;
 
 /**
  * The class <code>FanElectricity_MILModel</code> defines a MIL model of the

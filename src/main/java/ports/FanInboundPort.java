@@ -2,7 +2,7 @@ package main.java.ports;
 
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import main.java.components.Fan;
+import main.java.components.fan.Fan;
 import main.java.interfaces.FanCI;
 import main.java.utils.FanLevel;
 

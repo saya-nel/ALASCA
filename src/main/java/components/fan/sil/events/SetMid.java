@@ -1,14 +1,14 @@
-package main.java.simulation.fan.events;
+package main.java.components.fan.sil.events;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.fan.FanElectricity_MILModel;
+import main.java.components.fan.sil.FanElectricity_MILModel;
 import main.java.utils.FanLevel;
 
 /**
- * The class <code>SetHigh</code> defines the MIL event of the fan being set to
- * high power mode.
+ * The class <code>SetMid</code> defines the MIL event of the fan being set to
+ * medium power mode.
  *
  * <p>
  * <strong>Description</strong>
@@ -24,12 +24,12 @@ import main.java.utils.FanLevel;
  *
  * @author Bello Memmi
  */
-public class SetHigh extends AbstractFanEvent {
+public class SetMid extends AbstractFanEvent {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * create a SetHigh event.
+	 * create a SetMid event.
 	 *
 	 * <p>
 	 * <strong>Contract</strong>
@@ -42,7 +42,7 @@ public class SetHigh extends AbstractFanEvent {
 	 *
 	 * @param timeOfOccurrence time of occurrence of the event.
 	 */
-	public SetHigh(Time timeOfOccurrence) {
+	public SetMid(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
 
@@ -51,7 +51,7 @@ public class SetHigh extends AbstractFanEvent {
 	 */
 	@Override
 	public String eventAsString() {
-		return "SetHigh(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+		return "SetMid(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
 	}
 
 	/**
@@ -70,8 +70,8 @@ public class SetHigh extends AbstractFanEvent {
 		assert model instanceof FanElectricity_MILModel;
 
 		FanElectricity_MILModel m = (FanElectricity_MILModel) model;
-		if (m.isOn() && m.getLevel() != FanLevel.HIGH) {
-			m.setLevel(FanLevel.HIGH);
+		if (m.isOn() && m.getLevel() != FanLevel.MID) {
+			m.setLevel(FanLevel.MID);
 			m.toggleConsumptionHasChanged();
 		}
 	}

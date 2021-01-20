@@ -2,7 +2,7 @@ package main.java.ports;
 
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import main.java.components.Fridge;
+import main.java.components.fridge.Fridge;
 import main.java.interfaces.FridgeCI;
 
 /**

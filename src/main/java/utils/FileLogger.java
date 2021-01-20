@@ -1,4 +1,4 @@
-package main.java.simulation.utils;
+package main.java.utils;
 
 import java.io.File;
 import java.io.FileWriter;

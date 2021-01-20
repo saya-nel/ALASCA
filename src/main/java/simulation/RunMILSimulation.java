@@ -19,14 +19,14 @@ import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
+import main.java.components.fan.sil.FanElectricity_MILModel;
+import main.java.components.fan.sil.FanUserSILModel;
+import main.java.components.fan.sil.events.SetHigh;
+import main.java.components.fan.sil.events.SetLow;
+import main.java.components.fan.sil.events.SetMid;
+import main.java.components.fan.sil.events.TurnOff;
+import main.java.components.fan.sil.events.TurnOn;
 import main.java.simulation.battery.BatteryElectricity_MILModel;
-import main.java.simulation.fan.FanElectricity_MILModel;
-import main.java.simulation.fan.FanUser_MILModel;
-import main.java.simulation.fan.events.SetHigh;
-import main.java.simulation.fan.events.SetLow;
-import main.java.simulation.fan.events.SetMid;
-import main.java.simulation.fan.events.TurnOff;
-import main.java.simulation.fan.events.TurnOn;
 import main.java.simulation.fridge.FridgeElectricity_MILModel;
 import main.java.simulation.fridge.FridgeUser_MILModel;
 import main.java.simulation.fridge.events.SetEco;
@@ -73,7 +73,7 @@ public class RunMILSimulation {
 			// fan
 			atomicModelDescriptors.put(fanURI, AtomicHIOA_Descriptor.create(FanElectricity_MILModel.class, fanURI,
 					TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
-			atomicModelDescriptors.put(fanUserURI, AtomicModelDescriptor.create(FanUser_MILModel.class, fanUserURI,
+			atomicModelDescriptors.put(fanUserURI, AtomicModelDescriptor.create(FanUserSILModel.class, fanUserURI,
 					TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_ENGINE));
 
 			// battery

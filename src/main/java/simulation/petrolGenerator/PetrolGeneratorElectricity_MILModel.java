@@ -17,7 +17,7 @@ import main.java.simulation.petrolGenerator.events.EmptyGenerator;
 import main.java.simulation.petrolGenerator.events.FillAll;
 import main.java.simulation.petrolGenerator.events.TurnOff;
 import main.java.simulation.petrolGenerator.events.TurnOn;
-import main.java.simulation.utils.FileLogger;
+import main.java.utils.FileLogger;
 
 /**
  * Simulation of the petrolGenerator component, at the start he is turned off

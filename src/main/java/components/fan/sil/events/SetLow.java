@@ -1,40 +1,48 @@
-package main.java.simulation.fan.events;
+package main.java.components.fan.sil.events;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.fan.FanElectricity_MILModel;
+import main.java.components.fan.sil.FanElectricity_MILModel;
+import main.java.utils.FanLevel;
 
 /**
- * The class <code>TurnOff</code> defines the MIL event of the fan being
- * switched off.
+ * The class <code>SetLow</code> defines the MIL event of the fan being set to
+ * low power mode.
  *
- * <p><strong>Description</strong></p>
+ * <p>
+ * <strong>Description</strong>
+ * </p>
  *
- * <p><strong>Invariant</strong></p>
+ * <p>
+ * <strong>Invariant</strong>
+ * </p>
  *
  * <pre>
  * invariant		true
  * </pre>
  *
- * @author	Bello Memmi
+ * @author Bello Memmi
  */
-public class TurnOff extends AbstractFanEvent {
+public class SetLow extends AbstractFanEvent {
 
 	private static final long serialVersionUID = 1L;
+
 	/**
-	 * create a TurnOff event.
+	 * create a SetLow event.
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 * pre	{@code timeOfOccurrence != null}
 	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
 	 * </pre>
 	 *
-	 * @param timeOfOccurrence	time of occurrence of the event.
+	 * @param timeOfOccurrence time of occurrence of the event.
 	 */
-	public TurnOff(Time timeOfOccurrence) {
+	public SetLow(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
 
@@ -43,7 +51,7 @@ public class TurnOff extends AbstractFanEvent {
 	 */
 	@Override
 	public String eventAsString() {
-		return "turnOff(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+		return "SetLow(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
 	}
 
 	/**
@@ -61,9 +69,9 @@ public class TurnOff extends AbstractFanEvent {
 	public void executeOn(AtomicModel model) {
 		assert model instanceof FanElectricity_MILModel;
 
-		FanElectricity_MILModel m = ((FanElectricity_MILModel) model);
-		if (m.isOn()) {
-			m.toggleIsOn();
+		FanElectricity_MILModel m = (FanElectricity_MILModel) model;
+		if (m.isOn() && m.getLevel() != FanLevel.LOW) {
+			m.setLevel(FanLevel.LOW);
 			m.toggleConsumptionHasChanged();
 		}
 	}

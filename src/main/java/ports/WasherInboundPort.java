@@ -5,7 +5,7 @@ import java.time.LocalTime;
 
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import main.java.components.Washer;
+import main.java.components.washer.Washer;
 import main.java.interfaces.WasherCI;
 
 /**

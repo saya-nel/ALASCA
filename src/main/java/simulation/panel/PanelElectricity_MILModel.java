@@ -15,7 +15,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.simulation.panel.events.ElectricityLevel;
 import main.java.simulation.panel.events.ElectricityLevelRequest;
-import main.java.simulation.utils.FileLogger;
+import main.java.utils.FileLogger;
 
 @ModelExternalEvents(imported = { ElectricityLevelRequest.class }, exported = { ElectricityLevel.class })
 public class PanelElectricity_MILModel extends AtomicHIOA {

@@ -12,13 +12,13 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.simulation.utils.FileLogger;
 import main.java.simulation.washer.events.AbstractWasherEvent;
 import main.java.simulation.washer.events.SetEco;
 import main.java.simulation.washer.events.SetPerformance;
 import main.java.simulation.washer.events.SetStd;
 import main.java.simulation.washer.events.TurnOff;
 import main.java.simulation.washer.events.TurnOn;
+import main.java.utils.FileLogger;
 import main.java.utils.WasherModes;
 
 /**

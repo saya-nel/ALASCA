@@ -17,7 +17,7 @@ import main.java.simulation.fridge.events.AbstractFridgeEvent;
 import main.java.simulation.fridge.events.SetEco;
 import main.java.simulation.fridge.events.SetNormal;
 import main.java.simulation.fridge.events.SetRequestedTemperature;
-import main.java.simulation.utils.FileLogger;
+import main.java.utils.FileLogger;
 import main.java.utils.FridgeMode;
 
 /**

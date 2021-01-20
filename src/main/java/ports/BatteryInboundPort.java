@@ -5,7 +5,7 @@ import java.time.LocalTime;
 
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import main.java.components.Battery;
+import main.java.components.battery.Battery;
 import main.java.interfaces.BatteryCI;
 
 /**
