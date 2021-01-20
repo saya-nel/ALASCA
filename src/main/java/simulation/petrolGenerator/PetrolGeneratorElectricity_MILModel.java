@@ -204,16 +204,16 @@ public class PetrolGeneratorElectricity_MILModel extends AtomicHIOA {
 	 */
 	@Override
 	public Duration timeAdvance() {
-		// return Duration.INFINITY;
-		if (consumptionHasChanged) {
-			this.toggleConsumptionHasChanged();
-			return new Duration(0.0, this.getSimulatedTimeUnit());
-		} else if (needToBeFilled && !hasSendEmptyGenerator) {
-			return new Duration(0.0, this.getSimulatedTimeUnit());
-		} else if (needToBeFilled && hasSendEmptyGenerator) {
-			return Duration.INFINITY;
-		}
-		return standardStep;
+		return Duration.INFINITY;
+//		if (consumptionHasChanged) {
+//			this.toggleConsumptionHasChanged();
+//			return new Duration(0.0, this.getSimulatedTimeUnit());
+//		} else if (needToBeFilled && !hasSendEmptyGenerator) {
+//			return new Duration(0.0, this.getSimulatedTimeUnit());
+//		} else if (needToBeFilled && hasSendEmptyGenerator) {
+//			return Duration.INFINITY;
+//		}
+//		return standardStep;
 	}
 
 	/**

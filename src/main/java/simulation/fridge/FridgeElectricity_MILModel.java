@@ -91,7 +91,7 @@ public class FridgeElectricity_MILModel extends AtomicHIOAwithDE {
 	 * the tolerance on the target refregirant temperature to get a control with
 	 * hysteresis
 	 */
-	protected double CRITICAL_TEMPERATURE = 15;//this.requestedTemperature + 5;
+	protected double CRITICAL_TEMPERATURE;//this.requestedTemperature + 5;
 
 	protected double EXTERNAL_TEMPERATURE = 25;
 
