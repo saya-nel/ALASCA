@@ -140,4 +140,14 @@ public class PetrolGenerator extends AbstractComponent implements PetrolGenerato
 		return isTurnedOn;
 	}
 
+	/**
+	 *
+	 */
+	public void fillAll() throws Exception {
+		this.petrolLevel=this.maximumPetrolLevel;
+	}
+
+	public void emptyGenerator() throws Exception {
+		this.petrolLevel = 0;
+	}
 }
