@@ -11,7 +11,9 @@ import main.java.components.fridge.sil.actuator.FridgeActuatorOutboundPort;
 import main.java.components.fridge.sil.sensors.FridgeSensorCI;
 import main.java.components.fridge.sil.sensors.FridgeSensorConnector;
 import main.java.components.fridge.sil.sensors.FridgeSensorOutboundPort;
+import main.java.connectors.FridgeConnector;
 import main.java.deployment.RunSILSimulation;
+import main.java.ports.FridgeOutboundPort;
 
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +44,8 @@ extends AbstractComponent {
     protected FridgeSensorOutboundPort                      sensorOBP;
     /** actuator outbound port conntected to the fridge component           */
     protected FridgeActuatorOutboundPort                    actuatorOBP;
+    /** fridge outbound port to get target temperature                      */
+    protected FridgeOutboundPort                            fridgeOutboundPort;
     /** true if the fridge is in passive mode not freezing                  */
     protected boolean                                       isPassive;
     /** period of the reactive controller                                   */
@@ -56,9 +60,9 @@ extends AbstractComponent {
     // Constructors
     // -------------------------------------------------------------------------
 
-    /** target water temperature (in celcius).								*/
-    protected static final double			TARGET_TEMP = 5.0;
-    /** the tolerance (in celcius) on the target water temperature to get
+    /** target content temperature (in celcius).								*/
+    protected static double			                        TARGET_TEMP = 5.0;
+    /** the tolerance (in celcius) on the target content temperature to get
      *  a control with hysteresis.											*/
     protected static final double			TARGET_TOLERANCE = 2.0;
 
@@ -109,6 +113,16 @@ extends AbstractComponent {
                     this.actuatorOBP.getPortURI(),
                     Fridge.ACTUATOR_INBOUND_PORT_URI,
                     FridgeActuatorConnector.class.getCanonicalName());
+            /**
+             *  Fridge outbound port connexion
+             */
+            this.fridgeOutboundPort = new FridgeOutboundPort(this);
+            this.fridgeOutboundPort.publishPort();
+            this.doPortConnection(
+                    this.fridgeOutboundPort.getPortURI(),
+                    Fridge.CONTROL_INBOUND_PORT_URI,
+                    FridgeConnector.class.getCanonicalName()
+            );
         } catch (Exception e) {
             throw new ComponentStartException(e) ;
         }
@@ -143,6 +157,7 @@ extends AbstractComponent {
     {
         this.doPortDisconnection(this.sensorOBP.getPortURI());
         this.doPortDisconnection(this.actuatorOBP.getPortURI());
+        this.doPortDisconnection(this.fridgeOutboundPort.getPortURI());
         super.finalise();
     }
 
@@ -155,6 +170,7 @@ extends AbstractComponent {
         try {
             this.sensorOBP.unpublishPort();
             this.actuatorOBP.unpublishPort();
+            this.fridgeOutboundPort.unpublishPort();
         } catch (Exception e) {
             throw new ComponentShutdownException(e) ;
         }
@@ -180,22 +196,23 @@ extends AbstractComponent {
     protected synchronized void		controlLoop() throws Exception
     {
         double currentTemp = this.sensorOBP.getContentTemperatureInCelsius();
+        FridgeReactiveController.TARGET_TEMP = this.fridgeOutboundPort.getRequestedTemperature();
         if (!this.isPassive) {
             if (currentTemp <= TARGET_TEMP + TARGET_TOLERANCE) {
 
-                this.logMessage("Boiler reactive controller stops heating.");
+                this.logMessage("Fridge reactive controller stops freezing.");
                 this.actuatorOBP.startPassive();
                 this.isPassive = true;
             } else {
-                this.logMessage("Boiler reactive controller heats.");
+                this.logMessage("Fridge reactive controller heats.");
             }
         } else {
             if (currentTemp > TARGET_TEMP + TARGET_TOLERANCE) {
-                this.logMessage("Boiler reactive controller starts heating.");
+                this.logMessage("Fridge reactive controller starts freezing.");
                 this.actuatorOBP.stopPassive();
                 this.isPassive = false;
             } else {
-                this.logMessage("Boiler reactive controller does not heat.");
+                this.logMessage("Fridge reactive controller does not freezing.");
             }
         }
         this.numberOfLoops++;

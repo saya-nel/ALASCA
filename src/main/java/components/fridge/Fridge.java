@@ -13,23 +13,54 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.exceptions.PreconditionException;
+import main.java.components.fridge.sil.FridgeRTAtomicSimulatorPlugin;
+import main.java.components.fridge.sil.FridgeReactiveControlImplementationI;
+import main.java.components.fridge.sil.actuator.FridgeActuatorCI;
+import main.java.components.fridge.sil.actuator.FridgeActuatorInboundPort;
+import main.java.components.fridge.sil.events.Activate;
+import main.java.components.fridge.sil.events.Passivate;
+import main.java.components.fridge.sil.models.FridgeTemperatureSILModel;
+import main.java.components.fridge.sil.sensors.FridgeSensorCI;
+import main.java.components.fridge.sil.sensors.FridgeSensorInboundPort;
 import main.java.connectors.ControllerConnector;
 import main.java.interfaces.ControllerCI;
 import main.java.interfaces.FridgeCI;
 import main.java.interfaces.FridgeImplementationI;
 import main.java.ports.ControllerOutboundPort;
 import main.java.ports.FridgeInboundPort;
+import main.java.ports.FridgeOutboundPort;
 import main.java.utils.FridgeMode;
 import main.java.utils.Log;
 
-@OfferedInterfaces(offered = { FridgeCI.class })
+@OfferedInterfaces(offered = { FridgeCI.class, FridgeSensorCI.class, FridgeActuatorCI.class})
 @RequiredInterfaces(required = { ControllerCI.class })
-public class Fridge extends AbstractComponent implements FridgeImplementationI {
+public class Fridge extends AbstractComponent implements FridgeImplementationI,
+		FridgeReactiveControlImplementationI {
+
+	protected static final String 		SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
+
+	/** plug-in for the real atomic simulator of the fridge 		*/
+	protected FridgeRTAtomicSimulatorPlugin simulatorPlugin;
 
 	public static final String			SENSOR_INBOUND_PORT_URI =
 			"FRIDGE-SENSOR-IBP-URI";
+	protected FridgeSensorInboundPort 	sensorIBP;
+
+
 	public static final String			ACTUATOR_INBOUND_PORT_URI =
 			"FRIDGE-ACTUATOR-IBP-URI";
+	protected FridgeActuatorInboundPort actuatorIBP;
+
+
+	/** true if the component is executed in a SIL simulation mode. 	*/
+	protected boolean 					isSILSimulated;
+
+
+	public static final String 			CONTROL_INBOUND_PORT_URI =
+											"FRIDGE_CONTROL_IBP_URI";
+	protected FridgeInboundPort			controlIBP;
+
+
 	/**
 	 * Component URI
 	 */
@@ -63,7 +94,8 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	/**
 	 * inbound port of controller to connect fridge with
 	 */
-	protected String cip_URI;
+	public static final String 	REFLECTION_INBOUND_PORT_URI =
+													Fridge.class.getSimpleName();
 
 	/** maximum time during which the fridge can be suspended **/
 	protected static long MAX_SUSPENSION = Duration.ofHours(12).toMillis();
@@ -97,15 +129,14 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 
 	public final static double TRANSFER_OUTSIDE_CONSTANT = 100;
 
-	/**
-	 * @param uri    of the component
-	 * @param fipURI inbound port's uri
-	 * @throws Exception
-	 */
-	protected Fridge(String uri, boolean toogleTracing, String serialNumber, String fipURI, String cip_URI)
+
+	protected Fridge(boolean isSILSimulated)
 			throws Exception {
-		super(uri, 1, 0);
-		myUri = uri;
+		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
+		this.passive = new AtomicBoolean(false);
+		this.lastSuspensionTime = new AtomicReference<>();
+		this.initialise(isSILSimulated);
+		/**
 		this.serialNumber = serialNumber;
 		this.passive = new AtomicBoolean(false);
 		this.lastSuspensionTime = new AtomicReference<>();
@@ -119,7 +150,7 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 			this.tracer.get().setRelativePosition(1, 2);
 			this.toggleTracing();
 		}
-
+		*/
 	}
 
 	// -------------------------------------------------------------------------
@@ -128,31 +159,22 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 
 
 
-	/**
-	 * Initialize the fridge component
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 *     pre          {@code fridgeInboundPortURI != null}
-	 *     pre          {@code !fridgeInboundPortURI.isEmpty()}
-	 *     post         {@code getCurrentTemperature() == 20}
-	 *     post         {@code getRequestedTemperature() == 10}
-	 *     post         {@code getState() == false}
-	 * </pre>
-	 * 
-	 * @param fridgeInboundPortURI
-	 * @throws Exception
-	 */
-	public void initialise(String fridgeInboundPortURI) throws Exception {
-		assert fridgeInboundPortURI != null : new PreconditionException("fridgeInboundPortURI != null");
-		assert !fridgeInboundPortURI.isEmpty() : new PreconditionException("!fridgeInboundPortURI.isEmpty()");
-		this.currentTemperature = 20;
-		this.requestedTemperature = 10;
-		this.fip = new FridgeInboundPort(fridgeInboundPortURI, this);
-		this.fip.publishPort();
+
+	public void initialise(boolean isSILSimulated) throws Exception {
+//		assert fridgeInboundPortURI != null : new PreconditionException("fridgeInboundPortURI != null");
+//		assert !fridgeInboundPortURI.isEmpty() : new PreconditionException("!fridgeInboundPortURI.isEmpty()");
+//		this.currentTemperature = 20;
+//		this.requestedTemperature = 10;
+//		this.fip = new FridgeInboundPort(fridgeInboundPortURI, this);
+//		this.fip.publishPort();
+		this.isSILSimulated = isSILSimulated;
+		this.controlIBP = new FridgeInboundPort(CONTROL_INBOUND_PORT_URI, this);
+		this.controlIBP.publishPort();
+		this.sensorIBP = new FridgeSensorInboundPort(this);
+		this.sensorIBP.publishPort();
+		this.actuatorIBP = new FridgeActuatorInboundPort(this);
+		this.actuatorIBP.publishPort();
+
 	}
 
 	/**
@@ -185,11 +207,23 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 	@Override
 	public synchronized void start() throws ComponentStartException {
 		super.start();
-		try {
-			if (cip_URI.length() > 0)
-				this.doPortConnection(this.cop.getPortURI(), cip_URI, ControllerConnector.class.getCanonicalName());
-		} catch (Exception e) {
-			throw new ComponentStartException(e);
+		if (this.isSILSimulated) {
+			try {
+				// create the scheduled executor service that will run the
+				// simulation tasks
+				this.createNewExecutorService(
+						SCHEDULED_EXECUTOR_SERVICE_URI, 1, true);
+				// create and initialise the atomic simulator plug-in that will
+				// hold and execute the SIL simulation models
+				this.simulatorPlugin = new FridgeRTAtomicSimulatorPlugin();
+				this.simulatorPlugin.setPluginURI(FridgeTemperatureSILModel.URI);
+				this.simulatorPlugin.setSimulationExecutorService(
+						SCHEDULED_EXECUTOR_SERVICE_URI);
+				this.simulatorPlugin.initialiseSimulationArchitecture();
+				this.installPlugin(this.simulatorPlugin);
+			} catch (Exception e) {
+				throw new ComponentStartException(e) ;
+			}
 		}
 	}
 
@@ -354,6 +388,59 @@ public class Fridge extends AbstractComponent implements FridgeImplementationI {
 			}
 			Log.printAndLog(this, "emergency() service result : " + res);
 			return res;
+		}
+	}
+
+
+
+	// -------------------------------------------------------------------------
+	// Component services implementation
+	// -------------------------------------------------------------------------
+	/**
+	 * @see FridgeReactiveControlImplementationI#isPassive()
+	 */
+	@Override
+	public boolean 		isPassive(){ return this.passive.get();}
+
+	/**
+	 * @see main.java.components.fridge.sil.FridgeReactiveControlImplementationI#passiveSwitch(boolean)
+	 */
+	@Override
+	public void passiveSwitch(boolean passive) {
+		this.passive.set(passive);
+		if (this.isSILSimulated) {
+			try {
+				if(passive){
+					this.simulatorPlugin.triggerExternalEvent(
+							FridgeTemperatureSILModel.URI,
+							t -> new Passivate(t));
+				}else {
+					this.simulatorPlugin.triggerExternalEvent(
+							FridgeTemperatureSILModel.URI,
+							t -> new Activate(t));
+				}
+
+			} catch (Exception e){
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	/**
+	 * @see FridgeReactiveControlImplementationI#contentTemperatureSensor()
+	 */
+	@Override
+	public double contentTemperatureSensor() {
+		if(this.isSILSimulated){
+			try {
+				return (double) this.simulatorPlugin.getModelStateValue(
+						FridgeTemperatureSILModel.URI,
+						FridgeRTAtomicSimulatorPlugin.CURRENT_TEMPERATURE_FRIDGE_NAME
+				);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			throw new RuntimeException("Current content temperature not implemented yet");
 		}
 	}
 }
