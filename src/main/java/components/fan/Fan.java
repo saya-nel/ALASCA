@@ -104,7 +104,7 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 		fip.publishPort();
 
 		this.tracer.get().setTitle("Fan component");
-		this.tracer.get().setRelativePosition(1, 0);
+		this.tracer.get().setRelativePosition(0, 0);
 		this.toggleTracing();
 	}
 

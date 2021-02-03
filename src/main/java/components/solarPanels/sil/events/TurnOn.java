@@ -1,15 +1,21 @@
-package main.java.simulation.solarPanels.events;
+package main.java.components.solarPanels.sil.events;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.solarPanels.SolarPanelsElectricity_MILModel;
+import main.java.components.solarPanels.sil.SolarPanelsElectricalSILModel;
 
-public class TurnOff extends AbstractSolarPanelEvent {
+/**
+ * Turn on event for solar panels
+ * 
+ * @author Bello Memmi
+ *
+ */
+public class TurnOn extends AbstractSolarPanelEvent {
 
 	private static final long serialVersionUID = 1L;
 
-	public TurnOff(Time timeOfOccurrence) {
+	public TurnOn(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
 
@@ -18,7 +24,7 @@ public class TurnOff extends AbstractSolarPanelEvent {
 	 */
 	@Override
 	public String eventAsString() {
-		return "TurnOff solar panels(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+		return "Turn solar panel(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
 	}
 
 	/**
@@ -34,10 +40,10 @@ public class TurnOff extends AbstractSolarPanelEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof SolarPanelsElectricity_MILModel;
+		assert model instanceof SolarPanelsElectricalSILModel;
 
-		SolarPanelsElectricity_MILModel m = (SolarPanelsElectricity_MILModel) model;
-		m.turnOff();
+		SolarPanelsElectricalSILModel m = (SolarPanelsElectricalSILModel) model;
+		m.turnOn();
 		m.toggleConsumptionHasChanged();
 
 	}

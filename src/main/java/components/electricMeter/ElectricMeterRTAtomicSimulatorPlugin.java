@@ -27,6 +27,7 @@ import main.java.components.fan.sil.events.SetLow;
 import main.java.components.fan.sil.events.SetMid;
 import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
+import main.java.components.solarPanels.sil.SolarPanelsElectricalSILModel;
 import main.java.deployment.RunSILSimulation;
 
 /**
@@ -42,10 +43,11 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 
 	private static final long serialVersionUID = 1L;
 	/**
-	 * name of the intensity variable used in the protocol allowing the owner
-	 * component to access a value in the simulation models.
+	 * name of the intensity and production variables used in the protocol allowing
+	 * the owner component to access a value in the simulation models.
 	 */
 	public static final String INTENSITY_VARIABLE_NAME = "intensity";
+	public static final String PRODUCTION_VARIABLE_NAME = "production";
 
 	// -------------------------------------------------------------------------
 	// Constructors
@@ -88,6 +90,8 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 	public Object getModelStateValue(String modelURI, String name) throws Exception {
 		assert modelURI != null && name != null;
 
+		System.out.println("TRY GET VALUES");
+
 		// Get a Java reference on the object representing the corresponding
 		// simulation model.
 		ModelDescriptionI m = this.simulator.getDescendentModel(modelURI);
@@ -95,9 +99,13 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		// is the ElectricMeterSILModel.
 		assert m instanceof ElectricMeterSILModel;
 		// The only variable that can be accessed is the intensity.
-		assert name.equals(INTENSITY_VARIABLE_NAME);
+		assert name.equals(INTENSITY_VARIABLE_NAME) || name.equals(PRODUCTION_VARIABLE_NAME);
 
-		return ((ElectricMeterSILModel) m).getIntensity();
+		if (name.equals(INTENSITY_VARIABLE_NAME)) {
+			return ((ElectricMeterSILModel) m).getIntensity();
+		} else {
+			return ((ElectricMeterSILModel) m).getProduction();
+		}
 	}
 
 	/**
@@ -111,6 +119,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		Set<String> submodels = new HashSet<String>();
 		submodels.add(ElectricMeterSILModel.URI);
 		submodels.add(FanElectricalSILModel.URI);
+		submodels.add(SolarPanelsElectricalSILModel.URI);
 
 		atomicModelDescriptors.put(ElectricMeterSILModel.URI,
 				RTAtomicHIOA_Descriptor.create(ElectricMeterSILModel.class, ElectricMeterSILModel.URI, TimeUnit.SECONDS,
@@ -118,18 +127,36 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		atomicModelDescriptors.put(FanElectricalSILModel.URI,
 				RTAtomicHIOA_Descriptor.create(FanElectricalSILModel.class, FanElectricalSILModel.URI, TimeUnit.SECONDS,
 						null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE, RunSILSimulation.ACC_FACTOR));
+		atomicModelDescriptors.put(SolarPanelsElectricalSILModel.URI,
+				RTAtomicHIOA_Descriptor.create(SolarPanelsElectricalSILModel.class, SolarPanelsElectricalSILModel.URI,
+						TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+						RunSILSimulation.ACC_FACTOR));
 
 		Map<Class<? extends EventI>, EventSink[]> imported = new HashMap<Class<? extends EventI>, EventSink[]>();
+		// fan
 		imported.put(TurnOn.class, new EventSink[] { new EventSink(FanElectricalSILModel.URI, TurnOn.class) });
 		imported.put(TurnOff.class, new EventSink[] { new EventSink(FanElectricalSILModel.URI, TurnOff.class) });
 		imported.put(SetLow.class, new EventSink[] { new EventSink(FanElectricalSILModel.URI, SetLow.class) });
 		imported.put(SetMid.class, new EventSink[] { new EventSink(FanElectricalSILModel.URI, SetMid.class) });
 		imported.put(SetHigh.class, new EventSink[] { new EventSink(FanElectricalSILModel.URI, SetHigh.class) });
+		// sp
+		imported.put(main.java.components.solarPanels.sil.events.TurnOn.class,
+				new EventSink[] { new EventSink(SolarPanelsElectricalSILModel.URI,
+						main.java.components.solarPanels.sil.events.TurnOn.class) });
+		imported.put(main.java.components.solarPanels.sil.events.TurnOff.class,
+				new EventSink[] { new EventSink(SolarPanelsElectricalSILModel.URI,
+						main.java.components.solarPanels.sil.events.TurnOff.class) });
 
 		Map<VariableSource, VariableSink[]> bindings = new HashMap<VariableSource, VariableSink[]>();
+		// fan
 		VariableSource source = new VariableSource("currentIntensity", Double.class, FanElectricalSILModel.URI);
 		VariableSink[] sinks = new VariableSink[] {
 				new VariableSink("FanIntensity", Double.class, ElectricMeterSILModel.URI) };
+		bindings.put(source, sinks);
+		// sp
+		source = new VariableSource("currentProduction", Double.class, SolarPanelsElectricalSILModel.URI);
+		sinks = new VariableSink[] {
+				new VariableSink("SolarPanelsProduction", Double.class, ElectricMeterSILModel.URI) };
 		bindings.put(source, sinks);
 
 		coupledModelDescriptors.put(ElectricMeterSILCoupledModel.URI,

@@ -1,4 +1,4 @@
-package main.java.components.fan.sil;
+package main.java.components.solarPanels.sil;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -10,17 +10,13 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.components.fan.sil.events.AbstractFanEvent;
-import main.java.components.fan.sil.events.SetHigh;
-import main.java.components.fan.sil.events.SetLow;
-import main.java.components.fan.sil.events.SetMid;
-import main.java.components.fan.sil.events.TurnOff;
-import main.java.components.fan.sil.events.TurnOn;
+import main.java.components.solarPanels.sil.events.AbstractSolarPanelEvent;
+import main.java.components.solarPanels.sil.events.TurnOff;
+import main.java.components.solarPanels.sil.events.TurnOn;
 import main.java.utils.FileLogger;
 
-@ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class }, exported = {
-		TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class })
-public class FanStateSILModel extends AtomicModel {
+@ModelExternalEvents(imported = { TurnOn.class, TurnOff.class }, exported = { TurnOn.class, TurnOff.class })
+public class SolarPanelsStateSILModel extends AtomicModel {
 
 	// -------------------------------------------------------------------------
 	// Constants and variables
@@ -30,7 +26,11 @@ public class FanStateSILModel extends AtomicModel {
 	/**
 	 * URI for an instance model; works as long as only one instance is created.
 	 */
-	public static final String URI = FanStateSILModel.class.getSimpleName();
+	public static final String URI = SolarPanelsStateSILModel.class.getSimpleName();
+
+	/**
+	 * name used to pass the owner component reference as simulation parameter.
+	 */
 
 	/** the event that was received to change the state of the hair dryer. */
 	protected EventI lastReceivedEvent;
@@ -43,9 +43,10 @@ public class FanStateSILModel extends AtomicModel {
 	 * @param simulationEngine  simulation engine enacting the model.
 	 * @throws Exception <i>to do</i>.
 	 */
-	public FanStateSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
+	public SolarPanelsStateSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
+			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
-		this.setLogger(new FileLogger("fanState.log"));
+		this.setLogger(new FileLogger("solarPanelsState.log"));
 	}
 
 	// -------------------------------------------------------------------------
@@ -106,7 +107,7 @@ public class FanStateSILModel extends AtomicModel {
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		assert currentEvents != null && currentEvents.size() == 1;
 		this.lastReceivedEvent = currentEvents.get(0);
-		assert this.lastReceivedEvent instanceof AbstractFanEvent;
+		assert this.lastReceivedEvent instanceof AbstractSolarPanelEvent;
 		this.logMessage(
 				this.getCurrentStateTime() + " executing the external event " + lastReceivedEvent.eventAsString());
 	}

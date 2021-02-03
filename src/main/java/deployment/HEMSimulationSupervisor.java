@@ -27,6 +27,8 @@ import main.java.components.fan.sil.events.SetLow;
 import main.java.components.fan.sil.events.SetMid;
 import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
+import main.java.components.solarPanels.SolarPanels;
+import main.java.components.solarPanels.sil.SolarPanelsStateSILModel;
 
 /**
  * @author Bello Memmi
@@ -106,11 +108,24 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 						new Class[] { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class },
 						TimeUnit.SECONDS, Fan.REFLECTION_INBOUND_PORT_URI));
 
+		atomicModelDescriptors.put(SolarPanelsStateSILModel.URI,
+				RTComponentAtomicModelDescriptor.create(SolarPanelsStateSILModel.URI, new Class[] {},
+						new Class[] { main.java.components.solarPanels.sil.events.TurnOn.class,
+								main.java.components.solarPanels.sil.events.TurnOff.class },
+						TimeUnit.SECONDS, SolarPanels.REFLECTION_INBOUND_PORT_URI));
+
+//		atomicModelDescriptors.put(SolarPanelsSILCoupledModel.URI, // coupled model seen as atomic
+//				RTComponentAtomicModelDescriptor.create(SolarPanelsSILCoupledModel.URI, new Class[] {},
+//						new Class[] { main.java.components.solarPanels.sil.events.TurnOn.class,
+//								main.java.components.solarPanels.sil.events.TurnOff.class },
+//						TimeUnit.SECONDS, Fan.REFLECTION_INBOUND_PORT_URI));
+
 		Map<String, CoupledModelDescriptor> coupledModelDescriptors = new HashMap<>();
 
 		Set<String> submodels = new HashSet<String>();
 		submodels.add(ElectricMeterSILCoupledModel.URI);
 		submodels.add(FanSILCoupledModel.URI);
+		submodels.add(SolarPanelsStateSILModel.URI);
 
 		Map<EventSource, EventSink[]> connections = new HashMap<EventSource, EventSink[]>();
 
@@ -125,6 +140,16 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetMid.class) });
 		connections.put(new EventSource(FanSILCoupledModel.URI, SetLow.class),
 				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetLow.class) });
+		// SolarPanels -> ElectricMeterSIL
+		connections.put(
+				new EventSource(SolarPanelsStateSILModel.URI, main.java.components.solarPanels.sil.events.TurnOn.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI,
+						main.java.components.solarPanels.sil.events.TurnOn.class) });
+		connections.put(
+				new EventSource(SolarPanelsStateSILModel.URI,
+						main.java.components.solarPanels.sil.events.TurnOff.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI,
+						main.java.components.solarPanels.sil.events.TurnOff.class) });
 
 		coupledModelDescriptors.put(HEMProjectCoupledModel.URI,
 				RTComponentCoupledModelDescriptor.create(HEMProjectCoupledModel.class, HEMProjectCoupledModel.URI,

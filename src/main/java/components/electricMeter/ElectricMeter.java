@@ -38,7 +38,7 @@ public class ElectricMeter extends AbstractCyPhyComponent {
 		this.isUnitTesting = isUnitTesting;
 
 		this.tracer.get().setTitle("Electric meter component");
-		this.tracer.get().setRelativePosition(3, 0);
+		this.tracer.get().setRelativePosition(2, 0);
 		this.toggleTracing();
 	}
 

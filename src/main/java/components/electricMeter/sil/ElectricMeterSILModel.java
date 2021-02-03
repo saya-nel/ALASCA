@@ -57,6 +57,16 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	@ImportedVariable(type = Double.class)
 	protected Value<Double> FanIntensity;
 
+	/** current production in amperes; production is power/tension. */
+	@ExportedVariable(type = Double.class)
+	protected final Value<Double> currentProduction = new Value<Double>(this, 0.0, 0);
+	/**
+	 * current production of the solar panels in amperes; production is
+	 * power/tension.
+	 */
+	@ImportedVariable(type = Double.class)
+	protected Value<Double> SolarPanelsProduction;
+
 	/**
 	 * time interval until the next global electricity consumption computation.
 	 */
@@ -97,6 +107,15 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 		return this.currentIntensity.v;
 	}
 
+	/**
+	 * return the current production computed by the model.
+	 *
+	 * @return the current production computed by the model.
+	 */
+	public double getProduction() {
+		return this.currentProduction.v;
+	}
+
 	// -------------------------------------------------------------------------
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
@@ -108,6 +127,7 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	protected void initialiseVariables(Time startTime) {
 		// initial intensity, before the first computation
 		this.currentIntensity.v = 0.0;
+		this.currentProduction.v = 0.0;
 		super.initialiseVariables(startTime);
 	}
 
@@ -143,14 +163,9 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	@Override
 	public ArrayList<EventI> output() {
 		if (this.requestReceived) {
-			// when a request has been received, output a ConsumptionLevel
-			// event with the current global electricity consumption.
 			ArrayList<EventI> ret = new ArrayList<EventI>();
-//			ret.add(new ConsumptionLevel(this.getTimeOfNextEvent(),
-//										 this.currentIntensity.v));
 			return ret;
 		} else {
-			// otherwise, no output event.
 			return null;
 		}
 	}
@@ -189,6 +204,16 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 			message.append(".\n");
 			this.logMessage(message.toString());
 
+			this.currentProduction.v = this.SolarPanelsProduction.v;
+			this.currentProduction.time = this.getCurrentStateTime();
+
+			message = new StringBuffer("total production = ");
+			message.append(this.currentProduction.v);
+			message.append(" at ");
+			message.append(this.currentProduction.time);
+			message.append(".\n");
+			this.logMessage(message.toString());
+
 			// the next planned computation
 			this.nextStep = this.standardStep;
 		} else {
@@ -212,18 +237,7 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 		// construction which is a consumption level request.
 		assert currentEvents != null && currentEvents.size() == 1;
 
-		// The received event can only be a ConsumptionLevelRequest, as this
-		// is the only imported event by this model.
-//		assert	currentEvents.get(0) instanceof ConsumptionLevelRequest;
-//
-//		ConsumptionLevelRequest ce =
-//							(ConsumptionLevelRequest)currentEvents.get(0);
-//		System.out.println("Panel receiving the external event " +
-//							ce.getClass().getSimpleName() + "(" +
-//							ce.getTimeOfOccurrence().getSimulatedTime() + ")");
-
-		// this will trigger an immediate internal transition and the output
-		// of the ConsumptionLevel event.
+		// this will trigger an immediate internal transition
 		this.requestReceived = true;
 		this.nextStep = this.standardStep.subtract(elapsedTime);
 

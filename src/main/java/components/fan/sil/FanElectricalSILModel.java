@@ -1,10 +1,8 @@
 package main.java.components.fan.sil;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
@@ -14,7 +12,6 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.components.electricMeter.ElectricMeter;
 import main.java.components.fan.sil.events.AbstractFanEvent;
 import main.java.components.fan.sil.events.SetHigh;
 import main.java.components.fan.sil.events.SetLow;
@@ -37,8 +34,6 @@ public class FanElectricalSILModel extends AtomicHIOA {
 	 * URI for an instance model; works as long as only one instance is created.
 	 */
 	public static final String URI = FanElectricalSILModel.class.getSimpleName();
-	/** owner component. */
-	protected ComponentI owner;
 
 	/** energy generated during low mode in watts */
 	public static final double LOW_MODE_CONSUMPTION = 20;
@@ -132,14 +127,6 @@ public class FanElectricalSILModel extends AtomicHIOA {
 	// -------------------------------------------------------------------------
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
-
-	/**
-	 * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
-	 */
-	@Override
-	public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception {
-		this.owner = (ElectricMeter) simParams.get(FanUserSILModel.FAN_REFERENCE_NAME);
-	}
 
 	/**
 	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()

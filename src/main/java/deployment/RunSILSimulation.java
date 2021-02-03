@@ -6,6 +6,7 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.electricMeter.ElectricMeter;
 import main.java.components.fan.Fan;
+import main.java.components.solarPanels.SolarPanels;
 
 /**
  * 
@@ -26,6 +27,8 @@ public class RunSILSimulation extends AbstractCVM {
 	public static final String SIM_ARCHITECTURE_URI = "sil";
 	/** URI of the inbound port of the fan component. */
 	protected final static String FAN_INBOUND_PORT_URI = "fip-URI";
+	/** URI of the inbound port of the solar panels component. */
+	protected final static String SOLARPANELS_INBOUND_PORT_URI = "spip-URI";
 
 	public RunSILSimulation() throws Exception {
 	}
@@ -37,6 +40,8 @@ public class RunSILSimulation extends AbstractCVM {
 	public void deploy() throws Exception {
 		AbstractComponent.createComponent(Fan.class.getCanonicalName(),
 				new Object[] { FAN_INBOUND_PORT_URI, true, false });
+		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),
+				new Object[] { SOLARPANELS_INBOUND_PORT_URI, true, false });
 		AbstractComponent.createComponent(ElectricMeter.class.getCanonicalName(), new Object[] { false });
 
 		AbstractComponent.createComponent(HEMSimulationCoordinator.class.getCanonicalName(), new Object[] {});
