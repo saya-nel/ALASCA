@@ -14,6 +14,7 @@ import main.java.components.fridge.Fridge;
 import main.java.components.fridge.sil.events.Activate;
 import main.java.components.fridge.sil.events.Passivate;
 import main.java.utils.FridgeMode;
+import main.java.utils.Log;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -58,7 +59,7 @@ extends AtomicHIOAwithDE
 
     /** the current content temperature.										*/
     @InternalVariable(type = Double.class)
-    protected final Value<Double> contentTemperature = new Value<Double>(this, 0.0, 0);
+    protected final Value<Double> contentTemperature = new Value<Double>(this, 1.1, 0);
     /** the current derivative of the water temperature.					*/
     protected double				currentTempDerivative = 0.0;
 
@@ -120,7 +121,6 @@ extends AtomicHIOAwithDE
 
         this.toggleDebugMode();
         this.logMessage("simulation begins.\n");
-
         super.initialiseState(initialTime);
     }
 
@@ -172,6 +172,7 @@ extends AtomicHIOAwithDE
     {
         // this method is called at each internal transition, just after
         // executing the method userDefinedInternalTransition.
+        this.logMessage("currently in computeDerivatives");
         this.currentTempDerivative = 0.0;
         try {
             if (!this.owner.suspended()) {
@@ -214,7 +215,7 @@ extends AtomicHIOAwithDE
     public void			userDefinedInternalTransition(Duration elapsedTime)
     {
         super.userDefinedInternalTransition(elapsedTime);
-
+        this.logger.logMessage("", "current temp " +contentTemperature.v);
         // update the water temperature using the Euler integration of the
         // differential equation
         Duration d = this.getCurrentStateTime().subtract(this.contentTemperature.time);

@@ -10,11 +10,7 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
-import main.java.components.fridge.sil.events.Activate;
-import main.java.components.fridge.sil.events.Passivate;
-import main.java.simulation.fridge.events.SetEco;
-import main.java.simulation.fridge.events.SetNormal;
-import main.java.simulation.fridge.events.SetRequestedTemperature;
+import main.java.components.fridge.sil.events.*;
 import main.java.utils.FridgeMode;
 
 import java.util.ArrayList;
@@ -67,6 +63,8 @@ public class FridgeElectricity_SILModel extends AtomicHIOA {
 	/** true if the fridge is currently suspended */
 	protected boolean isSuspended = false;
 
+	/** target temperature 							*/
+	protected double targetTemperature;
 
 	protected EventI 	lastReceivedEvent;
 	// -------------------------------------------------------------------------
@@ -98,6 +96,14 @@ public class FridgeElectricity_SILModel extends AtomicHIOA {
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
 
+	}
+
+	public void setTargetTemperature(double temperature){
+		this.targetTemperature=temperature;
+	}
+
+	public double getTargetTemperature(){
+		return this.targetTemperature;
 	}
 
 	/**
@@ -205,6 +211,7 @@ public class FridgeElectricity_SILModel extends AtomicHIOA {
 	public void initialiseState(Time initialTime) {
 		this.lastReceivedEvent = null;
 		this.isSuspended = false;
+		this.targetTemperature = 0;
 		super.initialiseState(initialTime);
 	}
 

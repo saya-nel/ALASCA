@@ -3,7 +3,7 @@ package main.java.components.fridge.sil.events;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.fridge.FridgeElectricity_MILModel;
+import main.java.components.fridge.sil.models.FridgeElectricity_SILModel;
 import main.java.utils.FridgeMode;
 
 /**
@@ -61,12 +61,11 @@ public class SetNormal extends AbstractFridgeEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof FridgeElectricity_MILModel;
+		assert model instanceof FridgeElectricity_SILModel;
 
-		FridgeElectricity_MILModel m = (FridgeElectricity_MILModel) model;
+		FridgeElectricity_SILModel m = (FridgeElectricity_SILModel) model;
 		if (m.getMode() != FridgeMode.NORMAL) {
 			m.setMode(FridgeMode.NORMAL);
-			m.toggleConsumptionHasChanged();
 		}
 	}
 
