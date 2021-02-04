@@ -3,7 +3,7 @@ package main.java.components.petrolGenerator.sil.events;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.components.petrolGenerator.sil.PetrolGeneratorElectricitySILModel;
+import main.java.components.petrolGenerator.sil.PetrolGeneratorElectricalSILModel;
 
 public class TurnOn extends AbstractPetrolGeneratorEvent {
 
@@ -34,9 +34,9 @@ public class TurnOn extends AbstractPetrolGeneratorEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof PetrolGeneratorElectricitySILModel;
+		assert model instanceof PetrolGeneratorElectricalSILModel;
 
-		PetrolGeneratorElectricitySILModel m = (PetrolGeneratorElectricitySILModel) model;
+		PetrolGeneratorElectricalSILModel m = (PetrolGeneratorElectricalSILModel) model;
 		m.turnOn();
 		m.toggleConsumptionHasChanged();
 	}

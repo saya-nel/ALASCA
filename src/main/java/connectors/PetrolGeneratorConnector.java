@@ -59,4 +59,9 @@ public class PetrolGeneratorConnector extends AbstractConnector implements Petro
 		return ((PetrolGeneratorCI) this.offering).isTurnedOn();
 	}
 
+	@Override
+	public void fillAll() throws Exception {
+		((PetrolGeneratorCI) this.offering).fillAll();
+	}
+
 }

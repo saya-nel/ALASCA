@@ -92,4 +92,15 @@ public class PetrolGeneratorInboundPort extends AbstractInboundPort implements P
 	public boolean isTurnedOn() throws Exception {
 		return this.getOwner().handleRequestSync(owner -> ((PetrolGenerator) owner).isTurnedOn());
 	}
+
+	@Override
+	public void fillAll() throws Exception {
+		this.getOwner().runTask(owner -> {
+			try {
+				((PetrolGenerator) owner).fillAll();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
 }

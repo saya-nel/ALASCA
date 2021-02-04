@@ -47,4 +47,10 @@ public interface PetrolGeneratorCI extends PetrolGeneratorImplementationI, Requi
 	@Override
 	public boolean isTurnedOn() throws Exception;
 
+	/**
+	 * @see main.java.interfaces.PetrolGeneratorImplementationI#fillAll()
+	 */
+	@Override
+	public void fillAll() throws Exception;
+
 }

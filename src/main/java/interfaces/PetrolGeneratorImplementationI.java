@@ -30,6 +30,8 @@ public interface PetrolGeneratorImplementationI {
 	 */
 	public void addPetrol(float quantity) throws Exception;
 
+	public void fillAll() throws Exception;
+
 	/**
 	 * Turn the generator on
 	 */

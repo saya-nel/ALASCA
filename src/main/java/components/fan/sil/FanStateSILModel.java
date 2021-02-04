@@ -1,7 +1,6 @@
 package main.java.components.fan.sil;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
@@ -51,14 +50,6 @@ public class FanStateSILModel extends AtomicModel {
 	// -------------------------------------------------------------------------
 	// Methods
 	// -------------------------------------------------------------------------
-
-	/**
-	 * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
-	 */
-	@Override
-	public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception {
-		// this.owner = (Fan) simParams.get(FanUserSILModel.FAN_REFERENCE_NAME);
-	}
 
 	/**
 	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)

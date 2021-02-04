@@ -1,8 +1,18 @@
 package main.java.components.petrolGenerator;
 
-import fr.sorbonne_u.components.AbstractComponent;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import main.java.components.petrolGenerator.sil.PetrolGeneratorRTAtomicSimulatorPlugin;
+import main.java.components.petrolGenerator.sil.PetrolGeneratorSILCoupledModel;
+import main.java.components.petrolGenerator.sil.PetrolGeneratorStateSILModel;
+import main.java.components.petrolGenerator.sil.PetrolGeneratorUserSILModel;
+import main.java.deployment.RunSILSimulation;
 import main.java.interfaces.PetrolGeneratorCI;
 import main.java.interfaces.PetrolGeneratorImplementationI;
 import main.java.ports.PetrolGeneratorInboundPort;
@@ -14,12 +24,24 @@ import main.java.ports.PetrolGeneratorInboundPort;
  *
  */
 @OfferedInterfaces(offered = { PetrolGeneratorCI.class })
-public class PetrolGenerator extends AbstractComponent implements PetrolGeneratorImplementationI {
+public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGeneratorImplementationI {
+
+	public enum Operations {
+		TurnOn, TurnOff, FillAll, EmptyGenerator
+	}
 
 	/**
-	 * Component URI
+	 * URI of the reflection inbound port of this component; works for singleton.
 	 */
-	protected String myUri;
+	public static final String REFLECTION_INBOUND_PORT_URI = "pg-ibp-uri";
+
+	/** true if the component is executed in a SIL simulation mode. */
+	protected boolean isSILSimulated;
+	/** true if the component is under unit test. */
+	protected boolean isUnitTest;
+
+	protected PetrolGeneratorRTAtomicSimulatorPlugin simulatorPlugin;
+	protected static final String SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 
 	/**
 	 * Maximum petrol level
@@ -31,6 +53,8 @@ public class PetrolGenerator extends AbstractComponent implements PetrolGenerato
 	 */
 	protected float petrolLevel;
 
+	protected final double PETROL_CONSUMPTION = 0.0005; // petrol consumed for 1 second
+
 	/**
 	 * True if the generator is running
 	 */
@@ -41,6 +65,8 @@ public class PetrolGenerator extends AbstractComponent implements PetrolGenerato
 	 */
 	protected PetrolGeneratorInboundPort pgip;
 
+	protected boolean hasSendEmptyGenerator;
+
 	/**
 	 * Constructor of petrol generator
 	 * 
@@ -48,10 +74,9 @@ public class PetrolGenerator extends AbstractComponent implements PetrolGenerato
 	 * @param bipURI            URI of the petrol generator inbound port
 	 * @throws Exception
 	 */
-	protected PetrolGenerator(String reflectionPortURI, String pgipURI, float maxLevel) throws Exception {
-		super(1, 0);
-		myUri = reflectionPortURI;
-		this.initialise(pgipURI, maxLevel);
+	protected PetrolGenerator(String pgipURI, boolean isSILSimulated, boolean isUnitTest) throws Exception {
+		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
+		this.initialise(pgipURI, isSILSimulated, isUnitTest);
 	}
 
 	// -------------------------------------------------------------------------
@@ -64,12 +89,80 @@ public class PetrolGenerator extends AbstractComponent implements PetrolGenerato
 	 * @param batteryInboundPortURI
 	 * @throws Exception
 	 */
-	protected void initialise(String pgipURI, float maximumLevel) throws Exception {
+	protected void initialise(String pgipURI, boolean isSILSimulated, boolean isUnitTest) throws Exception {
+		this.isSILSimulated = isSILSimulated;
+		this.isUnitTest = isUnitTest;
 		this.isTurnedOn = false;
-		this.petrolLevel = 0;
-		this.maximumPetrolLevel = maximumLevel;
+		this.maximumPetrolLevel = 5;
+		this.hasSendEmptyGenerator = false;
+		this.petrolLevel = this.maximumPetrolLevel;
 		this.pgip = new PetrolGeneratorInboundPort(pgipURI, this);
 		this.pgip.publishPort();
+
+		this.tracer.get().setTitle("PetrolGenerator component");
+		this.tracer.get().setRelativePosition(0, 3);
+		this.toggleTracing();
+	}
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#start()
+	 */
+	@Override
+	public synchronized void start() throws ComponentStartException {
+		super.start();
+
+		if (this.isSILSimulated) {
+			try {
+				// create the scheduled executor service that will run the
+				// simulation tasks
+				this.createNewExecutorService(SCHEDULED_EXECUTOR_SERVICE_URI, 1, true);
+				// create and initialise the atomic simulator plug-in that will
+				// hold and execute the SIL simulation models
+				this.simulatorPlugin = new PetrolGeneratorRTAtomicSimulatorPlugin();
+				this.simulatorPlugin.setPluginURI(PetrolGeneratorSILCoupledModel.URI);
+				this.simulatorPlugin.setSimulationExecutorService(SCHEDULED_EXECUTOR_SERVICE_URI);
+				this.simulatorPlugin.initialiseSimulationArchitecture(this.isUnitTest);
+				this.installPlugin(this.simulatorPlugin);
+			} catch (Exception e) {
+				throw new ComponentStartException(e);
+			}
+		}
+	}
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
+	 */
+	@Override
+	public synchronized void execute() throws Exception {
+		super.execute();
+
+		if (this.isSILSimulated && this.isUnitTest) {
+			this.simulatorPlugin.setSimulationRunParameters(new HashMap<String, Object>());
+			this.simulatorPlugin.startRTSimulation(System.currentTimeMillis() + 100, 0.0, 10.1);
+		}
+
+		class DecreasePetrol extends TimerTask {
+			@Override
+			public void run() {
+				if (isTurnedOn) {
+					petrolLevel -= PETROL_CONSUMPTION;
+					if (petrolLevel < 0)
+						petrolLevel = 0;
+					if (isSILSimulated && petrolLevel == 0 && !hasSendEmptyGenerator) {
+						try {
+							turnOff();
+							simulateOperation(Operations.EmptyGenerator);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					logMessage("current petrol level : " + petrolLevel);
+				}
+			}
+		}
+
+		Timer t = new Timer();
+		t.schedule(new DecreasePetrol(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
 	}
 
 	/**
@@ -122,6 +215,14 @@ public class PetrolGenerator extends AbstractComponent implements PetrolGenerato
 	@Override
 	public void turnOn() throws Exception {
 		isTurnedOn = true;
+		if (hasSendEmptyGenerator)
+			hasSendEmptyGenerator = false;
+
+		this.logMessage("PetrolGenerator turn on");
+
+		if (this.isSILSimulated) {
+			this.simulateOperation(Operations.TurnOn);
+		}
 	}
 
 	/**
@@ -130,6 +231,11 @@ public class PetrolGenerator extends AbstractComponent implements PetrolGenerato
 	@Override
 	public void turnOff() throws Exception {
 		isTurnedOn = false;
+		this.logMessage("PetrolGenerator turn off");
+
+		if (this.isSILSimulated) {
+			this.simulateOperation(Operations.TurnOff);
+		}
 	}
 
 	/**
@@ -140,14 +246,28 @@ public class PetrolGenerator extends AbstractComponent implements PetrolGenerato
 		return isTurnedOn;
 	}
 
-	/**
-	 *
-	 */
+	@Override
 	public void fillAll() throws Exception {
-		this.petrolLevel=this.maximumPetrolLevel;
+		this.petrolLevel = this.maximumPetrolLevel;
+		this.logMessage("PetrolGenerator fill all");
 	}
 
-	public void emptyGenerator() throws Exception {
-		this.petrolLevel = 0;
+	protected void simulateOperation(Operations op) throws Exception {
+		switch (op) {
+		case TurnOn:
+			this.simulatorPlugin.triggerExternalEvent(PetrolGeneratorStateSILModel.URI,
+					t -> new main.java.components.petrolGenerator.sil.events.TurnOn(t));
+			break;
+		case TurnOff:
+			this.simulatorPlugin.triggerExternalEvent(PetrolGeneratorStateSILModel.URI,
+					t -> new main.java.components.petrolGenerator.sil.events.TurnOff(t));
+			break;
+		case EmptyGenerator:
+			hasSendEmptyGenerator = true;
+			this.simulatorPlugin.triggerExternalEvent(PetrolGeneratorUserSILModel.URI,
+					t -> new main.java.components.petrolGenerator.sil.events.EmptyGenerator(t));
+		default:
+			break;
+		}
 	}
 }

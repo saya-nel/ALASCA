@@ -27,6 +27,8 @@ import main.java.components.fan.sil.events.SetLow;
 import main.java.components.fan.sil.events.SetMid;
 import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
+import main.java.components.petrolGenerator.PetrolGenerator;
+import main.java.components.petrolGenerator.sil.PetrolGeneratorSILCoupledModel;
 import main.java.components.solarPanels.SolarPanels;
 import main.java.components.solarPanels.sil.SolarPanelsStateSILModel;
 
@@ -100,7 +102,9 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 
 		atomicModelDescriptors.put(ElectricMeterSILCoupledModel.URI, // coupled model seen as atomic
 				RTComponentAtomicModelDescriptor.create(ElectricMeterSILCoupledModel.URI,
-						new Class[] { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class },
+						new Class[] { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class,
+								main.java.components.petrolGenerator.sil.events.TurnOn.class,
+								main.java.components.petrolGenerator.sil.events.TurnOff.class },
 						new Class[] {}, TimeUnit.SECONDS, ElectricMeter.REFLECTION_INBOUND_PORT_URI));
 
 		atomicModelDescriptors.put(FanSILCoupledModel.URI, // coupled model seen as atomic
@@ -114,11 +118,11 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 								main.java.components.solarPanels.sil.events.TurnOff.class },
 						TimeUnit.SECONDS, SolarPanels.REFLECTION_INBOUND_PORT_URI));
 
-//		atomicModelDescriptors.put(SolarPanelsSILCoupledModel.URI, // coupled model seen as atomic
-//				RTComponentAtomicModelDescriptor.create(SolarPanelsSILCoupledModel.URI, new Class[] {},
-//						new Class[] { main.java.components.solarPanels.sil.events.TurnOn.class,
-//								main.java.components.solarPanels.sil.events.TurnOff.class },
-//						TimeUnit.SECONDS, Fan.REFLECTION_INBOUND_PORT_URI));
+		atomicModelDescriptors.put(PetrolGeneratorSILCoupledModel.URI, // coupled model seen as atomic
+				RTComponentAtomicModelDescriptor.create(PetrolGeneratorSILCoupledModel.URI, new Class[] {},
+						new Class[] { main.java.components.petrolGenerator.sil.events.TurnOn.class,
+								main.java.components.petrolGenerator.sil.events.TurnOff.class },
+						TimeUnit.SECONDS, PetrolGenerator.REFLECTION_INBOUND_PORT_URI));
 
 		Map<String, CoupledModelDescriptor> coupledModelDescriptors = new HashMap<>();
 
@@ -126,6 +130,7 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 		submodels.add(ElectricMeterSILCoupledModel.URI);
 		submodels.add(FanSILCoupledModel.URI);
 		submodels.add(SolarPanelsStateSILModel.URI);
+		submodels.add(PetrolGeneratorSILCoupledModel.URI);
 
 		Map<EventSource, EventSink[]> connections = new HashMap<EventSource, EventSink[]>();
 
@@ -150,6 +155,17 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 						main.java.components.solarPanels.sil.events.TurnOff.class),
 				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI,
 						main.java.components.solarPanels.sil.events.TurnOff.class) });
+		// PetrolGenerator -> ElectricMeterSIL
+		connections.put(
+				new EventSource(PetrolGeneratorSILCoupledModel.URI,
+						main.java.components.petrolGenerator.sil.events.TurnOn.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI,
+						main.java.components.petrolGenerator.sil.events.TurnOn.class) });
+		connections.put(
+				new EventSource(PetrolGeneratorSILCoupledModel.URI,
+						main.java.components.petrolGenerator.sil.events.TurnOff.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI,
+						main.java.components.petrolGenerator.sil.events.TurnOff.class) });
 
 		coupledModelDescriptors.put(HEMProjectCoupledModel.URI,
 				RTComponentCoupledModelDescriptor.create(HEMProjectCoupledModel.class, HEMProjectCoupledModel.URI,

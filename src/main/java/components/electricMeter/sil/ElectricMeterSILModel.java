@@ -61,11 +61,15 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentProduction = new Value<Double>(this, 0.0, 0);
 	/**
-	 * current production of the solar panels in amperes; production is
-	 * power/tension.
+	 * current production of the solar panels in amperes
 	 */
 	@ImportedVariable(type = Double.class)
 	protected Value<Double> SolarPanelsProduction;
+	/**
+	 * current production of the petrol generator in amperes
+	 */
+	@ImportedVariable(type = Double.class)
+	protected Value<Double> PetrolGeneratorProduction;
 
 	/**
 	 * time interval until the next global electricity consumption computation.
@@ -204,7 +208,7 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 			message.append(".\n");
 			this.logMessage(message.toString());
 
-			this.currentProduction.v = this.SolarPanelsProduction.v;
+			this.currentProduction.v = this.SolarPanelsProduction.v + this.PetrolGeneratorProduction.v;
 			this.currentProduction.time = this.getCurrentStateTime();
 
 			message = new StringBuffer("total production = ");

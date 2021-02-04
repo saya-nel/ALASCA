@@ -27,6 +27,8 @@ import main.java.components.fan.sil.events.SetLow;
 import main.java.components.fan.sil.events.SetMid;
 import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
+import main.java.components.petrolGenerator.sil.PetrolGeneratorElectricalSILModel;
+import main.java.components.petrolGenerator.sil.PetrolGeneratorUserSILModel;
 import main.java.components.solarPanels.sil.SolarPanelsElectricalSILModel;
 import main.java.deployment.RunSILSimulation;
 
@@ -76,6 +78,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		// models in two contexts: integration tests and unit through SIL
 		// simulations
 		simParams.put(FanUserSILModel.FAN_REFERENCE_NAME, this.getOwner());
+		simParams.put(PetrolGeneratorUserSILModel.PETROL_GENERATOR_REFERENCE_NAME, this.getOwner());
 
 		// this will pass the parameters to the simulation models that will then
 		// be able to get their own parameters.
@@ -89,8 +92,6 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 	@Override
 	public Object getModelStateValue(String modelURI, String name) throws Exception {
 		assert modelURI != null && name != null;
-
-		System.out.println("TRY GET VALUES");
 
 		// Get a Java reference on the object representing the corresponding
 		// simulation model.
@@ -120,6 +121,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		submodels.add(ElectricMeterSILModel.URI);
 		submodels.add(FanElectricalSILModel.URI);
 		submodels.add(SolarPanelsElectricalSILModel.URI);
+		submodels.add(PetrolGeneratorElectricalSILModel.URI);
 
 		atomicModelDescriptors.put(ElectricMeterSILModel.URI,
 				RTAtomicHIOA_Descriptor.create(ElectricMeterSILModel.class, ElectricMeterSILModel.URI, TimeUnit.SECONDS,
@@ -131,6 +133,10 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 				RTAtomicHIOA_Descriptor.create(SolarPanelsElectricalSILModel.class, SolarPanelsElectricalSILModel.URI,
 						TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						RunSILSimulation.ACC_FACTOR));
+		atomicModelDescriptors.put(PetrolGeneratorElectricalSILModel.URI,
+				RTAtomicHIOA_Descriptor.create(PetrolGeneratorElectricalSILModel.class,
+						PetrolGeneratorElectricalSILModel.URI, TimeUnit.SECONDS, null,
+						SimulationEngineCreationMode.ATOMIC_RT_ENGINE, RunSILSimulation.ACC_FACTOR));
 
 		Map<Class<? extends EventI>, EventSink[]> imported = new HashMap<Class<? extends EventI>, EventSink[]>();
 		// fan
@@ -146,6 +152,13 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		imported.put(main.java.components.solarPanels.sil.events.TurnOff.class,
 				new EventSink[] { new EventSink(SolarPanelsElectricalSILModel.URI,
 						main.java.components.solarPanels.sil.events.TurnOff.class) });
+		// pg
+		imported.put(main.java.components.petrolGenerator.sil.events.TurnOn.class,
+				new EventSink[] { new EventSink(PetrolGeneratorElectricalSILModel.URI,
+						main.java.components.petrolGenerator.sil.events.TurnOn.class) });
+		imported.put(main.java.components.petrolGenerator.sil.events.TurnOff.class,
+				new EventSink[] { new EventSink(PetrolGeneratorElectricalSILModel.URI,
+						main.java.components.petrolGenerator.sil.events.TurnOff.class) });
 
 		Map<VariableSource, VariableSink[]> bindings = new HashMap<VariableSource, VariableSink[]>();
 		// fan
@@ -157,6 +170,11 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		source = new VariableSource("currentProduction", Double.class, SolarPanelsElectricalSILModel.URI);
 		sinks = new VariableSink[] {
 				new VariableSink("SolarPanelsProduction", Double.class, ElectricMeterSILModel.URI) };
+		bindings.put(source, sinks);
+		// pg
+		source = new VariableSource("currentProduction", Double.class, PetrolGeneratorElectricalSILModel.URI);
+		sinks = new VariableSink[] {
+				new VariableSink("PetrolGeneratorProduction", Double.class, ElectricMeterSILModel.URI) };
 		bindings.put(source, sinks);
 
 		coupledModelDescriptors.put(ElectricMeterSILCoupledModel.URI,
