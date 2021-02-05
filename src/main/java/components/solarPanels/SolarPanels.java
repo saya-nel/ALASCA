@@ -6,13 +6,13 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import main.java.components.solarPanels.interfaces.SolarPanelsCI;
+import main.java.components.solarPanels.interfaces.SolarPanelsImplementationI;
+import main.java.components.solarPanels.ports.SolarPanelsInboundPort;
 import main.java.components.solarPanels.sil.SolarPanelsRTAtomicSimulatorPlugin;
 import main.java.components.solarPanels.sil.SolarPanelsStateSILModel;
 import main.java.components.solarPanels.sil.events.TurnOff;
 import main.java.components.solarPanels.sil.events.TurnOn;
-import main.java.interfaces.SolarPanelsCI;
-import main.java.interfaces.SolarPanelsImplementationI;
-import main.java.ports.SolarPanelsInboundPort;
 
 /**
  * Class representing the SolarPanels component
@@ -128,7 +128,7 @@ public class SolarPanels extends AbstractCyPhyComponent implements SolarPanelsIm
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOn()
+	 * @see main.java.components.solarPanels.interfaces.SolarPanelsImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
@@ -141,7 +141,7 @@ public class SolarPanels extends AbstractCyPhyComponent implements SolarPanelsIm
 	}
 
 	/**
-	 * @see main.java.interfaces.SolarPanelsImplementationI#turnOff()
+	 * @see main.java.components.solarPanels.interfaces.SolarPanelsImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception {
@@ -154,7 +154,7 @@ public class SolarPanels extends AbstractCyPhyComponent implements SolarPanelsIm
 	}
 
 	/**
-	 * @see main.java.interfaces.SolarPanelsImplementationI#isTurnedOn()
+	 * @see main.java.components.solarPanels.interfaces.SolarPanelsImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {

@@ -3,8 +3,8 @@ package main.java.components.fridge.sil.events;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.components.fridge.sil.models.FridgeElectricity_SILModel;
-import main.java.utils.FridgeMode;
+import main.java.components.fridge.sil.FridgeElectricalSILModel;
+import main.java.components.fridge.utils.FridgeMode;
 
 /**
  * The class <code>SetEco</code> defines the MIL event of the Fridge being
@@ -61,9 +61,9 @@ public class SetEco extends AbstractFridgeEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof FridgeElectricity_SILModel;
+		assert model instanceof FridgeElectricalSILModel;
 
-		FridgeElectricity_SILModel m = (FridgeElectricity_SILModel) model;
+		FridgeElectricalSILModel m = (FridgeElectricalSILModel) model;
 		if (m.getMode() != FridgeMode.ECO) {
 			m.setMode(FridgeMode.ECO);
 

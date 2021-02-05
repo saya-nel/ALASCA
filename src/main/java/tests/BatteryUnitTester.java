@@ -10,9 +10,9 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import main.java.connectors.BatteryConnector;
-import main.java.interfaces.BatteryCI;
-import main.java.ports.BatteryOutboundPort;
+import main.java.components.battery.connectors.BatteryConnector;
+import main.java.components.battery.interfaces.BatteryCI;
+import main.java.components.battery.ports.BatteryOutboundPort;
 import main.java.utils.Log;
 
 /**

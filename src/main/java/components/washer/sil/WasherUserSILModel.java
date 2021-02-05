@@ -10,8 +10,8 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.components.washer.Washer;
+import main.java.components.washer.utils.WasherModes;
 import main.java.utils.FileLogger;
-import main.java.utils.WasherModes;
 
 public class WasherUserSILModel extends AtomicModel {
 

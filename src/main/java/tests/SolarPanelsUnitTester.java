@@ -7,9 +7,9 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import main.java.connectors.SolarPanelsConnector;
-import main.java.interfaces.SolarPanelsCI;
-import main.java.ports.SolarPanelsOutboundPort;
+import main.java.components.solarPanels.connectors.SolarPanelsConnector;
+import main.java.components.solarPanels.interfaces.SolarPanelsCI;
+import main.java.components.solarPanels.ports.SolarPanelsOutboundPort;
 import main.java.utils.Log;
 
 /**

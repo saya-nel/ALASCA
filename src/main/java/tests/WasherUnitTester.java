@@ -10,9 +10,9 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import main.java.connectors.WasherConnector;
-import main.java.interfaces.WasherCI;
-import main.java.ports.WasherOutboundPort;
+import main.java.components.washer.connectors.WasherConnector;
+import main.java.components.washer.interfaces.WasherCI;
+import main.java.components.washer.ports.WasherOutboundPort;
 import main.java.utils.Log;
 
 /**

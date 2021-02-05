@@ -16,7 +16,7 @@ import main.java.components.battery.sil.events.AbstractBatteryEvent;
 import main.java.components.battery.sil.events.SetDraining;
 import main.java.components.battery.sil.events.SetRecharging;
 import main.java.components.battery.sil.events.SetSleeping;
-import main.java.utils.BatteryState;
+import main.java.components.battery.utils.BatteryState;
 import main.java.utils.FileLogger;
 
 @ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class })

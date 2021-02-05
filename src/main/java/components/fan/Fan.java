@@ -7,6 +7,9 @@ import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.exceptions.PreconditionException;
+import main.java.components.fan.interfaces.FanCI;
+import main.java.components.fan.interfaces.FanImplementationI;
+import main.java.components.fan.ports.FanInboundPort;
 import main.java.components.fan.sil.FanRTAtomicSimulatorPlugin;
 import main.java.components.fan.sil.FanSILCoupledModel;
 import main.java.components.fan.sil.FanStateSILModel;
@@ -15,10 +18,7 @@ import main.java.components.fan.sil.events.SetLow;
 import main.java.components.fan.sil.events.SetMid;
 import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
-import main.java.interfaces.FanCI;
-import main.java.interfaces.FanImplementationI;
-import main.java.ports.FanInboundPort;
-import main.java.utils.FanLevel;
+import main.java.components.fan.utils.FanLevel;
 
 /**
  * Class representing the Fan component
@@ -164,7 +164,7 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see main.java.interfaces.FanImplementationI#turnOn()
+	 * @see main.java.components.fan.interfaces.FanImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
@@ -177,7 +177,7 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	}
 
 	/**
-	 * @see main.java.interfaces.FanImplementationI#turnOff()
+	 * @see main.java.components.fan.interfaces.FanImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception {
@@ -190,7 +190,7 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	}
 
 	/**
-	 * @see main.java.interfaces.FanImplementationI#adjustPower(FanLevel)
+	 * @see main.java.components.fan.interfaces.FanImplementationI#adjustPower(FanLevel)
 	 */
 	@Override
 	public void adjustPower(FanLevel level) throws Exception {
@@ -215,7 +215,7 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	}
 
 	/**
-	 * @see main.java.interfaces.FanImplementationI#isTurnedOn()
+	 * @see main.java.components.fan.interfaces.FanImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {
@@ -223,7 +223,7 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	}
 
 	/**
-	 * @see main.java.interfaces.FanImplementationI#getFanLevel()
+	 * @see main.java.components.fan.interfaces.FanImplementationI#getFanLevel()
 	 */
 	@Override
 	public FanLevel getFanLevel() throws Exception {

@@ -18,8 +18,8 @@ import main.java.components.washer.sil.events.SetPerformance;
 import main.java.components.washer.sil.events.SetStd;
 import main.java.components.washer.sil.events.TurnOff;
 import main.java.components.washer.sil.events.TurnOn;
+import main.java.components.washer.utils.WasherModes;
 import main.java.utils.FileLogger;
-import main.java.utils.WasherModes;
 
 @ModelExternalEvents(imported = { SetEco.class, SetPerformance.class, SetStd.class, TurnOn.class, TurnOff.class })
 public class WasherElectricalSILModel extends AtomicHIOA {

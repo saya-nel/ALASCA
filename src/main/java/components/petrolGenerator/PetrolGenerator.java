@@ -8,14 +8,14 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import main.java.components.petrolGenerator.interfaces.PetrolGeneratorCI;
+import main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI;
+import main.java.components.petrolGenerator.ports.PetrolGeneratorInboundPort;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorRTAtomicSimulatorPlugin;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorSILCoupledModel;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorStateSILModel;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorUserSILModel;
 import main.java.deployment.RunSILSimulation;
-import main.java.interfaces.PetrolGeneratorCI;
-import main.java.interfaces.PetrolGeneratorImplementationI;
-import main.java.ports.PetrolGeneratorInboundPort;
 
 /**
  * Class representing the petrol generator component
@@ -185,7 +185,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see main.java.interfaces.PetrolGeneratorImplementationI#getMaxLevel()
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#getMaxLevel()
 	 */
 	@Override
 	public float getMaxLevel() throws Exception {
@@ -193,7 +193,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	}
 
 	/**
-	 * @see main.java.interfaces.PetrolGeneratorImplementationI#getPetrolLevel()
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#getPetrolLevel()
 	 */
 	@Override
 	public float getPetrolLevel() throws Exception {
@@ -201,7 +201,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	}
 
 	/**
-	 * @see main.java.interfaces.PetrolGeneratorImplementationI#addPetrol(float)
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#addPetrol(float)
 	 */
 	@Override
 	public void addPetrol(float quantity) throws Exception {
@@ -212,7 +212,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	}
 
 	/**
-	 * @see main.java.interfaces.PetrolGeneratorImplementationI#turnOn()
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#turnOn()
 	 */
 	@Override
 	public void turnOn() throws Exception {
@@ -228,7 +228,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	}
 
 	/**
-	 * @see main.java.interfaces.PetrolGeneratorImplementationI#turnOff()
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#turnOff()
 	 */
 	@Override
 	public void turnOff() throws Exception {
@@ -241,7 +241,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	}
 
 	/**
-	 * @see main.java.interfaces.PetrolGeneratorImplementationI#isTurnedOn()
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {

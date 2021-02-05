@@ -22,15 +22,15 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import main.java.interfaces.ControllerCI;
-import main.java.interfaces.ControllerImplementationI;
-import main.java.interfaces.PlanningEquipmentControlCI;
-import main.java.interfaces.StandardEquipmentControlCI;
-import main.java.interfaces.SuspensionEquipmentControlCI;
-import main.java.ports.ControllerInboundPort;
-import main.java.ports.PlanningEquipmentControlOutboundPort;
-import main.java.ports.StandardEquipmentControlOutboundPort;
-import main.java.ports.SuspensionEquipmentControlOutboundPort;
+import main.java.components.controller.interfaces.ControllerCI;
+import main.java.components.controller.interfaces.ControllerImplementationI;
+import main.java.components.controller.interfaces.PlanningEquipmentControlCI;
+import main.java.components.controller.interfaces.StandardEquipmentControlCI;
+import main.java.components.controller.interfaces.SuspensionEquipmentControlCI;
+import main.java.components.controller.ports.ControllerInboundPort;
+import main.java.components.controller.ports.PlanningEquipmentControlOutboundPort;
+import main.java.components.controller.ports.StandardEquipmentControlOutboundPort;
+import main.java.components.controller.ports.SuspensionEquipmentControlOutboundPort;
 import main.java.utils.Log;
 
 /**
@@ -168,7 +168,7 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see main.java.interfaces.ControllerImplementationI#register(String,String,
+	 * @see main.java.components.controller.interfaces.ControllerImplementationI#register(String,String,
 	 *      String)
 	 */
 	@Override

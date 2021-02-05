@@ -15,20 +15,20 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import main.java.components.battery.interfaces.BatteryCI;
+import main.java.components.battery.interfaces.BatteryImplementationI;
+import main.java.components.battery.ports.BatteryInboundPort;
 import main.java.components.battery.sil.BatteryElectricalSILModel;
 import main.java.components.battery.sil.BatteryRTAtomicSimulatorPlugin;
 import main.java.components.battery.sil.BatteryStateSILModel;
 import main.java.components.battery.sil.events.SetDraining;
 import main.java.components.battery.sil.events.SetRecharging;
 import main.java.components.battery.sil.events.SetSleeping;
-import main.java.connectors.ControllerConnector;
+import main.java.components.battery.utils.BatteryState;
+import main.java.components.controller.connectors.ControllerConnector;
+import main.java.components.controller.interfaces.ControllerCI;
+import main.java.components.controller.ports.ControllerOutboundPort;
 import main.java.deployment.RunSILSimulation;
-import main.java.interfaces.BatteryCI;
-import main.java.interfaces.BatteryImplementationI;
-import main.java.interfaces.ControllerCI;
-import main.java.ports.BatteryInboundPort;
-import main.java.ports.ControllerOutboundPort;
-import main.java.utils.BatteryState;
 import main.java.utils.Log;
 
 /**
@@ -268,7 +268,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see main.java.interfaces.BatteryImplementationI#getBatteryCharge()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#getBatteryCharge()
 	 */
 	@Override
 	public float getBatteryCharge() throws Exception {
@@ -278,7 +278,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see main.java.interfaces.BatteryImplementationI#upMode()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#upMode()
 	 */
 	@Override
 	public boolean upMode() throws Exception {
@@ -430,7 +430,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see main.java.interfaces.BatteryImplementationI#cancel()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#cancel()
 	 */
 	@Override
 	public boolean cancel() throws Exception {
@@ -446,7 +446,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see main.java.interfaces.BatteryImplementationI#planifyEvent(Duration,
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#planifyEvent(Duration,
 	 *      LocalTime)
 	 */
 	@Override

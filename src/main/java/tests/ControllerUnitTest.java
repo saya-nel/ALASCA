@@ -6,9 +6,9 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import main.java.connectors.ControllerConnector;
-import main.java.interfaces.ControllerCI;
-import main.java.ports.ControllerOutboundPort;
+import main.java.components.controller.connectors.ControllerConnector;
+import main.java.components.controller.interfaces.ControllerCI;
+import main.java.components.controller.ports.ControllerOutboundPort;
 import main.java.utils.Log;
 
 @RequiredInterfaces(required = { ControllerCI.class })

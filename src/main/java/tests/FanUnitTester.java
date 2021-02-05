@@ -8,10 +8,10 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import main.java.connectors.FanConnector;
-import main.java.interfaces.FanCI;
-import main.java.ports.FanOutboundPort;
-import main.java.utils.FanLevel;
+import main.java.components.fan.connectors.FanConnector;
+import main.java.components.fan.interfaces.FanCI;
+import main.java.components.fan.ports.FanOutboundPort;
+import main.java.components.fan.utils.FanLevel;
 import main.java.utils.Log;
 
 /**

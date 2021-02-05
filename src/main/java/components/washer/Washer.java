@@ -15,6 +15,12 @@ import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.exceptions.PreconditionException;
+import main.java.components.controller.connectors.ControllerConnector;
+import main.java.components.controller.interfaces.ControllerCI;
+import main.java.components.controller.ports.ControllerOutboundPort;
+import main.java.components.washer.interfaces.WasherCI;
+import main.java.components.washer.interfaces.WasherImplementationI;
+import main.java.components.washer.ports.WasherInboundPort;
 import main.java.components.washer.sil.WasherRTAtomicSimulatorPlugin;
 import main.java.components.washer.sil.WasherSILCoupledModel;
 import main.java.components.washer.sil.WasherStateSILModel;
@@ -23,14 +29,8 @@ import main.java.components.washer.sil.events.SetPerformance;
 import main.java.components.washer.sil.events.SetStd;
 import main.java.components.washer.sil.events.TurnOff;
 import main.java.components.washer.sil.events.TurnOn;
-import main.java.connectors.ControllerConnector;
-import main.java.interfaces.ControllerCI;
-import main.java.interfaces.WasherCI;
-import main.java.interfaces.WasherImplementationI;
-import main.java.ports.ControllerOutboundPort;
-import main.java.ports.WasherInboundPort;
+import main.java.components.washer.utils.WasherModes;
 import main.java.utils.Log;
-import main.java.utils.WasherModes;
 
 @OfferedInterfaces(offered = { WasherCI.class })
 @RequiredInterfaces(required = { ControllerCI.class })
@@ -249,7 +249,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#isTurnedOn()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {
@@ -259,7 +259,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#setProgramTemperature(int)
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#setProgramTemperature(int)
 	 */
 	@Override
 	public void setProgramTemperature(int temperature) throws Exception {
@@ -268,7 +268,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#getProgramDuration()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#getProgramDuration()
 	 */
 	@Override
 	public int getProgramTemperature() throws Exception {
@@ -278,7 +278,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#turnOn()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
 	public boolean turnOn() throws Exception {
@@ -294,7 +294,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#turnOff()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#turnOff()
 	 */
 	@Override
 	public boolean turnOff() throws Exception {
@@ -310,7 +310,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#upMode()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#upMode()
 	 */
 	@Override
 	public boolean upMode() throws Exception {
@@ -337,7 +337,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#downMode()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#downMode()
 	 */
 	@Override
 	public boolean downMode() throws Exception {
@@ -364,7 +364,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#setMode(int)
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#setMode(int)
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
@@ -399,7 +399,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#currentMode()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#currentMode()
 	 */
 	@Override
 	public int currentMode() throws Exception {
@@ -409,7 +409,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#hasPlan()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#hasPlan()
 	 */
 	@Override
 	public boolean hasPlan() throws Exception {
@@ -419,7 +419,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#startTime()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#startTime()
 	 */
 	@Override
 	public LocalTime startTime() throws Exception {
@@ -429,7 +429,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#duration()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#duration()
 	 */
 	@Override
 	public Duration duration() throws Exception {
@@ -439,7 +439,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#deadline()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#deadline()
 	 */
 	@Override
 	public LocalTime deadline() throws Exception {
@@ -449,7 +449,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#postpone(Duration)
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#postpone(Duration)
 	 */
 	@Override
 	public boolean postpone(Duration d) throws Exception {
@@ -461,7 +461,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#cancel()
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#cancel()
 	 */
 	@Override
 	public boolean cancel() throws Exception {
@@ -477,7 +477,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.interfaces.WasherImplementationI#planifyEvent(Duration,
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#planifyEvent(Duration,
 	 *      LocalTime)
 	 */
 	@Override

@@ -18,7 +18,7 @@ import main.java.components.fan.sil.events.SetLow;
 import main.java.components.fan.sil.events.SetMid;
 import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
-import main.java.utils.FanLevel;
+import main.java.components.fan.utils.FanLevel;
 import main.java.utils.FileLogger;
 
 @ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class })

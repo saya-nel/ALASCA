@@ -8,9 +8,9 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import main.java.connectors.PetrolGeneratorConnector;
-import main.java.interfaces.PetrolGeneratorCI;
-import main.java.ports.PetrolGeneratorOutboundPort;
+import main.java.components.petrolGenerator.connectors.PetrolGeneratorConnector;
+import main.java.components.petrolGenerator.interfaces.PetrolGeneratorCI;
+import main.java.components.petrolGenerator.ports.PetrolGeneratorOutboundPort;
 import main.java.utils.Log;
 
 /**

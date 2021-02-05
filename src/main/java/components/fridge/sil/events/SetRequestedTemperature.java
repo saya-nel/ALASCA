@@ -4,8 +4,7 @@ import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.components.fridge.sil.models.FridgeElectricity_SILModel;
-import main.java.components.fridge.sil.models.FridgeTemperatureSILModel;
+import main.java.components.fridge.sil.FridgeElectricalSILModel;
 
 public class SetRequestedTemperature extends AbstractFridgeEvent {
 
@@ -45,8 +44,7 @@ public class SetRequestedTemperature extends AbstractFridgeEvent {
 	@Override
 	public String eventAsString() {
 		return "SetRequestedTemperature(time : " + this.getTimeOfOccurrence().getSimulatedTime()
-				+ ", requestedTemperature : "
-				+ ((RequestedTemperature) this.getEventInformation()).requestedTemperature
+				+ ", requestedTemperature : " + ((RequestedTemperature) this.getEventInformation()).requestedTemperature
 				+ ")";
 	}
 
@@ -63,10 +61,11 @@ public class SetRequestedTemperature extends AbstractFridgeEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof FridgeElectricity_SILModel;
-		FridgeElectricity_SILModel m = (FridgeElectricity_SILModel) model;
+		assert model instanceof FridgeElectricalSILModel;
+		FridgeElectricalSILModel m = (FridgeElectricalSILModel) model;
 		m.setTargetTemperature(((RequestedTemperature) this.getEventInformation()).requestedTemperature);
-		//m.setRequestedTemperature(((RequestedTemperature) this.getEventInformation()).requestedTemperature);
+		// m.setRequestedTemperature(((RequestedTemperature)
+		// this.getEventInformation()).requestedTemperature);
 	}
 
 }

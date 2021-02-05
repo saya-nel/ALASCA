@@ -7,9 +7,9 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import main.java.connectors.FridgeConnector;
-import main.java.interfaces.FridgeCI;
-import main.java.ports.FridgeOutboundPort;
+import main.java.components.fridge.connectors.FridgeConnector;
+import main.java.components.fridge.interfaces.FridgeCI;
+import main.java.components.fridge.ports.FridgeOutboundPort;
 import main.java.utils.Log;
 
 /**
