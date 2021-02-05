@@ -18,6 +18,11 @@ import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDes
 import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
+import main.java.components.battery.Battery;
+import main.java.components.battery.sil.BatteryStateSILModel;
+import main.java.components.battery.sil.events.SetDraining;
+import main.java.components.battery.sil.events.SetRecharging;
+import main.java.components.battery.sil.events.SetSleeping;
 import main.java.components.electricMeter.ElectricMeter;
 import main.java.components.electricMeter.sil.ElectricMeterSILCoupledModel;
 import main.java.components.fan.Fan;
@@ -124,6 +129,12 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 								main.java.components.petrolGenerator.sil.events.TurnOff.class },
 						TimeUnit.SECONDS, PetrolGenerator.REFLECTION_INBOUND_PORT_URI));
 
+		atomicModelDescriptors.put(BatteryStateSILModel.URI,
+				RTComponentAtomicModelDescriptor.create(BatteryStateSILModel.URI,
+						new Class[] { SetDraining.class, SetSleeping.class, SetRecharging.class },
+						new Class[] { SetDraining.class, SetSleeping.class, SetRecharging.class }, TimeUnit.SECONDS,
+						Battery.REFLECTION_INBOUND_PORT_URI));
+
 		Map<String, CoupledModelDescriptor> coupledModelDescriptors = new HashMap<>();
 
 		Set<String> submodels = new HashSet<String>();
@@ -131,6 +142,7 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 		submodels.add(FanSILCoupledModel.URI);
 		submodels.add(SolarPanelsStateSILModel.URI);
 		submodels.add(PetrolGeneratorSILCoupledModel.URI);
+		submodels.add(BatteryStateSILModel.URI);
 
 		Map<EventSource, EventSink[]> connections = new HashMap<EventSource, EventSink[]>();
 
@@ -166,6 +178,13 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 						main.java.components.petrolGenerator.sil.events.TurnOff.class),
 				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI,
 						main.java.components.petrolGenerator.sil.events.TurnOff.class) });
+		// Battery -> ElectricMeterSIL
+		connections.put(new EventSource(BatteryStateSILModel.URI, SetDraining.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetDraining.class) });
+		connections.put(new EventSource(BatteryStateSILModel.URI, SetSleeping.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetSleeping.class) });
+		connections.put(new EventSource(BatteryStateSILModel.URI, SetRecharging.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetRecharging.class) });
 
 		coupledModelDescriptors.put(HEMProjectCoupledModel.URI,
 				RTComponentCoupledModelDescriptor.create(HEMProjectCoupledModel.class, HEMProjectCoupledModel.URI,

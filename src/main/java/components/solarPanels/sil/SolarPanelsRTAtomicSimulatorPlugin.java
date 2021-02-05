@@ -1,9 +1,7 @@
 package main.java.components.solarPanels.sil;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.cyphy.plugins.devs.RTAtomicSimulatorPlugin;
@@ -46,8 +44,8 @@ public class SolarPanelsRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin 
 		Map<String, AbstractAtomicModelDescriptor> atomicModelDescriptors = new HashMap<>();
 		Map<String, CoupledModelDescriptor> coupledModelDescriptors = new HashMap<>();
 
-		Set<String> submodels = new HashSet<String>();
-		submodels.add(SolarPanelsStateSILModel.URI);
+//		Set<String> submodels = new HashSet<String>();
+//		submodels.add(SolarPanelsStateSILModel.URI);
 //		if (isUnitTest) {
 //			submodels.add(SolarPanelsElectricalSILModel.URI);
 //		}

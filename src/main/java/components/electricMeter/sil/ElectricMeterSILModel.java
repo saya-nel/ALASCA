@@ -15,10 +15,6 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
-// -----------------------------------------------------------------------------
-//@ModelExternalEvents(imported = {ConsumptionLevelRequest.class},
-//					 exported = {ConsumptionLevel.class})
-// -----------------------------------------------------------------------------
 public class ElectricMeterSILModel extends AtomicHIOA {
 
 	// -------------------------------------------------------------------------
@@ -56,6 +52,11 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	 */
 	@ImportedVariable(type = Double.class)
 	protected Value<Double> FanIntensity;
+	/**
+	 * current intensity of the battery in amperes; intensity is power/tension.
+	 */
+	@ImportedVariable(type = Double.class)
+	protected Value<Double> BatteryIntensity;
 
 	/** current production in amperes; production is power/tension. */
 	@ExportedVariable(type = Double.class)
@@ -70,6 +71,11 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	 */
 	@ImportedVariable(type = Double.class)
 	protected Value<Double> PetrolGeneratorProduction;
+	/**
+	 * current production of the battery in amperes
+	 */
+	@ImportedVariable(type = Double.class)
+	protected Value<Double> BatteryProduction;
 
 	/**
 	 * time interval until the next global electricity consumption computation.
@@ -198,25 +204,19 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 		if (!this.requestReceived) {
 			// no request received, hence this is a computation step
 			// compute the new global electricity consumption
-			this.currentIntensity.v = this.FanIntensity.v;
+			this.currentIntensity.v = this.FanIntensity.v + this.BatteryIntensity.v;
 			this.currentIntensity.time = this.getCurrentStateTime();
+			this.logMessage("Consumption : " + String.format("%.2f", this.currentIntensity.v) + "(fan : "
+					+ String.format("%.2f", this.FanIntensity.v) + ", battery : "
+					+ String.format("%.2f", this.BatteryIntensity.v) + ")\n");
 
-			StringBuffer message = new StringBuffer("total consumption = ");
-			message.append(this.currentIntensity.v);
-			message.append(" at ");
-			message.append(this.currentIntensity.time);
-			message.append(".\n");
-			this.logMessage(message.toString());
-
-			this.currentProduction.v = this.SolarPanelsProduction.v + this.PetrolGeneratorProduction.v;
+			this.currentProduction.v = this.SolarPanelsProduction.v + this.PetrolGeneratorProduction.v
+					+ this.BatteryProduction.v;
 			this.currentProduction.time = this.getCurrentStateTime();
-
-			message = new StringBuffer("total production = ");
-			message.append(this.currentProduction.v);
-			message.append(" at ");
-			message.append(this.currentProduction.time);
-			message.append(".\n");
-			this.logMessage(message.toString());
+			this.logMessage("Production : " + String.format("%.2f", this.currentProduction.v) + "(solarPanels : "
+					+ String.format("%.2f", this.SolarPanelsProduction.v) + ", petrol generator : "
+					+ String.format("%.2f", this.PetrolGeneratorProduction.v) + ", battery : "
+					+ String.format("%.2f", this.BatteryProduction.v) + ")\n");
 
 			// the next planned computation
 			this.nextStep = this.standardStep;
@@ -234,17 +234,10 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	 */
 	@Override
 	public void userDefinedExternalTransition(Duration elapsedTime) {
-		// get the vector of current external events
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
-		// when this method is called, there is at least one external event,
-		// and for the panel model, there will be exactly one by
-		// construction which is a consumption level request.
 		assert currentEvents != null && currentEvents.size() == 1;
-
-		// this will trigger an immediate internal transition
 		this.requestReceived = true;
 		this.nextStep = this.standardStep.subtract(elapsedTime);
-
 		super.userDefinedExternalTransition(elapsedTime);
 	}
 

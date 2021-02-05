@@ -161,6 +161,8 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 			}
 		}
 
+		// wait the start of simulation and run Decrease petrol each simulated second
+		Thread.sleep(RunSILSimulation.DELAY_TO_START_SIMULATION);
 		Timer t = new Timer();
 		t.schedule(new DecreasePetrol(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
 	}

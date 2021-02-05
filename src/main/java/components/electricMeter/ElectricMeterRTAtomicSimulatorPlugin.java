@@ -18,6 +18,10 @@ import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDes
 import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
+import main.java.components.battery.sil.BatteryElectricalSILModel;
+import main.java.components.battery.sil.events.SetDraining;
+import main.java.components.battery.sil.events.SetRecharging;
+import main.java.components.battery.sil.events.SetSleeping;
 import main.java.components.electricMeter.sil.ElectricMeterSILCoupledModel;
 import main.java.components.electricMeter.sil.ElectricMeterSILModel;
 import main.java.components.fan.sil.FanElectricalSILModel;
@@ -122,6 +126,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		submodels.add(FanElectricalSILModel.URI);
 		submodels.add(SolarPanelsElectricalSILModel.URI);
 		submodels.add(PetrolGeneratorElectricalSILModel.URI);
+		submodels.add(BatteryElectricalSILModel.URI);
 
 		atomicModelDescriptors.put(ElectricMeterSILModel.URI,
 				RTAtomicHIOA_Descriptor.create(ElectricMeterSILModel.class, ElectricMeterSILModel.URI, TimeUnit.SECONDS,
@@ -137,6 +142,10 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 				RTAtomicHIOA_Descriptor.create(PetrolGeneratorElectricalSILModel.class,
 						PetrolGeneratorElectricalSILModel.URI, TimeUnit.SECONDS, null,
 						SimulationEngineCreationMode.ATOMIC_RT_ENGINE, RunSILSimulation.ACC_FACTOR));
+		atomicModelDescriptors.put(BatteryElectricalSILModel.URI,
+				RTAtomicHIOA_Descriptor.create(BatteryElectricalSILModel.class, BatteryElectricalSILModel.URI,
+						TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+						RunSILSimulation.ACC_FACTOR));
 
 		Map<Class<? extends EventI>, EventSink[]> imported = new HashMap<Class<? extends EventI>, EventSink[]>();
 		// fan
@@ -159,6 +168,13 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		imported.put(main.java.components.petrolGenerator.sil.events.TurnOff.class,
 				new EventSink[] { new EventSink(PetrolGeneratorElectricalSILModel.URI,
 						main.java.components.petrolGenerator.sil.events.TurnOff.class) });
+		// battery
+		imported.put(SetRecharging.class,
+				new EventSink[] { new EventSink(BatteryElectricalSILModel.URI, SetRecharging.class) });
+		imported.put(SetDraining.class,
+				new EventSink[] { new EventSink(BatteryElectricalSILModel.URI, SetDraining.class) });
+		imported.put(SetSleeping.class,
+				new EventSink[] { new EventSink(BatteryElectricalSILModel.URI, SetSleeping.class) });
 
 		Map<VariableSource, VariableSink[]> bindings = new HashMap<VariableSource, VariableSink[]>();
 		// fan
@@ -175,6 +191,13 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		source = new VariableSource("currentProduction", Double.class, PetrolGeneratorElectricalSILModel.URI);
 		sinks = new VariableSink[] {
 				new VariableSink("PetrolGeneratorProduction", Double.class, ElectricMeterSILModel.URI) };
+		bindings.put(source, sinks);
+		// battery
+		source = new VariableSource("currentIntensity", Double.class, BatteryElectricalSILModel.URI);
+		sinks = new VariableSink[] { new VariableSink("BatteryIntensity", Double.class, ElectricMeterSILModel.URI) };
+		bindings.put(source, sinks);
+		source = new VariableSource("currentProduction", Double.class, BatteryElectricalSILModel.URI);
+		sinks = new VariableSink[] { new VariableSink("BatteryProduction", Double.class, ElectricMeterSILModel.URI) };
 		bindings.put(source, sinks);
 
 		coupledModelDescriptors.put(ElectricMeterSILCoupledModel.URI,

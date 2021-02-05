@@ -1,20 +1,25 @@
 package main.java.components.battery;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
+import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import fr.sorbonne_u.exceptions.PreconditionException;
-import main.java.connectors.ControllerConnector;
+import main.java.components.battery.sil.BatteryElectricalSILModel;
+import main.java.components.battery.sil.BatteryRTAtomicSimulatorPlugin;
+import main.java.components.battery.sil.BatteryStateSILModel;
+import main.java.components.battery.sil.events.SetDraining;
+import main.java.components.battery.sil.events.SetRecharging;
+import main.java.components.battery.sil.events.SetSleeping;
+import main.java.deployment.RunSILSimulation;
 import main.java.interfaces.BatteryCI;
 import main.java.interfaces.BatteryImplementationI;
 import main.java.interfaces.ControllerCI;
@@ -31,12 +36,24 @@ import main.java.utils.Log;
  */
 @OfferedInterfaces(offered = { BatteryCI.class })
 @RequiredInterfaces(required = { ControllerCI.class })
-public class Battery extends AbstractComponent implements BatteryImplementationI {
+public class Battery extends AbstractCyPhyComponent implements BatteryImplementationI {
+
+	public enum Operations {
+		SetDraining, SetRecharching, SetSleeping
+	}
 
 	/**
-	 * Component URI
+	 * URI of the reflection inbound port of this component; works for singleton.
 	 */
-	protected String myUri;
+	public static final String REFLECTION_INBOUND_PORT_URI = "battery-ibp-uri";
+
+	/** true if the component is executed in a SIL simulation mode. */
+	protected boolean isSILSimulated;
+	/** true if the component is under unit test. */
+	protected boolean isUnitTest;
+
+	protected BatteryRTAtomicSimulatorPlugin simulatorPlugin;
+	protected static final String SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 
 	/**
 	 * Serial number for registering on controller
@@ -44,19 +61,17 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	protected String serialNumber;
 
 	/**
-	 * Actual charge of battery in mA/h
+	 * Actual charge of battery in ah
 	 */
 	protected float batteryCharge;
+
+	// ah
+	protected float maximumPowerLevel; // ah
 
 	/**
 	 * Actual battery mode 0 for RECHARGING 1 for DRAINING 2 for SLEEPING
 	 */
-	protected AtomicInteger operatingMode;
-
-	/**
-	 * Maximum energy of the battery
-	 */
-	protected float maximumEnergy;
+	protected BatteryState operatingMode;
 
 	/**
 	 * Inbound port of the battery
@@ -102,18 +117,34 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 * @param bipURI            URI inbound port battery
 	 * @throws Exception
 	 */
-	protected Battery(String reflectionPortURI, boolean toogleTracing, String serialNumber, String bipURI,
-			String cip_URI, float maxEnergy) throws Exception {
-		super(reflectionPortURI, 1, 0);
-		myUri = reflectionPortURI;
+	protected Battery(String serialNumber, String bipURI, String cip_URI, boolean isSILSimulated, boolean isUnitTest)
+			throws Exception {
+		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
+		// infos
 		this.serialNumber = serialNumber;
 		this.cip_uri = cip_URI;
-		this.initialise(bipURI, maxEnergy);
-		if (toogleTracing) {
-			this.tracer.get().setTitle("Battery component");
-			this.tracer.get().setRelativePosition(1, 1);
-			this.toggleTracing();
-		}
+		this.isSILSimulated = isSILSimulated;
+		this.isUnitTest = isUnitTest;
+		// power
+		this.maximumPowerLevel = 189;
+		this.batteryCharge = this.maximumPowerLevel;
+		// modes
+		this.operatingMode = BatteryState.SLEEPING;
+		// planning
+		this.hasPlan = new AtomicBoolean(false);
+		this.deadlineTime = new AtomicReference<>(null);
+		this.durationLastPlanned = new AtomicReference<>(null);
+		this.lastStartTime = new AtomicReference<>(null);
+		this.postponeDur = new AtomicReference<>(null);
+		// ports
+		this.bip = new BatteryInboundPort(bipURI, this);
+		this.bip.publishPort();
+		this.cop = new ControllerOutboundPort(this);
+		this.cop.localPublishPort();
+		// tracer
+		this.tracer.get().setTitle("Battery component");
+		this.tracer.get().setRelativePosition(0, 2);
+		this.toggleTracing();
 	}
 
 	// -------------------------------------------------------------------------
@@ -121,52 +152,89 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Initialize the battery component
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 *     pre		{@code batteryInboundPortURI != null}
-	 *     pre 		{@code batteryInboundPortURI.isEmpty()}
-	 *     post 	{@code getBatteryState() == BatteryState.SLEEPING }
-	 *     post 	{@code getBatteryCharge() == 0}
-	 * </pre>
-	 * 
-	 * @param batteryInboundPortURI
-	 * @throws Exception
-	 */
-	protected void initialise(String batteryInboundPortURI, float maximumEnergy) throws Exception {
-		assert batteryInboundPortURI != null : new PreconditionException("batteryInboundPortURI != null");
-		assert !batteryInboundPortURI.isEmpty() : new PreconditionException("batteryInboundPortURI.isEmpty()");
-		this.operatingMode = new AtomicInteger();
-		this.setMode(BatteryState.SLEEPING.ordinal());
-		this.hasPlan = new AtomicBoolean(false);
-		this.maximumEnergy = maximumEnergy;
-		this.deadlineTime = new AtomicReference<>(null);
-		this.durationLastPlanned = new AtomicReference<>(null);
-		this.lastStartTime = new AtomicReference<>(null);
-		this.postponeDur = new AtomicReference<>(null);
-		this.bip = new BatteryInboundPort(batteryInboundPortURI, this);
-		this.bip.publishPort();
-		this.cop = new ControllerOutboundPort(this);
-		this.cop.localPublishPort();
-	}
-
-	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#start()
 	 */
 	@Override
 	public synchronized void start() throws ComponentStartException {
 		super.start();
-		try {
-			if (cip_uri.length() > 0)
-				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
-						ControllerConnector.class.getCanonicalName());
-		} catch (Exception e) {
-			throw new ComponentStartException(e);
+		if (this.isSILSimulated) {
+			try {
+				// create the scheduled executor service that will run the
+				// simulation tasks
+				this.createNewExecutorService(SCHEDULED_EXECUTOR_SERVICE_URI, 1, true);
+				// create and initialise the atomic simulator plug-in that will
+				// hold and execute the SIL simulation models
+				this.simulatorPlugin = new BatteryRTAtomicSimulatorPlugin();
+				this.simulatorPlugin.setPluginURI(BatteryStateSILModel.URI);
+				this.simulatorPlugin.setSimulationExecutorService(SCHEDULED_EXECUTOR_SERVICE_URI);
+				this.simulatorPlugin.initialiseSimulationArchitecture(this.isUnitTest);
+				this.installPlugin(this.simulatorPlugin);
+			} catch (Exception e) {
+				throw new ComponentStartException(e);
+			}
 		}
+//		try {
+//			if (cip_uri.length() > 0)
+//				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
+//						ControllerConnector.class.getCanonicalName());
+//		} catch (Exception e) {
+//			throw new ComponentStartException(e);
+//		}
+	}
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
+	 */
+	@Override
+	public synchronized void execute() throws Exception {
+		super.execute();
+		if (this.isSILSimulated && this.isUnitTest) {
+			this.simulatorPlugin.setSimulationRunParameters(new HashMap<String, Object>());
+			this.simulatorPlugin.startRTSimulation(System.currentTimeMillis() + 100, 0.0, 10.1);
+		}
+
+		class DecreaseEnergy extends TimerTask {
+			@Override
+			public void run() {
+				if (operatingMode == BatteryState.DRAINING) {
+					batteryCharge -= (BatteryElectricalSILModel.DRAINING_MODE_PRODUCTION
+							/ BatteryElectricalSILModel.TENSION) / 3600;
+					if (batteryCharge <= 0) {
+						batteryCharge = 0;
+						try {
+							setMode(1); // put the battery on sleeping mode
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					logMessage("current battery charge : " + batteryCharge);
+				} else if (operatingMode == BatteryState.RECHARGING) {
+					batteryCharge += (BatteryElectricalSILModel.RECHARGING_MODE_CONSUMPTION
+							/ BatteryElectricalSILModel.TENSION) / 3600;
+					if (batteryCharge >= maximumPowerLevel) {
+						batteryCharge = maximumPowerLevel;
+						try {
+							setMode(1); // put the battery on sleeping mode
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					logMessage("current battery charge : " + batteryCharge);
+				}
+			}
+		}
+
+		// wait the start of simulation and run Decrease petrol each simulated second
+		Thread.sleep(RunSILSimulation.DELAY_TO_START_SIMULATION);
+		Timer t = new Timer();
+		t.schedule(new DecreaseEnergy(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
+
+//		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
+//		String xmlFile = new String(encoded, "UTF-8");
+//		boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(), xmlFile);
+//		if (!isRegister)
+//			throw new Exception("Battery can't register to controller");
+
 	}
 
 	/**
@@ -193,18 +261,6 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 		super.shutdown();
 	}
 
-	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
-	 */
-	@Override
-	public synchronized void execute() throws Exception {
-		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
-		String xmlFile = new String(encoded, "UTF-8");
-		boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(), xmlFile);
-		if (!isRegister)
-			throw new Exception("Battery can't register to controller");
-	}
-
 	// -------------------------------------------------------------------------
 	// Component services implementation
 	// -------------------------------------------------------------------------
@@ -225,12 +281,24 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	@Override
 	public boolean upMode() throws Exception {
 		boolean succeed = false;
-		if (this.operatingMode.get() == BatteryState.RECHARGING.ordinal()) {// return to 0
-			succeed = false;//this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.RECHARGING.ordinal());
-		} else {
-			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.get() + 1);
+		switch (operatingMode) {
+		case DRAINING:
+			operatingMode = BatteryState.RECHARGING;
+			simulateOperation(Operations.SetRecharching);
+			succeed = true;
+			break;
+		case RECHARGING:
+			succeed = false;
+			break;
+		case SLEEPING:
+			succeed = true;
+			operatingMode = BatteryState.RECHARGING;
+			simulateOperation(Operations.SetRecharching);
+			break;
+		default:
+			break;
 		}
-		Log.printAndLog(this, "upMode() service result : " + succeed);
+		this.logMessage("upMode() service result : " + succeed + ", current mode : " + operatingMode);
 		return succeed;
 	}
 
@@ -240,12 +308,24 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	@Override
 	public boolean downMode() throws Exception {
 		boolean succeed = false;
-		if (this.operatingMode.get() == BatteryState.DRAINING.ordinal()) {
-			succeed = false;//this.operatingMode.compareAndSet(this.operatingMode.get(), BatteryState.SLEEPING.ordinal());
-		} else {
-			succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), this.operatingMode.get() - 1);
+		switch (operatingMode) {
+		case DRAINING:
+			succeed = false;
+			break;
+		case RECHARGING:
+			succeed = true;
+			operatingMode = BatteryState.SLEEPING;
+			simulateOperation(Operations.SetSleeping);
+			break;
+		case SLEEPING:
+			succeed = true;
+			operatingMode = BatteryState.DRAINING;
+			simulateOperation(Operations.SetDraining);
+			break;
+		default:
+			break;
 		}
-		Log.printAndLog(this, "downMode() service result : " + succeed);
+		this.logMessage("downMode() service result : " + succeed + ", current mode : " + operatingMode);
 		return succeed;
 	}
 
@@ -254,18 +334,33 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
-
 		boolean succeed = false;
-		try {
-			if (modeIndex < BatteryState.RECHARGING.ordinal() || modeIndex > BatteryState.SLEEPING.ordinal()) {
-				throw new Exception("wrong mode for set mode in Battery");
-			} else {
-				succeed = this.operatingMode.compareAndSet(this.operatingMode.get(), modeIndex);
+		switch (modeIndex) {
+		case 0:
+			if (operatingMode != BatteryState.DRAINING) {
+				succeed = true;
+				operatingMode = BatteryState.DRAINING;
+				simulateOperation(Operations.SetDraining);
 			}
-		} catch (Exception e) {
-			System.err.println("wrong mode for set mode in battery");
+			break;
+		case 1:
+			if (operatingMode != BatteryState.SLEEPING) {
+				succeed = true;
+				operatingMode = BatteryState.SLEEPING;
+				simulateOperation(Operations.SetSleeping);
+			}
+			break;
+		case 2:
+			if (operatingMode != BatteryState.RECHARGING) {
+				succeed = true;
+				operatingMode = BatteryState.RECHARGING;
+				simulateOperation(Operations.SetRecharching);
+			}
+			break;
+		default:
+			break;
 		}
-		Log.printAndLog(this, "setMode(" + modeIndex + ") service result : " + succeed);
+		this.logMessage("setMode(" + modeIndex + ") service result : " + succeed + ", current mode : " + operatingMode);
 		return succeed;
 
 	}
@@ -275,7 +370,7 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 	 */
 	@Override
 	public int currentMode() throws Exception {
-		int result = this.operatingMode.get();
+		int result = this.operatingMode.ordinal();
 		Log.printAndLog(this, "currentMode() service result : " + result);
 		return result;
 	}
@@ -362,6 +457,21 @@ public class Battery extends AbstractComponent implements BatteryImplementationI
 			succeed &= this.deadlineTime.compareAndSet(this.deadlineTime.get(), deadline);
 		}
 		return succeed;
+	}
+
+	protected void simulateOperation(Operations op) throws Exception {
+		switch (op) {
+		case SetDraining:
+			this.simulatorPlugin.triggerExternalEvent(BatteryStateSILModel.URI, t -> new SetDraining(t));
+			break;
+		case SetRecharching:
+			this.simulatorPlugin.triggerExternalEvent(BatteryStateSILModel.URI, t -> new SetRecharging(t));
+			break;
+		case SetSleeping:
+			this.simulatorPlugin.triggerExternalEvent(BatteryStateSILModel.URI, t -> new SetSleeping(t));
+		default:
+			break;
+		}
 	}
 
 }

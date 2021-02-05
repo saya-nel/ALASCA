@@ -1,4 +1,4 @@
-package main.java.simulation.battery;
+package main.java.components.battery.sil;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +10,7 @@ import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
+import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.components.battery.sil.events.AbstractBatteryEvent;
 import main.java.components.battery.sil.events.SetDraining;
@@ -18,23 +19,8 @@ import main.java.components.battery.sil.events.SetSleeping;
 import main.java.utils.BatteryState;
 import main.java.utils.FileLogger;
 
-/**
- * The class <code>BatteryElectricity_MILModel</code> defines a MIL model of the
- * electricity consumption of a Battery.
- * <p>
- * <string>Description</string>
- * </p>
- * <p>
- * The battery can change mode and it changes the consumption.
- * </p>
- * </p>
- * 
- * @author Bello Memmi
- */
 @ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class })
-public class BatteryElectricity_MILModel extends AtomicHIOA {
-
-	// TODO : ajouté la gestion de la recharge planifiable pour la batterie
+public class BatteryElectricalSILModel extends AtomicHIOA {
 
 	private static final long serialVersionUID = 1L;
 
@@ -43,10 +29,9 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * time interval between each reduction of petrol level
+	 * URI for an instance model; works as long as only one instance is created.
 	 */
-	protected static final double STEP_LENGTH = 1.0;
-	protected final Duration standardStep;
+	public static final String URI = BatteryElectricalSILModel.class.getSimpleName();
 
 	/** power energy generated during draining mode */
 	public static final double DRAINING_MODE_PRODUCTION = 5000; // watts
@@ -66,7 +51,7 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	protected final Value<Double> currentProduction = new Value<>(this, 0.0, 0);
 
 	/** current state of the Battery */
-	protected BatteryState currentState = BatteryState.DRAINING;
+	protected BatteryState currentState = BatteryState.SLEEPING;
 
 	/**
 	 * true when the electricity consumption of the battery has changed after
@@ -74,20 +59,19 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	 */
 	protected boolean consumptionHasChanged = false;
 
-	/**
-	 * Create a battery MIL model instance.
-	 * 
-	 * @param uri               URI of the model.
-	 * @param simulatedTimeUnit time unit used for the simulation time.
-	 * @param simulationEngine  simulation engine to which the model is attached.
-	 * @throws Exception
-	 */
-	public BatteryElectricity_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
+	// -------------------------------------------------------------------------
+	// Constructors
+	// -------------------------------------------------------------------------
+
+	public BatteryElectricalSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
-		this.standardStep = new Duration(STEP_LENGTH, simulatedTimeUnit);
-		this.setLogger(new FileLogger("batteryElectricity.log"));
+		this.setLogger(new FileLogger("batteryElectrical.log"));
 	}
+
+	// -------------------------------------------------------------------------
+	// Methods
+	// -------------------------------------------------------------------------
 
 	/**
 	 * set the state of the Battery
@@ -122,21 +106,24 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
+	 */
 	@Override
 	public ArrayList<EventI> output() {
 		return null;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
+	 */
 	@Override
 	public Duration timeAdvance() {
-		if (this.consumptionHasChanged) {
+		if (consumptionHasChanged) {
 			this.toggleConsumptionHasChanged();
 			return new Duration(0.0, this.getSimulatedTimeUnit());
-		} else if (this.currentState == BatteryState.DRAINING || this.currentState == BatteryState.RECHARGING) {
-			return standardStep;
-		} else {
+		} else
 			return Duration.INFINITY;
-		}
 	}
 
 	/**
@@ -146,39 +133,17 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
 
-		// no new program event otherwise
-		// if the battery is draining, it loose power
 		if (this.currentState == BatteryState.DRAINING) {
-			if (currentPowerLevel - (DRAINING_MODE_PRODUCTION / 3600) > 0) {
-				// the battery loose power
-				this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
-				this.currentIntensity.v = 0.;
-				// power loose for 1 second = consumption (amp) / 3600
-				this.currentPowerLevel -= currentProduction.v / 3600;
-			} else {
-				this.currentState = BatteryState.SLEEPING;
-				this.currentPowerLevel = 0;
-				this.toggleConsumptionHasChanged();
-			}
+			this.currentProduction.v = DRAINING_MODE_PRODUCTION / TENSION;
+			this.currentIntensity.v = 0.;
 		} else if (this.currentState == BatteryState.SLEEPING) {
 			this.currentProduction.v = 0.;
 			this.currentIntensity.v = 0.;
-		} else if (this.currentState == BatteryState.RECHARGING) {
+		} else {
 			this.currentProduction.v = 0.;
-			if (this.currentPowerLevel + (RECHARGING_MODE_CONSUMPTION / 3600) < maximumPowerLevel) {
-				this.currentIntensity.v = RECHARGING_MODE_CONSUMPTION / TENSION;
-				// power gain for 1 second = production (amp) / 3600
-				this.currentPowerLevel += this.currentIntensity.v / 3600;
-			} else {
-				this.currentState = BatteryState.SLEEPING;
-				this.currentIntensity.v = 0.;
-				this.currentProduction.v = 0.;
-				this.currentPowerLevel = maximumPowerLevel;
-				toggleConsumptionHasChanged();
-			}
-		}
-		this.logger.logMessage("", this.getCurrentStateTime() + " : current power level : " + this.currentPowerLevel);
+			this.currentIntensity.v = RECHARGING_MODE_CONSUMPTION / TENSION;
 
+		}
 		this.currentIntensity.time = this.getCurrentStateTime();
 		this.currentProduction.time = this.getCurrentStateTime();
 	}
@@ -197,4 +162,14 @@ public class BatteryElectricity_MILModel extends AtomicHIOA {
 		ce.executeOn(this);
 		super.userDefinedExternalTransition(elapsedTime);
 	}
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
+	 */
+	@Override
+	public void endSimulation(Time endTime) throws Exception {
+		this.logMessage("simulation ends.\n");
+		super.endSimulation(endTime);
+	}
+
 }

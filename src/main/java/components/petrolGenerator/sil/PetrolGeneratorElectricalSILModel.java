@@ -124,14 +124,6 @@ public class PetrolGeneratorElectricalSILModel extends AtomicHIOA {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see AtomicHIOA#initialiseVariables(Time)
-	 */
-	@Override
-	protected void initialiseVariables(Time startTime) {
-		super.initialiseVariables(startTime);
-	}
-
-	/**
 	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
 	 */
 	@Override

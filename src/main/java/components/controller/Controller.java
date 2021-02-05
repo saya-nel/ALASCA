@@ -14,10 +14,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.connectors.AbstractConnector;
+import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -41,7 +41,7 @@ import main.java.utils.Log;
 @OfferedInterfaces(offered = { ControllerCI.class })
 @RequiredInterfaces(required = { StandardEquipmentControlCI.class, SuspensionEquipmentControlCI.class,
 		PlanningEquipmentControlCI.class })
-public class Controller extends AbstractComponent implements ControllerImplementationI {
+public class Controller extends AbstractCyPhyComponent implements ControllerImplementationI {
 
 	/**
 	 * URI of the pool of threads for control

@@ -1,42 +1,48 @@
-package main.java.simulation.battery.events;
+package main.java.components.battery.sil.events;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.battery.BatteryElectricity_MILModel;
+import main.java.components.battery.sil.BatteryElectricalSILModel;
 import main.java.utils.BatteryState;
 
 /**
- * The class <code>SetSleeping</code> defines the MIL event of the battery being
- * set to sleeping mode.
+ * The class <code>SetRecharging</code> defines the MIL event of the battery
+ * being set to recharging mode.
  *
- * <p><strong>Description</strong></p>
+ * <p>
+ * <strong>Description</strong>
+ * </p>
  *
- * <p><strong>Invariant</strong></p>
+ * <p>
+ * <strong>Invariant</strong>
+ * </p>
  *
  * <pre>
  * invariant		true
  * </pre>
  *
- * @author	Bello Memmi
+ * @author Bello Memmi
  */
-public class SetSleeping extends AbstractBatteryEvent {
+public class SetRecharging extends AbstractBatteryEvent {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * create a SetSleeping event.
+	 * create a SetRecharging event.
 	 *
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 *
 	 * <pre>
 	 * pre	{@code timeOfOccurrence != null}
 	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
 	 * </pre>
 	 *
-	 * @param timeOfOccurrence	time of occurrence of the event.
+	 * @param timeOfOccurrence time of occurrence of the event.
 	 */
-	public SetSleeping(Time timeOfOccurrence) {
+	public SetRecharging(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
 
@@ -45,7 +51,7 @@ public class SetSleeping extends AbstractBatteryEvent {
 	 */
 	@Override
 	public String eventAsString() {
-		return "SetSleeping(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+		return "SetRecharging(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
 	}
 
 	/**
@@ -61,11 +67,11 @@ public class SetSleeping extends AbstractBatteryEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof BatteryElectricity_MILModel;
+		assert model instanceof BatteryElectricalSILModel;
 
-		BatteryElectricity_MILModel m = (BatteryElectricity_MILModel) model;
-		if (m.getState() != BatteryState.SLEEPING) {
-			m.setState(BatteryState.SLEEPING);
+		BatteryElectricalSILModel m = (BatteryElectricalSILModel) model;
+		if (m.getState() != BatteryState.RECHARGING) {
+			m.setState(BatteryState.RECHARGING);
 			m.toggleConsumptionHasChanged();
 		}
 	}

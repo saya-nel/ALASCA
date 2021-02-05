@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.cyphy.plugins.devs.architectures.ComponentModelArchitectureI;
 import fr.sorbonne_u.components.cyphy.plugins.devs.architectures.PortURISinkReference;
@@ -55,48 +56,51 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 // -----------------------------------------------------------------------------
 /**
  * The class <code>AtomicSimulatorPlugin</code> implements the behaviours
- * required by a component that holds an atomic simulation model; it acts
- * mostly as a facade for the simulation engine and model that it is holding,
- * passing them most of the calls sometimes with adaptations (glue) to
- * account for the fact that communication among simulation engines and models
- * may pass through component connections.
+ * required by a component that holds an atomic simulation model; it acts mostly
+ * as a facade for the simulation engine and model that it is holding, passing
+ * them most of the calls sometimes with adaptations (glue) to account for the
+ * fact that communication among simulation engines and models may pass through
+ * component connections.
  *
- * <p><strong>Description</strong></p>
- * 
  * <p>
- * An atomic simulation plug-in is meant to manage the simulation models
- * held by its component. As such, it performs operations to create the
- * simulation architecture local to the component, for the interconnection
- * of models during the creation of the global inter-components simulator
- * architecture and during the simulation runs themselves to make its
- * simulation engines and models execute the simulation steps.
+ * <strong>Description</strong>
  * </p>
  * 
- * <p><strong>Invariant</strong></p>
+ * <p>
+ * An atomic simulation plug-in is meant to manage the simulation models held by
+ * its component. As such, it performs operations to create the simulation
+ * architecture local to the component, for the interconnection of models during
+ * the creation of the global inter-components simulator architecture and during
+ * the simulation runs themselves to make its simulation engines and models
+ * execute the simulation steps.
+ * </p>
+ * 
+ * <p>
+ * <strong>Invariant</strong>
+ * </p>
  * 
  * <pre>
  * invariant	true
  * </pre>
  * 
- * <p>Created on : 2018-04-06</p>
+ * <p>
+ * Created on : 2018-04-06
+ * </p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ * @author <a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-public class			AtomicSimulatorPlugin
-extends		AbstractSimulatorPlugin
-implements	AtomicSimulatorPluginI
-{
+public class AtomicSimulatorPlugin extends AbstractSimulatorPlugin implements AtomicSimulatorPluginI {
 	// -------------------------------------------------------------------------
 	// Plug-in internal constants and variables
 	// -------------------------------------------------------------------------
 
-	private static final long							serialVersionUID = 1L;
-	/** simulation architecture associated with this plug-in.				*/
-	protected Architecture									localArchitecture;
-	/** Port to receive events from other simulation models.				*/
-	protected EventsExchangingInboundPort						eeip;
-	/** Ports map to send events to other simulation models.				*/
-	protected final Map<String,EventsExchangingOutboundPort>	eePorts;
+	private static final long serialVersionUID = 1L;
+	/** simulation architecture associated with this plug-in. */
+	protected Architecture localArchitecture;
+	/** Port to receive events from other simulation models. */
+	protected EventsExchangingInboundPort eeip;
+	/** Ports map to send events to other simulation models. */
+	protected final Map<String, EventsExchangingOutboundPort> eePorts;
 
 	// -------------------------------------------------------------------------
 	// Constructor
@@ -105,7 +109,9 @@ implements	AtomicSimulatorPluginI
 	/**
 	 * create an atomic simulator plug-in.
 	 * 
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	true		// no precondition.
@@ -113,10 +119,8 @@ implements	AtomicSimulatorPluginI
 	 * </pre>
 	 *
 	 */
-	public				AtomicSimulatorPlugin()
-	{
-		this.eePorts =
-				new ConcurrentHashMap<String,EventsExchangingOutboundPort>();
+	public AtomicSimulatorPlugin() {
+		this.eePorts = new ConcurrentHashMap<String, EventsExchangingOutboundPort>();
 	}
 
 	// -------------------------------------------------------------------------
@@ -127,8 +131,7 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.components.AbstractPlugin#isInitialised()
 	 */
 	@Override
-	public boolean		isInitialised()
-	{
+	public boolean isInitialised() {
 		return super.isInitialised() && this.eePorts != null;
 	}
 
@@ -136,10 +139,9 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.components.AbstractPlugin#installOn(fr.sorbonne_u.components.ComponentI)
 	 */
 	@Override
-	public void			installOn(ComponentI owner) throws Exception
-	{
-		assert	owner != null;
-		assert	this.isSimulationArchitectureSet();
+	public void installOn(ComponentI owner) throws Exception {
+		assert owner != null;
+		assert this.isSimulationArchitectureSet();
 
 		super.installOn(owner);
 
@@ -151,48 +153,44 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.components.AbstractPlugin#initialise()
 	 */
 	@Override
-	public void			initialise() throws Exception
-	{
+	public void initialise() throws Exception {
 		super.initialise();
 
-		this.eeip = new EventsExchangingInboundPort(
-									this.getOwner(),
-									this.getPluginURI(),
-									this.getPreferredExecutionServiceURI());
+		this.eeip = new EventsExchangingInboundPort(this.getOwner(), this.getPluginURI(),
+				this.getPreferredExecutionServiceURI());
 		this.eeip.publishPort();
 
 		this.constructSimulator();
 	}
 
 	/**
-	 * create the simulator from the local simulation architecture and
-	 * initialise the variable <code>simulator</code> with the reference
-	 * to the simulator object.
+	 * create the simulator from the local simulation architecture and initialise
+	 * the variable <code>simulator</code> with the reference to the simulator
+	 * object.
 	 * 
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code isSimulationArchitectureSet()}
 	 * post	{@code isSimulatorSet()}
 	 * </pre>
 	 *
-	 * @throws Exception	<i>to do</i>.
+	 * @throws Exception <i>to do</i>.
 	 */
-	protected void		constructSimulator() throws Exception
-	{
-		assert	this.isSimulationArchitectureSet();
+	protected void constructSimulator() throws Exception {
+		assert this.isSimulationArchitectureSet();
 
-		this.simulator =
-			this.localArchitecture.constructSimulator(this.getPluginURI());
-		assert	this.isSimulatorSet();
+		this.simulator = this.localArchitecture.constructSimulator(this.getPluginURI());
+		assert this.isSimulatorSet();
 	}
 
 	/**
 	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AbstractSimulatorPlugin#finalise()
 	 */
 	@Override
-	public void			finalise() throws Exception
-	{
+	public void finalise() throws Exception {
 		if (this.eePorts != null) {
 			for (EventsExchangingOutboundPort eeop : this.eePorts.values()) {
 				if (eeop.connected()) {
@@ -201,15 +199,13 @@ implements	AtomicSimulatorPluginI
 			}
 		}
 
-		assert	this.eePorts == null ||
-					this.eePorts.values().stream().
-						map(eeop -> {	try {
-											return !eeop.connected();
-										} catch (Exception e) {
-											throw new RuntimeException(e);
-										}
-									}).
-						allMatch(b -> b);
+		assert this.eePorts == null || this.eePorts.values().stream().map(eeop -> {
+			try {
+				return !eeop.connected();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}).allMatch(b -> b);
 
 		super.finalise();
 	}
@@ -218,8 +214,7 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.components.AbstractPlugin#uninstall()
 	 */
 	@Override
-	public void			uninstall() throws Exception
-	{
+	public void uninstall() throws Exception {
 		this.eeip.unpublishPort();
 		this.eeip.destroyPort();
 		this.eeip = null;
@@ -232,7 +227,7 @@ implements	AtomicSimulatorPluginI
 			}
 			this.eePorts.clear();
 		}
-		assert	this.eePorts == null || this.eePorts.isEmpty();
+		assert this.eePorts == null || this.eePorts.isEmpty();
 		this.removeRequiredInterface(EventsExchangingCI.class);
 
 		super.uninstall();
@@ -246,8 +241,7 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AtomicSimulatorPluginI#isSimulationArchitectureSet()
 	 */
 	@Override
-	public boolean		isSimulationArchitectureSet()
-	{
+	public boolean isSimulationArchitectureSet() {
 		return this.localArchitecture != null;
 	}
 
@@ -255,12 +249,11 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AtomicSimulatorPluginI#setSimulationArchitecture(fr.sorbonne_u.devs_simulation.architectures.Architecture)
 	 */
 	@Override
-	public void			setSimulationArchitecture(Architecture archi)
-	{
-		assert	this.getPluginURI() != null;
-		assert	!this.isSimulationArchitectureSet();
-		assert	archi != null;
-		assert	archi.getRootModelURI().equals(this.getPluginURI());
+	public void setSimulationArchitecture(Architecture archi) {
+		assert this.getPluginURI() != null;
+		assert !this.isSimulationArchitectureSet();
+		assert archi != null;
+		assert archi.getRootModelURI().equals(this.getPluginURI());
 
 		this.localArchitecture = archi;
 	}
@@ -271,7 +264,9 @@ implements	AtomicSimulatorPluginI
 
 	/**
 	 * .
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code isSimulatorSet()}
@@ -281,17 +276,17 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI#findProxyAtomicEngineURI(java.lang.String)
 	 */
 	@Override
-	public String		findProxyAtomicEngineURI(String modelURI)
-	throws Exception
-	{
-		assert	this.isSimulatorSet();
-		
+	public String findProxyAtomicEngineURI(String modelURI) throws Exception {
+		assert this.isSimulatorSet();
+
 		return this.simulator.findProxyAtomicEngineURI(modelURI);
 	}
 
 	/**
 	 * .
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code isSimulatorSet()}
@@ -301,61 +296,48 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI#getEventAtomicSinks(java.lang.Class)
 	 */
 	@Override
-	public Set<CallableEventAtomicSink>	getEventAtomicSinks(
-		Class<? extends EventI> ce
-		) throws Exception
-	{
-		assert	this.isSimulatorSet();
+	public Set<CallableEventAtomicSink> getEventAtomicSinks(Class<? extends EventI> ce) throws Exception {
+		assert this.isSimulatorSet();
 
-		Set<CallableEventAtomicSink> internals =
-									this.simulator.getEventAtomicSinks(ce);
+		Set<CallableEventAtomicSink> internals = this.simulator.getEventAtomicSinks(ce);
 		Set<CallableEventAtomicSink> ret = new HashSet<>();
 		for (CallableEventAtomicSink as : internals) {
-			ret.add(new CallableEventAtomicSink(
-							as.importingModelURI,
-							as.sourceEventType,
-							as.sinkEventType,
-							new PortURISinkReference(this.eeip.getPortURI()),
-							as.converter));
+			ret.add(new CallableEventAtomicSink(as.importingModelURI, as.sourceEventType, as.sinkEventType,
+					new PortURISinkReference(this.eeip.getPortURI()), as.converter));
 		}
 		return ret;
 	}
 
 	/**
 	 * .
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code isSimulatorSet()}
 	 * post	true				// no more postconditions.
 	 * </pre>
 	 * 
-	 * @see fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI#addInfluencees(java.lang.String, java.lang.Class, java.util.Set)
+	 * @see fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI#addInfluencees(java.lang.String,
+	 *      java.lang.Class, java.util.Set)
 	 */
 	@Override
-	public void			addInfluencees(
-		String modelURI,
-		Class<? extends EventI> ce,
-		Set<CallableEventAtomicSink> influencees
-		) throws Exception
-	{
-		assert	this.isSimulatorSet();
-		assert	modelURI != null;
-		assert	this.simulator.getURI().equals(modelURI) ||
-					this.simulator.isDescendentModel(modelURI);
-		assert	ce != null;
-		assert	influencees != null && influencees.size() != 0;
+	public void addInfluencees(String modelURI, Class<? extends EventI> ce, Set<CallableEventAtomicSink> influencees)
+			throws Exception {
+		assert this.isSimulatorSet();
+		assert modelURI != null;
+		assert this.simulator.getURI().equals(modelURI) || this.simulator.isDescendentModel(modelURI);
+		assert ce != null;
+		assert influencees != null && influencees.size() != 0;
 
 		// When adding influencees that reside in other components, the
 		// sink references must be converted to references passing through
 		// an outbound port of this plug-in owner component
-		Set<CallableEventAtomicSink> newInfluencees =
-								new HashSet<CallableEventAtomicSink>();
+		Set<CallableEventAtomicSink> newInfluencees = new HashSet<CallableEventAtomicSink>();
 		for (CallableEventAtomicSink caes : influencees) {
 			assert !caes.importingAtomicModelReference.isDirect();
-			String inboundPortURI =
-				((PortURISinkReference)
-							caes.importingAtomicModelReference).portURI;
+			String inboundPortURI = ((PortURISinkReference) caes.importingAtomicModelReference).portURI;
 			EventsExchangingOutboundPort eeop = null;
 			if (this.eePorts.containsKey(inboundPortURI)) {
 				// when a submodel influences a remote model that is already
@@ -366,18 +348,12 @@ implements	AtomicSimulatorPluginI
 				// model
 				eeop = new EventsExchangingOutboundPort(this.getOwner());
 				eeop.publishPort();
-				this.getOwner().doPortConnection(
-						eeop.getPortURI(),
-						inboundPortURI,
+				this.getOwner().doPortConnection(eeop.getPortURI(), inboundPortURI,
 						EventsExchangingConnector.class.getCanonicalName());
 				this.eePorts.put(inboundPortURI, eeop);
 			}
-			newInfluencees.add(new CallableEventAtomicSink(
-											caes.importingModelURI,
-											caes.sourceEventType,
-											caes.sinkEventType,
-											new AtomicSinkReference(eeop),
-											caes.converter));
+			newInfluencees.add(new CallableEventAtomicSink(caes.importingModelURI, caes.sourceEventType,
+					caes.sinkEventType, new AtomicSinkReference(eeop), caes.converter));
 		}
 		this.simulator.addInfluencees(modelURI, ce, newInfluencees);
 	}
@@ -388,7 +364,9 @@ implements	AtomicSimulatorPluginI
 
 	/**
 	 * .
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code isSimulatorSet()}
@@ -398,14 +376,10 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI#getAtomicEngineReference(java.lang.String)
 	 */
 	@Override
-	public AbstractAtomicSinkReference	getAtomicEngineReference(
-		String atomicEngineURI
-		) throws Exception
-	{
-		assert	this.isSimulatorSet();
+	public AbstractAtomicSinkReference getAtomicEngineReference(String atomicEngineURI) throws Exception {
+		assert this.isSimulatorSet();
 
-		if (this.simulator.getURI().equals(atomicEngineURI) ||
-					this.simulator.isDescendentModel(atomicEngineURI)) {
+		if (this.simulator.getURI().equals(atomicEngineURI) || this.simulator.isDescendentModel(atomicEngineURI)) {
 			return new PortURISinkReference(this.eeip.getPortURI());
 		} else {
 			return null;
@@ -416,34 +390,31 @@ implements	AtomicSimulatorPluginI
 	// Parent notification methods
 	// -------------------------------------------------------------------------
 
-	
 	// -------------------------------------------------------------------------
 	// Events exchanging methods
 	// -------------------------------------------------------------------------
 
 	/**
 	 * .
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code isSimulatorSet()}
 	 * post	true				// no more postconditions.
 	 * </pre>
 	 * 
-	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AbstractSimulatorPlugin#storeInput(java.lang.String, ArrayList)
+	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AbstractSimulatorPlugin#storeInput(java.lang.String,
+	 *      ArrayList)
 	 */
 	@Override
-	public void			storeInput(
-		String destinationModelURI,
-		ArrayList<EventI> es
-		) throws Exception
-	{
-		assert	this.isSimulatorSet();
-		assert	destinationModelURI != null;
-		assert	this.simulator.getURI().equals(destinationModelURI) ||
-					this.simulator.isDescendentModel(destinationModelURI);
-		assert	es != null && !es.isEmpty();
-
+	public void storeInput(String destinationModelURI, ArrayList<EventI> es) throws Exception {
+		assert this.isSimulatorSet();
+		assert destinationModelURI != null;
+		assert this.simulator.getURI().equals(destinationModelURI)
+				|| this.simulator.isDescendentModel(destinationModelURI);
+		assert es != null && !es.isEmpty();
 		this.simulator.storeInput(destinationModelURI, es);
 	}
 
@@ -456,16 +427,13 @@ implements	AtomicSimulatorPluginI
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.interfaces.ModelStateAccessI#getModelStateValue(java.lang.String, java.lang.String)
+	 * @see fr.sorbonne_u.components.cyphy.interfaces.ModelStateAccessI#getModelStateValue(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
-	public Object		getModelStateValue(String modelURI, String name)
-	throws Exception
-	{
-		throw new Exception(
-					"Call to the method getModelStateValue in " +
-					"AtomicSimulatorPlugin that should have been " +
-					"redefined in a subclass.");
+	public Object getModelStateValue(String modelURI, String name) throws Exception {
+		throw new Exception("Call to the method getModelStateValue in " + "AtomicSimulatorPlugin that should have been "
+				+ "redefined in a subclass.");
 	}
 
 	// -------------------------------------------------------------------------
@@ -474,7 +442,9 @@ implements	AtomicSimulatorPluginI
 
 	/**
 	 * .
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code isSimulationArchitectureSet()}
@@ -484,21 +454,16 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.interfaces.SimulatorPluginManagementI#compose(fr.sorbonne_u.components.cyphy.plugins.devs.architectures.ComponentModelArchitectureI)
 	 */
 	@Override
-	public String		compose(ComponentModelArchitectureI architecture)
-	throws Exception
-	{
-		assert	this.isSimulationArchitectureSet();
-		assert	architecture != null;
-		assert	architecture.isAtomicModel(this.getPluginURI());
+	public String compose(ComponentModelArchitectureI architecture) throws Exception {
+		assert this.isSimulationArchitectureSet();
+		assert architecture != null;
+		assert architecture.isAtomicModel(this.getPluginURI());
 
-		AbstractAtomicModelDescriptor amd =
-				(AbstractAtomicModelDescriptor)
-						architecture.getModelDescriptor(this.getPluginURI());
+		AbstractAtomicModelDescriptor amd = (AbstractAtomicModelDescriptor) architecture
+				.getModelDescriptor(this.getPluginURI());
 
-		assert	this.includedIn(amd.importedEvents,
-								this.simulator.getImportedEventTypes());
-		assert	this.includedIn(this.simulator.getExportedEventTypes(),
-								amd.exportedEvents);
+		assert this.includedIn(amd.importedEvents, this.simulator.getImportedEventTypes());
+		assert this.includedIn(this.simulator.getExportedEventTypes(), amd.exportedEvents);
 
 		return this.sip.getPortURI();
 	}
@@ -507,8 +472,7 @@ implements	AtomicSimulatorPluginI
 	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AbstractSimulatorPlugin#reinitialise()
 	 */
 	@Override
-	public void			reinitialise() throws Exception
-	{
+	public void reinitialise() throws Exception {
 		super.reinitialise();
 
 		if (this.eePorts != null) {
@@ -528,23 +492,22 @@ implements	AtomicSimulatorPluginI
 	 * return true if every element in <code>tab1</code> appears in
 	 * <code>tab2</code>.
 	 * 
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code tab1 != null && tab2 != null}
 	 * post	true			// no postcondition.
 	 * </pre>
 	 *
-	 * @param tab1	array of instances of {@code Class<?>} representing events.
-	 * @param tab2	array of instances of {@code Class<?>} representing events.
-	 * @return		true if every element in <code>tab1</code> appears in <code>tab2</code>.
+	 * @param tab1 array of instances of {@code Class<?>} representing events.
+	 * @param tab2 array of instances of {@code Class<?>} representing events.
+	 * @return true if every element in <code>tab1</code> appears in
+	 *         <code>tab2</code>.
 	 */
-	private boolean		includedIn(
-		Class<? extends EventI>[] tab1,
-		Class<? extends EventI>[] tab2
-		)
-	{
-		assert	tab1 != null && tab2 != null;
+	private boolean includedIn(Class<? extends EventI>[] tab1, Class<? extends EventI>[] tab2) {
+		assert tab1 != null && tab2 != null;
 
 		boolean allAppear = true;
 		for (Class<?> c : tab1) {
@@ -556,22 +519,23 @@ implements	AtomicSimulatorPluginI
 	/**
 	 * return true in the <code>c</code> appears in <code>tab</code>.
 	 * 
-	 * <p><strong>Contract</strong></p>
+	 * <p>
+	 * <strong>Contract</strong>
+	 * </p>
 	 * 
 	 * <pre>
 	 * pre	{@code c != null && tab != null}
 	 * post	true			// no postcondition.
 	 * </pre>
 	 *
-	 * @param c		an instance of {@code Class<?>} representing an event.
-	 * @param tab	array of instances of {@code Class<?>} representing events.
-	 * @return		true in the <code>c</code> appears in <code>tab</code>.
+	 * @param c   an instance of {@code Class<?>} representing an event.
+	 * @param tab array of instances of {@code Class<?>} representing events.
+	 * @return true in the <code>c</code> appears in <code>tab</code>.
 	 */
-	private boolean		appearsIn(Class<?> c, Class<? extends EventI>[] tab)
-	{
-		assert	c != null && tab != null;
+	private boolean appearsIn(Class<?> c, Class<? extends EventI>[] tab) {
+		assert c != null && tab != null;
 		boolean found = false;
-		for (int i = 0 ; i < tab.length && !found ; i++) {
+		for (int i = 0; i < tab.length && !found; i++) {
 			found = c.equals(tab[i]);
 		}
 		return found;
