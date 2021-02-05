@@ -49,7 +49,7 @@ extends AbstractComponent {
     /** true if the fridge is in passive mode not freezing                  */
     protected boolean                                       isPassive;
     /** period of the reactive controller                                   */
-    protected static final long                             CONTROL_PERIOD = 1000L;
+    protected static final long                             CONTROL_PERIOD = 10000L;
     /** total number of control loop executions (for testing purposes).     */
     protected static final int                              TOTAL_LOOPS = 10;
     /** number of control loops executed so far                             */
@@ -82,7 +82,7 @@ extends AbstractComponent {
         // one scheduled executor service used to execute the control loop
         super(1, 1);
 
-        this.tracer.get().setTitle("Boiler reactive controller component");
+        this.tracer.get().setTitle("fridge reactive controller component");
         this.tracer.get().setRelativePosition(1, 1);
         this.toggleTracing();
     }
@@ -204,7 +204,7 @@ extends AbstractComponent {
                 this.actuatorOBP.startPassive();
                 this.isPassive = true;
             } else {
-                this.logMessage("Fridge reactive controller heats.");
+                this.logMessage("Fridge reactive controller is freezing.");
             }
         } else {
             if (currentTemp > TARGET_TEMP + TARGET_TOLERANCE) {

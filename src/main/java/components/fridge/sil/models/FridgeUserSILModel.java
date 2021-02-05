@@ -6,11 +6,11 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
+
 import main.java.components.fridge.Fridge;
-import main.java.simulation.fridge.events.AbstractFridgeEvent;
-import main.java.simulation.fridge.events.SetEco;
-import main.java.simulation.fridge.events.SetNormal;
-import main.java.simulation.fridge.events.SetRequestedTemperature;
+import main.java.components.fridge.sil.events.*;
+import main.java.utils.FridgeMode;
+
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Bello Memmi
  */
-@ModelExternalEvents(exported = { SetEco.class, SetNormal.class, SetRequestedTemperature.class })
-public class FridgeUser_MILModel extends AtomicModel {
+//@ModelExternalEvents(exported = { SetEco.class, SetNormal.class, SetRequestedTemperature.class })
+public class FridgeUserSILModel extends AtomicModel {
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
@@ -33,10 +33,10 @@ public class FridgeUser_MILModel extends AtomicModel {
 	protected static final double 		STEP = 60 * 60 * 6; // 5 hours
 	/** URI for an instance model; works as long as only one instance is
 	 *  created.															*/
-	public static final String			URI = FridgeUser_MILModel.class.
+	public static final String			URI = FridgeUserSILModel.class.
 			getSimpleName();
 	/** the current event being output. */
-	protected AbstractFridgeEvent currentEvent;
+	protected AbstractFridgeEvent 		currentEvent;
 	/** time interval between event outputs. */
 	protected Duration 					time2next;
 	/** name used to pass the owner component reference as simulation
@@ -45,7 +45,7 @@ public class FridgeUser_MILModel extends AtomicModel {
 	/** owner component */
 	protected Fridge 					owner;
 
-	public FridgeUser_MILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
+	public FridgeUserSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
 	}
 
@@ -116,7 +116,43 @@ public class FridgeUser_MILModel extends AtomicModel {
 		}
 	}
 
+	@Override
+	public void userDefinedInternalTransition(Duration elapsedTime){
+		super.userDefinedInternalTransition(elapsedTime);
+		this.currentEvent = this.getCurrentEventAndSetNext(this.getTimeOfNextEvent());
+		assert this.currentEvent instanceof AbstractFridgeEvent;
+		if(this.currentEvent instanceof SetEco){
+			this.owner.runTask(o -> {
+				try{
+					((Fridge) o).setMode(FridgeMode.ECO.ordinal());
+				} catch (Exception e){
+					throw new RuntimeException(e);
+				}
+			});
+		}
+		else if(this.currentEvent instanceof SetNormal) {
+			this.owner.runTask(o -> {
+				try {
+					((Fridge) o).setMode(FridgeMode.NORMAL.ordinal());
+				} catch (Exception e){
+					throw new RuntimeException(e);
+				}
+			});
+		}
+		else if(this.currentEvent instanceof SetRequestedTemperature) {
+			SetRequestedTemperature ev = (SetRequestedTemperature) this.currentEvent;
+			double req =
+					((SetRequestedTemperature.RequestedTemperature) ev.getEventInformation()).getRequestedTemperature();
 
+			this.owner.runTask( o -> {
+				try {
+					((Fridge) o).setRequestedTemperature((float) req);
+				} catch (Exception e){
+					throw new RuntimeException(e);
+				}
+			});
+		}
+	}
 
 	/**
 	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)

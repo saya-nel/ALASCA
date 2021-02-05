@@ -79,7 +79,7 @@ extends AtomicModel {
     ) throws Exception
     {
         this.owner = (Fridge) simParams.get(
-                FridgeUser_MILModel.FRIDGE_REFERENCE_NAME);
+                FridgeUserSILModel.FRIDGE_REFERENCE_NAME);
     }
 
     /**
