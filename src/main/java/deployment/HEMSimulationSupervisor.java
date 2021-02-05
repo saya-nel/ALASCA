@@ -36,6 +36,11 @@ import main.java.components.petrolGenerator.PetrolGenerator;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorSILCoupledModel;
 import main.java.components.solarPanels.SolarPanels;
 import main.java.components.solarPanels.sil.SolarPanelsStateSILModel;
+import main.java.components.washer.Washer;
+import main.java.components.washer.sil.WasherSILCoupledModel;
+import main.java.components.washer.sil.events.SetEco;
+import main.java.components.washer.sil.events.SetPerformance;
+import main.java.components.washer.sil.events.SetStd;
 
 /**
  * @author Bello Memmi
@@ -135,6 +140,13 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 						new Class[] { SetDraining.class, SetSleeping.class, SetRecharging.class }, TimeUnit.SECONDS,
 						Battery.REFLECTION_INBOUND_PORT_URI));
 
+		atomicModelDescriptors.put(WasherSILCoupledModel.URI, // coupled model seen as atomic
+				RTComponentAtomicModelDescriptor.create(WasherSILCoupledModel.URI, new Class[] {},
+						new Class[] { main.java.components.washer.sil.events.TurnOn.class,
+								main.java.components.washer.sil.events.TurnOff.class, SetEco.class, SetStd.class,
+								SetPerformance.class },
+						TimeUnit.SECONDS, Washer.REFLECTION_INBOUND_PORT_URI));
+
 		Map<String, CoupledModelDescriptor> coupledModelDescriptors = new HashMap<>();
 
 		Set<String> submodels = new HashSet<String>();
@@ -143,6 +155,7 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 		submodels.add(SolarPanelsStateSILModel.URI);
 		submodels.add(PetrolGeneratorSILCoupledModel.URI);
 		submodels.add(BatteryStateSILModel.URI);
+		submodels.add(WasherSILCoupledModel.URI);
 
 		Map<EventSource, EventSink[]> connections = new HashMap<EventSource, EventSink[]>();
 
@@ -185,6 +198,20 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetSleeping.class) });
 		connections.put(new EventSource(BatteryStateSILModel.URI, SetRecharging.class),
 				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetRecharging.class) });
+		// Washer -> ElectricMeterSIL
+		connections.put(new EventSource(WasherSILCoupledModel.URI, main.java.components.washer.sil.events.TurnOn.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI,
+						main.java.components.washer.sil.events.TurnOn.class) });
+		connections.put(
+				new EventSource(WasherSILCoupledModel.URI, main.java.components.washer.sil.events.TurnOff.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI,
+						main.java.components.washer.sil.events.TurnOff.class) });
+		connections.put(new EventSource(WasherSILCoupledModel.URI, SetEco.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetEco.class) });
+		connections.put(new EventSource(WasherSILCoupledModel.URI, SetStd.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetStd.class) });
+		connections.put(new EventSource(WasherSILCoupledModel.URI, SetPerformance.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetPerformance.class) });
 
 		coupledModelDescriptors.put(HEMProjectCoupledModel.URI,
 				RTComponentCoupledModelDescriptor.create(HEMProjectCoupledModel.class, HEMProjectCoupledModel.URI,

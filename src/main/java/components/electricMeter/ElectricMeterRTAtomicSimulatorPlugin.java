@@ -34,6 +34,8 @@ import main.java.components.fan.sil.events.TurnOn;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorElectricalSILModel;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorUserSILModel;
 import main.java.components.solarPanels.sil.SolarPanelsElectricalSILModel;
+import main.java.components.washer.sil.WasherElectricalSILModel;
+import main.java.components.washer.sil.WasherUserSILModel;
 import main.java.deployment.RunSILSimulation;
 
 /**
@@ -83,6 +85,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		// simulations
 		simParams.put(FanUserSILModel.FAN_REFERENCE_NAME, this.getOwner());
 		simParams.put(PetrolGeneratorUserSILModel.PETROL_GENERATOR_REFERENCE_NAME, this.getOwner());
+		simParams.put(WasherUserSILModel.WASHER_REFERENCE_NAME, this.getOwner());
 
 		// this will pass the parameters to the simulation models that will then
 		// be able to get their own parameters.
@@ -127,6 +130,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		submodels.add(SolarPanelsElectricalSILModel.URI);
 		submodels.add(PetrolGeneratorElectricalSILModel.URI);
 		submodels.add(BatteryElectricalSILModel.URI);
+		submodels.add(WasherElectricalSILModel.URI);
 
 		atomicModelDescriptors.put(ElectricMeterSILModel.URI,
 				RTAtomicHIOA_Descriptor.create(ElectricMeterSILModel.class, ElectricMeterSILModel.URI, TimeUnit.SECONDS,
@@ -144,6 +148,10 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 						SimulationEngineCreationMode.ATOMIC_RT_ENGINE, RunSILSimulation.ACC_FACTOR));
 		atomicModelDescriptors.put(BatteryElectricalSILModel.URI,
 				RTAtomicHIOA_Descriptor.create(BatteryElectricalSILModel.class, BatteryElectricalSILModel.URI,
+						TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+						RunSILSimulation.ACC_FACTOR));
+		atomicModelDescriptors.put(WasherElectricalSILModel.URI,
+				RTAtomicHIOA_Descriptor.create(WasherElectricalSILModel.class, WasherElectricalSILModel.URI,
 						TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						RunSILSimulation.ACC_FACTOR));
 
@@ -175,6 +183,18 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 				new EventSink[] { new EventSink(BatteryElectricalSILModel.URI, SetDraining.class) });
 		imported.put(SetSleeping.class,
 				new EventSink[] { new EventSink(BatteryElectricalSILModel.URI, SetSleeping.class) });
+		// washer
+		imported.put(main.java.components.washer.sil.events.TurnOn.class, new EventSink[] {
+				new EventSink(WasherElectricalSILModel.URI, main.java.components.washer.sil.events.TurnOn.class) });
+		imported.put(main.java.components.washer.sil.events.TurnOff.class, new EventSink[] {
+				new EventSink(WasherElectricalSILModel.URI, main.java.components.washer.sil.events.TurnOff.class) });
+		imported.put(main.java.components.washer.sil.events.SetEco.class, new EventSink[] {
+				new EventSink(WasherElectricalSILModel.URI, main.java.components.washer.sil.events.SetEco.class) });
+		imported.put(main.java.components.washer.sil.events.SetStd.class, new EventSink[] {
+				new EventSink(WasherElectricalSILModel.URI, main.java.components.washer.sil.events.SetStd.class) });
+		imported.put(main.java.components.washer.sil.events.SetPerformance.class,
+				new EventSink[] { new EventSink(WasherElectricalSILModel.URI,
+						main.java.components.washer.sil.events.SetPerformance.class) });
 
 		Map<VariableSource, VariableSink[]> bindings = new HashMap<VariableSource, VariableSink[]>();
 		// fan
@@ -198,6 +218,10 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		bindings.put(source, sinks);
 		source = new VariableSource("currentProduction", Double.class, BatteryElectricalSILModel.URI);
 		sinks = new VariableSink[] { new VariableSink("BatteryProduction", Double.class, ElectricMeterSILModel.URI) };
+		bindings.put(source, sinks);
+		// washer
+		source = new VariableSource("currentIntensity", Double.class, WasherElectricalSILModel.URI);
+		sinks = new VariableSink[] { new VariableSink("WasherIntensity", Double.class, ElectricMeterSILModel.URI) };
 		bindings.put(source, sinks);
 
 		coupledModelDescriptors.put(ElectricMeterSILCoupledModel.URI,

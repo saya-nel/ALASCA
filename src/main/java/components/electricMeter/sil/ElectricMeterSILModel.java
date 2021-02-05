@@ -57,6 +57,11 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	 */
 	@ImportedVariable(type = Double.class)
 	protected Value<Double> BatteryIntensity;
+	/**
+	 * current intensity of the washer in amperes; intensity is power/tension.
+	 */
+	@ImportedVariable(type = Double.class)
+	protected Value<Double> WasherIntensity;
 
 	/** current production in amperes; production is power/tension. */
 	@ExportedVariable(type = Double.class)
@@ -204,11 +209,12 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 		if (!this.requestReceived) {
 			// no request received, hence this is a computation step
 			// compute the new global electricity consumption
-			this.currentIntensity.v = this.FanIntensity.v + this.BatteryIntensity.v;
+			this.currentIntensity.v = this.FanIntensity.v + this.BatteryIntensity.v + this.WasherIntensity.v;
 			this.currentIntensity.time = this.getCurrentStateTime();
 			this.logMessage("Consumption : " + String.format("%.2f", this.currentIntensity.v) + "(fan : "
 					+ String.format("%.2f", this.FanIntensity.v) + ", battery : "
-					+ String.format("%.2f", this.BatteryIntensity.v) + ")\n");
+					+ String.format("%.2f", this.BatteryIntensity.v) + ", washer : "
+					+ String.format("%.2f", this.WasherIntensity.v) + ")\n");
 
 			this.currentProduction.v = this.SolarPanelsProduction.v + this.PetrolGeneratorProduction.v
 					+ this.BatteryProduction.v;

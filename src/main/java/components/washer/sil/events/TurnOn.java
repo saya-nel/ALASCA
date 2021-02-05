@@ -1,16 +1,15 @@
-package main.java.simulation.washer.events;
+package main.java.components.washer.sil.events;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import main.java.simulation.washer.WasherElectricity_MILModel;
-import main.java.utils.WasherModes;
+import main.java.components.washer.sil.WasherElectricalSILModel;
 
-public class SetEco extends AbstractWasherEvent {
+public class TurnOn extends AbstractWasherEvent {
 
 	private static final long serialVersionUID = 1L;
 
-	public SetEco(Time timeOfOccurrence) {
+	public TurnOn(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
 
@@ -19,7 +18,7 @@ public class SetEco extends AbstractWasherEvent {
 	 */
 	@Override
 	public String eventAsString() {
-		return "SetEco(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+		return "TurnOn(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
 	}
 
 	/**
@@ -35,11 +34,11 @@ public class SetEco extends AbstractWasherEvent {
 	 */
 	@Override
 	public void executeOn(AtomicModel model) {
-		assert model instanceof WasherElectricity_MILModel;
+		assert model instanceof WasherElectricalSILModel;
 
-		WasherElectricity_MILModel m = (WasherElectricity_MILModel) model;
-		if (m.isOn() && m.getMode() != WasherModes.ECO) {
-			m.setMode(WasherModes.ECO);
+		WasherElectricalSILModel m = (WasherElectricalSILModel) model;
+		if (!m.isOn()) {
+			m.toggleIsOn();
 			m.toggleConsumptionHasChanged();
 		}
 	}

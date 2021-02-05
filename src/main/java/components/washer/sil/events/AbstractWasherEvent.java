@@ -1,4 +1,4 @@
-package main.java.simulation.washer.events;
+package main.java.components.washer.sil.events;
 
 import fr.sorbonne_u.devs_simulation.es.events.ES_Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
