@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.battery.Battery;
+import main.java.components.controller.Controller;
 import main.java.components.electricMeter.ElectricMeter;
 import main.java.components.fan.Fan;
 import main.java.components.petrolGenerator.PetrolGenerator;
@@ -49,6 +50,8 @@ public class RunSILSimulation extends AbstractCVM {
 	 */
 	@Override
 	public void deploy() throws Exception {
+		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
+				new Object[] { CONTROLLER_INBOUND_PORT_URI });
 		AbstractComponent.createComponent(Fan.class.getCanonicalName(),
 				new Object[] { FAN_INBOUND_PORT_URI, true, false });
 		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),

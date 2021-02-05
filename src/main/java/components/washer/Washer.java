@@ -1,5 +1,7 @@
 package main.java.components.washer;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ import main.java.components.washer.sil.events.SetPerformance;
 import main.java.components.washer.sil.events.SetStd;
 import main.java.components.washer.sil.events.TurnOff;
 import main.java.components.washer.sil.events.TurnOn;
+import main.java.connectors.ControllerConnector;
 import main.java.interfaces.ControllerCI;
 import main.java.interfaces.WasherCI;
 import main.java.interfaces.WasherImplementationI;
@@ -129,7 +132,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 		initialise(wipURI);
 
 		this.tracer.get().setTitle("Washer component");
-		this.tracer.get().setRelativePosition(1, 3);
+		this.tracer.get().setRelativePosition(1, 0);
 		this.toggleTracing();
 
 	}
@@ -189,13 +192,13 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 			}
 		}
 
-//		try {
-//			if (cip_uri.length() > 0)
-//				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
-//						ControllerConnector.class.getCanonicalName());
-//		} catch (Exception e) {
-//			throw new ComponentStartException(e);
-//		}
+		try {
+			if (cip_uri.length() > 0)
+				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
+						ControllerConnector.class.getCanonicalName());
+		} catch (Exception e) {
+			throw new ComponentStartException(e);
+		}
 	}
 
 	/**
@@ -210,11 +213,11 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 			this.simulatorPlugin.startRTSimulation(System.currentTimeMillis() + 100, 0.0, 10.1);
 		}
 
-//		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/washer-control.xml"));
-//		String xmlFile = new String(encoded, "UTF-8");
-//		boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(), xmlFile);
-//		if (!isRegister)
-//			throw new Exception("Washer can't register to controller");
+		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/washer-control.xml"));
+		String xmlFile = new String(encoded, "UTF-8");
+		boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(), xmlFile);
+		if (!isRegister)
+			throw new Exception("Washer can't register to controller");
 	}
 
 	/**

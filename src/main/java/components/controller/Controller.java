@@ -44,6 +44,11 @@ import main.java.utils.Log;
 public class Controller extends AbstractCyPhyComponent implements ControllerImplementationI {
 
 	/**
+	 * URI of the reflection inbound port of this component; works for singleton.
+	 */
+	public static final String REFLECTION_INBOUND_PORT_URI = "controller-ibp-uri";
+
+	/**
 	 * URI of the pool of threads for control
 	 */
 	public static final String CONTROL_EXECUTOR_URI = "control";
@@ -65,29 +70,26 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 
 	public static final String REGISTERING_POOL = "registering-pool";
 
-	protected Controller(String uri, boolean toogleTracing, String inboundPortRegisterURI) throws Exception {
-		super(uri, 1, 0);
-		assert uri != null;
+	protected Controller(String cipURI) throws Exception {
+		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
 
 		this.createNewExecutorService(CONTROL_EXECUTOR_URI, 1, false);
 		this.createNewExecutorService(REGISTER_EXECUTOR_URI, 1, false);
 
-		initialise(inboundPortRegisterURI);
-		if (toogleTracing) {
-			this.tracer.get().setTitle("Controller component");
-			this.tracer.get().setRelativePosition(1, 0);
-			this.toggleTracing();
-		}
+		initialise(cipURI);
+
+		this.tracer.get().setTitle("Controller component");
+		this.tracer.get().setRelativePosition(2, 1);
+		this.toggleTracing();
 	}
 
 	// -------------------------------------------------------------------------
 	// Component life-cycle
 	// -------------------------------------------------------------------------
 
-	protected void initialise(String inboundPortRegisterURI) throws Exception {
+	protected void initialise(String cipURI) throws Exception {
 		// Initialize ports relative to registering
-		this.cip = new ControllerInboundPort(inboundPortRegisterURI,
-				this.getExecutorServiceIndex(REGISTER_EXECUTOR_URI), this);
+		this.cip = new ControllerInboundPort(cipURI, this.getExecutorServiceIndex(REGISTER_EXECUTOR_URI), this);
 		this.cip.publishPort();
 
 		// Initialize ports lists relative to controlling devices
@@ -138,16 +140,23 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 			try {
 				// wait for components to register
 				Thread.sleep(4000);
-				// iter on planning equipments
-				for (PlanningEquipmentControlOutboundPort plecop : plecops) {
-					plecop.upMode();
+
+				// turn the battery on
+				for (PlanningEquipmentControlCI plecop : plecops) {
+					this.logMessage("execute downMode() on planning equipments (launch battery)");
 					plecop.downMode();
 				}
-				for (SuspensionEquipmentControlOutboundPort suecop : suecops) {
-					suecop.suspend();
-					suecop.suspended();
-					suecop.resume();
-				}
+
+				// iter on planning equipments
+//				for (PlanningEquipmentControlOutboundPort plecop : plecops) {
+//					plecop.upMode();
+//					plecop.downMode();
+//				}
+//				for (SuspensionEquipmentControlOutboundPort suecop : suecops) {
+//					suecop.suspend();
+//					suecop.suspended();
+//					suecop.resume();
+//				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

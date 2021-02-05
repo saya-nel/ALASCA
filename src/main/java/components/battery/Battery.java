@@ -1,5 +1,7 @@
 package main.java.components.battery;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -19,6 +21,7 @@ import main.java.components.battery.sil.BatteryStateSILModel;
 import main.java.components.battery.sil.events.SetDraining;
 import main.java.components.battery.sil.events.SetRecharging;
 import main.java.components.battery.sil.events.SetSleeping;
+import main.java.connectors.ControllerConnector;
 import main.java.deployment.RunSILSimulation;
 import main.java.interfaces.BatteryCI;
 import main.java.interfaces.BatteryImplementationI;
@@ -173,13 +176,13 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 				throw new ComponentStartException(e);
 			}
 		}
-//		try {
-//			if (cip_uri.length() > 0)
-//				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
-//						ControllerConnector.class.getCanonicalName());
-//		} catch (Exception e) {
-//			throw new ComponentStartException(e);
-//		}
+		try {
+			if (cip_uri.length() > 0)
+				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
+						ControllerConnector.class.getCanonicalName());
+		} catch (Exception e) {
+			throw new ComponentStartException(e);
+		}
 	}
 
 	/**
@@ -224,17 +227,16 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 			}
 		}
 
+		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
+		String xmlFile = new String(encoded, "UTF-8");
+		boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(), xmlFile);
+		if (!isRegister)
+			throw new Exception("Battery can't register to controller");
+
 		// wait the start of simulation and run Decrease petrol each simulated second
 		Thread.sleep(RunSILSimulation.DELAY_TO_START_SIMULATION);
 		Timer t = new Timer();
 		t.schedule(new DecreaseEnergy(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
-
-//		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
-//		String xmlFile = new String(encoded, "UTF-8");
-//		boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(), xmlFile);
-//		if (!isRegister)
-//			throw new Exception("Battery can't register to controller");
-
 	}
 
 	/**
