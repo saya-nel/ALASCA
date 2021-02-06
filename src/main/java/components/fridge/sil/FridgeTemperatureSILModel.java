@@ -16,7 +16,10 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import main.java.components.fridge.Fridge;
 import main.java.components.fridge.sil.events.Activate;
 import main.java.components.fridge.sil.events.Passivate;
+import main.java.components.fridge.sil.events.SetEco;
+import main.java.components.fridge.sil.events.SetNormal;
 import main.java.components.fridge.utils.FridgeMode;
+import main.java.utils.FileLogger;
 
 /**
  * The class <code>FridgeTemperatureSILModel</code> defines a simple simulation
@@ -25,7 +28,8 @@ import main.java.components.fridge.utils.FridgeMode;
  * @author Bello Memmi
  */
 // -----------------------------------------------------------------------------
-@ModelExternalEvents(imported = { Passivate.class, Activate.class }, exported = { Passivate.class, Activate.class })
+@ModelExternalEvents(imported = { SetEco.class, SetNormal.class, Passivate.class, Activate.class }, exported = {
+		SetEco.class, SetNormal.class, Passivate.class, Activate.class })
 // -----------------------------------------------------------------------------
 public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 
@@ -38,8 +42,6 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 	 * URI for an instance model; works as long as only one instance is created.
 	 */
 	public static final String URI = FridgeTemperatureSILModel.class.getSimpleName();
-	/** tracing flag. */
-	public static boolean TRACE = true;
 
 	/** integration step for the differential equation(assumed in seconds). */
 	protected static final double STEP = 1.0;
@@ -48,9 +50,10 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 	/** last received external event. */
 	protected Event lastReceivedEvent;
 	/** URI of the variable pointing to the fridge component. */
-	public static final String FRIDGE_REFERENCE_NAME = URI + ":BRN";
+	public static final String FRIDGE_REFERENCE_NAME = URI + ":FRIDGERN";
 	/** owner component. */
 	protected Fridge owner;
+
 	// -------------------------------------------------------------------------
 	// HIOA model variables
 	// -------------------------------------------------------------------------
@@ -86,6 +89,7 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
 		this.integrationStep = new Duration(STEP, simulatedTimeUnit);
+		this.setLogger(new FileLogger("FridgeTemperature.log"));
 	}
 
 	// -------------------------------------------------------------------------
@@ -166,7 +170,6 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 	protected void computeDerivatives() {
 		// this method is called at each internal transition, just after
 		// executing the method userDefinedInternalTransition.
-		this.logMessage("currently in computeDerivatives");
 		this.currentTempDerivative = 0.0;
 		try {
 			if (!this.owner.suspended()) {
@@ -187,6 +190,7 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 		// fridge and outside divided by the insulation transfer constant
 		this.currentTempDerivative += (Fridge.EXTERNAL_TEMPERATURE - this.contentTemperature.v)
 				/ Fridge.TRANSFER_OUTSIDE_CONSTANT;
+		this.logMessage("new computed derivatives : " + this.currentTempDerivative);
 	}
 
 	/**
@@ -203,24 +207,12 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		this.logger.logMessage("", "current temp " + contentTemperature.v);
 		// update the water temperature using the Euler integration of the
 		// differential equation
 		Duration d = this.getCurrentStateTime().subtract(this.contentTemperature.time);
 		this.contentTemperature.v = this.contentTemperature.v + this.currentTempDerivative * d.getSimulatedDuration();
 		this.contentTemperature.time = this.getCurrentStateTime();
-
-		// Tracing
-		if (TRACE) {
-			String mark = "";
-			try {
-				mark = (!this.owner.suspended()) ? " (+)" // active
-						: " (-)"; // suspended
-				this.logger.logMessage("", mark);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
+		this.logger.logMessage("", "current temp " + contentTemperature.v);
 	}
 
 	/**

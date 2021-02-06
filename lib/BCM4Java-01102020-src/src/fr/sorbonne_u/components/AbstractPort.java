@@ -310,8 +310,9 @@ public abstract class AbstractPort extends UnicastRemoteObject implements PortI 
 		assert owner != null : new PreconditionException("owner != null");
 		assert implementedInterface != null : new PreconditionException("implementedInterface != null");
 		assert !owner.isPortExisting(uri) : new PreconditionException("owner.isPortExisting(uri)");
-		assert implementedInterface.isAssignableFrom(this.getClass()) : new PreconditionException(
-				"implementedInterface.isAssignableFrom(" + "this.getClass())");
+		assert implementedInterface
+				.isAssignableFrom(this.getClass()) : new PreconditionException("implementedInterface.isAssignableFrom("
+						+ this.getClass() + ") , interface : \n" + implementedInterface.getName());
 
 		this.uri = uri;
 		this.owner = (AbstractComponent) owner;

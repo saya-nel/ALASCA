@@ -31,6 +31,12 @@ import main.java.components.fan.sil.events.SetLow;
 import main.java.components.fan.sil.events.SetMid;
 import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
+import main.java.components.fridge.sil.FridgeElectricalSILModel;
+import main.java.components.fridge.sil.FridgeTemperatureSILModel;
+import main.java.components.fridge.sil.events.Activate;
+import main.java.components.fridge.sil.events.Passivate;
+import main.java.components.fridge.sil.events.SetEco;
+import main.java.components.fridge.sil.events.SetNormal;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorElectricalSILModel;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorUserSILModel;
 import main.java.components.solarPanels.sil.SolarPanelsElectricalSILModel;
@@ -86,6 +92,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		simParams.put(FanUserSILModel.FAN_REFERENCE_NAME, this.getOwner());
 		simParams.put(PetrolGeneratorUserSILModel.PETROL_GENERATOR_REFERENCE_NAME, this.getOwner());
 		simParams.put(WasherUserSILModel.WASHER_REFERENCE_NAME, this.getOwner());
+		simParams.put(FridgeTemperatureSILModel.FRIDGE_REFERENCE_NAME, this.getOwner());
 
 		// this will pass the parameters to the simulation models that will then
 		// be able to get their own parameters.
@@ -131,6 +138,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		submodels.add(PetrolGeneratorElectricalSILModel.URI);
 		submodels.add(BatteryElectricalSILModel.URI);
 		submodels.add(WasherElectricalSILModel.URI);
+		submodels.add(FridgeElectricalSILModel.URI);
 
 		atomicModelDescriptors.put(ElectricMeterSILModel.URI,
 				RTAtomicHIOA_Descriptor.create(ElectricMeterSILModel.class, ElectricMeterSILModel.URI, TimeUnit.SECONDS,
@@ -152,6 +160,10 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 						RunSILSimulation.ACC_FACTOR));
 		atomicModelDescriptors.put(WasherElectricalSILModel.URI,
 				RTAtomicHIOA_Descriptor.create(WasherElectricalSILModel.class, WasherElectricalSILModel.URI,
+						TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+						RunSILSimulation.ACC_FACTOR));
+		atomicModelDescriptors.put(FridgeElectricalSILModel.URI,
+				RTAtomicHIOA_Descriptor.create(FridgeElectricalSILModel.class, FridgeElectricalSILModel.URI,
 						TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						RunSILSimulation.ACC_FACTOR));
 
@@ -195,6 +207,11 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		imported.put(main.java.components.washer.sil.events.SetPerformance.class,
 				new EventSink[] { new EventSink(WasherElectricalSILModel.URI,
 						main.java.components.washer.sil.events.SetPerformance.class) });
+		// fridge
+		imported.put(SetEco.class, new EventSink[] { new EventSink(FridgeElectricalSILModel.URI, SetEco.class) });
+		imported.put(SetNormal.class, new EventSink[] { new EventSink(FridgeElectricalSILModel.URI, SetNormal.class) });
+		imported.put(Activate.class, new EventSink[] { new EventSink(FridgeElectricalSILModel.URI, Activate.class) });
+		imported.put(Passivate.class, new EventSink[] { new EventSink(FridgeElectricalSILModel.URI, Passivate.class) });
 
 		Map<VariableSource, VariableSink[]> bindings = new HashMap<VariableSource, VariableSink[]>();
 		// fan
@@ -223,6 +240,10 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		source = new VariableSource("currentIntensity", Double.class, WasherElectricalSILModel.URI);
 		sinks = new VariableSink[] { new VariableSink("WasherIntensity", Double.class, ElectricMeterSILModel.URI) };
 		bindings.put(source, sinks);
+		// fridge
+		source = new VariableSource("currentIntensity", Double.class, FridgeElectricalSILModel.URI);
+		sinks = new VariableSink[] { new VariableSink("FridgeIntensity", Double.class, ElectricMeterSILModel.URI) };
+		bindings.put(source, sinks);
 
 		coupledModelDescriptors.put(ElectricMeterSILCoupledModel.URI,
 				new RTCoupledHIOA_Descriptor(ElectricMeterSILCoupledModel.class, ElectricMeterSILCoupledModel.URI,
@@ -237,6 +258,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		this.setSimulationArchitecture(new RTArchitecture(RunSILSimulation.SIM_ARCHITECTURE_URI,
 				ElectricMeterSILCoupledModel.URI, atomicModelDescriptors, coupledModelDescriptors, TimeUnit.SECONDS,
 				RunSILSimulation.ACC_FACTOR));
+
 	}
 }
 // -----------------------------------------------------------------------------

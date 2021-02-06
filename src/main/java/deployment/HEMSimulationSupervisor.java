@@ -32,6 +32,11 @@ import main.java.components.fan.sil.events.SetLow;
 import main.java.components.fan.sil.events.SetMid;
 import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
+import main.java.components.fridge.Fridge;
+import main.java.components.fridge.sil.FridgeTemperatureSILModel;
+import main.java.components.fridge.sil.events.Activate;
+import main.java.components.fridge.sil.events.Passivate;
+import main.java.components.fridge.sil.events.SetNormal;
 import main.java.components.petrolGenerator.PetrolGenerator;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorSILCoupledModel;
 import main.java.components.solarPanels.SolarPanels;
@@ -114,7 +119,11 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 				RTComponentAtomicModelDescriptor.create(ElectricMeterSILCoupledModel.URI,
 						new Class[] { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class,
 								main.java.components.petrolGenerator.sil.events.TurnOn.class,
-								main.java.components.petrolGenerator.sil.events.TurnOff.class },
+								main.java.components.petrolGenerator.sil.events.TurnOff.class,
+								main.java.components.washer.sil.events.TurnOn.class,
+								main.java.components.washer.sil.events.TurnOff.class, SetEco.class, SetStd.class,
+								SetPerformance.class, main.java.components.fridge.sil.events.SetEco.class,
+								SetNormal.class, Activate.class, Passivate.class },
 						new Class[] {}, TimeUnit.SECONDS, ElectricMeter.REFLECTION_INBOUND_PORT_URI));
 
 		atomicModelDescriptors.put(FanSILCoupledModel.URI, // coupled model seen as atomic
@@ -146,6 +155,13 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 								main.java.components.washer.sil.events.TurnOff.class, SetEco.class, SetStd.class,
 								SetPerformance.class },
 						TimeUnit.SECONDS, Washer.REFLECTION_INBOUND_PORT_URI));
+		atomicModelDescriptors.put(FridgeTemperatureSILModel.URI,
+				RTComponentAtomicModelDescriptor.create(FridgeTemperatureSILModel.URI,
+						new Class[] { main.java.components.fridge.sil.events.SetEco.class, SetNormal.class,
+								Passivate.class, Activate.class },
+						new Class[] { main.java.components.fridge.sil.events.SetEco.class, SetNormal.class,
+								Passivate.class, Activate.class },
+						TimeUnit.SECONDS, Fridge.REFLECTION_INBOUND_PORT_URI));
 
 		Map<String, CoupledModelDescriptor> coupledModelDescriptors = new HashMap<>();
 
@@ -156,6 +172,7 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 		submodels.add(PetrolGeneratorSILCoupledModel.URI);
 		submodels.add(BatteryStateSILModel.URI);
 		submodels.add(WasherSILCoupledModel.URI);
+		submodels.add(FridgeTemperatureSILModel.URI);
 
 		Map<EventSource, EventSink[]> connections = new HashMap<EventSource, EventSink[]>();
 
@@ -212,6 +229,17 @@ public class HEMSimulationSupervisor extends AbstractCyPhyComponent {
 				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetStd.class) });
 		connections.put(new EventSource(WasherSILCoupledModel.URI, SetPerformance.class),
 				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetPerformance.class) });
+		// fridge -> ElectricMeterSIL
+		connections.put(
+				new EventSource(FridgeTemperatureSILModel.URI, main.java.components.fridge.sil.events.SetEco.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI,
+						main.java.components.fridge.sil.events.SetEco.class) });
+		connections.put(new EventSource(FridgeTemperatureSILModel.URI, SetNormal.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, SetNormal.class) });
+		connections.put(new EventSource(FridgeTemperatureSILModel.URI, Activate.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, Activate.class) });
+		connections.put(new EventSource(FridgeTemperatureSILModel.URI, Passivate.class),
+				new EventSink[] { new EventSink(ElectricMeterSILCoupledModel.URI, Passivate.class) });
 
 		coupledModelDescriptors.put(HEMProjectCoupledModel.URI,
 				RTComponentCoupledModelDescriptor.create(HEMProjectCoupledModel.class, HEMProjectCoupledModel.URI,

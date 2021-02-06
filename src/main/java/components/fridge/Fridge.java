@@ -12,6 +12,7 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import main.java.components.controller.connectors.ControllerConnector;
 import main.java.components.controller.interfaces.ControllerCI;
 import main.java.components.controller.ports.ControllerOutboundPort;
 import main.java.components.fridge.interfaces.FridgeActuatorCI;
@@ -22,11 +23,13 @@ import main.java.components.fridge.interfaces.FridgeSensorCI;
 import main.java.components.fridge.ports.FridgeActuatorInboundPort;
 import main.java.components.fridge.ports.FridgeInboundPort;
 import main.java.components.fridge.ports.FridgeSensorInboundPort;
+import main.java.components.fridge.sil.FridgeElectricalSILModel;
 import main.java.components.fridge.sil.FridgeRTAtomicSimulatorPlugin;
-import main.java.components.fridge.sil.FridgeSILCoupledModel;
 import main.java.components.fridge.sil.FridgeTemperatureSILModel;
 import main.java.components.fridge.sil.events.Activate;
 import main.java.components.fridge.sil.events.Passivate;
+import main.java.components.fridge.sil.events.SetEco;
+import main.java.components.fridge.sil.events.SetNormal;
 import main.java.components.fridge.utils.FridgeMode;
 import main.java.utils.Log;
 
@@ -35,6 +38,13 @@ import main.java.utils.Log;
 public class Fridge extends AbstractCyPhyComponent
 		implements FridgeImplementationI, FridgeReactiveControlImplementationI {
 
+	/**
+	 * inbound port of controller to connect fridge with
+	 */
+	public static final String REFLECTION_INBOUND_PORT_URI = Fridge.class.getSimpleName();
+
+	/** true if the component is executed in a SIL simulation mode. */
+	protected boolean isSILSimulated;
 	protected static final String SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 
 	/** plug-in for the real atomic simulator of the fridge */
@@ -46,16 +56,8 @@ public class Fridge extends AbstractCyPhyComponent
 	public static final String ACTUATOR_INBOUND_PORT_URI = "FRIDGE-ACTUATOR-IBP-URI";
 	protected FridgeActuatorInboundPort actuatorIBP;
 
-	/** true if the component is executed in a SIL simulation mode. */
-	protected boolean isSILSimulated;
-
-	public static final String CONTROL_INBOUND_PORT_URI = "FRIDGE_CONTROL_IBP_URI";
-	protected FridgeInboundPort controlIBP;
-
-	/**
-	 * Component URI
-	 */
-	protected String myUri;
+	public static final String FIP_URI = "fridgeip-URI";
+	protected FridgeInboundPort fip;
 
 	/**
 	 * Serial number for registering on controller
@@ -63,29 +65,11 @@ public class Fridge extends AbstractCyPhyComponent
 	protected String serialNumber;
 
 	/**
-	 * Requested Temperature for the fridge
-	 */
-	protected float requestedTemperature;
-
-	/**
-	 * current temperature inside of fridge pas sûr de l'utilité intégré à la
-	 * simulation
-	 */
-	protected int currentTemperature;
-	/**
-	 * Inbound port of the fridge component
-	 */
-	protected FridgeInboundPort fip;
-
-	/**
 	 * Outbound port of the controller from which the fridge will register
 	 */
 	protected ControllerOutboundPort cop;
 
-	/**
-	 * inbound port of controller to connect fridge with
-	 */
-	public static final String REFLECTION_INBOUND_PORT_URI = Fridge.class.getSimpleName();
+	protected String cip_URI;
 
 	/** maximum time during which the fridge can be suspended **/
 	protected static long MAX_SUSPENSION = Duration.ofHours(12).toMillis();
@@ -101,95 +85,42 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	protected AtomicReference<FridgeMode> mode;
 
-	public final static double MINIMAL_FRIDGE_TEMP = -4;
-
 	public final static double STANDARD_FREEZE_TEMP = -20;
 	public final static double ECO_FREEZE_TEMP = -10;
 
-	public double currentTempDerivative = 0.0;
-	/**
-	 * the tolerance on the target refregirant temperature to get a control with
-	 * hysteresis
-	 */
-	public final static double CRITICAL_TEMPERATURE = 9;// this.requestedTemperature + 5;
-
-	public final static double EXTERNAL_TEMPERATURE = 25;
+	public final static double EXTERNAL_TEMPERATURE = 20;
 
 	public final static double FREEZE_TRANSFER_CONSTANT = 1000;
 
 	public final static double TRANSFER_OUTSIDE_CONSTANT = 100;
 
-	protected Fridge(boolean isSILSimulated) throws Exception {
+	protected Fridge(String serialNumber, String cip_URI, boolean isSILSimulated) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
+		// attributs
+		this.serialNumber = serialNumber;
+		this.isSILSimulated = isSILSimulated;
 		this.passive = new AtomicBoolean(false);
 		this.lastSuspensionTime = new AtomicReference<>();
-		this.initialise(isSILSimulated);
-		/**
-		 * this.serialNumber = serialNumber; this.passive = new AtomicBoolean(false);
-		 * this.lastSuspensionTime = new AtomicReference<>(); this.mode = new
-		 * AtomicReference<>(FridgeMode.NORMAL); this.cop = new
-		 * ControllerOutboundPort(this); this.cop.localPublishPort(); this.cip_URI =
-		 * cip_URI; this.initialise(fipURI); if (toogleTracing) {
-		 * this.tracer.get().setTitle("Fridge component");
-		 * this.tracer.get().setRelativePosition(1, 2); this.toggleTracing(); }
-		 */
+		this.mode = new AtomicReference<>(FridgeMode.NORMAL);
+		// ports
+		this.fip = new FridgeInboundPort(FIP_URI, this);
+		this.fip.publishPort();
+		this.sensorIBP = new FridgeSensorInboundPort(this);
+		this.sensorIBP.publishPort();
+		this.actuatorIBP = new FridgeActuatorInboundPort(this);
+		this.actuatorIBP.publishPort();
+		this.cip_URI = cip_URI;
+		this.cop = new ControllerOutboundPort(this);
+		this.cop.localPublishPort();
+		// tracer
+		this.tracer.get().setTitle("Fridge component");
+		this.tracer.get().setRelativePosition(1, 2);
+		this.toggleTracing();
 	}
 
 	// -------------------------------------------------------------------------
 	// Component life-cycle
 	// -------------------------------------------------------------------------
-
-	public void initialise(boolean isSILSimulated) throws Exception {
-//		assert fridgeInboundPortURI != null : new PreconditionException("fridgeInboundPortURI != null");
-//		assert !fridgeInboundPortURI.isEmpty() : new PreconditionException("!fridgeInboundPortURI.isEmpty()");
-//		this.currentTemperature = 20;
-//		this.requestedTemperature = 10;
-//		this.fip = new FridgeInboundPort(fridgeInboundPortURI, this);
-//		this.fip.publishPort();
-		this.isSILSimulated = isSILSimulated;
-		this.controlIBP = new FridgeInboundPort(CONTROL_INBOUND_PORT_URI, this);
-		this.controlIBP.publishPort();
-		this.sensorIBP = new FridgeSensorInboundPort(this);
-		this.sensorIBP.publishPort();
-		this.actuatorIBP = new FridgeActuatorInboundPort(this);
-		this.actuatorIBP.publishPort();
-		this.tracer.get().setTitle("Fridge component");
-		this.tracer.get().setRelativePosition(1, 0);
-		this.toggleTracing();
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
-	 */
-	@Override
-	public synchronized void finalise() throws Exception {
-		if (cop.connected())
-			this.cop.doDisconnection();
-		if (controlIBP.connected())
-			controlIBP.doDisconnection();
-		if (sensorIBP.connected())
-			sensorIBP.doDisconnection();
-		if (actuatorIBP.connected())
-			actuatorIBP.doDisconnection();
-		super.finalise();
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
-	 */
-	@Override
-	public synchronized void shutdown() throws ComponentShutdownException {
-		try {
-			this.cop.unpublishPort();
-			// this.fip.unpublishPort();
-			controlIBP.unpublishPort();
-			sensorIBP.unpublishPort();
-			actuatorIBP.unpublishPort();
-		} catch (Exception e) {
-			throw new ComponentShutdownException(e);
-		}
-		super.shutdown();
-	}
 
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#start()
@@ -205,15 +136,47 @@ public class Fridge extends AbstractCyPhyComponent
 				// create and initialise the atomic simulator plug-in that will
 				// hold and execute the SIL simulation models
 				this.simulatorPlugin = new FridgeRTAtomicSimulatorPlugin();
-				this.simulatorPlugin.setPluginURI(FridgeSILCoupledModel.URI);
+				this.simulatorPlugin.setPluginURI(FridgeTemperatureSILModel.URI);
 				this.simulatorPlugin.setSimulationExecutorService(SCHEDULED_EXECUTOR_SERVICE_URI);
 				this.simulatorPlugin.initialiseSimulationArchitecture();
-
 				this.installPlugin(this.simulatorPlugin);
 			} catch (Exception e) {
 				throw new ComponentStartException(e);
 			}
 		}
+		try {
+			if (cip_URI.length() > 0)
+				this.doPortConnection(this.cop.getPortURI(), this.cip_URI,
+						ControllerConnector.class.getCanonicalName());
+		} catch (Exception e) {
+			throw new ComponentStartException(e);
+		}
+	}
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
+	 */
+	@Override
+	public synchronized void finalise() throws Exception {
+		if (cop.connected())
+			this.cop.doDisconnection();
+		super.finalise();
+	}
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
+	 */
+	@Override
+	public synchronized void shutdown() throws ComponentShutdownException {
+		try {
+			this.cop.unpublishPort();
+			this.fip.unpublishPort();
+			sensorIBP.unpublishPort();
+			actuatorIBP.unpublishPort();
+		} catch (Exception e) {
+			throw new ComponentShutdownException(e);
+		}
+		super.shutdown();
 	}
 
 	/**
@@ -240,8 +203,7 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	@Override
 	public float getRequestedTemperature() throws Exception {
-		Log.printAndLog(this, "getRequestedTemperature() service result : " + requestedTemperature);
-		return requestedTemperature;
+		throw new Exception("not implemented yet");
 	}
 
 	/**
@@ -249,8 +211,7 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	@Override
 	public void setRequestedTemperature(float temp) throws Exception {
-		Log.printAndLog(this, "setRequestedTemperature(" + temp + ") service called, new temp = " + temp);
-		this.requestedTemperature = temp;
+		throw new Exception("not implemented yet");
 	}
 
 	/**
@@ -258,8 +219,7 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	@Override
 	public float getCurrentTemperature() throws Exception {
-		Log.printAndLog(this, "getCurrentTemperature() service result : " + this.currentTemperature);
-		return this.currentTemperature;
+		throw new Exception("not implemented yet");
 	}
 
 	/**
@@ -273,6 +233,13 @@ public class Fridge extends AbstractCyPhyComponent
 		else
 			succeed = this.mode.compareAndSet(this.mode.get(),
 					FridgeMode.values()[(this.mode.get().ordinal() + 1) % 2]);
+		if (isSILSimulated && succeed) {
+			if (this.mode.get() == FridgeMode.NORMAL) {
+				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetNormal(t));
+			} else {
+				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
+			}
+		}
 		Log.printAndLog(this, "upMode() service result : " + true);
 		return succeed;
 	}
@@ -287,6 +254,13 @@ public class Fridge extends AbstractCyPhyComponent
 			succeed = false;
 		else
 			succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[this.mode.get().ordinal() - 1]);
+		if (isSILSimulated && succeed) {
+			if (this.mode.get() == FridgeMode.NORMAL) {
+				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetNormal(t));
+			} else {
+				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
+			}
+		}
 		Log.printAndLog(this, "downmode() service result : " + true);
 		return succeed;
 	}
@@ -301,6 +275,13 @@ public class Fridge extends AbstractCyPhyComponent
 			succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[modeIndex]);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		if (isSILSimulated && succeed) {
+			if (this.mode.get() == FridgeMode.NORMAL) {
+				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetNormal(t));
+			} else {
+				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
+			}
 		}
 		Log.printAndLog(this, "setMode(" + modeIndex + ") service result : " + succeed);
 		return succeed;
@@ -420,7 +401,7 @@ public class Fridge extends AbstractCyPhyComponent
 		if (this.isSILSimulated) {
 			try {
 				return (double) this.simulatorPlugin.getModelStateValue(FridgeTemperatureSILModel.URI,
-						FridgeRTAtomicSimulatorPlugin.CURRENT_TEMPERATURE_FRIDGE_NAME);
+						FridgeRTAtomicSimulatorPlugin.FRIDGE_TEMPERATURE_VARIABLE_NAME);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

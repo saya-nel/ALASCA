@@ -10,6 +10,7 @@ import main.java.components.fridge.connectors.FridgeActuatorConnector;
 import main.java.components.fridge.connectors.FridgeConnector;
 import main.java.components.fridge.connectors.FridgeSensorConnector;
 import main.java.components.fridge.interfaces.FridgeActuatorCI;
+import main.java.components.fridge.interfaces.FridgeCI;
 import main.java.components.fridge.interfaces.FridgeSensorCI;
 import main.java.components.fridge.ports.FridgeActuatorOutboundPort;
 import main.java.components.fridge.ports.FridgeOutboundPort;
@@ -36,7 +37,7 @@ import main.java.deployment.RunSILSimulation;
  * @author Bello Memmi
  */
 
-@RequiredInterfaces(required = { FridgeSensorCI.class, FridgeActuatorCI.class })
+@RequiredInterfaces(required = { FridgeSensorCI.class, FridgeActuatorCI.class, FridgeCI.class })
 public class FridgeReactiveController extends AbstractComponent {
 	// -------------------------------------------------------------------------
 	// Constants and variables
@@ -87,7 +88,7 @@ public class FridgeReactiveController extends AbstractComponent {
 		super(1, 1);
 
 		this.tracer.get().setTitle("fridge reactive controller component");
-		this.tracer.get().setRelativePosition(1, 1);
+		this.tracer.get().setRelativePosition(1, 3);
 		this.toggleTracing();
 	}
 
@@ -117,7 +118,7 @@ public class FridgeReactiveController extends AbstractComponent {
 			 */
 			this.fridgeOutboundPort = new FridgeOutboundPort(this);
 			this.fridgeOutboundPort.publishPort();
-			this.doPortConnection(this.fridgeOutboundPort.getPortURI(), Fridge.CONTROL_INBOUND_PORT_URI,
+			this.doPortConnection(this.fridgeOutboundPort.getPortURI(), Fridge.FIP_URI,
 					FridgeConnector.class.getCanonicalName());
 		} catch (Exception e) {
 			throw new ComponentStartException(e);
@@ -188,7 +189,7 @@ public class FridgeReactiveController extends AbstractComponent {
 	 */
 	protected synchronized void controlLoop() throws Exception {
 		double currentTemp = this.sensorOBP.getContentTemperatureInCelsius();
-		FridgeReactiveController.TARGET_TEMP = this.fridgeOutboundPort.getRequestedTemperature();
+		this.logMessage("target temp : " + TARGET_TEMP + ", current temp : " + currentTemp);
 		if (!this.isPassive) {
 			if (currentTemp <= TARGET_TEMP + TARGET_TOLERANCE) {
 

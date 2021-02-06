@@ -17,8 +17,8 @@ import main.java.components.fridge.sil.events.Activate;
 import main.java.components.fridge.sil.events.Passivate;
 import main.java.components.fridge.sil.events.SetEco;
 import main.java.components.fridge.sil.events.SetNormal;
-import main.java.components.fridge.sil.events.SetRequestedTemperature;
 import main.java.components.fridge.utils.FridgeMode;
+import main.java.utils.FileLogger;
 
 /**
  * The class <code>FridgeElectricity_MILModel</code> defines a MIL model of the
@@ -33,16 +33,19 @@ import main.java.components.fridge.utils.FridgeMode;
  * 
  * @author Bello Memmi
  */
-@ModelExternalEvents(imported = { SetEco.class, SetNormal.class, SetRequestedTemperature.class, Activate.class,
-		Passivate.class })
+@ModelExternalEvents(imported = { SetEco.class, SetNormal.class, Activate.class, Passivate.class })
 public class FridgeElectricalSILModel extends AtomicHIOA {
 
+	private static final long serialVersionUID = 1L;
+
+	// -------------------------------------------------------------------------
+	// Constants and variables
+	// -------------------------------------------------------------------------
+
 	public static final String URI = FridgeElectricalSILModel.class.getSimpleName();
-	/** integration step for the differential equation(assumed in seconds). */
-	protected static final double STEP = 1.0;
+
 	/** owner component */
 	protected ComponentI owner;
-	private static final long serialVersionUID = 1L;
 	/** energy generated during eco mode */
 	public static final double ECO_MODE_CONSUMPTION = 40;
 	/** energy generated during normal mode */
@@ -52,36 +55,26 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 
 	/** current mode of the fridge */
 	protected FridgeMode currentMode = FridgeMode.NORMAL;
-	/**
-	 * true when the electricity consumption of the washer has changed after
-	 * executing an external event (when <code>currentState</code> changes
-	 */
-	// protected boolean consumptionHasChanged = false;
 
 	/** true if the fridge is currently suspended */
 	protected boolean isSuspended = false;
 
-	/** target temperature */
-	protected double targetTemperature;
-
 	protected EventI lastReceivedEvent;
+
 	// -------------------------------------------------------------------------
 	// HIOA model variables
 	// -------------------------------------------------------------------------
+
 	/** current intensity in Amperes; intensity is power/tension. */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
 
+	// ------------------------------------------------------------------------
+	// Constructors
+	// ------------------------------------------------------------------------
+
 	/**
 	 * Create a Fridge MIL model instance.
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 *     pre 	true //no precondition
-	 *     post	true // no postcondition
-	 * </pre>
 	 * 
 	 * @param uri               URI of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation time.
@@ -91,45 +84,25 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	public FridgeElectricalSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
-
+		this.setLogger(new FileLogger("fridgeElectrical.log"));
 	}
 
-	public void setTargetTemperature(double temperature) {
-		this.targetTemperature = temperature;
-	}
-
-	public double getTargetTemperature() {
-		return this.targetTemperature;
-	}
+	// -------------------------------------------------------------------------
+	// Methods
+	// -------------------------------------------------------------------------
 
 	/**
 	 * set the mode of the Fridge
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 *     pre 		state != null
-	 *     post 	true			//no post condition
-	 * </pre>
 	 * 
 	 * @param mode the new mode
 	 */
 	public void setMode(FridgeMode mode) {
 		currentMode = mode;
+		this.updateIntensity();
 	}
 
 	/**
 	 * return the mode of the fridge.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 *     pre 	true 	// no precondition
-	 *     post	{@code ret != null}
-	 * </pre>
 	 * 
 	 * @return the state of the Fridge.
 	 */
@@ -140,15 +113,6 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	/**
 	 * the fridge switch to passive.
 	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true			// no precondition.
-	 * post	true			// no postcondition.
-	 * </pre>
-	 *
 	 */
 	public void suspend() {
 		this.isSuspended = true;
@@ -157,15 +121,6 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 
 	/**
 	 * the fridge switch to active.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true			// no precondition.
-	 * post	true			// no postcondition.
-	 * </pre>
 	 *
 	 */
 	public void resume() {
@@ -176,15 +131,6 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	/**
 	 * update the intensity of electric concsumption of the fridge given its current
 	 * mode.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
 	 *
 	 */
 	protected void updateIntensity() {
@@ -211,7 +157,7 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	public void initialiseState(Time initialTime) {
 		this.lastReceivedEvent = null;
 		this.isSuspended = false;
-		this.targetTemperature = 0;
+
 		super.initialiseState(initialTime);
 	}
 
@@ -220,8 +166,9 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	 */
 	@Override
 	protected void initialiseVariables(Time startTime) {
-		updateIntensity();
+		this.currentIntensity.v = 0.0;
 		super.initialiseVariables(startTime);
+		this.updateIntensity();
 	}
 
 	/**
@@ -259,7 +206,6 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	@Override
 	public void userDefinedInternalTransition(Duration elapsedTime) {
 		super.userDefinedInternalTransition(elapsedTime);
-		updateIntensity();
 		this.lastReceivedEvent = null;
 	}
 
@@ -280,12 +226,12 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 		message.append(this.lastReceivedEvent.getClass().getSimpleName());
 		message.append("(");
 		message.append(this.lastReceivedEvent.getTimeOfOccurrence().getSimulatedTime());
-		message.append(")\n");
+		message.append(")");
+		this.logMessage(message.toString());
 		this.logger.logMessage("", message.toString());
 		// events have a method execute on to perform their effect on this
 		// model
 		this.lastReceivedEvent.executeOn(this);
-		updateIntensity();
 		super.userDefinedExternalTransition(elapsedTime);
 	}
 

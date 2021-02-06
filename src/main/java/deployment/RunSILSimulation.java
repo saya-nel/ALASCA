@@ -8,6 +8,8 @@ import main.java.components.battery.Battery;
 import main.java.components.controller.Controller;
 import main.java.components.electricMeter.ElectricMeter;
 import main.java.components.fan.Fan;
+import main.java.components.fridge.Fridge;
+import main.java.components.fridge.FridgeReactiveController;
 import main.java.components.petrolGenerator.PetrolGenerator;
 import main.java.components.solarPanels.SolarPanels;
 import main.java.components.washer.Washer;
@@ -62,6 +64,9 @@ public class RunSILSimulation extends AbstractCVM {
 				new Object[] { "batterySerial", BATTERY_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, true, false });
 		AbstractComponent.createComponent(Washer.class.getCanonicalName(),
 				new Object[] { "washerSerial", WASHER_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, true, false });
+		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
+				new Object[] { "fridgeSerial", CONTROLLER_INBOUND_PORT_URI, true });
+		AbstractComponent.createComponent(FridgeReactiveController.class.getCanonicalName(), new Object[] {});
 		AbstractComponent.createComponent(ElectricMeter.class.getCanonicalName(), new Object[] { false });
 
 		AbstractComponent.createComponent(HEMSimulationCoordinator.class.getCanonicalName(), new Object[] {});

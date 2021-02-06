@@ -1,9 +1,7 @@
 package main.java.components.fridge.sil;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.cyphy.plugins.devs.RTAtomicSimulatorPlugin;
@@ -12,15 +10,6 @@ import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
 import fr.sorbonne_u.devs_simulation.hioa.architectures.RTAtomicHIOA_Descriptor;
 import fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI;
 import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDescriptor;
-import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor;
-import fr.sorbonne_u.devs_simulation.models.architectures.RTAtomicModelDescriptor;
-import fr.sorbonne_u.devs_simulation.models.architectures.RTCoupledModelDescriptor;
-import fr.sorbonne_u.devs_simulation.models.events.EventI;
-import fr.sorbonne_u.devs_simulation.models.events.EventSink;
-import fr.sorbonne_u.devs_simulation.models.events.EventSource;
-import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
-import main.java.components.fridge.sil.events.SetEco;
-import main.java.components.fridge.sil.events.SetRequestedTemperature;
 import main.java.deployment.RunSILSimulation;
 
 /**
@@ -40,7 +29,7 @@ public class FridgeRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	 * name of the variable to be used in the protocol to access data in a
 	 * simulation model from its owner component.
 	 */
-	public static final String CURRENT_TEMPERATURE_FRIDGE_NAME = "contentTemperature";
+	public static final String FRIDGE_TEMPERATURE_VARIABLE_NAME = "contentTemperature";
 
 	// -------------------------------------------------------------------------
 	// Constructors
@@ -53,141 +42,22 @@ public class FridgeRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * initialise the local simulation architecture for the Fridge.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
-	 *
-	 * @throws Exception <i>to do</I>.
-	 */
-//    public void			initialiseSimulationArchitecture(boolean isUnitTest) throws Exception
-//    {
-//        Map<String, AbstractAtomicModelDescriptor>
-//                atomicModelDescriptors = new HashMap<>();
-//        Map<String, CoupledModelDescriptor>
-//                coupledModelDescriptors = new HashMap<>();
-//        Set<String> submodels = new HashSet<String>();
-//        submodels.add(FridgeUserSILModel.URI);
-//        if (isUnitTest)
-//            submodels.add(FridgeElectricity_SILModel.URI);
-//        atomicModelDescriptors.put(
-//                FridgeTemperatureSILModel.URI,
-//                RTAtomicHIOA_Descriptor.create(
-//                        FridgeTemperatureSILModel.class,
-//                        FridgeTemperatureSILModel.URI,
-//                        TimeUnit.SECONDS,
-//                        null,
-//                        SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
-//                        RunSILSimulation.ACC_FACTOR));
-//
-//        this.setSimulationArchitecture(
-//                new RTArchitecture(
-//                        RunSILSimulation.SIM_ARCHITECTURE_URI,
-//                        FridgeTemperatureSILModel.URI,
-//                        atomicModelDescriptors,
-//                        new HashMap<>(),
-//                        TimeUnit.SECONDS,
-//                        RunSILSimulation.ACC_FACTOR));
-//        if (isUnitTest) {
-//            atomicModelDescriptors.put(
-//                    FridgeElectricity_SILModel.URI,
-//                    RTAtomicHIOA_Descriptor.create(
-//                            FridgeElectricity_SILModel.class,
-//                            FridgeElectricity_SILModel.URI,
-//                            TimeUnit.SECONDS,
-//                            null,
-//                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
-//                            RunSILSimulation.ACC_FACTOR));
-//        }
-//    }
-
-	/**
 	 * initialise the local simulation architecture for the hair dryer component.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
 	 *
 	 * @throws Exception <i>to do</i>.
 	 */
 	public void initialiseSimulationArchitecture() throws Exception {
 
 		Map<String, AbstractAtomicModelDescriptor> atomicModelDescriptors = new HashMap<>();
-		Map<String, CoupledModelDescriptor> coupledModelDescriptors = new HashMap<>();
-		Set<String> submodels = new HashSet<String>();
-
-		submodels.add(FridgeStateSILModel.URI);
-		submodels.add(FridgeUserSILModel.URI);
-
-		submodels.add(FridgeTemperatureSILModel.URI);
 
 		atomicModelDescriptors.put(FridgeTemperatureSILModel.URI,
 				RTAtomicHIOA_Descriptor.create(FridgeTemperatureSILModel.class, FridgeTemperatureSILModel.URI,
 						TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						RunSILSimulation.ACC_FACTOR));
 
-		atomicModelDescriptors.put(FridgeStateSILModel.URI,
-				RTAtomicModelDescriptor.create(FridgeStateSILModel.class, FridgeStateSILModel.URI, TimeUnit.SECONDS,
-						null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE, RunSILSimulation.ACC_FACTOR));
-		atomicModelDescriptors.put(FridgeUserSILModel.URI,
-				RTAtomicModelDescriptor.create(FridgeUserSILModel.class, FridgeUserSILModel.URI, TimeUnit.SECONDS, null,
-						SimulationEngineCreationMode.ATOMIC_RT_ENGINE, RunSILSimulation.ACC_FACTOR));
-
-//        atomicModelDescriptors.put(
-//                FridgeElectricity_SILModel.URI,
-//                RTAtomicModelDescriptor.create(
-//                        FridgeElectricity_SILModel.class,
-//                        FridgeElectricity_SILModel.URI,
-//                        TimeUnit.SECONDS,
-//                        null,
-//                        SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
-//                        RunSILSimulation.ACC_FACTOR));
-
-		Map<Class<? extends EventI>, ReexportedEvent> reexported = null;
-		Map<EventSource, EventSink[]> connections = null;
-		reexported = new HashMap<Class<? extends EventI>, ReexportedEvent>();
-		reexported.put(SetRequestedTemperature.class,
-				new ReexportedEvent(FridgeStateSILModel.URI, SetRequestedTemperature.class));
-		reexported.put(SetEco.class, new ReexportedEvent(FridgeStateSILModel.URI, SetEco.class));
-//            reexported.put(SetNormal.class,
-//                    new ReexportedEvent(FridgeStateSILModel.URI,
-//                            SetNormal.class));
-//
-//            reexported.put(Passivate.class,
-//                    new ReexportedEvent(FridgeTemperatureSILModel.URI,
-//                            Passivate.class));
-//            reexported.put(Activate.class,
-//                    new ReexportedEvent(FridgeTemperatureSILModel.URI,
-//                            Activate.class));
-
-		coupledModelDescriptors.put(FridgeSILCoupledModel.URI,
-				new RTCoupledModelDescriptor(FridgeSILCoupledModel.class, FridgeSILCoupledModel.URI, submodels, null,
-						reexported, connections, null, SimulationEngineCreationMode.COORDINATION_RT_ENGINE,
-						RunSILSimulation.ACC_FACTOR));
-
-		this.setSimulationArchitecture(new RTArchitecture(RunSILSimulation.SIM_ARCHITECTURE_URI,
-				FridgeTemperatureSILModel.URI, atomicModelDescriptors, coupledModelDescriptors, TimeUnit.SECONDS,
-				RunSILSimulation.ACC_FACTOR));
-
-//        this.setSimulationArchitecture(
-//                new RTArchitecture(
-//                        RunSILSimulation.SIM_ARCHITECTURE_URI,
-//                        FridgeSILCoupledModel.URI,
-//                        atomicModelDescriptors,
-//                        coupledModelDescriptors,
-//                        TimeUnit.SECONDS,
-//                        RunSILSimulation.ACC_FACTOR));
+		this.setSimulationArchitecture(
+				new RTArchitecture(RunSILSimulation.SIM_ARCHITECTURE_URI, FridgeTemperatureSILModel.URI,
+						atomicModelDescriptors, new HashMap<>(), TimeUnit.SECONDS, RunSILSimulation.ACC_FACTOR));
 	}
 
 	/**
@@ -195,9 +65,7 @@ public class FridgeRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	 */
 	@Override
 	public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception {
-		assert !simParams.containsKey(FridgeTemperatureSILModel.FRIDGE_REFERENCE_NAME);
 		simParams.put(FridgeTemperatureSILModel.FRIDGE_REFERENCE_NAME, this.getOwner());
-		simParams.put(FridgeUserSILModel.FRIDGE_REFERENCE_NAME, this.getOwner());
 
 		super.setSimulationRunParameters(simParams);
 	}
@@ -210,7 +78,7 @@ public class FridgeRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	public Object getModelStateValue(String modelURI, String name) throws Exception {
 		assert modelURI != null && name != null;
 		assert modelURI.equals(FridgeTemperatureSILModel.URI);
-		assert name.equals(CURRENT_TEMPERATURE_FRIDGE_NAME);
+		assert name.equals(FRIDGE_TEMPERATURE_VARIABLE_NAME);
 
 		// Get a Java reference on the object representing the corresponding
 		// simulation model.

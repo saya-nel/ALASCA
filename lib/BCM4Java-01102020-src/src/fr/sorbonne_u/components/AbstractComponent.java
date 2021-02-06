@@ -3158,7 +3158,8 @@ public abstract class AbstractComponent implements ComponentI {
 		this.portManagementLock.writeLock().lock();
 		try {
 			assert this.isInterface(p.getImplementedInterface()) : new PreconditionException(
-					"The port doesn't implement an interface" + " declared by this component!");
+					"The port doesn't implement an interface" + " declared by this component! : "
+							+ p.getImplementedInterface().getName());
 			assert this.findPortFromURI(p.getPortURI()) == null : new PreconditionException(
 					"A port with the same URI is already registered" + " in this component!");
 
