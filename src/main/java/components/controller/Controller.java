@@ -165,17 +165,27 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		}
 		super.shutdown();
 	}
+
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
 	 */
 	@Override
-	public void execute() throws Exception {
+	public synchronized void execute() throws Exception {
 
 		ComponentI me = this;
+
 		class RunControl extends TimerTask {
 			@Override
-			public synchronized void run() {
+			public void run() {
 				try {
+					if (!isStarted()) {
+						cancel();
+						throw new Exception();
+					}
+
+					Log.printAndLog(me, "controller, consommation " + eop.getIntensity());
+					Log.printAndLog(me, "controller, production " + eop.getProduction());
+
 					double prod = eop.getProduction();
 					double cons = eop.getIntensity();
 //					Log.printAndLog(me, "controller, consommation " + cons);
@@ -311,24 +321,24 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		if (equipmentType == null)
 			return false;
 		switch (equipmentType) {
-			case "suspension":
-				SuspensionEquipmentControlOutboundPort suecop = new SuspensionEquipmentControlOutboundPort(this);
-				suecop.localPublishPort();
-				suecops.add(suecop);
-				this.doPortConnection(suecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
-				break;
-			case "planning":
-				PlanningEquipmentControlOutboundPort plecop = new PlanningEquipmentControlOutboundPort(this);
-				plecop.localPublishPort();
-				plecops.add(plecop);
-				this.doPortConnection(plecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
-				break;
-			default:
-				StandardEquipmentControlOutboundPort stecop = new StandardEquipmentControlOutboundPort(this);
-				stecop.localPublishPort();
-				stecops.add(stecop);
-				this.doPortConnection(stecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
-				break;
+		case "suspension":
+			SuspensionEquipmentControlOutboundPort suecop = new SuspensionEquipmentControlOutboundPort(this);
+			suecop.localPublishPort();
+			suecops.add(suecop);
+			this.doPortConnection(suecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
+			break;
+		case "planning":
+			PlanningEquipmentControlOutboundPort plecop = new PlanningEquipmentControlOutboundPort(this);
+			plecop.localPublishPort();
+			plecops.add(plecop);
+			this.doPortConnection(plecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
+			break;
+		default:
+			StandardEquipmentControlOutboundPort stecop = new StandardEquipmentControlOutboundPort(this);
+			stecop.localPublishPort();
+			stecops.add(stecop);
+			this.doPortConnection(stecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
+			break;
 		}
 		Log.printAndLog(this, "Equipment : " + serial_number + " is registered.");
 		return true;
@@ -363,14 +373,14 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		// on determine l'interface implémentée par le connecteur généré
 		String equipmentType = getEquipmentType(xmlFile);
 		switch (equipmentType) {
-			case "suspension":
-				connectorImplementedInterface = SuspensionEquipmentControlCI.class;
-				break;
-			case "planning":
-				connectorImplementedInterface = PlanningEquipmentControlCI.class;
-				break;
-			default:
-				connectorImplementedInterface = StandardEquipmentControlCI.class;
+		case "suspension":
+			connectorImplementedInterface = SuspensionEquipmentControlCI.class;
+			break;
+		case "planning":
+			connectorImplementedInterface = PlanningEquipmentControlCI.class;
+			break;
+		default:
+			connectorImplementedInterface = StandardEquipmentControlCI.class;
 		}
 
 		// on détermine l'interface offerte par le connecteur généré
@@ -428,8 +438,8 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	}
 
 	public Class<?> makeConnectorClassJavassist(String connectorCanonicalClassName, Class<?> connectorSuperclass,
-												Class<?> connectorImplementedInterface, Class<?> offeredInterface, HashMap<String, String> methodNamesMap,
-												HashMap<String, String> notImplementedMethodBody) throws Exception {
+			Class<?> connectorImplementedInterface, Class<?> offeredInterface, HashMap<String, String> methodNamesMap,
+			HashMap<String, String> notImplementedMethodBody) throws Exception {
 		ClassPool pool = ClassPool.getDefault();
 		CtClass cs = pool.get(connectorSuperclass.getCanonicalName());
 		CtClass cii = pool.get(connectorImplementedInterface.getCanonicalName());

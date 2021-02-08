@@ -145,19 +145,24 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 		class DecreasePetrol extends TimerTask {
 			@Override
 			public void run() {
-				if (isTurnedOn) {
-					petrolLevel -= PETROL_CONSUMPTION;
-					if (petrolLevel < 0)
-						petrolLevel = 0;
-					if (isSILSimulated && petrolLevel == 0 && !hasSendEmptyGenerator) {
-						try {
+				try {
+					if (!isStarted()) {
+						cancel();
+						throw new Exception();
+					}
+
+					if (isTurnedOn) {
+						petrolLevel -= PETROL_CONSUMPTION;
+						if (petrolLevel < 0)
+							petrolLevel = 0;
+						if (isSILSimulated && petrolLevel == 0 && !hasSendEmptyGenerator) {
+
 							turnOff();
 							simulateOperation(Operations.EmptyGenerator);
-						} catch (Exception e) {
-							e.printStackTrace();
 						}
+						logMessage("current petrol level : " + petrolLevel);
 					}
-					logMessage("current petrol level : " + petrolLevel);
+				} catch (Exception e) {
 				}
 			}
 		}

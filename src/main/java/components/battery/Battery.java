@@ -186,6 +186,11 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 			public void run() {
 
 				try {
+					if (!isStarted()) {
+						cancel();
+						throw new Exception();
+					}
+
 					// if the battery have a planified program that need to start, we start it
 					if (startTime.get() != null && startTime().isAfter(LocalTime.now())) {
 						setMode(BatteryState.RECHARGING.ordinal());
@@ -195,7 +200,6 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 						me.cancel();
 					}
 				} catch (Exception e1) {
-					e1.printStackTrace();
 				}
 
 				if (operatingMode == BatteryState.DRAINING) {
