@@ -106,6 +106,7 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "testOn()");
 		try {
 			this.wop.turnOn();
+			Thread.sleep(1000); // wait for the washer to turn on
 			assertTrue(this.wop.isTurnedOn());
 		} catch (Exception e) {
 			assertTrue(false);

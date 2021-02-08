@@ -198,11 +198,13 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 			this.simulatorPlugin.startRTSimulation(System.currentTimeMillis() + 100, 0.0, 10.1);
 		}
 
-		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/washer-control.xml"));
-		String xmlFile = new String(encoded, "UTF-8");
-		boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(), xmlFile);
-		if (!isRegister)
-			throw new Exception("Washer can't register to controller");
+		if (this.cip_uri.length() > 0) {
+			byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/washer-control.xml"));
+			String xmlFile = new String(encoded, "UTF-8");
+			boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(), xmlFile);
+			if (!isRegister)
+				throw new Exception("Washer can't register to controller");
+		}
 
 		Washer me = this;
 
@@ -235,6 +237,9 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 			Thread.sleep(RunSILSimulation.DELAY_TO_START_SIMULATION);
 			Timer t = new Timer();
 			t.schedule(new CheckProgram(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
+		} else {
+			Timer t = new Timer();
+			t.schedule(new CheckProgram(), 0, 1000);
 		}
 	}
 
