@@ -19,6 +19,13 @@ import main.java.components.battery.sil.events.SetSleeping;
 import main.java.components.battery.utils.BatteryState;
 import main.java.utils.FileLogger;
 
+/**
+ * The class <code>BatteryElectricalSILModel</code> defines a SIL model of the
+ * electricity consumption of a battery.
+ * 
+ * @author Bello Memmi
+ *
+ */
 @ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class })
 public class BatteryElectricalSILModel extends AtomicHIOA {
 
@@ -33,24 +40,30 @@ public class BatteryElectricalSILModel extends AtomicHIOA {
 	 */
 	public static final String URI = BatteryElectricalSILModel.class.getSimpleName();
 
-	/** power energy generated during draining mode */
-	public static final double DRAINING_MODE_PRODUCTION = 5000; // watts
+	/** power energy generated during draining mode in watts */
+	public static final double DRAINING_MODE_PRODUCTION = 5000;
 
-	/** power consumption during Recharging mode */
-	public static final double RECHARGING_MODE_CONSUMPTION = 5000; // watts
+	/** power consumption during Recharging mode in watts */
+	public static final double RECHARGING_MODE_CONSUMPTION = 5000;
 
-	/** tension */
-	public static final double TENSION = 48; // volts
+	/** tension in volts */
+	public static final double TENSION = 48;
 
-	/** current consumption in Amperes; intensity is power/tension. */
+	/**
+	 * current consumption in Amperes; intensity is power/tension.
+	 */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<>(this, 0.0, 0);
 
-	/** current production in Amperes in production mode */
+	/**
+	 * current production in Amperes in production mode
+	 */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentProduction = new Value<>(this, 0.0, 0);
 
-	/** current state of the Battery */
+	/**
+	 * current state of the Battery
+	 */
 	protected BatteryState currentState = BatteryState.SLEEPING;
 
 	/**

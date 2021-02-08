@@ -13,6 +13,13 @@ import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor
 import fr.sorbonne_u.devs_simulation.models.architectures.RTAtomicModelDescriptor;
 import main.java.deployment.RunSILSimulation;
 
+/**
+ * The class <code>BatteryRTAtomicSimulatorPlugin</code> extends the real time
+ * atomic model plug-in to add the necessary methods for the battery component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class BatteryRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 
 	// -------------------------------------------------------------------------
@@ -34,19 +41,10 @@ public class BatteryRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * initialise the local simulation architecture for the hair dryer component.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
+	 * initialise the local simulation architecture for the battery component.
 	 *
 	 * @param isUnitTest true if the component is under unit test.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public void initialiseSimulationArchitecture(boolean isUnitTest) throws Exception {
 		this.isUnitTest = isUnitTest;

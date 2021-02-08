@@ -17,7 +17,8 @@ import main.java.components.battery.ports.BatteryOutboundPort;
 import main.java.utils.Log;
 
 /**
- * Tester for the Battery component
+ * The class <code>BatteryUnitTester</code> implements a component performing
+ * unit tests for the class <code>Battery</code> as a BCM component.
  * 
  * @author Bello Memmi
  *
@@ -119,6 +120,9 @@ public class BatteryUnitTester extends AbstractComponent {
 	// TESTS
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Test the getBatteryCharge method
+	 */
 	public void testGetBatteryCharge() {
 		Log.printAndLog(this, "testGetBatteryCharge()");
 		try {
@@ -129,6 +133,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the upMode method
+	 */
 	public void testUpMode() {
 		Log.printAndLog(this, "testUpMode()");
 		try {
@@ -141,6 +148,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the downMode method
+	 */
 	public void testDownMode() {
 		Log.printAndLog(this, "testDownMode()");
 		try {
@@ -153,6 +163,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the setMode method
+	 */
 	public void testSetMode() {
 		Log.printAndLog(this, "testSetMode()");
 		try {
@@ -164,6 +177,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the currentMode method
+	 */
 	public void testCurrentMode() {
 		Log.printAndLog(this, "testCurrentMode()");
 		try {
@@ -175,6 +191,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the hasPlan method
+	 */
 	public void testHasPlan() {
 		Log.printAndLog(this, "testHasPlan()");
 		try {
@@ -188,6 +207,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the startTime method
+	 */
 	public void testStartTime() {
 		Log.printAndLog(this, "testStartTime()");
 		try {
@@ -201,6 +223,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the duration method
+	 */
 	public void testDuration() {
 		Log.printAndLog(this, "testDuration");
 		try {
@@ -214,6 +239,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the deadline method
+	 */
 	public void testDeadline() {
 		Log.printAndLog(this, "testDeadline");
 		try {
@@ -227,6 +255,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the postpone method
+	 */
 	public void testPostpone() {
 		Log.printAndLog(this, "testPostpone");
 		try {
@@ -242,6 +273,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the cancel method
+	 */
 	public void testCancel() {
 		Log.printAndLog(this, "testCancel()");
 		try {
@@ -257,6 +291,9 @@ public class BatteryUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the planifyEvent method
+	 */
 	public void testPlanifyEvent() {
 		Log.printAndLog(this, "testPlanifyEvent()");
 		try {

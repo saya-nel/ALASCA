@@ -31,7 +31,10 @@ import main.java.deployment.RunSILSimulation;
 import main.java.utils.Log;
 
 /**
- * Class representing the Battery component
+ * The class <code>Battery</code> implements the battery component.
+ *
+ * The battery can be in 3 differents states : SLEEP, DRAINING (produce energy)
+ * and RECHARCHING (consomes energy)
  * 
  * @author Bello Memmi
  *
@@ -67,11 +70,13 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	 */
 	protected float batteryCharge;
 
-	// ah
-	protected final float maximumPowerLevel = 189; // ah
+	/**
+	 * Maximum charge of the battery in ah
+	 */
+	protected final float maximumPowerLevel = 189;
 
 	/**
-	 * Actual battery mode 0 for RECHARGING 1 for DRAINING 2 for SLEEPING
+	 * Actual battery mode
 	 */
 	protected BatteryState operatingMode;
 
@@ -86,7 +91,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	protected ControllerOutboundPort cop;
 
 	/**
-	 *
+	 * URI of the controller to connect to
 	 */
 	protected String cip_uri;
 
@@ -169,6 +174,12 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
+	 * 
+	 * Run a task every second that : - increase the batteryCharge if the battery is
+	 * recharging and - decrease the batteryCharge if the battery is draining -
+	 * launch a recharge if a program is planned for start now - stop the recharge
+	 * if a program is planned to stop now
+	 * 
 	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
 	 */
 	@Override
@@ -186,6 +197,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 			public void run() {
 
 				try {
+					// cancel the task if the component is not started
 					if (!isStarted()) {
 						cancel();
 						throw new Exception();
@@ -202,13 +214,15 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 				} catch (Exception e1) {
 				}
 
+				// if the battery is draining,
 				if (operatingMode == BatteryState.DRAINING) {
 					batteryCharge -= (BatteryElectricalSILModel.DRAINING_MODE_PRODUCTION
 							/ BatteryElectricalSILModel.TENSION) / 3600;
+					// no more energy, we go sleep
 					if (batteryCharge <= 0) {
 						batteryCharge = 0;
 						try {
-							setMode(1); // put the battery on sleeping mode
+							me.cancel();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -217,10 +231,11 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 				} else if (operatingMode == BatteryState.RECHARGING) {
 					batteryCharge += (BatteryElectricalSILModel.RECHARGING_MODE_CONSUMPTION
 							/ BatteryElectricalSILModel.TENSION) / 3600;
+					// maximum charge, we go sleep
 					if (batteryCharge >= maximumPowerLevel) {
 						batteryCharge = maximumPowerLevel;
 						try {
-							setMode(1); // put the battery on sleeping mode
+							cancel();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -230,6 +245,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 			}
 		}
 
+		// connect to the controller, not trigger for tests
 		if (cip_uri.length() > 0) {
 			byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
 			String xmlFile = new String(encoded, "UTF-8");
@@ -296,7 +312,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#downMode()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#downMode()
 	 */
 	@Override
 	public boolean downMode() throws Exception {
@@ -306,7 +322,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#setMode(int)
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#setMode(int)
 	 */
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
@@ -346,7 +362,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#currentMode()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#currentMode()
 	 */
 	@Override
 	public int currentMode() throws Exception {
@@ -356,7 +372,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#hasPlan()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#hasPlan()
 	 */
 	@Override
 	public boolean hasPlan() throws Exception {
@@ -366,7 +382,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#startTime()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#startTime()
 	 */
 	@Override
 	public LocalTime startTime() throws Exception {
@@ -376,7 +392,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#duration()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#duration()
 	 */
 	@Override
 	public Duration duration() throws Exception {
@@ -389,7 +405,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#deadline()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#deadline()
 	 */
 	@Override
 	public LocalTime deadline() throws Exception {
@@ -399,7 +415,8 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	}
 
 	/**
-	 * @see interfaces.BatteryImplementationI#postpone(Duration)
+	 * @see @see
+	 *      main.java.components.battery.interfaces.BatteryImplementationI#postpone(Duration)
 	 */
 	@Override
 	public boolean postpone(Duration d) throws Exception {
@@ -419,12 +436,12 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	@Override
 	public boolean cancel() throws Exception {
 		boolean succeed = false;
-		// if the program isn't running, we can cancel it
-		if (this.startTime.get() != null && this.startTime.get().isAfter(LocalTime.now())) {
+		if (this.startTime.get() != null) {
 			synchronized (this.startTime) {
 				this.startTime.set(null);
 				this.endTime.set(null);
 				succeed = true;
+				operatingMode = BatteryState.SLEEPING;
 			}
 		}
 		Log.printAndLog(this, "cancel() service result : " + succeed);
@@ -450,6 +467,12 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 		return succeed;
 	}
 
+	/**
+	 * Send the event associated with the operation to the simulation
+	 * 
+	 * @param op operation
+	 * @throws Exception
+	 */
 	protected void simulateOperation(Operations op) throws Exception {
 		switch (op) {
 		case SetDraining:

@@ -8,7 +8,8 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.components.battery.interfaces.BatteryCI;
 
 /**
- * Outbound port of Battery component for battery component interface
+ * The class <code>BatteryInboundPort</code> implements an inbound port for the
+ * component interface <code>BatteryCI</code>.
  * 
  * @author Bello Memmi
  *

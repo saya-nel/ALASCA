@@ -7,20 +7,8 @@ import main.java.components.battery.sil.BatteryElectricalSILModel;
 import main.java.components.battery.utils.BatteryState;
 
 /**
- * The class <code>SetSleeping</code> defines the MIL event of the battery being
- * set to sleeping mode.
- *
- * <p>
- * <strong>Description</strong>
- * </p>
- *
- * <p>
- * <strong>Invariant</strong>
- * </p>
- *
- * <pre>
- * invariant		true
- * </pre>
+ * The class <code>SetSleeping</code> defines the event of the battery being on
+ * Sleeping mode
  *
  * @author Bello Memmi
  */
@@ -29,16 +17,7 @@ public class SetSleeping extends AbstractBatteryEvent {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * create a SetSleeping event.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	{@code timeOfOccurrence != null}
-	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
-	 * </pre>
+	 * create a SetSleeping event
 	 *
 	 * @param timeOfOccurrence time of occurrence of the event.
 	 */

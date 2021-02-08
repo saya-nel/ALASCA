@@ -7,7 +7,8 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 import main.java.components.battery.interfaces.BatteryCI;
 
 /**
- * Connector between two BatteryCI implementations
+ * The class <code>BatteryConnector</code> implements a connector for the
+ * component interface <code>BatteryCI</code>.
  *
  * @author Bello Memmi
  *

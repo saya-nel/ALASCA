@@ -10,7 +10,8 @@ import main.java.components.battery.interfaces.BatteryCI;
 
 /**
  * 
- * Battery inbound port for Battery component interface
+ * The class <code>BatteryInboundPort</code> implements an inbound port for the
+ * component interface <code>BatteryCI</code>.
  * 
  * @author Bello Memmi
  *

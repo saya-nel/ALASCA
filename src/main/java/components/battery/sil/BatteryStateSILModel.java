@@ -15,15 +15,26 @@ import main.java.components.battery.sil.events.SetRecharging;
 import main.java.components.battery.sil.events.SetSleeping;
 import main.java.utils.FileLogger;
 
+/**
+ * The class <code>BattryStateSILModel</code> defines a simulation model
+ * tracking the state changes on a battery
+ * 
+ * @author Bello Memmi
+ *
+ */
 @ModelExternalEvents(imported = { SetDraining.class, SetRecharging.class, SetSleeping.class }, exported = {
 		SetDraining.class, SetRecharging.class, SetSleeping.class })
 public class BatteryStateSILModel extends AtomicModel {
 
 	private static final long serialVersionUID = 1L;
 
-	/** URI for an instance mode; works as long as only one instance is created */
+	/**
+	 * URI for an instance mode; works as long as only one instance is created
+	 */
 	public static final String URI = BatteryStateSILModel.class.getSimpleName();
-	/** the event that was received to change the state of the battery. */
+	/**
+	 * the event that was received to change the state of the battery.
+	 */
 	protected EventI lastReceivedEvent;
 
 	public BatteryStateSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {

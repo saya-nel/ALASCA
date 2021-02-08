@@ -7,20 +7,8 @@ import main.java.components.battery.sil.BatteryElectricalSILModel;
 import main.java.components.battery.utils.BatteryState;
 
 /**
- * The class <code>SetDraining</code> defines the MIL event of the battery being
- * set to drainging mode.
- *
- * <p>
- * <strong>Description</strong>
- * </p>
- *
- * <p>
- * <strong>Invariant</strong>
- * </p>
- *
- * <pre>
- * invariant		true
- * </pre>
+ * The class <code>SetDraining</code> defines the event of the battery being on
+ * Draining mode
  *
  * @author Bello Memmi
  */
@@ -30,15 +18,6 @@ public class SetDraining extends AbstractBatteryEvent {
 
 	/**
 	 * create a SetDraining event.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	{@code timeOfOccurrence != null}
-	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
-	 * </pre>
 	 *
 	 * @param timeOfOccurrence time of occurrence of the event.
 	 */

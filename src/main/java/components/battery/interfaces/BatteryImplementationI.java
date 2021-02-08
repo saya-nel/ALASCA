@@ -3,14 +3,21 @@ package main.java.components.battery.interfaces;
 import java.time.Duration;
 import java.time.LocalTime;
 
+import main.java.components.battery.Battery;
+
 /**
  * 
- * Battery services interface
+ * The interface <code>BatteryImplementationI</code> defines the service that
+ * must be implemented by the {@link Battery} component.
  * 
  * @author Bello Memmi
  *
  */
 public interface BatteryImplementationI {
+
+	// -------------------------------------------------------------------------
+	// Component services signatures
+	// -------------------------------------------------------------------------
 
 	/**
 	 * Return the actual battery charge
@@ -27,22 +34,22 @@ public interface BatteryImplementationI {
 	 */
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#upMode()
+	 * @see main.java.components.controller.interfaces.StandardEquipmentControlCI#upMode()
 	 */
 	public boolean upMode() throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#downMode()
+	 * @see main.java.components.controller.interfaces.StandardEquipmentControlCI#downMode()
 	 */
 	public boolean downMode() throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#setMode(int)
+	 * @see main.java.components.controller.interfaces.StandardEquipmentControlCI#setMode(int)
 	 */
 	public boolean setMode(int modeIndex) throws Exception;
 
 	/**
-	 * @see interfaces.StandardEquipmentControlCI#currentMode()
+	 * @see main.java.components.controller.interfaces.StandardEquipmentControlCI#currentMode()
 	 */
 	public int currentMode() throws Exception;
 
@@ -53,40 +60,40 @@ public interface BatteryImplementationI {
 	 */
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#hasPlan()
+	 * @see main.java.components.controller.interfaces.PlanningEquipmentControlCI#hasPlan()
 	 */
 	public boolean hasPlan() throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#startTime()
+	 * @see main.java.components.controller.interfaces.PlanningEquipmentControlCI#startTime()
 	 */
 	public LocalTime startTime() throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#duration()
+	 * @see main.java.components.controller.interfaces.PlanningEquipmentControlCI#duration()
 	 */
 	public Duration duration() throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#deadline()
+	 * @see main.java.components.controller.interfaces.PlanningEquipmentControlCI#deadline()
 	 */
 	public LocalTime deadline() throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#postpone(Duration)
+	 * @see main.java.components.controller.interfaces.PlanningEquipmentControlCI#postpone(Duration)
 	 */
 	public boolean postpone(Duration d) throws Exception;
 
 	/**
-	 * @see interfaces.PlanningEquipmentControlCI#cancel()
+	 * @see main.java.components.controller.interfaces.PlanningEquipmentControlCI#cancel()
 	 */
 	public boolean cancel() throws Exception;
 
 	/**
-	 * planify event
+	 * planify a battery charge
 	 * 
-	 * @param durationLastPlanned duration of the event
-	 * @param deadline            deadline of the event
+	 * @param starTime time to start the charge
+	 * @param endTime  time to end the charge
 	 * @return true if the plan has been successfully added
 	 */
 	public boolean planifyEvent(LocalTime starTime, LocalTime endTime) throws Exception;
