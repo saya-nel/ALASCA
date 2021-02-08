@@ -1,4 +1,4 @@
-package main.java.tests;
+package main.java.components.solarPanels.tests;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
