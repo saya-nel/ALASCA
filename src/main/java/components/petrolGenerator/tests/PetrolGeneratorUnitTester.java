@@ -14,10 +14,12 @@ import main.java.components.petrolGenerator.ports.PetrolGeneratorOutboundPort;
 import main.java.utils.Log;
 
 /**
- * 
- * Test class for PetrolGenerator component
+ * The class <code>PetrolGeneratorUnitTester</code> implements a component
+ * performing unit tests for the class <code>PetrolGenerator</code> as a BCM
+ * component.
  * 
  * @author Bello Memmi
+ *
  */
 @RequiredInterfaces(required = { PetrolGeneratorCI.class })
 public class PetrolGeneratorUnitTester extends AbstractComponent {

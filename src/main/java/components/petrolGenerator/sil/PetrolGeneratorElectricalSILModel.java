@@ -18,10 +18,8 @@ import main.java.components.petrolGenerator.sil.events.TurnOn;
 import main.java.utils.FileLogger;
 
 /**
- * Simulation of the petrolGenerator component, at the start he is turned off
- * with 20 liters of petrol in. he produce electricity while he is turned on and
- * get petrol. when he doesnt have petrol, he turn off. Then the user need to
- * fill it and turn it on again.
+ * The class <code>PetrolGeneratorElectricalSILModel</code> defines a SIL model
+ * of the electricity consumption of a petrol generator.
  * 
  * @author Bello Memmi
  *
@@ -41,10 +39,12 @@ public class PetrolGeneratorElectricalSILModel extends AtomicHIOA {
 	public static final String URI = PetrolGeneratorElectricalSILModel.class.getSimpleName();
 
 	/**
-	 * Electricity produced when the petrol generator is on and get petrol
+	 * Electricity produced when the petrol generator is on and get petrol in watts
 	 */
 	protected static final double GENERATING = 1700;
-	/** tension same for all the house */
+	/**
+	 * tension in volts
+	 */
 	public static final double TENSION = 220;
 
 	/**
@@ -67,6 +67,14 @@ public class PetrolGeneratorElectricalSILModel extends AtomicHIOA {
 	// Constructors
 	// -------------------------------------------------------------------------
 
+	/**
+	 * create a petrol generator SIL model instance.
+	 *
+	 * @param uri               URI of the model.
+	 * @param simulatedTimeUnit time unit used for the simulation time.
+	 * @param simulationEngine  simulation engine to which the model is attached.
+	 * @throws Exception
+	 */
 	public PetrolGeneratorElectricalSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
@@ -99,21 +107,7 @@ public class PetrolGeneratorElectricalSILModel extends AtomicHIOA {
 	}
 
 	/**
-	 * toggle the value of the state of the model telling whether the electricity
-	 * consumption level has just changed or not; when it changes after receiving an
-	 * external event, an immediate internal transition is triggered to update the
-	 * level of electricity consumption.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
-	 * 
-	 * @author Bello Memmi
+	 * Change the consumptionHasChanged value to the negation of the actual value
 	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;

@@ -7,7 +7,8 @@ import main.java.components.petrolGenerator.interfaces.PetrolGeneratorCI;
 
 /**
  * 
- * PetrolGenerator inbound port for the petrol generator component interface
+ * The class <code>PetrolGeneratorInboundPort</code> implements an inbound port
+ * for the component interface <code>PetrolGeneratorCI</code>.
  * 
  * @author Bello Memmi
  *
@@ -93,6 +94,9 @@ public class PetrolGeneratorInboundPort extends AbstractInboundPort implements P
 		return this.getOwner().handleRequestSync(owner -> ((PetrolGenerator) owner).isTurnedOn());
 	}
 
+	/**
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#fillAll()
+	 */
 	@Override
 	public void fillAll() throws Exception {
 		this.getOwner().runTask(owner -> {

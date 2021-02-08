@@ -5,10 +5,22 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorUserSILModel;
 
+/**
+ * The class <code>EmptyGenerator</code> defines the event of the petrol
+ * generator being on empty, it is send to the user
+ *
+ * @author Bello Memmi
+ */
 public class EmptyGenerator extends AbstractPetrolGeneratorEvent {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * create a EmptyGenerator event.
+	 *
+	 *
+	 * @param timeOfOccurrence time of occurrence of the event.
+	 */
 	public EmptyGenerator(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}

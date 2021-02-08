@@ -14,14 +14,25 @@ import main.java.components.petrolGenerator.sil.events.TurnOff;
 import main.java.components.petrolGenerator.sil.events.TurnOn;
 import main.java.utils.FileLogger;
 
+/**
+ * The class <code>PetrolGeneratorStateSILModel</code> defines a simulation
+ * model tracking the state changes on a petrol generator
+ * 
+ * @author Bello Memmi
+ *
+ */
 @ModelExternalEvents(imported = { TurnOn.class, TurnOff.class }, exported = { TurnOff.class, TurnOn.class })
 public class PetrolGeneratorStateSILModel extends AtomicModel {
 
 	private static final long serialVersionUID = 1L;
 
-	/** URI for an instance mode; works as long as only one instance is created */
+	/**
+	 * URI for an instance mode; works as long as only one instance is created
+	 */
 	public static final String URI = PetrolGeneratorStateSILModel.class.getSimpleName();
-	/** the event that was received to change the state of the petrol generator. */
+	/**
+	 * the event that was received to change the state of the petrol generator.
+	 */
 	protected EventI lastReceivedEvent;
 
 	// -------------------------------------------------------------------------
@@ -29,17 +40,8 @@ public class PetrolGeneratorStateSILModel extends AtomicModel {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create an instance of hair dryer state SIL simulation model.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
-	 *
+	 * create an instance of petrol generator state SIL simulation model.
+	 * 
 	 * @param uri               unique identifier of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation clock.
 	 * @param simulationEngine  simulation engine enacting the model.

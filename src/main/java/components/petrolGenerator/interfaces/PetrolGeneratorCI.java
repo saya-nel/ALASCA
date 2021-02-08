@@ -2,9 +2,12 @@ package main.java.components.petrolGenerator.interfaces;
 
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
+import main.java.components.petrolGenerator.PetrolGenerator;
 
 /**
- * Component interface for the petrol generator
+ * 
+ * The component interface <code>PetrolGeneratorCI</code> defines the services a
+ * {@link PetrolGenerator} component offers and that can be required from it.
  * 
  * @author Bello Memmi
  *

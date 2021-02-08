@@ -4,7 +4,8 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 import main.java.components.petrolGenerator.interfaces.PetrolGeneratorCI;
 
 /**
- * Connector for the PetrolGeneratorCI component interface
+ * The class <code>PetrolGeneratorConnector</code> implements a connector for
+ * the component interface <code>PetrolGeneratorCI</code>.
  * 
  * @author Bello Memmi
  *
@@ -52,13 +53,16 @@ public class PetrolGeneratorConnector extends AbstractConnector implements Petro
 	}
 
 	/**
-	 * @see interfaces.PetrolGeneratorImplementationI#isTurnedOn()
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#isTurnedOn()
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {
 		return ((PetrolGeneratorCI) this.offering).isTurnedOn();
 	}
 
+	/**
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#fillAll()
+	 */
 	@Override
 	public void fillAll() throws Exception {
 		((PetrolGeneratorCI) this.offering).fillAll();

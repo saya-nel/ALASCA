@@ -15,7 +15,7 @@ import main.java.utils.FileLogger;
 
 /**
  * 
- * The class <code>FanUser_MILModel</code> defines a user model for the fan
+ * The class <code>FanUserSILModel</code> defines a user model for the fan
  * 
  * @author Bello Memmi
  *
@@ -29,11 +29,17 @@ public class FanUserSILModel extends AtomicModel {
 	 */
 	public static final String URI = FanUserSILModel.class.getSimpleName();
 
-	/** time interval between event outputs. */
+	/**
+	 * time interval between event outputs.
+	 */
 	protected static final double STEP = 2.0;
-	/** the current event being output. */
+	/**
+	 * the current event being output.
+	 */
 	protected Fan.Operations currentOperation;
-	/** time interval between event outputs. */
+	/**
+	 * time interval between event outputs.
+	 */
 	protected Duration time2next;
 
 	/**
@@ -41,7 +47,9 @@ public class FanUserSILModel extends AtomicModel {
 	 */
 	public static final String FAN_REFERENCE_NAME = URI + ":" + "FANRN";
 
-	/** owner component. */
+	/**
+	 * owner component.
+	 */
 	protected Fan owner;
 
 	// -------------------------------------------------------------------------

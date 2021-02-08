@@ -17,7 +17,9 @@ import main.java.components.petrolGenerator.sil.events.EmptyGenerator;
 import main.java.utils.FileLogger;
 
 /**
- * The users actions that interacts with the simulated petrol generator
+ * 
+ * The class <code>PetrolGeneratorUserSILModel</code> defines a user model for
+ * the fan
  * 
  * @author Bello Memmi
  *
@@ -30,24 +32,48 @@ public class PetrolGeneratorUserSILModel extends AtomicModel {
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
+
+	/**
+	 * URI for an instance model; works as long as only one instance is created.
+	 */
 	public static final String URI = PetrolGeneratorUserSILModel.class.getSimpleName();
 
-	/** default time interval between event outputs. */
+	/**
+	 * default time interval between event outputs.
+	 */
 	protected static final double STEP = 1.0;
-
+	/**
+	 * the current event being output.
+	 */
 	protected PetrolGenerator.Operations currentOperation;
 
-	/** time interval between event outputs. */
+	/**
+	 * time interval between event outputs.
+	 */
 	protected Duration time2next;
 
+	/**
+	 * name used to pass the owner component reference as simulation parameter.
+	 */
 	public static final String PETROL_GENERATOR_REFERENCE_NAME = URI + ":" + "PGRN";
 
+	/**
+	 * owner component.
+	 */
 	protected PetrolGenerator owner;
 
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
 
+	/**
+	 * create a petorl generator user SIL model instance.
+	 *
+	 * @param uri               URI of the model.
+	 * @param simulatedTimeUnit time unit used for the simulation time.
+	 * @param simulationEngine  simulation engine to which the model is attached.
+	 * @throws Exception
+	 */
 	public PetrolGeneratorUserSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
@@ -58,6 +84,11 @@ public class PetrolGeneratorUserSILModel extends AtomicModel {
 	// Methods
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Triggered by the empty generator event
+	 * 
+	 * @param event
+	 */
 	public void receiveEmptyGenerator(EmptyGenerator event) {
 		this.currentOperation = PetrolGenerator.Operations.EmptyGenerator;
 		// we wait 20 minutes before filling
@@ -100,7 +131,7 @@ public class PetrolGeneratorUserSILModel extends AtomicModel {
 	}
 
 	/**
-	 * @see AtomicModel#initialiseState(Time)
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
 	 */
 	@Override
 	public void initialiseState(Time initialTime) {

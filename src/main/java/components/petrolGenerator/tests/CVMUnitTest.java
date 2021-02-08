@@ -4,6 +4,13 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.petrolGenerator.PetrolGenerator;
 
+/**
+ * The class <code>CVMUnitTest</code> performs unit tests on the
+ * {@link PetrolGenerator} component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class CVMUnitTest extends AbstractCVM {
 	/**
 	 * URI of the petrol generator inbound port offering the interface
@@ -11,7 +18,7 @@ public class CVMUnitTest extends AbstractCVM {
 	protected final static String PG_INBOUND_PORT_URI = "pgip-URI";
 	/**
 	 * if true, the unit test is driven by the SIL simulation, otherwise it is
-	 * driven by the component <code>HairDryerUnitTester</code>.
+	 * driven by the component <code>PetrolGeneratorUnitTester</code>.
 	 */
 	protected final static boolean SIL_UNIT_TEST = false;
 

@@ -11,6 +11,13 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
+/**
+ * 
+ * Coupled model for the fan simulation
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class PetrolGeneratorSILCoupledModel extends CoupledModel {
 
 	private static final long serialVersionUID = 1L;

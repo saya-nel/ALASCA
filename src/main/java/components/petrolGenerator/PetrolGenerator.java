@@ -19,8 +19,11 @@ import main.java.deployment.RunSILSimulation;
 import main.java.utils.Log;
 
 /**
- * Class representing the petrol generator component
- * 
+ * The class <code>PetrolGenerator</code> implements the petorl generator
+ * component.
+ *
+ * The petrol generator produce energy when he is turned on and if he get petrol
+ *
  * @author Bello Memmi
  *
  */
@@ -36,25 +39,32 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	 */
 	public static final String REFLECTION_INBOUND_PORT_URI = "pg-ibp-uri";
 
-	/** true if the component is executed in a SIL simulation mode. */
+	/**
+	 * true if the component is executed in a SIL simulation mode.
+	 */
 	protected boolean isSILSimulated;
-	/** true if the component is under unit test. */
+	/**
+	 * true if the component is under unit test.
+	 */
 	protected boolean isUnitTest;
 
 	protected PetrolGeneratorRTAtomicSimulatorPlugin simulatorPlugin;
 	protected static final String SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 
 	/**
-	 * Maximum petrol level
+	 * Maximum petrol level in liter
 	 */
 	protected float maximumPetrolLevel;
 
 	/**
-	 * generator petrol level
+	 * generator petrol level in liter
 	 */
 	protected float petrolLevel;
 
-	protected final double PETROL_CONSUMPTION = 0.0005; // petrol consumed for 1 second
+	/**
+	 * petrol consumed for 1 second, in liter
+	 */
+	protected final double PETROL_CONSUMPTION = 0.0005;
 
 	/**
 	 * True if the generator is running
@@ -66,6 +76,9 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	 */
 	protected PetrolGeneratorInboundPort pgip;
 
+	/**
+	 * True if the generator has send the event to the user to signal he is empty
+	 */
 	protected boolean hasSendEmptyGenerator;
 
 	/**
@@ -87,16 +100,18 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	/**
 	 * Initialize the petrol generator component
 	 * 
-	 * @param batteryInboundPortURI
+	 * @param pgipURI uri of the petrol generator to call is services
 	 * @throws Exception
 	 */
 	protected void initialise(String pgipURI, boolean isSILSimulated, boolean isUnitTest) throws Exception {
 		this.isSILSimulated = isSILSimulated;
 		this.isUnitTest = isUnitTest;
+
 		this.isTurnedOn = false;
 		this.maximumPetrolLevel = 5;
 		this.hasSendEmptyGenerator = false;
 		this.petrolLevel = 2;
+
 		this.pgip = new PetrolGeneratorInboundPort(pgipURI, this);
 		this.pgip.publishPort();
 
@@ -131,6 +146,10 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	}
 
 	/**
+	 * The execute method run a task each second that : - decrease the petrol level
+	 * if the generator is running - turn off the generator if he have no more
+	 * petrol and singal to the user that the generator is empty
+	 * 
 	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
 	 */
 	@Override
@@ -259,12 +278,21 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 		return isTurnedOn;
 	}
 
+	/**
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#fillAll()
+	 */
 	@Override
 	public void fillAll() throws Exception {
 		this.petrolLevel = this.maximumPetrolLevel;
 		Log.printAndLog(this, "fillAll() service called, new petrol level : " + petrolLevel);
 	}
 
+	/**
+	 * Send the event associated with the operation to the simulation
+	 * 
+	 * @param op operation
+	 * @throws Exception
+	 */
 	protected void simulateOperation(Operations op) throws Exception {
 		switch (op) {
 		case TurnOn:

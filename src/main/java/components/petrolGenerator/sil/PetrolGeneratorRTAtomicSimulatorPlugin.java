@@ -22,7 +22,16 @@ import main.java.components.petrolGenerator.sil.events.TurnOff;
 import main.java.components.petrolGenerator.sil.events.TurnOn;
 import main.java.deployment.RunSILSimulation;
 
+/**
+ * The class <code>PetrolGeneratorRTAtomicSimulatorPlugin</code> extends the
+ * real time atomic model plug-in to add the necessary methods for the petrol
+ * generator component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class PetrolGeneratorRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
+
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
@@ -42,15 +51,6 @@ public class PetrolGeneratorRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlu
 	// -------------------------------------------------------------------------
 
 	/**
-	 * .
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	{@code !simParams.containsKey(PetrolGeneratorUserSILModel.HAIR_DRYER_REFERENCE_NAME)}
-	 * post	true		// no postconditions.
-	 * </pre>
 	 *
 	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AbstractSimulatorPlugin#setSimulationRunParameters(java.util.Map)
 	 */
@@ -61,19 +61,11 @@ public class PetrolGeneratorRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlu
 	}
 
 	/**
-	 * initialise the local simulation architecture for the hair dryer component.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
+	 * initialise the local simulation architecture for the petrol generator
+	 * component.
 	 *
 	 * @param isUnitTest true if the component is under unit test.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public void initialiseSimulationArchitecture(boolean isUnitTest) throws Exception {
 		this.isUnitTest = isUnitTest;

@@ -5,7 +5,8 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.components.petrolGenerator.interfaces.PetrolGeneratorCI;
 
 /**
- * Outbound port for PetrolGenerator component interface
+ * The class <code>PetrolGeneratorOutboundPort</code> implements an outbound
+ * port for the component interface <code>PetrolGeneratorCI</code>.
  * 
  * @author Bello Memmi
  *
@@ -15,7 +16,7 @@ public class PetrolGeneratorOutboundPort extends AbstractOutboundPort implements
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Constructor of FanOutboundPort
+	 * Constructor of PetrolGeneratorOutboundPort
 	 * 
 	 * @param owner owner component
 	 * @throws Exception
@@ -72,6 +73,9 @@ public class PetrolGeneratorOutboundPort extends AbstractOutboundPort implements
 		return ((PetrolGeneratorCI) this.getConnector()).isTurnedOn();
 	}
 
+	/**
+	 * @see main.java.components.petrolGenerator.interfaces.PetrolGeneratorImplementationI#fillAll()
+	 */
 	@Override
 	public void fillAll() throws Exception {
 		((PetrolGeneratorCI) this.getConnector()).fillAll();

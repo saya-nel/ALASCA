@@ -1,13 +1,20 @@
 package main.java.components.petrolGenerator.interfaces;
 
+import main.java.components.petrolGenerator.PetrolGenerator;
+
 /**
  * 
- * methods of Petrol Generator
+ * The interface <code>PetrolGeneratorImplementationI</code> defines the service
+ * that must be implemented by the {@link PetrolGenerator} component.
  * 
  * @author Bello Memmi
  *
  */
 public interface PetrolGeneratorImplementationI {
+
+	// -------------------------------------------------------------------------
+	// Component services signatures
+	// -------------------------------------------------------------------------
 
 	/**
 	 * Return the maximum level of petrol of the generator
@@ -30,6 +37,11 @@ public interface PetrolGeneratorImplementationI {
 	 */
 	public void addPetrol(float quantity) throws Exception;
 
+	/**
+	 * Fill all the petrol generator
+	 * 
+	 * @throws Exception
+	 */
 	public void fillAll() throws Exception;
 
 	/**
