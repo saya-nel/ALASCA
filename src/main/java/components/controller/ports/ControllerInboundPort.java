@@ -6,7 +6,9 @@ import main.java.components.controller.Controller;
 import main.java.components.controller.interfaces.ControllerCI;
 
 /**
- * Controller inbound port for the controller component interface
+ * 
+ * The class <code>ControllerInboundPort</code> implements an inbound port for
+ * the component interface <code>ControllerCI</code>.
  * 
  * @author Bello Memmi
  *
@@ -34,8 +36,8 @@ public class ControllerInboundPort extends AbstractInboundPort implements Contro
 	}
 
 	/**
-	 * @see main.java.components.controller.interfaces.ControllerImplementationI#register(String, String,
-	 *      String)
+	 * @see main.java.components.controller.interfaces.ControllerImplementationI#register(String,
+	 *      String, String)
 	 */
 	@Override
 	public boolean register(String serial_number, String inboundPortURI, String XMLFile) throws Exception {

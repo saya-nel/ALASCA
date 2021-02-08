@@ -5,7 +5,8 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.components.controller.interfaces.ControllerCI;
 
 /**
- * Outbound port for the controller component interface
+ * The class <code>ControllerInboundPort</code> implements an inbound port for
+ * the component interface <code>ControllerCI</code>.
  * 
  * @author Bello Memmi
  *
@@ -22,8 +23,6 @@ public class ControllerOutboundPort extends AbstractOutboundPort implements Cont
 	 */
 	public ControllerOutboundPort(ComponentI owner) throws Exception {
 		super(ControllerCI.class, owner);
-		// super(uri, ControllerCI.class, owner);
-		assert uri != null && owner != null;
 	}
 
 	/**

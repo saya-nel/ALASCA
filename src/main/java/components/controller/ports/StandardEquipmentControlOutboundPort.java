@@ -5,7 +5,9 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.components.controller.interfaces.StandardEquipmentControlCI;
 
 /**
- * outbound port for the standard equipment control component interface
+ * The class <code>StandardEquipmentControlOutboundPort</code> implements an
+ * outbound port for the component interface
+ * <code>StandardEquipmentControlCI</code>.
  * 
  * @author Bello Memmi
  *

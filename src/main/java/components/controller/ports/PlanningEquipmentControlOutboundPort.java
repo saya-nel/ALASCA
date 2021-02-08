@@ -8,9 +8,11 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.components.controller.interfaces.PlanningEquipmentControlCI;
 
 /**
- * Outbound port for the planning equipment control component interface
+ * The class <code>PlanningEquipmentControlOutboundPort</code> implements an
+ * outbound port for the component interface
+ * <code>PlanningEquipmentControlCI</code>.
  * 
- * @author pablo
+ * @author Bello Memmi
  *
  */
 public class PlanningEquipmentControlOutboundPort extends AbstractOutboundPort implements PlanningEquipmentControlCI {

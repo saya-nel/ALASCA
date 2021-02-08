@@ -43,6 +43,11 @@ import main.java.deployment.RunSILSimulation;
 import main.java.utils.Log;
 
 /**
+ * The class <code>Controller</code> implements the controller component.
+ *
+ * The controller component handle the management of the energy in the house the
+ * components register to the controller, which connect to them after this and
+ * call their services according to the actual available energy
  *
  * @author Bello Memmi
  *
@@ -72,31 +77,51 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	 */
 	public static final String REGISTER_EXECUTOR_URI = "register";
 
-	// ports used for registering
+	/**
+	 * ports used for registering
+	 */
 	private ControllerInboundPort cip;
 
-	// ports used for controlling standard devices
+	/**
+	 * ports used for controlling standard devices
+	 */
 	private Vector<StandardEquipmentControlOutboundPort> stecops;
-	// ports used for controlling planning devices
+	/**
+	 * ports used for controlling planning devices
+	 */
 	private Vector<PlanningEquipmentControlOutboundPort> plecops;
-	// ports used for controlling suspensible devices
+	/**
+	 * ports used for controlling suspensible devices
+	 */
 	private Vector<SuspensionEquipmentControlOutboundPort> suecops;
 
+	/**
+	 * outboundPort to use ElectricMeter services
+	 */
 	private ElectricMeterOutboundPort eop;
 
+	/**
+	 * uri of the {@link ElectricMeterOutboundPort}
+	 */
 	private String eipURI;
-
-	public static final String REGISTERING_POOL = "registering-pool";
 
 	public static int countChangeMode = 0;
 
 	public static double lastRatio = 1;
 
+	/**
+	 * Constructor of the controller
+	 * 
+	 * @param cipURI inbound port uri of controller for registering
+	 * @param eipURI inbound port uri of the electric meter
+	 * @throws Exception
+	 */
 	protected Controller(String cipURI, String eipURI) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
 
 		this.createNewExecutorService(CONTROL_EXECUTOR_URI, 1, false);
 		this.createNewExecutorService(REGISTER_EXECUTOR_URI, 1, false);
+
 		this.eipURI = eipURI;
 
 		initialise(cipURI);
@@ -110,6 +135,12 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	// Component life-cycle
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Initialise the controller component
+	 * 
+	 * @param cipURI inbound port uri of the controller for registering
+	 * @throws Exception
+	 */
 	protected void initialise(String cipURI) throws Exception {
 		// Initialize ports relative to registering
 		this.cip = new ControllerInboundPort(cipURI, this.getExecutorServiceIndex(REGISTER_EXECUTOR_URI), this);
@@ -123,6 +154,9 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		this.eop.localPublishPort();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#start()
+	 */
 	@Override
 	public synchronized void start() throws ComponentStartException {
 		super.start();
@@ -169,6 +203,9 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	}
 
 	/**
+	 * Handle the management of the available energy in the house, the controller
+	 * look each second the consumption and production and make decisions
+	 * 
 	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
 	 */
 	@Override
@@ -326,6 +363,12 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	// Component private methods
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Return the equipment type (String) from is xml adapter
+	 * 
+	 * @param xml adapter
+	 * @return equipment type
+	 */
 	private String getEquipmentType(String xml) {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
@@ -340,6 +383,14 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		}
 	}
 
+	/**
+	 * Create a connector to connect to the equipment
+	 * 
+	 * @param serialNumber serial number of the equipment
+	 * @param xmlFile      adapter
+	 * @return the generated connector
+	 * @throws Exception
+	 */
 	private Class<?> generateConnector(String serialNumber, String xmlFile) throws Exception {
 		String generatedClassName = serialNumber + "_connector";
 		Class<?> superClass = AbstractConnector.class;

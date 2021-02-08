@@ -1,9 +1,14 @@
 package main.java.components.controller.interfaces;
 
+import main.java.components.controller.Controller;
+
 /**
- * Contains all methods required from the controller by the devices
+ * 
+ * The interface <code>ControllerImplementationI</code> defines the service that
+ * must be implemented by the {@link Controller} component.
  * 
  * @author Bello Memmi
+ *
  */
 public interface ControllerImplementationI {
 	/**

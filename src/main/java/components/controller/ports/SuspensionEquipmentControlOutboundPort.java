@@ -5,7 +5,9 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.components.controller.interfaces.SuspensionEquipmentControlCI;
 
 /**
- * outbound port for the suspension equipment control component interface
+ * The class <code>SuspensionEquipmentControlOutboundPort</code> implements an
+ * outbound port for the component interface
+ * <code>SuspensionEquipmentControlCI</code>.
  * 
  * @author Bello Memmi
  *
