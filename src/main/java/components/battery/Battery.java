@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -69,7 +68,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	protected float batteryCharge;
 
 	// ah
-	protected float maximumPowerLevel; // ah
+	protected final float maximumPowerLevel = 189; // ah
 
 	/**
 	 * Actual battery mode 0 for RECHARGING 1 for DRAINING 2 for SLEEPING
@@ -92,26 +91,14 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	protected String cip_uri;
 
 	/**
-	 * boolean indicating whether the battery has plan
+	 * Start time of the planed program
 	 */
-	protected AtomicBoolean hasPlan;
+	protected AtomicReference<LocalTime> startTime;
 
 	/**
-	 * last time the chrono has been triggered
+	 * End time of the planed program
 	 */
-	protected AtomicReference<LocalTime> lastStartTime;
-
-	/**
-	 * duration time of last planified task
-	 */
-	protected AtomicReference<Duration> durationLastPlanned;
-
-	/**
-	 * deadline of the last program
-	 */
-	protected AtomicReference<LocalTime> deadlineTime;
-
-	protected AtomicReference<Duration> postponeDur;
+	protected AtomicReference<LocalTime> endTime;
 
 	/**
 	 * Constructor of battery
@@ -129,16 +116,12 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 		this.isSILSimulated = isSILSimulated;
 		this.isUnitTest = isUnitTest;
 		// power
-		this.maximumPowerLevel = 189;
-		this.batteryCharge = this.maximumPowerLevel;
+		this.batteryCharge = 5;
 		// modes
 		this.operatingMode = BatteryState.SLEEPING;
 		// planning
-		this.hasPlan = new AtomicBoolean(false);
-		this.deadlineTime = new AtomicReference<>(null);
-		this.durationLastPlanned = new AtomicReference<>(null);
-		this.lastStartTime = new AtomicReference<>(null);
-		this.postponeDur = new AtomicReference<>(null);
+		this.startTime = new AtomicReference<>(null);
+		this.endTime = new AtomicReference<>(null);
 		// ports
 		this.bip = new BatteryInboundPort(bipURI, this);
 		this.bip.publishPort();
@@ -227,16 +210,21 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 			}
 		}
 
-		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
-		String xmlFile = new String(encoded, "UTF-8");
-		boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(), xmlFile);
-		if (!isRegister)
-			throw new Exception("Battery can't register to controller");
+		if (cip_uri.length() > 0) {
+			byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/battery-control.xml"));
+			String xmlFile = new String(encoded, "UTF-8");
+			boolean isRegister = this.cop.register(this.serialNumber, bip.getPortURI(), xmlFile);
+			if (!isRegister)
+				throw new Exception("Battery can't register to controller");
+		}
 
-		// wait the start of simulation and run Decrease petrol each simulated second
-		Thread.sleep(RunSILSimulation.DELAY_TO_START_SIMULATION);
-		Timer t = new Timer();
-		t.schedule(new DecreaseEnergy(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
+		if (this.isSILSimulated) {
+			// wait the start of simulation and run Decrease petrol each simulated second
+			Thread.sleep(RunSILSimulation.DELAY_TO_START_SIMULATION);
+			Timer t = new Timer();
+			t.schedule(new DecreaseEnergy(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
+		}
+
 	}
 
 	/**
@@ -272,7 +260,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	 */
 	@Override
 	public float getBatteryCharge() throws Exception {
-		float result = 0;
+		float result = this.batteryCharge;
 		Log.printAndLog(this, "getBatteryCharge() service result : " + result);
 		return result;
 	}
@@ -285,8 +273,9 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 		boolean succeed = false;
 		switch (operatingMode) {
 		case DRAINING:
-			operatingMode = BatteryState.RECHARGING;
-			simulateOperation(Operations.SetRecharching);
+			operatingMode = BatteryState.SLEEPING;
+			if (isSILSimulated)
+				simulateOperation(Operations.SetRecharching);
 			succeed = true;
 			break;
 		case RECHARGING:
@@ -295,12 +284,13 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 		case SLEEPING:
 			succeed = true;
 			operatingMode = BatteryState.RECHARGING;
-			simulateOperation(Operations.SetRecharching);
+			if (isSILSimulated)
+				simulateOperation(Operations.SetRecharching);
 			break;
 		default:
 			break;
 		}
-		this.logMessage("upMode() service result : " + succeed + ", current mode : " + operatingMode);
+		Log.printAndLog(this, "upMode() service result : " + succeed + ", current mode : " + operatingMode);
 		return succeed;
 	}
 
@@ -317,17 +307,19 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 		case RECHARGING:
 			succeed = true;
 			operatingMode = BatteryState.SLEEPING;
-			simulateOperation(Operations.SetSleeping);
+			if (isSILSimulated)
+				simulateOperation(Operations.SetSleeping);
 			break;
 		case SLEEPING:
 			succeed = true;
 			operatingMode = BatteryState.DRAINING;
-			simulateOperation(Operations.SetDraining);
+			if (isSILSimulated)
+				simulateOperation(Operations.SetDraining);
 			break;
 		default:
 			break;
 		}
-		this.logMessage("downMode() service result : " + succeed + ", current mode : " + operatingMode);
+		Log.printAndLog(this, "downMode() service result : " + succeed + ", current mode : " + operatingMode);
 		return succeed;
 	}
 
@@ -342,27 +334,31 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 			if (operatingMode != BatteryState.DRAINING) {
 				succeed = true;
 				operatingMode = BatteryState.DRAINING;
-				simulateOperation(Operations.SetDraining);
+				if (isSILSimulated)
+					simulateOperation(Operations.SetDraining);
 			}
 			break;
 		case 1:
 			if (operatingMode != BatteryState.SLEEPING) {
 				succeed = true;
 				operatingMode = BatteryState.SLEEPING;
-				simulateOperation(Operations.SetSleeping);
+				if (isSILSimulated)
+					simulateOperation(Operations.SetSleeping);
 			}
 			break;
 		case 2:
 			if (operatingMode != BatteryState.RECHARGING) {
 				succeed = true;
 				operatingMode = BatteryState.RECHARGING;
-				simulateOperation(Operations.SetRecharching);
+				if (isSILSimulated)
+					simulateOperation(Operations.SetRecharching);
 			}
 			break;
 		default:
 			break;
 		}
-		this.logMessage("setMode(" + modeIndex + ") service result : " + succeed + ", current mode : " + operatingMode);
+		Log.printAndLog(this,
+				"setMode(" + modeIndex + ") service result : " + succeed + ", current mode : " + operatingMode);
 		return succeed;
 
 	}
@@ -382,7 +378,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	 */
 	@Override
 	public boolean hasPlan() throws Exception {
-		boolean result = this.hasPlan.get();
+		boolean result = this.startTime.get() != null;
 		Log.printAndLog(this, "hasPlan() service result : " + result);
 		return result;
 	}
@@ -392,7 +388,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	 */
 	@Override
 	public LocalTime startTime() throws Exception {
-		LocalTime result = this.lastStartTime.get();
+		LocalTime result = this.startTime.get();
 		Log.printAndLog(this, "startTime() service result : " + result);
 		return result;
 	}
@@ -402,7 +398,10 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	 */
 	@Override
 	public Duration duration() throws Exception {
-		Duration result = this.durationLastPlanned.get();
+		Duration result = null;
+		if (this.startTime.get() != null && this.endTime.get() != null) {
+			result = Duration.between(this.startTime.get(), this.endTime.get());
+		}
 		Log.printAndLog(this, "Duration() service result : " + result);
 		return result;
 	}
@@ -412,7 +411,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	 */
 	@Override
 	public LocalTime deadline() throws Exception {
-		LocalTime result = this.deadlineTime.get();
+		LocalTime result = this.endTime.get();
 		Log.printAndLog(this, "deadLine() service result : " + result);
 		return result;
 	}
@@ -423,8 +422,11 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	@Override
 	public boolean postpone(Duration d) throws Exception {
 		boolean succeed = false;
-		succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(),
-				this.lastStartTime.get().plusHours(d.toHours()));
+		if (this.startTime.get() != null && this.endTime.get() != null) {
+			this.startTime.set((LocalTime) d.addTo(this.startTime.get()));
+			this.endTime.set((LocalTime) d.addTo(this.endTime.get()));
+			succeed = true;
+		}
 		Log.printAndLog(this, "postpone(" + d + ") service result : " + succeed);
 		return succeed;
 	}
@@ -435,11 +437,13 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	@Override
 	public boolean cancel() throws Exception {
 		boolean succeed = false;
-		synchronized (this.lastStartTime) {
-			succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(), null);
-			succeed = this.hasPlan.compareAndSet(true, false);
-			succeed = this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), null);
-			succeed = this.deadlineTime.compareAndSet(this.deadlineTime.get(), null);
+		// if the program isn't running, we can cancel it
+		if (this.startTime.get() != null && this.startTime.get().isAfter(LocalTime.now())) {
+			synchronized (this.startTime) {
+				this.startTime.set(null);
+				this.endTime.set(null);
+				succeed = true;
+			}
 		}
 		Log.printAndLog(this, "cancel() service result : " + succeed);
 		return succeed;
@@ -450,14 +454,17 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) {
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) {
 		boolean succeed = false;
-		synchronized (this.lastStartTime) {
-			succeed = true;
-			succeed &= this.hasPlan.compareAndSet(false, true);
-			succeed &= this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), durationLastPlanned);
-			succeed &= this.deadlineTime.compareAndSet(this.deadlineTime.get(), deadline);
+		if (startTime.isAfter(LocalTime.now()) && endTime.isAfter(startTime)) {
+			synchronized (this.startTime) {
+				this.startTime.set(startTime);
+				this.endTime.set(endTime);
+				succeed = true;
+			}
 		}
+		Log.printAndLog(this, "planifyEvent(" + startTime + ", " + endTime + ") service result : " + succeed
+				+ ". startTime : " + this.startTime.get() + ", endTime : " + this.endTime.get());
 		return succeed;
 	}
 

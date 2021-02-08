@@ -123,9 +123,8 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryCI
 	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-		return this.getOwner()
-				.handleRequestSync(owner -> ((Battery) owner).planifyEvent(durationLastPlanned, deadline));
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Battery) owner).planifyEvent(startTime, endTime));
 	}
 
 }

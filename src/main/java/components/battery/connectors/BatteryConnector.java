@@ -107,8 +107,8 @@ public class BatteryConnector extends AbstractConnector implements BatteryCI {
 	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-		return ((BatteryCI) this.offering).planifyEvent(durationLastPlanned, deadline);
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception {
+		return ((BatteryCI) this.offering).planifyEvent(startTime, endTime);
 	}
 
 }

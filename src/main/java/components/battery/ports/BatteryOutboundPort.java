@@ -131,8 +131,8 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-		return ((BatteryCI) this.getConnector()).planifyEvent(durationLastPlanned, deadline);
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception {
+		return ((BatteryCI) this.getConnector()).planifyEvent(startTime, endTime);
 	}
 
 }

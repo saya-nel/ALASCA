@@ -86,5 +86,5 @@ public interface BatteryCI extends BatteryImplementationI, OfferedCI, RequiredCI
 	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception;
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception;
 }
