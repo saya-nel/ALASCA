@@ -5,6 +5,8 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,6 +32,7 @@ import main.java.components.washer.sil.events.SetStd;
 import main.java.components.washer.sil.events.TurnOff;
 import main.java.components.washer.sil.events.TurnOn;
 import main.java.components.washer.utils.WasherModes;
+import main.java.deployment.RunSILSimulation;
 import main.java.utils.Log;
 
 @OfferedInterfaces(offered = { WasherCI.class })
@@ -174,7 +177,6 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 				throw new ComponentStartException(e);
 			}
 		}
-
 		try {
 			if (cip_uri.length() > 0)
 				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
@@ -201,6 +203,39 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 		boolean isRegister = this.cop.register(this.serialNumber, wip.getPortURI(), xmlFile);
 		if (!isRegister)
 			throw new Exception("Washer can't register to controller");
+
+		Washer me = this;
+
+		class CheckProgram extends TimerTask {
+			@Override
+			public void run() {
+
+				try {
+					// if the washer is off and have a planified program that need to start, we
+					// start it
+					if (!isOn.get() && startTime.get() != null && startTime.get().isBefore(LocalTime.now())) {
+						isOn.set(true);
+						Log.printAndLog(me, "Washer is running.");
+						if (isSILSimulated)
+							simulateOperation(Operations.TURN_ON);
+					}
+					// if the washer have a planified program that is finish, we cancel it and turn
+					// the washer off
+					else if (startTime.get() != null && endTime.get().isBefore(LocalTime.now())) {
+						me.cancel();
+					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+
+		if (this.isSILSimulated) {
+			// wait the start of simulation and run CheckProgram
+			Thread.sleep(RunSILSimulation.DELAY_TO_START_SIMULATION);
+			Timer t = new Timer();
+			t.schedule(new CheckProgram(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
+		}
 	}
 
 	/**
@@ -270,10 +305,15 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	@Override
 	public boolean turnOn() throws Exception {
 		boolean succeed = false;
-		succeed = this.isOn.compareAndSet(false, true);
+		// if the washer have is off we create the default plan for now
+		if (!isOn.get()) {
+			planifyEvent(LocalTime.now(), LocalTime.now().plusMinutes(30));
+			succeed = true;
+		}
+
 		Log.printAndLog(this, "turnOn() service result : " + succeed);
 
-		if (this.isSILSimulated) {
+		if (this.isSILSimulated && succeed) {
 			this.simulateOperation(Operations.TURN_ON);
 		}
 
@@ -286,7 +326,11 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	@Override
 	public boolean turnOff() throws Exception {
 		boolean succeed = false;
-		succeed = this.isOn.compareAndSet(true, false);
+		// if the washer is running, we cancel the plan (that stop the washer)
+		if (isOn.get()) {
+			cancel();
+		}
+
 		Log.printAndLog(this, "turnOff() service result : " + succeed);
 
 		if (this.isSILSimulated) {
@@ -301,26 +345,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	 */
 	@Override
 	public boolean upMode() throws Exception {
-		boolean succeed = false;
-		switch (mode) {
-		case ECO:
-			mode = WasherModes.STD;
-			if (this.isSILSimulated)
-				simulateOperation(Operations.SET_STD);
-			succeed = true;
-			break;
-		case STD:
-			mode = WasherModes.PERFORMANCE;
-			if (this.isSILSimulated)
-				simulateOperation(Operations.SET_PERFORMANCE);
-			succeed = true;
-			break;
-		case PERFORMANCE:
-			succeed = false;
-			break;
-		default:
-			break;
-		}
+		boolean succeed = setMode(mode.ordinal() + 1);
 		Log.printAndLog(this, "upMode() service result : " + succeed + ", current mode : " + mode);
 		return succeed;
 	}
@@ -330,26 +355,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	 */
 	@Override
 	public boolean downMode() throws Exception {
-		boolean succeed = false;
-		switch (mode) {
-		case ECO:
-			succeed = false;
-			break;
-		case STD:
-			mode = WasherModes.ECO;
-			if (this.isSILSimulated)
-				simulateOperation(Operations.SET_ECO);
-			succeed = true;
-			break;
-		case PERFORMANCE:
-			mode = WasherModes.STD;
-			if (this.isSILSimulated)
-				simulateOperation(Operations.SET_STD);
-			succeed = true;
-			break;
-		default:
-			break;
-		}
+		boolean succeed = setMode(mode.ordinal() - 1);
 		Log.printAndLog(this, "downMode() service result : " + succeed + ", current mode : " + mode);
 		return succeed;
 	}
@@ -407,7 +413,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	 */
 	@Override
 	public boolean hasPlan() throws Exception {
-		boolean result = this.startTime.get() != null;
+		boolean result = this.startTime.get() != null && this.endTime.get() != null;
 		Log.printAndLog(this, "hasPlan() service result : " + result);
 		return result;
 	}
@@ -451,9 +457,17 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	@Override
 	public boolean postpone(Duration d) throws Exception {
 		boolean succeed = false;
+		// if the washer got a plan , we delay it and if the washer was running, we stop
+		// it
 		if (this.startTime.get() != null && this.endTime.get() != null) {
 			this.startTime.set((LocalTime) d.addTo(this.startTime.get()));
 			this.endTime.set((LocalTime) d.addTo(this.endTime.get()));
+			if (isOn.get()) {
+				Log.printAndLog(this, "Washer is stopping");
+				isOn.set(false);
+				if (isSILSimulated)
+					simulateOperation(Operations.TURN_OFF);
+			}
 			succeed = true;
 		}
 		Log.printAndLog(this, "postpone(" + d + ") service result : " + succeed);
@@ -466,11 +480,18 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	@Override
 	public boolean cancel() throws Exception {
 		boolean succeed = false;
-		// if the program isn't running, we can cancel it
-		if (this.startTime.get() != null && this.startTime.get().isAfter(LocalTime.now())) {
+		// if the washer got a plan we cancel it and if the washer was running, we stop
+		// it
+		if (this.startTime.get() != null && this.endTime.get() != null) {
 			synchronized (this.startTime) {
 				this.startTime.set(null);
 				this.endTime.set(null);
+				if (isOn.get()) {
+					Log.printAndLog(this, "Washer is stopping");
+					isOn.set(false);
+					if (isSILSimulated)
+						simulateOperation(Operations.TURN_OFF);
+				}
 				succeed = true;
 			}
 		}
@@ -485,7 +506,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	@Override
 	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) {
 		boolean succeed = false;
-		if (startTime.isAfter(LocalTime.now()) && endTime.isAfter(startTime)) {
+		if (endTime.isAfter(startTime)) {
 			synchronized (this.startTime) {
 				this.startTime.set(startTime);
 				this.endTime.set(endTime);

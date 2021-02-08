@@ -179,9 +179,25 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 			this.simulatorPlugin.startRTSimulation(System.currentTimeMillis() + 100, 0.0, 10.1);
 		}
 
+		Battery me = this;
+
 		class DecreaseEnergy extends TimerTask {
 			@Override
 			public void run() {
+
+				try {
+					// if the battery have a planified program that need to start, we start it
+					if (startTime.get() != null && startTime().isAfter(LocalTime.now())) {
+						setMode(BatteryState.RECHARGING.ordinal());
+					}
+					// if the battery have a planified program that is finish, we cancel it
+					else if (startTime.get() != null && deadline().isBefore(LocalTime.now())) {
+						me.cancel();
+					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+
 				if (operatingMode == BatteryState.DRAINING) {
 					batteryCharge -= (BatteryElectricalSILModel.DRAINING_MODE_PRODUCTION
 							/ BatteryElectricalSILModel.TENSION) / 3600;
@@ -270,26 +286,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	 */
 	@Override
 	public boolean upMode() throws Exception {
-		boolean succeed = false;
-		switch (operatingMode) {
-		case DRAINING:
-			operatingMode = BatteryState.SLEEPING;
-			if (isSILSimulated)
-				simulateOperation(Operations.SetRecharching);
-			succeed = true;
-			break;
-		case RECHARGING:
-			succeed = false;
-			break;
-		case SLEEPING:
-			succeed = true;
-			operatingMode = BatteryState.RECHARGING;
-			if (isSILSimulated)
-				simulateOperation(Operations.SetRecharching);
-			break;
-		default:
-			break;
-		}
+		boolean succeed = setMode(operatingMode.ordinal() + 1);
 		Log.printAndLog(this, "upMode() service result : " + succeed + ", current mode : " + operatingMode);
 		return succeed;
 	}
@@ -299,26 +296,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	 */
 	@Override
 	public boolean downMode() throws Exception {
-		boolean succeed = false;
-		switch (operatingMode) {
-		case DRAINING:
-			succeed = false;
-			break;
-		case RECHARGING:
-			succeed = true;
-			operatingMode = BatteryState.SLEEPING;
-			if (isSILSimulated)
-				simulateOperation(Operations.SetSleeping);
-			break;
-		case SLEEPING:
-			succeed = true;
-			operatingMode = BatteryState.DRAINING;
-			if (isSILSimulated)
-				simulateOperation(Operations.SetDraining);
-			break;
-		default:
-			break;
-		}
+		boolean succeed = setMode(operatingMode.ordinal() - 1);
 		Log.printAndLog(this, "downMode() service result : " + succeed + ", current mode : " + operatingMode);
 		return succeed;
 	}
@@ -331,7 +309,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 		boolean succeed = false;
 		switch (modeIndex) {
 		case 0:
-			if (operatingMode != BatteryState.DRAINING) {
+			if (operatingMode != BatteryState.DRAINING && batteryCharge > 0) {
 				succeed = true;
 				operatingMode = BatteryState.DRAINING;
 				if (isSILSimulated)
@@ -347,7 +325,7 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 			}
 			break;
 		case 2:
-			if (operatingMode != BatteryState.RECHARGING) {
+			if (operatingMode != BatteryState.RECHARGING && batteryCharge < maximumPowerLevel) {
 				succeed = true;
 				operatingMode = BatteryState.RECHARGING;
 				if (isSILSimulated)
