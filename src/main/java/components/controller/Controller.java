@@ -170,12 +170,16 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 			@Override
 			public void run() {
 				try {
+					if (!isStarted()) {
+						cancel();
+						throw new Exception();
+					}
+
 					Log.printAndLog(me, "controller, consommation " + eop.getIntensity());
 					Log.printAndLog(me, "controller, production " + eop.getProduction());
 
 					// faire des choses
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 		}
