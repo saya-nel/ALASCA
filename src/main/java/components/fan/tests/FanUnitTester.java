@@ -1,4 +1,4 @@
-package main.java.tests;
+package main.java.components.fan.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
