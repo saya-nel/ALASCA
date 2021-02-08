@@ -3,17 +3,24 @@ package main.java.components.fan.tests;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.fan.Fan;
+import main.java.components.fan.interfaces.FanCI;
 
+/**
+ * The class <code>CVMUnitTest</code> performs unit tests on the {@link Fan}
+ * component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class CVMUnitTest extends AbstractCVM {
 
 	/**
-	 * URI of the hair dryer inbound port offering the interface
-	 * <code>HairDryerCI</code>.
+	 * URI of the fan inbound port offering the interface {@link FanCI}
 	 */
 	protected final static String FAN_INBOUND_PORT_URI = "fip-URI";
 	/**
 	 * if true, the unit test is driven by the SIL simulation, otherwise it is
-	 * driven by the component <code>HairDryerUnitTester</code>.
+	 * driven by the component <code>FanUnitTester</code>.
 	 */
 	protected final static boolean SIL_UNIT_TEST = false;
 

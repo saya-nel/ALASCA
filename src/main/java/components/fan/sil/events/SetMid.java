@@ -7,20 +7,8 @@ import main.java.components.fan.sil.FanElectricalSILModel;
 import main.java.components.fan.utils.FanLevel;
 
 /**
- * The class <code>SetMid</code> defines the MIL event of the fan being set to
- * medium power mode.
- *
- * <p>
- * <strong>Description</strong>
- * </p>
- *
- * <p>
- * <strong>Invariant</strong>
- * </p>
- *
- * <pre>
- * invariant		true
- * </pre>
+ * The class <code>SetMid</code> defines the event of the fan being on Mid
+ * consumption mode
  *
  * @author Bello Memmi
  */
@@ -30,15 +18,6 @@ public class SetMid extends AbstractFanEvent {
 
 	/**
 	 * create a SetMid event.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	{@code timeOfOccurrence != null}
-	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
-	 * </pre>
 	 *
 	 * @param timeOfOccurrence time of occurrence of the event.
 	 */

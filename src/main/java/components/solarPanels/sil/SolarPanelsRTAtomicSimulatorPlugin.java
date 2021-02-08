@@ -13,6 +13,14 @@ import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor
 import fr.sorbonne_u.devs_simulation.models.architectures.RTAtomicModelDescriptor;
 import main.java.deployment.RunSILSimulation;
 
+/**
+ * The class <code>SolarPanelsRTAtomicSimulatorPlugin</code> extends the real
+ * time atomic model plug-in to add the necessary methods for the solar panels
+ * component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class SolarPanelsRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 
 	// -------------------------------------------------------------------------

@@ -15,6 +15,8 @@ import main.java.utils.FileLogger;
 
 /**
  * 
+ * The class <code>FanUser_MILModel</code> defines a user model for the fan
+ * 
  * @author Bello Memmi
  *
  */
@@ -48,20 +50,11 @@ public class FanUserSILModel extends AtomicModel {
 
 	/**
 	 * create a fan user SIL model instance.
-	 * 
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
 	 *
 	 * @param uri               URI of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation time.
 	 * @param simulationEngine  simulation engine to which the model is attached.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public FanUserSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);

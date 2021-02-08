@@ -18,8 +18,8 @@ import main.java.components.solarPanels.sil.events.TurnOn;
 import main.java.utils.FileLogger;
 
 /**
- * The class <code>HairDryerElectricalSILModel</code> defines a SIL model of the
- * electricity consumption of a hair dryer.
+ * The class <code>SolarPanelsElectricalSILModel</code> defines a SIL model of
+ * the electricity consumption of a solar panels
  * 
  * @author Bello Memmi
  *
@@ -60,7 +60,7 @@ public class SolarPanelsElectricalSILModel extends AtomicHIOA {
 	protected boolean isOn = true;
 
 	/**
-	 * True if the solar panels has changed is consumption mode
+	 * True if the solar panels has changed is consumption
 	 */
 	protected boolean consumptionHasChanged = true;
 

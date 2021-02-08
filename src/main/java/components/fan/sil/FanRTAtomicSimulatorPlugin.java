@@ -25,6 +25,13 @@ import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
 import main.java.deployment.RunSILSimulation;
 
+/**
+ * The class <code>FanRTAtomicSimulatorPlugin</code> extends the real time
+ * atomic model plug-in to add the necessary methods for the fan component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class FanRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 
 	// -------------------------------------------------------------------------
@@ -46,15 +53,6 @@ public class FanRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * .
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 * pre	{@code !simParams.containsKey(FanUserSILModel.FAN_REFERENCE_NAME)}
-	 * </pre>
-	 * 
 	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AbstractSimulatorPlugin#setSimulationRunParameters(java.util.Map)
 	 */
 	@Override

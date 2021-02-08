@@ -5,7 +5,8 @@ import main.java.components.fan.interfaces.FanCI;
 import main.java.components.fan.utils.FanLevel;
 
 /**
- * Connector for the FanCI component interface
+ * The class <code>FanConnector</code> implements a connector for the component
+ * interface <code>FanCI</code>.
  * 
  * @author Bello Memmi
  *

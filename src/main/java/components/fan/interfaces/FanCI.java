@@ -2,11 +2,13 @@ package main.java.components.fan.interfaces;
 
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
+import main.java.components.fan.Fan;
 import main.java.components.fan.utils.FanLevel;
 
 /**
  * 
- * Fan component interface
+ * The component interface <code>FanCI</code> defines the services a {@link Fan}
+ * component offers and that can be required from it.
  * 
  * @author Bello Memmi
  *

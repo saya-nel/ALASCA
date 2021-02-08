@@ -1,15 +1,21 @@
 package main.java.components.fan.interfaces;
 
+import main.java.components.fan.Fan;
 import main.java.components.fan.utils.FanLevel;
 
 /**
  * 
- * Fan services interface
+ * The interface <code>FanImplementationI</code> defines the service that must
+ * be implemented by the {@link Fan} component.
  * 
  * @author Bello Memmi
  *
  */
 public interface FanImplementationI {
+
+	// -------------------------------------------------------------------------
+	// Component services signatures
+	// -------------------------------------------------------------------------
 
 	/**
 	 * Turn on the fan

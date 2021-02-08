@@ -3,6 +3,7 @@ package main.java.components.solarPanels.tests;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.solarPanels.SolarPanels;
+import main.java.components.solarPanels.interfaces.SolarPanelsCI;
 
 /**
  * 
@@ -15,7 +16,7 @@ import main.java.components.solarPanels.SolarPanels;
 public class CVMUnitTest extends AbstractCVM {
 	/**
 	 * URI of the solar panels inbound port offering the interface
-	 * <code>HairDryerCI</code>.
+	 * {@link SolarPanelsCI}
 	 */
 	protected final static String SP_INBOUND_PORT_URI = "spip-URI";
 	/**

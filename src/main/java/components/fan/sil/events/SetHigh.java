@@ -7,20 +7,8 @@ import main.java.components.fan.sil.FanElectricalSILModel;
 import main.java.components.fan.utils.FanLevel;
 
 /**
- * The class <code>SetHigh</code> defines the MIL event of the fan being set to
- * high power mode.
- *
- * <p>
- * <strong>Description</strong>
- * </p>
- *
- * <p>
- * <strong>Invariant</strong>
- * </p>
- *
- * <pre>
- * invariant		true
- * </pre>
+ * The class <code>SetHigh</code> defines the event of the fan being on High
+ * consumption mode
  *
  * @author Bello Memmi
  */
@@ -31,14 +19,6 @@ public class SetHigh extends AbstractFanEvent {
 	/**
 	 * create a SetHigh event.
 	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	{@code timeOfOccurrence != null}
-	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
-	 * </pre>
 	 *
 	 * @param timeOfOccurrence time of occurrence of the event.
 	 */
@@ -68,7 +48,6 @@ public class SetHigh extends AbstractFanEvent {
 	@Override
 	public void executeOn(AtomicModel model) {
 		assert model instanceof FanElectricalSILModel;
-
 		FanElectricalSILModel m = (FanElectricalSILModel) model;
 		if (m.isOn() && m.getLevel() != FanLevel.HIGH) {
 			m.setLevel(FanLevel.HIGH);

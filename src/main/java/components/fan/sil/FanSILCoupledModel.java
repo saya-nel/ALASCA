@@ -13,6 +13,8 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
 /**
  * 
+ * Coupled model for the fan simulation
+ * 
  * @author Bello Memmi
  *
  */

@@ -17,6 +17,13 @@ import main.java.components.fan.sil.events.TurnOff;
 import main.java.components.fan.sil.events.TurnOn;
 import main.java.utils.FileLogger;
 
+/**
+ * The class <code>FanStateSILModel</code> defines a simulation model tracking
+ * the state changes on a fan
+ * 
+ * @author Bello Memmi
+ *
+ */
 @ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class }, exported = {
 		TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class })
 public class FanStateSILModel extends AtomicModel {
@@ -31,7 +38,7 @@ public class FanStateSILModel extends AtomicModel {
 	 */
 	public static final String URI = FanStateSILModel.class.getSimpleName();
 
-	/** the event that was received to change the state of the hair dryer. */
+	/** the event that was received to change the state of the fan */
 	protected EventI lastReceivedEvent;
 
 	/**
@@ -40,7 +47,7 @@ public class FanStateSILModel extends AtomicModel {
 	 * @param uri               unique identifier of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation clock.
 	 * @param simulationEngine  simulation engine enacting the model.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public FanStateSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);

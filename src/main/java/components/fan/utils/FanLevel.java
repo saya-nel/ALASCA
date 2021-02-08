@@ -1,8 +1,10 @@
 package main.java.components.fan.utils;
 
+import main.java.components.fan.Fan;
+
 /**
  * 
- * Represents fan power
+ * Represents {@link Fan} level power
  * 
  * @author Bello Memmi
  *

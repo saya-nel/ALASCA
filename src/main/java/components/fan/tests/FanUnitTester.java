@@ -15,7 +15,8 @@ import main.java.components.fan.utils.FanLevel;
 import main.java.utils.Log;
 
 /**
- * Tester for the Fan component
+ * The class <code>FanUnitTester</code> implements a component performing unit
+ * tests for the class <code>Fan</code> as a BCM component.
  * 
  * @author Bello Memmi
  *

@@ -8,7 +8,8 @@ import main.java.components.fan.utils.FanLevel;
 
 /**
  * 
- * Fan inbound port for Fan component interface
+ * The class <code>FanInboundPort</code> implements an inbound port for the
+ * component interface <code>FanCI</code>.
  * 
  * @author Bello Memmi
  *

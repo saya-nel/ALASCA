@@ -6,7 +6,6 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import fr.sorbonne_u.exceptions.PreconditionException;
 import main.java.components.fan.interfaces.FanCI;
 import main.java.components.fan.interfaces.FanImplementationI;
 import main.java.components.fan.ports.FanInboundPort;
@@ -21,8 +20,11 @@ import main.java.components.fan.sil.events.TurnOn;
 import main.java.components.fan.utils.FanLevel;
 
 /**
- * Class representing the Fan component
- * 
+ * The class <code>Fan</code> implements the fan component.
+ *
+ * The Fan have 3 modes of consumption and can be turned on on all these mods
+ * the consumption vary with the mode
+ *
  * @author Bello Memmi
  *
  */
@@ -64,7 +66,7 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	/**
 	 * Constructor of the fan
 	 * 
-	 * @param uri of the Fan component
+	 * @param fipURI uri of the fan component inbound port
 	 */
 	protected Fan(String fipURI, boolean isSILSimulated, boolean isUnitTest) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
@@ -78,29 +80,18 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 	/**
 	 * Initialise the fan component
 	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 *     pre 		{@code fanInboundPort != null}
-	 *     pre 		{@code !fanInboundPort.isEmpty()}
-	 *     post		{@code getFanLevel() == FanLevel.MID}
-	 *     post 	{@code isTurnedOn() == False}
-	 * </pre>
 	 * 
-	 * @param fanInboundPort
+	 * @param fipURI uri of the fan component inbound port
 	 * @throws Exception
 	 */
-	public void initialise(String fanInboundPort, boolean isSILSimulated, boolean isUnitTest) throws Exception {
-		assert fanInboundPort != null : new PreconditionException("fanInboundPort != null");
-		assert !fanInboundPort.isEmpty() : new PreconditionException("!fanInboundPort.isEmpty()");
-
-		this.currentLevel = FanLevel.MID;
-		this.isOn = false;
+	public void initialise(String fipURI, boolean isSILSimulated, boolean isUnitTest) throws Exception {
 		this.isSILSimulated = isSILSimulated;
 		this.isUnitTest = isUnitTest;
-		fip = new FanInboundPort(fanInboundPort, this);
+
+		this.isOn = false;
+		this.currentLevel = FanLevel.MID;
+
+		fip = new FanInboundPort(fipURI, this);
 		fip.publishPort();
 
 		this.tracer.get().setTitle("Fan component");
@@ -230,6 +221,12 @@ public class Fan extends AbstractCyPhyComponent implements FanImplementationI {
 		return currentLevel;
 	}
 
+	/**
+	 * Send the event associated with the operation to the simulation
+	 * 
+	 * @param op operation
+	 * @throws Exception
+	 */
 	protected void simulateOperation(Operations op) throws Exception {
 		switch (op) {
 		case TURN_ON:

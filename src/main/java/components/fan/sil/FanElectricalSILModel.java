@@ -21,6 +21,13 @@ import main.java.components.fan.sil.events.TurnOn;
 import main.java.components.fan.utils.FanLevel;
 import main.java.utils.FileLogger;
 
+/**
+ * The class <code>FanElectricalSILModel</code> defines a SIL model of the
+ * electricity consumption of a fan.
+ * 
+ * @author Bello Memmi
+ *
+ */
 @ModelExternalEvents(imported = { TurnOn.class, TurnOff.class, SetLow.class, SetMid.class, SetHigh.class })
 public class FanElectricalSILModel extends AtomicHIOA {
 
@@ -35,26 +42,39 @@ public class FanElectricalSILModel extends AtomicHIOA {
 	 */
 	public static final String URI = FanElectricalSILModel.class.getSimpleName();
 
-	/** energy generated during low mode in watts */
+	/**
+	 * energy consumption during low mode in watts
+	 */
 	public static final double LOW_MODE_CONSUMPTION = 20;
-	/** energy generated during medium mode in watts */
+	/**
+	 * energy consumption during medium mode in watts
+	 */
 	public static final double MID_MODE_CONSUMPTION = 40;
-	/** energy generated during high mode in watts */
+	/**
+	 * energy consumption during high mode in watts
+	 */
 	public static final double HIGH_MODE_CONSUMPTION = 60;
 
-	/** nominal tension (in Volts) of the hair dryer. */
+	/**
+	 * nominal tension (in Volts) of the hair dryer.
+	 */
 	public static final double TENSION = 220.0;
 
-	/** current intensity in Amperes; intensity is power/tension. */
+	/**
+	 * current intensity in Amperes; intensity is power/tension.
+	 */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
-	/** indicating whether the fan is on */
+	/**
+	 * indicating whether the fan is on
+	 */
 	protected boolean isOn = false;
-	/** current level of the Fan */
+	/**
+	 * current consumption level of the Fan
+	 */
 	protected FanLevel currentLevel = FanLevel.LOW;
 	/**
-	 * true when the electricity consumption of the battery has changed after
-	 * executing an external event (when <code>currentState</code> changes
+	 * True if the solar panels has changed is consumption
 	 */
 	protected boolean consumptionHasChanged = false;
 
@@ -115,10 +135,7 @@ public class FanElectricalSILModel extends AtomicHIOA {
 	}
 
 	/**
-	 * toggle the value of the state of the model telling whether the electricity
-	 * consumption level has just changed or not; when it changes after receiving an
-	 * external event, an immediate internal transition is triggered to update the
-	 * level of electricity consumption.
+	 * Change the consumptionHasChanged value to the negation of the actual value
 	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;

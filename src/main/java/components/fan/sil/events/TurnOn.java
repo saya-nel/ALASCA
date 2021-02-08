@@ -6,20 +6,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.components.fan.sil.FanElectricalSILModel;
 
 /**
- * The class <code>TurnOn</code> defines the MIL event of the fan being switched
- * on.
- *
- * <p>
- * <strong>Description</strong>
- * </p>
- *
- * <p>
- * <strong>Invariant</strong>
- * </p>
- *
- * <pre>
- * invariant		true
- * </pre>
+ * The class <code>TurnOff</code> defines the event of the fan being turned off
  *
  * @author Bello Memmi
  */
@@ -29,15 +16,6 @@ public class TurnOn extends AbstractFanEvent {
 
 	/**
 	 * create a TurnOn event.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	{@code timeOfOccurrence != null}
-	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
-	 * </pre>
 	 *
 	 * @param timeOfOccurrence time of occurrence of the event.
 	 */
