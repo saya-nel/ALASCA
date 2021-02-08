@@ -7,11 +7,15 @@ import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import main.java.components.electricMeter.interfaces.ElectricMeterCI;
 import main.java.components.electricMeter.interfaces.ElectricMeterImplementationI;
 import main.java.components.electricMeter.ports.ElectricMeterInboundPort;
+import main.java.components.electricMeter.sil.ElectricMeterRTAtomicSimulatorPlugin;
 import main.java.components.electricMeter.sil.ElectricMeterSILCoupledModel;
 import main.java.components.electricMeter.sil.ElectricMeterSILModel;
 
 /**
- * 
+ * The class <code>ElectricMeter</code> implements the electric meter component.
+ *
+ * The ElectricMeter can share the actual house energy production / consumption
+ *
  * @author Bello Memmi
  *
  */
@@ -22,14 +26,26 @@ public class ElectricMeter extends AbstractCyPhyComponent implements ElectricMet
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
+	/**
+	 * URI of the reflection inbound port of this component; works for singleton.
+	 */
 	public static final String REFLECTION_INBOUND_PORT_URI = "EMRIB-URI";
-	/** true if the component is executed for unit testing. */
+	/**
+	 * true if the component is executed for unit testing.
+	 */
 	protected boolean isUnitTesting;
-	/** the atomic simulator plug-in of the component. */
+	/**
+	 * the atomic simulator plug-in of the component.
+	 */
 	protected ElectricMeterRTAtomicSimulatorPlugin simulatorPlugin;
-	/** URI of the executor service used to perform the simulation. */
+	/**
+	 * URI of the executor service used to perform the simulation.
+	 */
 	protected static final String SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 
+	/**
+	 * uri of the inbound port for use electric meter services
+	 */
 	protected ElectricMeterInboundPort eip;
 
 	// -------------------------------------------------------------------------
@@ -39,6 +55,7 @@ public class ElectricMeter extends AbstractCyPhyComponent implements ElectricMet
 	/**
 	 * create the electric meter component.
 	 *
+	 * @param eipURI        uri of the inbound port
 	 * @param isUnitTesting true if the component is executed in unit testing.
 	 */
 	protected ElectricMeter(String eipURI, boolean isUnitTesting) throws Exception {
@@ -81,6 +98,9 @@ public class ElectricMeter extends AbstractCyPhyComponent implements ElectricMet
 		}
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
+	 */
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
 		try {
@@ -91,6 +111,9 @@ public class ElectricMeter extends AbstractCyPhyComponent implements ElectricMet
 		super.shutdown();
 	}
 
+	/**
+	 * @see main.java.components.electricMeter.interfaces.ElectricMeterImplementationI#getProduction()
+	 */
 	@Override
 	public double getProduction() throws Exception {
 		double currentProduction = (double) this.simulatorPlugin.getModelStateValue(ElectricMeterSILModel.URI,
@@ -98,6 +121,9 @@ public class ElectricMeter extends AbstractCyPhyComponent implements ElectricMet
 		return currentProduction;
 	}
 
+	/**
+	 * @see main.java.components.electricMeter.interfaces.ElectricMeterImplementationI#getIntensity()
+	 */
 	@Override
 	public double getIntensity() throws Exception {
 		double currentIntensity = (double) this.simulatorPlugin.getModelStateValue(ElectricMeterSILModel.URI,

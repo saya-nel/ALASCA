@@ -1,4 +1,4 @@
-package main.java.components.electricMeter;
+package main.java.components.electricMeter.sil;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,8 +22,6 @@ import main.java.components.battery.sil.BatteryElectricalSILModel;
 import main.java.components.battery.sil.events.SetDraining;
 import main.java.components.battery.sil.events.SetRecharging;
 import main.java.components.battery.sil.events.SetSleeping;
-import main.java.components.electricMeter.sil.ElectricMeterSILCoupledModel;
-import main.java.components.electricMeter.sil.ElectricMeterSILModel;
 import main.java.components.fan.sil.FanElectricalSILModel;
 import main.java.components.fan.sil.FanUserSILModel;
 import main.java.components.fan.sil.events.SetHigh;
@@ -45,6 +43,9 @@ import main.java.components.washer.sil.WasherUserSILModel;
 import main.java.deployment.RunSILSimulation;
 
 /**
+ * The class <code>ElectricMeterRTAtomicSimulatorPlugin</code> extends the real
+ * time atomic model plug-in to add the necessary methods for the electric meter
+ * component.
  * 
  * @author Bello Memmi
  *
@@ -63,8 +64,6 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 	public static final String INTENSITY_VARIABLE_NAME = "intensity";
 	public static final String PRODUCTION_VARIABLE_NAME = "production";
 
-	public static String uri;
-
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
@@ -73,7 +72,6 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 	 * create the plug-in.
 	 */
 	public ElectricMeterRTAtomicSimulatorPlugin() {
-		uri = this.getPluginURI();
 	}
 
 	// -------------------------------------------------------------------------
@@ -116,10 +114,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		// The only model in this example that provides access to some value
 		// is the ElectricMeterSILModel.
 		assert m instanceof ElectricMeterSILModel;
-		// The only variable that can be accessed is the intensity.
 		assert name.equals(INTENSITY_VARIABLE_NAME) || name.equals(PRODUCTION_VARIABLE_NAME);
-
-		System.out.println("VARIABLE NAME " + name);
 
 		if (name.equals(INTENSITY_VARIABLE_NAME)) {
 			return ((ElectricMeterSILModel) m).getIntensity();

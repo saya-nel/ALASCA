@@ -13,8 +13,15 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
+import main.java.components.electricMeter.ElectricMeter;
 import main.java.utils.FileLogger;
 
+/**
+ * SIL model for the {@link ElectricMeter} component
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class ElectricMeterSILModel extends AtomicHIOA {
 
 	// -------------------------------------------------------------------------
@@ -27,9 +34,13 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	 */
 	public static final String URI = ElectricMeterSILModel.class.getSimpleName();
 
-	/** URI of the variable pointing to the electric meter component. */
+	/**
+	 * URI of the variable pointing to the electric meter component.
+	 */
 	public static final String ELECTRIC_METER_REFERENCE_NAME = URI + ":EMRN";
-	/** owner component. */
+	/**
+	 * owner component.
+	 */
 	protected ComponentI owner;
 
 	/**
@@ -44,7 +55,9 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	 */
 	protected final Duration standardStep;
 
-	/** current intensity in amperes; intensity is power/tension. */
+	/**
+	 * current intensity in amperes; intensity is power/tension.
+	 */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
 	/**
@@ -68,7 +81,9 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	@ImportedVariable(type = Double.class)
 	protected Value<Double> FridgeIntensity;
 
-	/** current production in amperes; production is power/tension. */
+	/**
+	 * current production in amperes; production is power/tension.
+	 */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentProduction = new Value<Double>(this, 0.0, 0);
 	/**
@@ -102,7 +117,7 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create a new panel model instance.
+	 * create a new electric model instance.
 	 *
 	 * @param uri               URI of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation time.
@@ -173,7 +188,6 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	@Override
 	public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception {
 		this.owner = (ComponentI) simParams.get(ELECTRIC_METER_REFERENCE_NAME);
-//		this.setLogger(new StandardComponentLogger(this.owner));
 		this.setLogger(new FileLogger("electricMeter.log"));
 		super.setSimulationRunParameters(simParams);
 	}

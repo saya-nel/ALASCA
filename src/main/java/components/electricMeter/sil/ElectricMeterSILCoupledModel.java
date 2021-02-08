@@ -14,6 +14,13 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
+/**
+ * 
+ * Coupled model for the electric meter simulation
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class ElectricMeterSILCoupledModel extends CoupledModel {
 
 	// -------------------------------------------------------------------------
@@ -46,7 +53,7 @@ public class ElectricMeterSILCoupledModel extends CoupledModel {
 	 *                          by the coupled model.
 	 * @param bindings          bindings between exported and imported variables
 	 *                          among submodels.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public ElectricMeterSILCoupledModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine,
 			ModelDescriptionI[] submodels, Map<Class<? extends EventI>, EventSink[]> imported,
