@@ -92,7 +92,7 @@ public class Fridge extends AbstractCyPhyComponent
 
 	public final static double FREEZE_TRANSFER_CONSTANT = 1000;
 
-	public final static double TRANSFER_OUTSIDE_CONSTANT = 100;
+	public final static double TRANSFER_OUTSIDE_CONSTANT = 10000;
 
 	protected Fridge(String serialNumber, String cip_URI, boolean isSILSimulated) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);

@@ -52,9 +52,9 @@ public class FridgeReactiveController extends AbstractComponent {
 	/** true if the fridge is in passive mode not freezing */
 	protected boolean isPassive;
 	/** period of the reactive controller */
-	protected static final long CONTROL_PERIOD = 10000L;
+	protected static final long CONTROL_PERIOD = 1000L;
 	/** total number of control loop executions (for testing purposes). */
-	protected static final int TOTAL_LOOPS = 10;
+	protected static final int TOTAL_LOOPS = 10000;
 	/** number of control loops executed so far */
 	protected int numberOfLoops;
 
@@ -204,7 +204,9 @@ public class FridgeReactiveController extends AbstractComponent {
 				this.logMessage("Fridge reactive controller starts freezing.");
 				this.actuatorOBP.stopPassive();
 				this.isPassive = false;
+				System.out.println("Fridge reactive controller start freezing");
 			} else {
+				System.out.println("fridge reactive controller does not freezing");
 				this.logMessage("Fridge reactive controller does not freezing.");
 			}
 		}

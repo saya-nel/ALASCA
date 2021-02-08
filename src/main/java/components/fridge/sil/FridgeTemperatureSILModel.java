@@ -60,7 +60,7 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 
 	/** the current content temperature. */
 	@InternalVariable(type = Double.class)
-	protected final Value<Double> contentTemperature = new Value<Double>(this, 1.1, 0);
+	protected final Value<Double> contentTemperature = new Value<Double>(this, 6., 0);
 	/** the current derivative of the water temperature. */
 	protected double currentTempDerivative = 0.0;
 
@@ -173,14 +173,14 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 		this.currentTempDerivative = 0.0;
 		try {
 			if (!this.owner.suspended()) {
-				// the heating contribution: temperature difference between the
-				// plate and the water divided by the heat transfer constant
+				// the freezing contribution: temperature difference between the
+				// evaporator and the fridge content divided by the cold transfer constant
 				if (this.owner.getMode() == FridgeMode.NORMAL) {
 					this.currentTempDerivative = (Fridge.STANDARD_FREEZE_TEMP - this.contentTemperature.v)
 							/ Fridge.FREEZE_TRANSFER_CONSTANT;
 				} else {
 					this.currentTempDerivative = (Fridge.ECO_FREEZE_TEMP - this.contentTemperature.v)
-							/ Fridge.FREEZE_TRANSFER_CONSTANT;
+							/ Fridge.TRANSFER_OUTSIDE_CONSTANT;
 				}
 			}
 		} catch (Exception e) {
