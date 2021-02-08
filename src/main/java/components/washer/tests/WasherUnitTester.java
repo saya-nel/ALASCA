@@ -17,7 +17,8 @@ import main.java.components.washer.ports.WasherOutboundPort;
 import main.java.utils.Log;
 
 /**
- * Tester for the Washer component
+ * The class <code>WasherUnitTester</code> implements a component performing
+ * unit tests for the class <code>Washer</code> as a BCM component.
  * 
  * @author Bello Memmi
  *
@@ -35,11 +36,23 @@ public class WasherUnitTester extends AbstractComponent {
 	 */
 	protected String wipURI;
 
+	/**
+	 * WasherUnitTester constructor
+	 * 
+	 * @param wipURI washer inbound port uri to connect to
+	 * @throws Exception
+	 */
 	protected WasherUnitTester(String wipURI) throws Exception {
 		super(1, 0);
 		this.initialise(wipURI);
 	}
 
+	/**
+	 * initialise the component
+	 * 
+	 * @param wipURI washer inbound port uri to connect to
+	 * @throws Exception
+	 */
 	private void initialise(String wipURI) throws Exception {
 		this.wipURI = wipURI;
 		this.wop = new WasherOutboundPort(this);
@@ -102,6 +115,9 @@ public class WasherUnitTester extends AbstractComponent {
 	// TESTS
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Test the isTurnedOn method
+	 */
 	public void testIsTurnedOn() {
 		Log.printAndLog(this, "testOn()");
 		try {
@@ -114,6 +130,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the turnOn method
+	 */
 	public void testTurnOn() {
 		Log.printAndLog(this, "testOn()");
 		try {
@@ -125,6 +144,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the turnOff method
+	 */
 	public void testTurnOff() {
 		Log.printAndLog(this, "testOff()");
 		try {
@@ -136,6 +158,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the setProgramTemperature method
+	 */
 	public void testSetProgramTemperature() {
 		Log.printAndLog(this, "testSetProgramTemperature()");
 		try {
@@ -147,6 +172,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the getProgramTemperature method
+	 */
 	public void testGetProgramTemperature() {
 		Log.printAndLog(this, "testGetProgramTemperature()");
 		try {
@@ -158,6 +186,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the upMode method
+	 */
 	public void testUpMode() {
 		Log.printAndLog(this, "testUpMode()");
 		try {
@@ -170,6 +201,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the downMode method
+	 */
 	public void testDownMode() {
 		Log.printAndLog(this, "testDownMode()");
 		try {
@@ -182,6 +216,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the setMode method
+	 */
 	public void testSetMode() {
 		Log.printAndLog(this, "testSetMode()");
 		try {
@@ -193,6 +230,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the hasPlan method
+	 */
 	public void testHasPlan() {
 		Log.printAndLog(this, "testHasPlan()");
 		try {
@@ -206,6 +246,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the startTime method
+	 */
 	public void testStartTime() {
 		Log.printAndLog(this, "testStartTime()");
 		try {
@@ -219,6 +262,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the duration method
+	 */
 	public void testDuration() {
 		Log.printAndLog(this, "testDuration");
 		try {
@@ -232,6 +278,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the deadline method
+	 */
 	public void testDeadline() {
 		Log.printAndLog(this, "testDeadline");
 		try {
@@ -245,6 +294,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the postpone method
+	 */
 	public void testPostpone() {
 		Log.printAndLog(this, "testPostpone");
 		try {
@@ -260,6 +312,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the cancel method
+	 */
 	public void testCancel() {
 		Log.printAndLog(this, "testCancel()");
 		try {
@@ -275,6 +330,9 @@ public class WasherUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the planifyEvent method
+	 */
 	public void testPlanifyEvent() {
 		Log.printAndLog(this, "testPlanifyEvent()");
 		try {

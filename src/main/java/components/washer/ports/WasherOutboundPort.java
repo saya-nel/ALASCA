@@ -8,9 +8,9 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.components.washer.interfaces.WasherCI;
 
 /**
- *
- * Outbound port for the washer component interface
- *
+ * The class <code>WasherOutboundPort</code> implements an outbound port for the
+ * component interface <code>WasherCI</code>.
+ * 
  * @author Bello Memmi
  *
  */

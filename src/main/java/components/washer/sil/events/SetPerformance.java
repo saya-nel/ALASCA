@@ -6,10 +6,21 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.components.washer.sil.WasherElectricalSILModel;
 import main.java.components.washer.utils.WasherModes;
 
+/**
+ * The class <code>SetPerformance</code> defines the event of the washer being
+ * on performance mode
+ *
+ * @author Bello Memmi
+ */
 public class SetPerformance extends AbstractWasherEvent {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * create a SetPerformance event
+	 *
+	 * @param timeOfOccurrence time of occurrence of the event.
+	 */
 	public SetPerformance(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}

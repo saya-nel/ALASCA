@@ -25,6 +25,13 @@ import main.java.components.washer.sil.events.TurnOff;
 import main.java.components.washer.sil.events.TurnOn;
 import main.java.deployment.RunSILSimulation;
 
+/**
+ * The class <code>WasherRTAtomicSimulatorPlugin</code> extends the real time
+ * atomic model plug-in to add the necessary methods for the washer component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class WasherRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 
 	// -------------------------------------------------------------------------
@@ -46,14 +53,6 @@ public class WasherRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * .
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 * pre	{@code !simParams.containsKey(FanUserSILModel.FAN_REFERENCE_NAME)}
-	 * </pre>
 	 * 
 	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AbstractSimulatorPlugin#setSimulationRunParameters(java.util.Map)
 	 */
@@ -64,10 +63,10 @@ public class WasherRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	}
 
 	/**
-	 * initialise the local simulation architecture for the fan component.
+	 * initialise the local simulation architecture for the washer component.
 	 *
 	 * @param isUnitTest true if the component is under unit test.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public void initialiseSimulationArchitecture(boolean isUnitTest) throws Exception {
 		this.isUnitTest = isUnitTest;

@@ -17,6 +17,13 @@ import main.java.components.washer.sil.events.TurnOff;
 import main.java.components.washer.sil.events.TurnOn;
 import main.java.utils.FileLogger;
 
+/**
+ * The class <code>WasherStateSILModel</code> defines a simulation model
+ * tracking the state changes on a washer
+ * 
+ * @author Bello Memmi
+ *
+ */
 @ModelExternalEvents(imported = { SetEco.class, SetPerformance.class, SetStd.class, TurnOn.class,
 		TurnOff.class }, exported = { SetEco.class, SetPerformance.class, SetStd.class, TurnOn.class, TurnOff.class })
 public class WasherStateSILModel extends AtomicModel {
@@ -31,16 +38,18 @@ public class WasherStateSILModel extends AtomicModel {
 	 */
 	public static final String URI = WasherStateSILModel.class.getSimpleName();
 
-	/** the event that was received to change the state of the hair dryer. */
+	/**
+	 * the event that was received to change the state of the washer
+	 */
 	protected EventI lastReceivedEvent;
 
 	/**
-	 * create an instance of fan state SIL simulation model.
+	 * create an instance of washer state SIL simulation model.
 	 * 
 	 * @param uri               unique identifier of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation clock.
 	 * @param simulationEngine  simulation engine enacting the model.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public WasherStateSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);

@@ -21,6 +21,13 @@ import main.java.components.washer.sil.events.TurnOn;
 import main.java.components.washer.utils.WasherModes;
 import main.java.utils.FileLogger;
 
+/**
+ * The class <code>WasherElectricalSILModel</code> defines a SIL model of the
+ * electricity consumption of a washer.
+ * 
+ * @author Bello Memmi
+ *
+ */
 @ModelExternalEvents(imported = { SetEco.class, SetPerformance.class, SetStd.class, TurnOn.class, TurnOff.class })
 public class WasherElectricalSILModel extends AtomicHIOA {
 
@@ -35,20 +42,34 @@ public class WasherElectricalSILModel extends AtomicHIOA {
 	 */
 	public static final String URI = WasherElectricalSILModel.class.getSimpleName();
 
-	/** energy generated during eco mode */
+	/**
+	 * energy generated during eco mode in watts
+	 */
 	public static final double ECO_MODE_CONSUMPTION = 20;
-	/** energy generated during standard mode */
+	/**
+	 * energy generated during standard mode in watts
+	 */
 	public static final double STD_MODE_CONSUMPTION = 22;
-	/** energy generated during performance mode */
+	/**
+	 * energy generated during performance mode in watts
+	 */
 	public static final double PERFORMANCE_MODE_CONSUMPTION = 23;
-	/** tension same for all the house */
+	/**
+	 * tension in volts
+	 */
 	public static final double TENSION = 15;
-	/** current intensity in Amperes; intensity is power/tension. */
+	/**
+	 * current intensity in Amperes; intensity is power/tension.
+	 */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentIntensity = new Value<Double>(this, 0.0, 0);
-	/** indicates whether the washer is on or not */
+	/**
+	 * indicates whether the washer is on or not
+	 */
 	protected boolean isOn;
-	/** current state of the washer */
+	/**
+	 * current state of the washer
+	 */
 	protected WasherModes currentMode = WasherModes.ECO;
 	/**
 	 * true when the electricity consumption of the washer has changed after
@@ -110,10 +131,7 @@ public class WasherElectricalSILModel extends AtomicHIOA {
 	}
 
 	/**
-	 * toggle the value of the state of the model telling whether the electricity
-	 * consumption level has just changed or not; when it changes after receiving an
-	 * external event, an immediate internal transition is triggered to update the
-	 * level of electricity consumption.
+	 * Change the consumptionHasChanged value to the negation of the actual value
 	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
@@ -135,11 +153,17 @@ public class WasherElectricalSILModel extends AtomicHIOA {
 		super.initialiseVariables(startTime);
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
+	 */
 	@Override
 	public ArrayList<EventI> output() {
 		return null;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
+	 */
 	@Override
 	public Duration timeAdvance() {
 		if (this.consumptionHasChanged) {

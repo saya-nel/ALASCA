@@ -6,10 +6,21 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.components.washer.sil.WasherElectricalSILModel;
 import main.java.components.washer.utils.WasherModes;
 
+/**
+ * The class <code>SetStd</code> defines the event of the washer being on
+ * standard mode
+ *
+ * @author Bello Memmi
+ */
 public class SetStd extends AbstractWasherEvent {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * create a SetStd event.
+	 *
+	 * @param timeOfOccurrence time of occurrence of the event.
+	 */
 	public SetStd(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}

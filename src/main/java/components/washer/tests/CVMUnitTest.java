@@ -4,15 +4,21 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.washer.Washer;
 
+/**
+ * The class <code>CVMUnitTest</code> performs unit tests on the {@link Washer}
+ * component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class CVMUnitTest extends AbstractCVM {
 	/**
-	 * URI of the washer inbound port offering the interface
-	 * <code>HairDryerCI</code>.
+	 * URI of the washer inbound port offering the interface <code>WasherCI</code>.
 	 */
 	protected final static String WASHER_INBOUND_PORT_URI = "wdip-URI";
 	/**
 	 * if true, the unit test is driven by the SIL simulation, otherwise it is
-	 * driven by the component <code>HairDryerUnitTester</code>.
+	 * driven by the component <code>WasherUnitTester</code>.
 	 */
 	protected final static boolean SIL_UNIT_TEST = false;
 

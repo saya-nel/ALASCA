@@ -9,8 +9,10 @@ import main.java.components.washer.Washer;
 import main.java.components.washer.interfaces.WasherCI;
 
 /**
- * inbound port for the washer component interface
- *
+ * 
+ * The class <code>WasherInboundPort</code> implements an inbound port for the
+ * component interface <code>WasherCI</code>.
+ * 
  * @author Bello Memmi
  *
  */

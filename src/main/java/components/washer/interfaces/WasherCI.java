@@ -5,11 +5,13 @@ import java.time.LocalTime;
 
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
+import main.java.components.washer.Washer;
 
 /**
- *
- * Washer component interface
- *
+ * 
+ * The component interface <code>WasherCI</code> defines the services a
+ * {@link Washer} component offers and that can be required from it.
+ * 
  * @author Bello Memmi
  *
  */
@@ -105,6 +107,10 @@ public interface WasherCI extends WasherImplementationI, RequiredCI, OfferedCI {
 	@Override
 	public boolean cancel() throws Exception;
 
+	/**
+	 * @see main.java.components.washer.interfaces.WasherImplementationI#planifyEvent(LocalTime,
+	 *      LocalTime)
+	 */
 	@Override
 	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception;
 }

@@ -7,8 +7,9 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 import main.java.components.washer.interfaces.WasherCI;
 
 /**
- * Connector for the WasherCI component interface
- * 
+ * The class <code>WasherConnector</code> implements a connector for the
+ * component interface <code>WasherCI</code>.
+ *
  * @author Bello Memmi
  *
  */

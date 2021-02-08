@@ -13,6 +13,13 @@ import main.java.components.washer.Washer;
 import main.java.components.washer.utils.WasherModes;
 import main.java.utils.FileLogger;
 
+/**
+ * 
+ * The class <code>WasherUserSILModel</code> defines a user model for the washer
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class WasherUserSILModel extends AtomicModel {
 
 	private static final long serialVersionUID = 1L;
@@ -22,11 +29,17 @@ public class WasherUserSILModel extends AtomicModel {
 	 */
 	public static final String URI = WasherUserSILModel.class.getSimpleName();
 
-	/** time interval between event outputs. */
+	/**
+	 * time interval between event outputs.
+	 */
 	protected static final double STEP = 60 * 60 * 4; // 4 hours
-	/** the current event being output. */
+	/**
+	 * the current event being output.
+	 */
 	protected Washer.Operations currentOperation;
-	/** time interval between event outputs. */
+	/**
+	 * time interval between event outputs.
+	 */
 	protected Duration time2next;
 
 	/**
@@ -42,16 +55,7 @@ public class WasherUserSILModel extends AtomicModel {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create a fan user SIL model instance.
-	 * 
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
+	 * create a washer user SIL model instance.
 	 *
 	 * @param uri               URI of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation time.

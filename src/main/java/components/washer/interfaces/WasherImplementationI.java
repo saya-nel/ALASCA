@@ -3,10 +3,13 @@ package main.java.components.washer.interfaces;
 import java.time.Duration;
 import java.time.LocalTime;
 
+import main.java.components.washer.Washer;
+
 /**
- *
- * Washer services interfaces
- *
+ * 
+ * The interface <code>WasherImplementationI</code> defines the service that
+ * must be implemented by the {@link Washer} component.
+ * 
  * @author Bello Memmi
  *
  */
@@ -33,6 +36,16 @@ public interface WasherImplementationI {
 	 * @throws Exception
 	 */
 	public int getProgramTemperature() throws Exception;
+
+	/**
+	 * Add an event
+	 * 
+	 * @param startTime time to start washing
+	 * @param endTime   time to end washing
+	 * @return true if success
+	 * @throws Exception
+	 */
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception;
 
 	/*
 	 * 
@@ -106,21 +119,4 @@ public interface WasherImplementationI {
 	 */
 	public boolean cancel() throws Exception;
 
-	/**
-	 *
-	 *
-	 * Planify
-	 *
-	 *
-	 */
-
-	/**
-	 * Add an event
-	 * 
-	 * @param durationLastPlanned duration of program
-	 * @param deadline            deadline of program
-	 * @return true if success
-	 * @throws Exception
-	 */
-	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception;
 }

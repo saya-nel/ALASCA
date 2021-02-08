@@ -16,7 +16,6 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import fr.sorbonne_u.exceptions.PreconditionException;
 import main.java.components.controller.connectors.ControllerConnector;
 import main.java.components.controller.interfaces.ControllerCI;
 import main.java.components.controller.ports.ControllerOutboundPort;
@@ -35,6 +34,16 @@ import main.java.components.washer.utils.WasherModes;
 import main.java.deployment.RunSILSimulation;
 import main.java.utils.Log;
 
+/**
+ * The class <code>Washer</code> implements the washercomponent.
+ *
+ * The washer can be in 3 differents states : eco, std and performance the
+ * washing task are planified the washer automaticly turn on when a task need to
+ * start and turn off when he finish to washing
+ * 
+ * @author Bello Memmi
+ *
+ */
 @OfferedInterfaces(offered = { WasherCI.class })
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Washer extends AbstractCyPhyComponent implements WasherImplementationI {
@@ -48,9 +57,13 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	 */
 	public static final String REFLECTION_INBOUND_PORT_URI = "Washer-ibp-uri";
 
-	/** true if the component is executed in a SIL simulation mode. */
+	/**
+	 * true if the component is executed in a SIL simulation mode.
+	 */
 	protected boolean isSILSimulated;
-	/** true if the component is under unit test. */
+	/**
+	 * true if the component is under unit test.
+	 */
 	protected boolean isUnitTest;
 
 	protected WasherRTAtomicSimulatorPlugin simulatorPlugin;
@@ -72,7 +85,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	protected AtomicInteger programTemperature;
 
 	/**
-	 * mode currently used 0 ECO 1 STD 2 PERFORMANCE
+	 * mode currently used
 	 */
 	protected WasherModes mode;
 
@@ -102,7 +115,8 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	protected AtomicReference<LocalTime> endTime;
 
 	/**
-	 *
+	 * Constructor of washer
+	 * 
 	 * @param reflectionPortURI
 	 * @param serialNumber      serial number of Washer component
 	 * @param wipURI            inbound port's URI of Washer
@@ -130,24 +144,19 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	// -------------------------------------------------------------------------
 
 	/**
-	 * <pre>
-	 *     pre      {@code washerInboundPortURI != null}
-	 *     pre      {@code washerInboundPortURI.isEmpty()}
-	 *     post     {@code getStateWasher == false }
-	 *     post     {@code getTemperatureOperating == 0}
-	 * </pre>
 	 * 
-	 * @param washerInboundPortURI
+	 * initialise the washer component
+	 * 
+	 * @param washerInboundPortURI uri of the washer inbound port
 	 * @throws Exception
 	 */
 	protected void initialise(String washerInboundPortURI) throws Exception {
-		assert washerInboundPortURI != null : new PreconditionException("washerInboundPortUri != null");
-		assert !washerInboundPortURI.isEmpty() : new PreconditionException("washerInboundPortURI.isEmpty()");
 		this.mode = WasherModes.ECO;
 		this.isOn = new AtomicBoolean(false);
 		this.programTemperature = new AtomicInteger(30);
 		this.startTime = new AtomicReference<>(null);
 		this.endTime = new AtomicReference<>(null);
+
 		this.wip = new WasherInboundPort(washerInboundPortURI, this);
 		this.wip.publishPort();
 		this.cop = new ControllerOutboundPort(this);
@@ -177,6 +186,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 				throw new ComponentStartException(e);
 			}
 		}
+		// connect to controller, isn't triggered for unit tests
 		try {
 			if (cip_uri.length() > 0)
 				this.doPortConnection(this.cop.getPortURI(), this.cip_uri,
@@ -187,6 +197,10 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
+	 * Run a task every second that : - Run the washer if a planified wash need to
+	 * be launch - Stop run the washer if a planified wash is ending
+	 * 
+	 * 
 	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
 	 */
 	@Override
@@ -198,6 +212,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 			this.simulatorPlugin.startRTSimulation(System.currentTimeMillis() + 100, 0.0, 10.1);
 		}
 
+		// connect to the controller, not triggered for unit test
 		if (this.cip_uri.length() > 0) {
 			byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/washer-control.xml"));
 			String xmlFile = new String(encoded, "UTF-8");
@@ -305,6 +320,10 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
+	 * The turn on method dont run the washer, a planified wash is created for now
+	 * during 30 minutes the wash is launched by execute() if you need to create a
+	 * personalised wash, use others services
+	 * 
 	 * @see main.java.components.washer.interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
@@ -480,6 +499,8 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
+	 * cancel an event and turn the washer off if he was running
+	 * 
 	 * @see main.java.components.battery.interfaces.BatteryImplementationI#cancel()
 	 */
 	@Override
@@ -523,6 +544,12 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 		return succeed;
 	}
 
+	/**
+	 * Send the event associated with the operation to the simulation
+	 * 
+	 * @param op operation
+	 * @throws Exception
+	 */
 	protected void simulateOperation(Operations op) throws Exception {
 		switch (op) {
 		case TURN_ON:
