@@ -2,10 +2,9 @@ package main.java.components.controller;
 
 import java.io.StringReader;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -51,6 +50,12 @@ import main.java.utils.Log;
 		PlanningEquipmentControlCI.class, ElectricMeterCI.class })
 public class Controller extends AbstractCyPhyComponent implements ControllerImplementationI {
 
+
+	/**
+	 * postpone duration step
+	 */
+	public static final int POSTPONE_DURATION = 2;
+
 	/**
 	 * URI of the reflection inbound port of this component; works for singleton.
 	 */
@@ -82,6 +87,9 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 
 	public static final String REGISTERING_POOL = "registering-pool";
 
+	public static int countChangeMode = 0;
+
+	public static double lastRatio = 1;
 	protected Controller(String cipURI, String eipURI) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
 
@@ -157,23 +165,82 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		}
 		super.shutdown();
 	}
-
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
 	 */
 	@Override
-	public synchronized void execute() throws Exception {
+	public void execute() throws Exception {
 
 		ComponentI me = this;
-
 		class RunControl extends TimerTask {
 			@Override
-			public void run() {
+			public synchronized void run() {
 				try {
-					Log.printAndLog(me, "controller, consommation " + eop.getIntensity());
-					Log.printAndLog(me, "controller, production " + eop.getProduction());
-
+					double prod = eop.getProduction();
+					double cons = eop.getIntensity();
+//					Log.printAndLog(me, "controller, consommation " + cons);
+//					Log.printAndLog(me, "controller, production " + prod);
 					// faire des choses
+					double ratio = cons/prod;
+					Log.printAndLog(me, "ratio conso/prod "+ratio);
+					// more production than consumption
+					if(ratio<1){
+						if(lastRatio>=1){
+							//ratio changed so cpt of up and down mode set to 0
+							countChangeMode=0;
+						}
+						if(countChangeMode==0|| countChangeMode==1){
+							//upper consumption mode
+							for (StandardEquipmentControlOutboundPort stecop : stecops)
+								stecop.upMode();
+						}
+						else if(countChangeMode>=2){
+							for (StandardEquipmentControlOutboundPort stecop : stecops)
+								stecop.upMode();
+							for (PlanningEquipmentControlOutboundPort plecop : plecops)
+								plecop.upMode();
+							for (SuspensionEquipmentControlOutboundPort suecop : suecops)
+								suecop.upMode();
+						}
+						countChangeMode++;
+					}
+					// more consumption than production
+					else if(ratio>1){
+						if(lastRatio<=1){
+							countChangeMode=0;
+						}
+						// lower consumption mode
+						if(countChangeMode==0 || countChangeMode==-1){
+							for (StandardEquipmentControlOutboundPort stecop : stecops)
+								stecop.downMode();
+						}
+						else if(countChangeMode<=-2){
+							for (StandardEquipmentControlOutboundPort stecop : stecops)
+								stecop.downMode();
+							for (PlanningEquipmentControlOutboundPort plecop : plecops)
+								plecop.downMode();
+							for (SuspensionEquipmentControlOutboundPort suecop : suecops) {
+								suecop.downMode();
+								if(suecop.suspended()){
+									double emergency = suecop.emergency(); // 0 to 1
+									if(emergency>=Math.abs(countChangeMode*0.1)){// heuristic using countchangemode in order to decide level of emergency acceptable before resume
+										suecop.resume();
+									}
+								}
+								else{// otherwise suspend suspension equipment
+									suecop.suspend();
+								}
+							}
+							if(countChangeMode<=-4){
+								// many negatives ratios
+								// controller has to postpone planned event wanted by users
+								for (PlanningEquipmentControlOutboundPort plecop : plecops)
+									plecop.postpone(Duration.ofMinutes(POSTPONE_DURATION));
+							}
+						}
+						countChangeMode--;
+					}
+					lastRatio=ratio;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -244,24 +311,24 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		if (equipmentType == null)
 			return false;
 		switch (equipmentType) {
-		case "suspension":
-			SuspensionEquipmentControlOutboundPort suecop = new SuspensionEquipmentControlOutboundPort(this);
-			suecop.localPublishPort();
-			suecops.add(suecop);
-			this.doPortConnection(suecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
-			break;
-		case "planning":
-			PlanningEquipmentControlOutboundPort plecop = new PlanningEquipmentControlOutboundPort(this);
-			plecop.localPublishPort();
-			plecops.add(plecop);
-			this.doPortConnection(plecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
-			break;
-		default:
-			StandardEquipmentControlOutboundPort stecop = new StandardEquipmentControlOutboundPort(this);
-			stecop.localPublishPort();
-			stecops.add(stecop);
-			this.doPortConnection(stecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
-			break;
+			case "suspension":
+				SuspensionEquipmentControlOutboundPort suecop = new SuspensionEquipmentControlOutboundPort(this);
+				suecop.localPublishPort();
+				suecops.add(suecop);
+				this.doPortConnection(suecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
+				break;
+			case "planning":
+				PlanningEquipmentControlOutboundPort plecop = new PlanningEquipmentControlOutboundPort(this);
+				plecop.localPublishPort();
+				plecops.add(plecop);
+				this.doPortConnection(plecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
+				break;
+			default:
+				StandardEquipmentControlOutboundPort stecop = new StandardEquipmentControlOutboundPort(this);
+				stecop.localPublishPort();
+				stecops.add(stecop);
+				this.doPortConnection(stecop.getPortURI(), inboundPortURI, generatedConnector.getCanonicalName());
+				break;
 		}
 		Log.printAndLog(this, "Equipment : " + serial_number + " is registered.");
 		return true;
@@ -296,14 +363,14 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		// on determine l'interface implémentée par le connecteur généré
 		String equipmentType = getEquipmentType(xmlFile);
 		switch (equipmentType) {
-		case "suspension":
-			connectorImplementedInterface = SuspensionEquipmentControlCI.class;
-			break;
-		case "planning":
-			connectorImplementedInterface = PlanningEquipmentControlCI.class;
-			break;
-		default:
-			connectorImplementedInterface = StandardEquipmentControlCI.class;
+			case "suspension":
+				connectorImplementedInterface = SuspensionEquipmentControlCI.class;
+				break;
+			case "planning":
+				connectorImplementedInterface = PlanningEquipmentControlCI.class;
+				break;
+			default:
+				connectorImplementedInterface = StandardEquipmentControlCI.class;
 		}
 
 		// on détermine l'interface offerte par le connecteur généré
@@ -361,8 +428,8 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	}
 
 	public Class<?> makeConnectorClassJavassist(String connectorCanonicalClassName, Class<?> connectorSuperclass,
-			Class<?> connectorImplementedInterface, Class<?> offeredInterface, HashMap<String, String> methodNamesMap,
-			HashMap<String, String> notImplementedMethodBody) throws Exception {
+												Class<?> connectorImplementedInterface, Class<?> offeredInterface, HashMap<String, String> methodNamesMap,
+												HashMap<String, String> notImplementedMethodBody) throws Exception {
 		ClassPool pool = ClassPool.getDefault();
 		CtClass cs = pool.get(connectorSuperclass.getCanonicalName());
 		CtClass cii = pool.get(connectorImplementedInterface.getCanonicalName());

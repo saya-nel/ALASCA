@@ -209,11 +209,12 @@ public class Fridge extends AbstractCyPhyComponent
 			succeed = this.mode.compareAndSet(this.mode.get(),
 					FridgeMode.values()[(this.mode.get().ordinal() + 1) % 2]);
 		if (isSILSimulated && succeed) {
-			if (this.mode.get() == FridgeMode.NORMAL) {
+			if (this.mode.get() == FridgeMode.ECO) {
 				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetNormal(t));
-			} else {
-				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
 			}
+//			else {
+//				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
+//			}
 		}
 		Log.printAndLog(this, "upMode() service result : " + true);
 		return succeed;
@@ -231,10 +232,12 @@ public class Fridge extends AbstractCyPhyComponent
 			succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[this.mode.get().ordinal() - 1]);
 		if (isSILSimulated && succeed) {
 			if (this.mode.get() == FridgeMode.NORMAL) {
-				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetNormal(t));
-			} else {
 				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
+
 			}
+//			else {
+//				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
+//			}
 		}
 		Log.printAndLog(this, "downmode() service result : " + true);
 		return succeed;

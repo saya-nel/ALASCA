@@ -156,7 +156,7 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	@Override
 	public void initialiseState(Time initialTime) {
 		this.lastReceivedEvent = null;
-		this.isSuspended = false;
+		this.isSuspended = true;
 
 		super.initialiseState(initialTime);
 	}
