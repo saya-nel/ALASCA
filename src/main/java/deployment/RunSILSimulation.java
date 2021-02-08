@@ -44,6 +44,8 @@ public class RunSILSimulation extends AbstractCVM {
 	/** URI of the inbound port of the controller component. */
 	protected final static String CONTROLLER_INBOUND_PORT_URI = "cip-URI";
 
+	protected final static String ELECTRIC_METER_INBOUND_PORT_URI = "eip-URI";
+
 	public RunSILSimulation() throws Exception {
 	}
 
@@ -53,7 +55,7 @@ public class RunSILSimulation extends AbstractCVM {
 	@Override
 	public void deploy() throws Exception {
 		AbstractComponent.createComponent(Controller.class.getCanonicalName(),
-				new Object[] { CONTROLLER_INBOUND_PORT_URI });
+				new Object[] { CONTROLLER_INBOUND_PORT_URI, ELECTRIC_METER_INBOUND_PORT_URI });
 		AbstractComponent.createComponent(Fan.class.getCanonicalName(),
 				new Object[] { FAN_INBOUND_PORT_URI, true, false });
 		AbstractComponent.createComponent(SolarPanels.class.getCanonicalName(),
@@ -67,7 +69,8 @@ public class RunSILSimulation extends AbstractCVM {
 		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
 				new Object[] { "fridgeSerial", CONTROLLER_INBOUND_PORT_URI, true, false });
 		AbstractComponent.createComponent(FridgeReactiveController.class.getCanonicalName(), new Object[] {});
-		AbstractComponent.createComponent(ElectricMeter.class.getCanonicalName(), new Object[] { false });
+		AbstractComponent.createComponent(ElectricMeter.class.getCanonicalName(),
+				new Object[] { ELECTRIC_METER_INBOUND_PORT_URI, false });
 
 		AbstractComponent.createComponent(HEMSimulationCoordinator.class.getCanonicalName(), new Object[] {});
 		AbstractComponent.createComponent(HEMSimulationSupervisor.class.getCanonicalName(), new Object[] {});

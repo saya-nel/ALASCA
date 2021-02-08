@@ -1,15 +1,22 @@
 package main.java.components.electricMeter;
 
+import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
+import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import main.java.components.electricMeter.interfaces.ElectricMeterCI;
+import main.java.components.electricMeter.interfaces.ElectricMeterImplementationI;
+import main.java.components.electricMeter.ports.ElectricMeterInboundPort;
 import main.java.components.electricMeter.sil.ElectricMeterSILCoupledModel;
+import main.java.components.electricMeter.sil.ElectricMeterSILModel;
 
 /**
  * 
  * @author Bello Memmi
  *
  */
-public class ElectricMeter extends AbstractCyPhyComponent {
+@OfferedInterfaces(offered = { ElectricMeterCI.class })
+public class ElectricMeter extends AbstractCyPhyComponent implements ElectricMeterImplementationI {
 
 	// -------------------------------------------------------------------------
 	// Constants and variables
@@ -23,6 +30,8 @@ public class ElectricMeter extends AbstractCyPhyComponent {
 	/** URI of the executor service used to perform the simulation. */
 	protected static final String SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 
+	protected ElectricMeterInboundPort eip;
+
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
@@ -32,10 +41,13 @@ public class ElectricMeter extends AbstractCyPhyComponent {
 	 *
 	 * @param isUnitTesting true if the component is executed in unit testing.
 	 */
-	protected ElectricMeter(boolean isUnitTesting) {
+	protected ElectricMeter(String eipURI, boolean isUnitTesting) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
 
 		this.isUnitTesting = isUnitTesting;
+
+		this.eip = new ElectricMeterInboundPort(eipURI, this);
+		this.eip.publishPort();
 
 		this.tracer.get().setTitle("Electric meter component");
 		this.tracer.get().setRelativePosition(2, 0);
@@ -68,5 +80,30 @@ public class ElectricMeter extends AbstractCyPhyComponent {
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public synchronized void shutdown() throws ComponentShutdownException {
+		try {
+			this.eip.unpublishPort();
+		} catch (Exception e) {
+			throw new ComponentShutdownException(e);
+		}
+		super.shutdown();
+	}
+
+	@Override
+	public double getProduction() throws Exception {
+		double currentProduction = (double) this.simulatorPlugin.getModelStateValue(ElectricMeterSILModel.URI,
+				ElectricMeterRTAtomicSimulatorPlugin.PRODUCTION_VARIABLE_NAME);
+		return currentProduction;
+	}
+
+	@Override
+	public double getIntensity() throws Exception {
+		double currentIntensity = (double) this.simulatorPlugin.getModelStateValue(ElectricMeterSILModel.URI,
+				ElectricMeterRTAtomicSimulatorPlugin.INTENSITY_VARIABLE_NAME);
+		return currentIntensity;
+	}
+
 }
 // -----------------------------------------------------------------------------

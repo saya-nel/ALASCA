@@ -3,6 +3,8 @@ package main.java.components.controller;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -14,11 +16,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -31,6 +35,10 @@ import main.java.components.controller.ports.ControllerInboundPort;
 import main.java.components.controller.ports.PlanningEquipmentControlOutboundPort;
 import main.java.components.controller.ports.StandardEquipmentControlOutboundPort;
 import main.java.components.controller.ports.SuspensionEquipmentControlOutboundPort;
+import main.java.components.electricMeter.connectors.ElectricMeterConnector;
+import main.java.components.electricMeter.interfaces.ElectricMeterCI;
+import main.java.components.electricMeter.ports.ElectricMeterOutboundPort;
+import main.java.deployment.RunSILSimulation;
 import main.java.utils.Log;
 
 /**
@@ -40,7 +48,7 @@ import main.java.utils.Log;
  */
 @OfferedInterfaces(offered = { ControllerCI.class })
 @RequiredInterfaces(required = { StandardEquipmentControlCI.class, SuspensionEquipmentControlCI.class,
-		PlanningEquipmentControlCI.class })
+		PlanningEquipmentControlCI.class, ElectricMeterCI.class })
 public class Controller extends AbstractCyPhyComponent implements ControllerImplementationI {
 
 	/**
@@ -68,13 +76,18 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	// ports used for controlling suspensible devices
 	private Vector<SuspensionEquipmentControlOutboundPort> suecops;
 
+	private ElectricMeterOutboundPort eop;
+
+	private String eipURI;
+
 	public static final String REGISTERING_POOL = "registering-pool";
 
-	protected Controller(String cipURI) throws Exception {
+	protected Controller(String cipURI, String eipURI) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
 
 		this.createNewExecutorService(CONTROL_EXECUTOR_URI, 1, false);
 		this.createNewExecutorService(REGISTER_EXECUTOR_URI, 1, false);
+		this.eipURI = eipURI;
 
 		initialise(cipURI);
 
@@ -96,6 +109,18 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		this.stecops = new Vector<>();
 		this.plecops = new Vector<>();
 		this.suecops = new Vector<>();
+		this.eop = new ElectricMeterOutboundPort(this);
+		this.eop.localPublishPort();
+	}
+
+	@Override
+	public synchronized void start() throws ComponentStartException {
+		super.start();
+		try {
+			this.doPortConnection(this.eop.getPortURI(), this.eipURI, ElectricMeterConnector.class.getCanonicalName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -109,6 +134,7 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 			plecop.doDisconnection();
 		for (SuspensionEquipmentControlOutboundPort suecop : this.suecops)
 			suecop.doDisconnection();
+		eop.doDisconnection();
 		super.finalise();
 	}
 
@@ -125,6 +151,7 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 				plecop.unpublishPort();
 			for (SuspensionEquipmentControlOutboundPort suecop : this.suecops)
 				suecop.unpublishPort();
+			eop.unpublishPort();
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e);
 		}
@@ -136,16 +163,42 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	 */
 	@Override
 	public synchronized void execute() throws Exception {
+
+		ComponentI me = this;
+
+		class RunControl extends TimerTask {
+			@Override
+			public void run() {
+				try {
+					Log.printAndLog(me, "controller, consommation " + eop.getIntensity());
+					Log.printAndLog(me, "controller, production " + eop.getProduction());
+
+					// faire des choses
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
 		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
 			try {
+
+				// wait the start of simulation and run Decrease petrol each simulated second
+				Thread.sleep(RunSILSimulation.DELAY_TO_START_SIMULATION);
+				Timer t = new Timer();
+				t.schedule(new RunControl(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
+//				Thread.sleep((long) ((long) RunSILSimulation.SIMULATION_DURATION / RunSILSimulation.ACC_FACTOR));
+//				t.cancel();
 				// wait for components to register
-				Thread.sleep(4000);
+
+//				double currentIntensity = this.simulatorPlugin.getModelStateValue(EletricMeterSILModel.URI,
+//                        ElectricMeterRTAtomicSimulatorPlugin.INTENSITY_VARIABLE_NAME );
 
 				// turn the battery on
-				for (PlanningEquipmentControlCI plecop : plecops) {
-					this.logMessage("execute downMode() on planning equipments (launch battery)");
-					plecop.downMode();
-				}
+//				for (PlanningEquipmentControlCI plecop : plecops) {
+//					this.logMessage("execute downMode() on planning equipments (launch battery)");
+//					plecop.downMode();
+//				}
 
 				// iter on planning equipments
 //				for (PlanningEquipmentControlOutboundPort plecop : plecops) {

@@ -1,0 +1,33 @@
+package main.java.components.electricMeter.ports;
+
+import fr.sorbonne_u.components.ComponentI;
+import fr.sorbonne_u.components.ports.AbstractInboundPort;
+import main.java.components.electricMeter.ElectricMeter;
+import main.java.components.electricMeter.interfaces.ElectricMeterCI;
+
+public class ElectricMeterInboundPort extends AbstractInboundPort implements ElectricMeterCI {
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Constructor of the ControllerInboundPort
+	 * 
+	 * @param uri           reflexion uri of the port
+	 * @param executorIndex index of the thread pool for running services
+	 * @param owner         owner component
+	 */
+	public ElectricMeterInboundPort(String uri, ComponentI owner) throws Exception {
+		super(uri, ElectricMeterCI.class, owner);
+	}
+
+	@Override
+	public double getProduction() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((ElectricMeter) owner).getProduction());
+	}
+
+	@Override
+	public double getIntensity() throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((ElectricMeter) owner).getIntensity());
+	}
+
+}

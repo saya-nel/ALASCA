@@ -63,6 +63,8 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 	public static final String INTENSITY_VARIABLE_NAME = "intensity";
 	public static final String PRODUCTION_VARIABLE_NAME = "production";
 
+	public static String uri;
+
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
@@ -71,6 +73,7 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 	 * create the plug-in.
 	 */
 	public ElectricMeterRTAtomicSimulatorPlugin() {
+		uri = this.getPluginURI();
 	}
 
 	// -------------------------------------------------------------------------
@@ -115,6 +118,8 @@ public class ElectricMeterRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugi
 		assert m instanceof ElectricMeterSILModel;
 		// The only variable that can be accessed is the intensity.
 		assert name.equals(INTENSITY_VARIABLE_NAME) || name.equals(PRODUCTION_VARIABLE_NAME);
+
+		System.out.println("VARIABLE NAME " + name);
 
 		if (name.equals(INTENSITY_VARIABLE_NAME)) {
 			return ((ElectricMeterSILModel) m).getIntensity();
