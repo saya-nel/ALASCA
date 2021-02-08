@@ -16,6 +16,7 @@ import main.java.components.petrolGenerator.sil.PetrolGeneratorSILCoupledModel;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorStateSILModel;
 import main.java.components.petrolGenerator.sil.PetrolGeneratorUserSILModel;
 import main.java.deployment.RunSILSimulation;
+import main.java.utils.Log;
 
 /**
  * Class representing the petrol generator component
@@ -95,7 +96,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 		this.isTurnedOn = false;
 		this.maximumPetrolLevel = 5;
 		this.hasSendEmptyGenerator = false;
-		this.petrolLevel = this.maximumPetrolLevel;
+		this.petrolLevel = 2;
 		this.pgip = new PetrolGeneratorInboundPort(pgipURI, this);
 		this.pgip.publishPort();
 
@@ -189,6 +190,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	 */
 	@Override
 	public float getMaxLevel() throws Exception {
+		Log.printAndLog(this, "getMaxLevel() service result : " + maximumPetrolLevel);
 		return maximumPetrolLevel;
 	}
 
@@ -197,6 +199,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	 */
 	@Override
 	public float getPetrolLevel() throws Exception {
+		Log.printAndLog(this, "getPetrolLevel() service result : " + petrolLevel);
 		return petrolLevel;
 	}
 
@@ -209,6 +212,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 			petrolLevel = petrolLevel + quantity;
 		else
 			petrolLevel = maximumPetrolLevel;
+		Log.printAndLog(this, "addPetrol(" + quantity + ") service called, new petrol level :  " + petrolLevel);
 	}
 
 	/**
@@ -220,7 +224,7 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 		if (hasSendEmptyGenerator)
 			hasSendEmptyGenerator = false;
 
-		this.logMessage("PetrolGenerator turn on");
+		Log.printAndLog(this, "turnOn() service called.");
 
 		if (this.isSILSimulated) {
 			this.simulateOperation(Operations.TurnOn);
@@ -233,7 +237,8 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	@Override
 	public void turnOff() throws Exception {
 		isTurnedOn = false;
-		this.logMessage("PetrolGenerator turn off");
+
+		Log.printAndLog(this, "turnOff() service called.");
 
 		if (this.isSILSimulated) {
 			this.simulateOperation(Operations.TurnOff);
@@ -245,13 +250,14 @@ public class PetrolGenerator extends AbstractCyPhyComponent implements PetrolGen
 	 */
 	@Override
 	public boolean isTurnedOn() throws Exception {
+		Log.printAndLog(this, "isTurnedOn() service result : " + isTurnedOn);
 		return isTurnedOn;
 	}
 
 	@Override
 	public void fillAll() throws Exception {
 		this.petrolLevel = this.maximumPetrolLevel;
-		this.logMessage("PetrolGenerator fill all");
+		Log.printAndLog(this, "fillAll() service called, new petrol level : " + petrolLevel);
 	}
 
 	protected void simulateOperation(Operations op) throws Exception {

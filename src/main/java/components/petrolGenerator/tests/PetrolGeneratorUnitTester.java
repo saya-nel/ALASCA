@@ -1,4 +1,4 @@
-package main.java.tests;
+package main.java.components.petrolGenerator.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -117,7 +117,7 @@ public class PetrolGeneratorUnitTester extends AbstractComponent {
 	public void testGetMaxLevel() {
 		Log.printAndLog(this, "test getMaxLevel()");
 		try {
-			assertEquals(1000, this.pgop.getMaxLevel());
+			assertEquals(5, this.pgop.getMaxLevel());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -130,7 +130,7 @@ public class PetrolGeneratorUnitTester extends AbstractComponent {
 	public void testGetPetrolLevel() {
 		Log.printAndLog(this, "test getPetrolLevel()");
 		try {
-			assertEquals(0, this.pgop.getPetrolLevel());
+			assertEquals(2, this.pgop.getPetrolLevel());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -143,8 +143,8 @@ public class PetrolGeneratorUnitTester extends AbstractComponent {
 	public void testAddPetrol() {
 		Log.printAndLog(this, "test addPetrol()");
 		try {
-			this.pgop.addPetrol(50f);
-			assertEquals(50, this.pgop.getPetrolLevel());
+			this.pgop.addPetrol(1);
+			assertEquals(3, this.pgop.getPetrolLevel());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -193,6 +193,17 @@ public class PetrolGeneratorUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	public void testFillAll() {
+		Log.printAndLog(this, "test fillAll()");
+		try {
+			pgop.fillAll();
+			assertEquals(pgop.getMaxLevel(), pgop.getPetrolLevel());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
 	/**
 	 * Run all the tests
 	 */
@@ -203,6 +214,7 @@ public class PetrolGeneratorUnitTester extends AbstractComponent {
 		testTurnOn();
 		testTurnOff();
 		testIsTurnedOn();
+		testFillAll();
 		Log.printAndLog(this, "all tests passed");
 	}
 }

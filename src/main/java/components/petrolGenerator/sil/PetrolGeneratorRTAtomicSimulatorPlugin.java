@@ -117,8 +117,6 @@ public class PetrolGeneratorRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlu
 			reexported = new HashMap<Class<? extends EventI>, ReexportedEvent>();
 			reexported.put(TurnOn.class, new ReexportedEvent(PetrolGeneratorStateSILModel.URI, TurnOn.class));
 			reexported.put(TurnOff.class, new ReexportedEvent(PetrolGeneratorStateSILModel.URI, TurnOff.class));
-//			reexported.put(EmptyGenerator.class,
-//					new ReexportedEvent(PetrolGeneratorUserSILModel.URI, EmptyGenerator.class));
 		}
 
 		coupledModelDescriptors.put(PetrolGeneratorSILCoupledModel.URI,
