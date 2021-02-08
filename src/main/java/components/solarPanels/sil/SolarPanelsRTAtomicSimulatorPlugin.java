@@ -34,10 +34,10 @@ public class SolarPanelsRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin 
 	// -------------------------------------------------------------------------
 
 	/**
-	 * initialise the local simulation architecture for the fan component.
+	 * initialise the local simulation architecture for the solar panels component.
 	 *
 	 * @param isUnitTest true if the component is under unit test.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public void initialiseSimulationArchitecture(boolean isUnitTest) throws Exception {
 		this.isUnitTest = isUnitTest;

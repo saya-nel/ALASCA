@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.cyphy.plugins.devs.utils.StandardComponentLogger;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ImportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
@@ -14,6 +13,7 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
+import main.java.utils.FileLogger;
 
 public class ElectricMeterSILModel extends AtomicHIOA {
 
@@ -173,7 +173,8 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	@Override
 	public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception {
 		this.owner = (ComponentI) simParams.get(ELECTRIC_METER_REFERENCE_NAME);
-		this.setLogger(new StandardComponentLogger(this.owner));
+//		this.setLogger(new StandardComponentLogger(this.owner));
+		this.setLogger(new FileLogger("electricMeter.log"));
 		super.setSimulationRunParameters(simParams);
 	}
 

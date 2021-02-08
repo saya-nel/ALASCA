@@ -7,7 +7,8 @@ import main.java.components.solarPanels.interfaces.SolarPanelsCI;
 
 /**
  * 
- * SolarPanels inbound port for SolarPanels component interface
+ * The class <code>SolarPanelsInboundPort</code> implements an inbound port for
+ * the component interface <code>SolarPanelsCI</code>.
  * 
  * @author Bello Memmi
  *

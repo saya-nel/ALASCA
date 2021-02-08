@@ -1,13 +1,20 @@
 package main.java.components.solarPanels.interfaces;
 
+import main.java.components.solarPanels.SolarPanels;
+
 /**
  * 
- * SolarPanels services interface
+ * The interface <code>SolarPanelsImplementationI</code> defines the service
+ * that must be implemented by the {@link SolarPanels} component.
  * 
  * @author Bello Memmi
  *
  */
 public interface SolarPanelsImplementationI {
+
+	// -------------------------------------------------------------------------
+	// Component services signatures
+	// -------------------------------------------------------------------------
 
 	/**
 	 * Turn the solar panels on

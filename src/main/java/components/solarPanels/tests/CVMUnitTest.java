@@ -4,6 +4,14 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.solarPanels.SolarPanels;
 
+/**
+ * 
+ * The class <code>CVMUnitTest</code> performs unit tests on the
+ * {@link SolarPanels} component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class CVMUnitTest extends AbstractCVM {
 	/**
 	 * URI of the solar panels inbound port offering the interface
@@ -12,7 +20,7 @@ public class CVMUnitTest extends AbstractCVM {
 	protected final static String SP_INBOUND_PORT_URI = "spip-URI";
 	/**
 	 * if true, the unit test is driven by the SIL simulation, otherwise it is
-	 * driven by the component <code>HairDryerUnitTester</code>.
+	 * driven by the component <code>SolarPanelsUnitTester</code>.
 	 */
 	protected final static boolean SIL_UNIT_TEST = false;
 

@@ -13,7 +13,9 @@ import main.java.components.solarPanels.ports.SolarPanelsOutboundPort;
 import main.java.utils.Log;
 
 /**
- * Tester for the SolarPanels component
+ * The class <code>SolarPanelsUnitTester</code> implements a component
+ * performing unit tests for the class <code>SolarPanelsr</code> as a BCM
+ * component.
  * 
  * @author Bello Memmi
  *

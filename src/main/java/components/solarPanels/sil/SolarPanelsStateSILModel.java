@@ -15,6 +15,13 @@ import main.java.components.solarPanels.sil.events.TurnOff;
 import main.java.components.solarPanels.sil.events.TurnOn;
 import main.java.utils.FileLogger;
 
+/**
+ * The class <code>SolarPanelsStateSILModel</code> defines a simulation model
+ * tracking the state changes on a solar panels.
+ * 
+ * @author Bello Memmi
+ *
+ */
 @ModelExternalEvents(imported = { TurnOn.class, TurnOff.class }, exported = { TurnOn.class, TurnOff.class })
 public class SolarPanelsStateSILModel extends AtomicModel {
 
@@ -28,20 +35,16 @@ public class SolarPanelsStateSILModel extends AtomicModel {
 	 */
 	public static final String URI = SolarPanelsStateSILModel.class.getSimpleName();
 
-	/**
-	 * name used to pass the owner component reference as simulation parameter.
-	 */
-
-	/** the event that was received to change the state of the hair dryer. */
+	/** the event that was received to change the state of the solar panels. */
 	protected EventI lastReceivedEvent;
 
 	/**
-	 * create an instance of fan state SIL simulation model.
+	 * create an instance of solar panels state SIL simulation model.
 	 * 
 	 * @param uri               unique identifier of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation clock.
 	 * @param simulationEngine  simulation engine enacting the model.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public SolarPanelsStateSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {

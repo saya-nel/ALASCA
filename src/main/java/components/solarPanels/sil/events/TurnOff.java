@@ -6,7 +6,8 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import main.java.components.solarPanels.sil.SolarPanelsElectricalSILModel;
 
 /**
- * Turn off event for solar panels
+ * The class <code>TurnOff</code> defines the event of the solar panels being
+ * turned off
  * 
  * @author Bello Memmi
  *
@@ -15,6 +16,11 @@ public class TurnOff extends AbstractSolarPanelEvent {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * create a TurnOff event.
+	 *
+	 * @param timeOfOccurrence time of occurrence of the event.
+	 */
 	public TurnOff(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}
@@ -41,7 +47,6 @@ public class TurnOff extends AbstractSolarPanelEvent {
 	@Override
 	public void executeOn(AtomicModel model) {
 		assert model instanceof SolarPanelsElectricalSILModel;
-
 		SolarPanelsElectricalSILModel m = (SolarPanelsElectricalSILModel) model;
 		m.turnOff();
 		m.toggleConsumptionHasChanged();

@@ -17,6 +17,13 @@ import main.java.components.solarPanels.sil.events.TurnOff;
 import main.java.components.solarPanels.sil.events.TurnOn;
 import main.java.utils.FileLogger;
 
+/**
+ * The class <code>HairDryerElectricalSILModel</code> defines a SIL model of the
+ * electricity consumption of a hair dryer.
+ * 
+ * @author Bello Memmi
+ *
+ */
 @ModelExternalEvents(imported = { TurnOn.class, TurnOff.class })
 public class SolarPanelsElectricalSILModel extends AtomicHIOA {
 
@@ -31,15 +38,30 @@ public class SolarPanelsElectricalSILModel extends AtomicHIOA {
 	 */
 	public static final String URI = SolarPanelsElectricalSILModel.class.getSimpleName();
 
-	public static final double DRAINING_MODE_PRODUCTION = 50; // supposed to vary according to weather
+	/**
+	 * Production in watts, supposed to vary according to weather
+	 */
+	public static final double DRAINING_MODE_PRODUCTION = 50;
 
+	/**
+	 * In volts
+	 */
 	public static final double TENSION = 220;
 
+	/**
+	 * Current production in amperes, production is power / tension.
+	 */
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double> currentProduction = new Value<>(this, 0.0, 0);
 
+	/**
+	 * True if the solar panels is turned on
+	 */
 	protected boolean isOn = true;
 
+	/**
+	 * True if the solar panels has changed is consumption mode
+	 */
 	protected boolean consumptionHasChanged = true;
 
 	// -------------------------------------------------------------------------
@@ -47,16 +69,17 @@ public class SolarPanelsElectricalSILModel extends AtomicHIOA {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create a fan SIL model instance.
+	 * create a solar panels SIL model instance.
 	 *
 	 * @param uri               URI of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation time.
 	 * @param simulationEngine  simulation engine to which the model is attached.
-	 * @throws Exception <i>to do</i>.
+	 * @throws Exception
 	 */
 	public SolarPanelsElectricalSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
 			throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
+		// logger for outputs
 		this.setLogger(new FileLogger("SolarPanelsElectrical.log"));
 	}
 
@@ -64,18 +87,32 @@ public class SolarPanelsElectricalSILModel extends AtomicHIOA {
 	// Methods
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Getter of isOn
+	 * 
+	 * @return isOn
+	 */
 	public boolean getIsOn() {
 		return isOn;
 	}
 
+	/**
+	 * Turn the simulated solar panels on
+	 */
 	public void turnOn() {
 		isOn = true;
 	}
 
+	/**
+	 * Turn the simulated solar panels off
+	 */
 	public void turnOff() {
 		isOn = false;
 	}
 
+	/**
+	 * Change the consumptionHasChanged value to the negation of the actual value
+	 */
 	public void toggleConsumptionHasChanged() {
 		this.consumptionHasChanged = (this.consumptionHasChanged) ? false : true;
 	}

@@ -4,7 +4,8 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 import main.java.components.solarPanels.interfaces.SolarPanelsCI;
 
 /**
- * Connector for the SolarPanelsCI component interface
+ * The class <code>SolarPanelsConnector</code> implements a connector for the
+ * component interface <code>SolarPanelsCI</code>.
  * 
  * @author Bello Memmi
  *

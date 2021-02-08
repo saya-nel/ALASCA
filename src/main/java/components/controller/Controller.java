@@ -3,8 +3,10 @@ package main.java.components.controller;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,7 +52,6 @@ import main.java.utils.Log;
 		PlanningEquipmentControlCI.class, ElectricMeterCI.class })
 public class Controller extends AbstractCyPhyComponent implements ControllerImplementationI {
 
-
 	/**
 	 * postpone duration step
 	 */
@@ -90,6 +91,7 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	public static int countChangeMode = 0;
 
 	public static double lastRatio = 1;
+
 	protected Controller(String cipURI, String eipURI) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
 
@@ -191,20 +193,19 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 //					Log.printAndLog(me, "controller, consommation " + cons);
 //					Log.printAndLog(me, "controller, production " + prod);
 					// faire des choses
-					double ratio = cons/prod;
-					Log.printAndLog(me, "ratio conso/prod "+ratio);
+					double ratio = cons / prod;
+					Log.printAndLog(me, "ratio conso/prod " + ratio);
 					// more production than consumption
-					if(ratio<1){
-						if(lastRatio>=1){
-							//ratio changed so cpt of up and down mode set to 0
-							countChangeMode=0;
+					if (ratio < 1) {
+						if (lastRatio >= 1) {
+							// ratio changed so cpt of up and down mode set to 0
+							countChangeMode = 0;
 						}
-						if(countChangeMode==0|| countChangeMode==1){
-							//upper consumption mode
+						if (countChangeMode == 0 || countChangeMode == 1) {
+							// upper consumption mode
 							for (StandardEquipmentControlOutboundPort stecop : stecops)
 								stecop.upMode();
-						}
-						else if(countChangeMode>=2){
+						} else if (countChangeMode >= 2) {
 							for (StandardEquipmentControlOutboundPort stecop : stecops)
 								stecop.upMode();
 							for (PlanningEquipmentControlOutboundPort plecop : plecops)
@@ -215,33 +216,34 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 						countChangeMode++;
 					}
 					// more consumption than production
-					else if(ratio>1){
-						if(lastRatio<=1){
-							countChangeMode=0;
+					else if (ratio > 1) {
+						if (lastRatio <= 1) {
+							countChangeMode = 0;
 						}
 						// lower consumption mode
-						if(countChangeMode==0 || countChangeMode==-1){
+						if (countChangeMode == 0 || countChangeMode == -1) {
 							for (StandardEquipmentControlOutboundPort stecop : stecops)
 								stecop.downMode();
-						}
-						else if(countChangeMode<=-2){
+						} else if (countChangeMode <= -2) {
 							for (StandardEquipmentControlOutboundPort stecop : stecops)
 								stecop.downMode();
 							for (PlanningEquipmentControlOutboundPort plecop : plecops)
 								plecop.downMode();
 							for (SuspensionEquipmentControlOutboundPort suecop : suecops) {
 								suecop.downMode();
-								if(suecop.suspended()){
+								if (suecop.suspended()) {
 									double emergency = suecop.emergency(); // 0 to 1
-									if(emergency>=Math.abs(countChangeMode*0.1)){// heuristic using countchangemode in order to decide level of emergency acceptable before resume
+									if (emergency >= Math.abs(countChangeMode * 0.1)) {// heuristic using
+																						// countchangemode in order to
+																						// decide level of emergency
+																						// acceptable before resume
 										suecop.resume();
 									}
-								}
-								else{// otherwise suspend suspension equipment
+								} else {// otherwise suspend suspension equipment
 									suecop.suspend();
 								}
 							}
-							if(countChangeMode<=-4){
+							if (countChangeMode <= -4) {
 								// many negatives ratios
 								// controller has to postpone planned event wanted by users
 								for (PlanningEquipmentControlOutboundPort plecop : plecops)
@@ -250,9 +252,8 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 						}
 						countChangeMode--;
 					}
-					lastRatio=ratio;
+					lastRatio = ratio;
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -264,29 +265,6 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 				Thread.sleep(RunSILSimulation.DELAY_TO_START_SIMULATION);
 				Timer t = new Timer();
 				t.schedule(new RunControl(), 0, (long) (1000 / RunSILSimulation.ACC_FACTOR));
-//				Thread.sleep((long) ((long) RunSILSimulation.SIMULATION_DURATION / RunSILSimulation.ACC_FACTOR));
-//				t.cancel();
-				// wait for components to register
-
-//				double currentIntensity = this.simulatorPlugin.getModelStateValue(EletricMeterSILModel.URI,
-//                        ElectricMeterRTAtomicSimulatorPlugin.INTENSITY_VARIABLE_NAME );
-
-				// turn the battery on
-//				for (PlanningEquipmentControlCI plecop : plecops) {
-//					this.logMessage("execute downMode() on planning equipments (launch battery)");
-//					plecop.downMode();
-//				}
-
-				// iter on planning equipments
-//				for (PlanningEquipmentControlOutboundPort plecop : plecops) {
-//					plecop.upMode();
-//					plecop.downMode();
-//				}
-//				for (SuspensionEquipmentControlOutboundPort suecop : suecops) {
-//					suecop.suspend();
-//					suecop.suspended();
-//					suecop.resume();
-//				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

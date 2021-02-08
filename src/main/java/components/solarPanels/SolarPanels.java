@@ -6,6 +6,7 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import main.java.components.controller.Controller;
 import main.java.components.solarPanels.interfaces.SolarPanelsCI;
 import main.java.components.solarPanels.interfaces.SolarPanelsImplementationI;
 import main.java.components.solarPanels.ports.SolarPanelsInboundPort;
@@ -15,8 +16,11 @@ import main.java.components.solarPanels.sil.events.TurnOff;
 import main.java.components.solarPanels.sil.events.TurnOn;
 
 /**
- * Class representing the SolarPanels component
- * 
+ * The class <code>SolarPanels</code> implements the solar panels component.
+ *
+ * When he is turned on, the solar panels produce energy, he is not linked to
+ * the {@link Controller} so he never turn off, but the implementation allow it.
+ *
  * @author Bello Memmi
  *
  */
@@ -41,7 +45,7 @@ public class SolarPanels extends AbstractCyPhyComponent implements SolarPanelsIm
 	protected static final String SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 
 	/**
-	 * Inboud port of the heater
+	 * Inboud port of the solar panels
 	 */
 	protected SolarPanelsInboundPort spip;
 
@@ -53,7 +57,7 @@ public class SolarPanels extends AbstractCyPhyComponent implements SolarPanelsIm
 	/**
 	 * Constructor of the solar panels
 	 * 
-	 * @param uri of the SolarPanels component
+	 * @param spipURI uri of the inbound port
 	 */
 	protected SolarPanels(String spipURI, boolean isSILSimulated, boolean isUnitTest) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
@@ -161,6 +165,12 @@ public class SolarPanels extends AbstractCyPhyComponent implements SolarPanelsIm
 		return isTurnedOn;
 	}
 
+	/**
+	 * Send the event associated with the operation to the simulation
+	 * 
+	 * @param op operation
+	 * @throws Exception
+	 */
 	protected void simulateOperation(Operations op) throws Exception {
 		switch (op) {
 		case TURN_ON:
