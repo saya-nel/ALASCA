@@ -1,6 +1,7 @@
-package main.java.tests;
+package main.java.components.washer.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
@@ -101,20 +102,29 @@ public class WasherUnitTester extends AbstractComponent {
 	// TESTS
 	// -------------------------------------------------------------------------
 
-	public void testOn() {
+	public void testIsTurnedOn() {
 		Log.printAndLog(this, "testOn()");
 		try {
 			this.wop.turnOn();
 			assertTrue(this.wop.isTurnedOn());
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
-
 	}
 
-	public void testOff() {
+	public void testTurnOn() {
+		Log.printAndLog(this, "testOn()");
+		try {
+			this.wop.turnOn();
+			assertTrue(this.wop.isTurnedOn());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testTurnOff() {
 		Log.printAndLog(this, "testOff()");
 		try {
 			this.wop.turnOff();
@@ -123,15 +133,36 @@ public class WasherUnitTester extends AbstractComponent {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
-
 	}
+
+	public void testSetProgramTemperature() {
+		Log.printAndLog(this, "testSetProgramTemperature()");
+		try {
+			this.wop.setProgramTemperature(30);
+			assertEquals(30, this.wop.getProgramTemperature());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testGetProgramTemperature() {
+		Log.printAndLog(this, "testGetProgramTemperature()");
+		try {
+			this.wop.setProgramTemperature(40);
+			assertEquals(40, this.wop.getProgramTemperature());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
 	public void testUpMode() {
 		Log.printAndLog(this, "testUpMode()");
 		try {
-			this.wop.turnOn();
-			int cur_value = this.wop.currentMode();
+			this.wop.setMode(0);
 			this.wop.upMode();
-			assertEquals(this.wop.currentMode(), (cur_value + 1) % 3);
+			assertEquals(this.wop.currentMode(), 1);
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -141,11 +172,10 @@ public class WasherUnitTester extends AbstractComponent {
 	public void testDownMode() {
 		Log.printAndLog(this, "testDownMode()");
 		try {
-			int cur_value = this.wop.currentMode();
+			this.wop.setMode(1);
 			this.wop.downMode();
-			assertEquals(this.wop.currentMode(), Math.floorMod((cur_value - 1), 3));
+			assertEquals(this.wop.currentMode(), 0);
 		} catch (Exception e) {
-			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -154,57 +184,34 @@ public class WasherUnitTester extends AbstractComponent {
 	public void testSetMode() {
 		Log.printAndLog(this, "testSetMode()");
 		try {
-			int exp_value = (this.wop.currentMode() + 1) % 3;
-			this.wop.setMode(exp_value);
-			assertEquals(exp_value, this.wop.currentMode());
+			this.wop.setMode(1);
+			assertEquals(1, this.wop.currentMode());
 		} catch (Exception e) {
-			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
 
-	public void testPlanifyTest() {
-		Log.printAndLog(this, "testPlanifyTest()");
+	public void testHasPlan() {
+		Log.printAndLog(this, "testHasPlan()");
 		try {
-			Duration d = Duration.ofHours(1);
-			LocalTime deadline = LocalTime.now().plusHours(3);
-			this.wop.planifyEvent(d, deadline);
+			LocalTime starTime = LocalTime.now().plusHours(1);
+			LocalTime endTime = LocalTime.now().plusHours(2);
+			this.wop.planifyEvent(starTime, endTime);
 			assertTrue(this.wop.hasPlan());
-
 		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
 
-	public void testCancel() {
-		Log.printAndLog(this, "testCancel()");
+	public void testStartTime() {
+		Log.printAndLog(this, "testStartTime()");
 		try {
-			Duration d = Duration.ofHours(1);
-			LocalTime deadline = LocalTime.now().plusHours(3);
-			this.wop.planifyEvent(d, deadline);
-			assertTrue(this.wop.hasPlan());
-			this.wop.cancel();
-			assertTrue(!this.wop.hasPlan());
-			assertEquals(this.wop.deadline(), null);
-			assertEquals(this.wop.startTime(), null);
-			assertEquals(this.wop.duration(), null);
-
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
-
-	public void testPostpone() {
-		Log.printAndLog(this, "testPostpone");
-		try {
-			Duration d = Duration.ofHours(1);
-			LocalTime deadline = LocalTime.now().plusHours(3);
-			Duration postponeDuration = Duration.ofHours(4);
-			this.wop.planifyEvent(d, deadline);
-			this.wop.postpone(postponeDuration);
+			LocalTime starTime = LocalTime.now().plusHours(1);
+			LocalTime endTime = LocalTime.now().plusHours(2);
+			this.wop.planifyEvent(starTime, endTime);
+			assertEquals(starTime, this.wop.startTime());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -214,10 +221,10 @@ public class WasherUnitTester extends AbstractComponent {
 	public void testDuration() {
 		Log.printAndLog(this, "testDuration");
 		try {
-			Duration d = Duration.ofHours(1);
-			LocalTime deadline = LocalTime.now().plusHours(3);
-			this.wop.planifyEvent(d, deadline);
-			assertEquals(d, this.wop.duration());
+			LocalTime starTime = LocalTime.now().plusHours(1);
+			LocalTime endTime = LocalTime.now().plusHours(2);
+			this.wop.planifyEvent(starTime, endTime);
+			assertEquals(Duration.between(starTime, endTime), this.wop.duration());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -227,10 +234,53 @@ public class WasherUnitTester extends AbstractComponent {
 	public void testDeadline() {
 		Log.printAndLog(this, "testDeadline");
 		try {
-			Duration d = Duration.ofHours(1);
-			LocalTime deadline = LocalTime.now().plusHours(3);
-			this.wop.planifyEvent(d, deadline);
-			assertEquals(deadline, this.wop.deadline());
+			LocalTime starTime = LocalTime.now().plusHours(1);
+			LocalTime endTime = LocalTime.now().plusHours(2);
+			this.wop.planifyEvent(starTime, endTime);
+			assertEquals(endTime, this.wop.deadline());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testPostpone() {
+		Log.printAndLog(this, "testPostpone");
+		try {
+			LocalTime starTime = LocalTime.now().plusHours(1);
+			LocalTime endTime = LocalTime.now().plusHours(2);
+			this.wop.planifyEvent(starTime, endTime);
+			this.wop.postpone(Duration.ofHours(1));
+			assertEquals(starTime.plusHours(1), this.wop.startTime());
+			assertEquals(endTime.plusHours(1), this.wop.deadline());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testCancel() {
+		Log.printAndLog(this, "testCancel()");
+		try {
+			LocalTime starTime = LocalTime.now().plusHours(1);
+			LocalTime endTime = LocalTime.now().plusHours(2);
+			this.wop.planifyEvent(starTime, endTime);
+			assertTrue(this.wop.hasPlan());
+			this.wop.cancel();
+			assertFalse(this.wop.hasPlan());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
+	public void testPlanifyEvent() {
+		Log.printAndLog(this, "testPlanifyEvent()");
+		try {
+			LocalTime starTime = LocalTime.now().plusHours(1);
+			LocalTime endTime = LocalTime.now().plusHours(2);
+			this.wop.planifyEvent(starTime, endTime);
+			assertTrue(this.wop.hasPlan());
 		} catch (Exception e) {
 			assertTrue(false);
 		}
@@ -241,15 +291,21 @@ public class WasherUnitTester extends AbstractComponent {
 	 * Run all the tests
 	 */
 	private void runAllTests() {
-
+		this.testIsTurnedOn();
+		this.testTurnOn();
+		this.testTurnOff();
+		this.testGetProgramTemperature();
+		this.testSetProgramTemperature();
 		this.testUpMode();
 		this.testDownMode();
 		this.testSetMode();
-		this.testPlanifyTest();
-		this.testCancel();
+		this.testHasPlan();
+		this.testStartTime();
 		this.testDuration();
 		this.testDeadline();
-
-		Log.printAndLog(this, "all tests Washer passed");
+		this.testPostpone();
+		this.testCancel();
+		this.testPlanifyEvent();
+		Log.printAndLog(this, "all tests passed");
 	}
 }

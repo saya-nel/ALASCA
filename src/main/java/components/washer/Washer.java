@@ -89,29 +89,14 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	protected String cip_uri;
 
 	/**
-	 * boolean indicating whether the battery has plan
+	 * Start time of the planed program
 	 */
-	protected AtomicBoolean hasPlan;
+	protected AtomicReference<LocalTime> startTime;
 
 	/**
-	 * last time the chrono has been triggered
+	 * End time of the planed program
 	 */
-	protected AtomicReference<LocalTime> lastStartTime;
-
-	/**
-	 * duration time of last planified task
-	 */
-	protected AtomicReference<Duration> durationLastPlanned;
-
-	/**
-	 * deadline of the last program
-	 */
-	protected AtomicReference<LocalTime> deadlineTime;
-
-	/**
-	 * delay the program
-	 */
-	protected AtomicReference<Duration> postponeDur;
+	protected AtomicReference<LocalTime> endTime;
 
 	/**
 	 *
@@ -157,11 +142,9 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 		assert !washerInboundPortURI.isEmpty() : new PreconditionException("washerInboundPortURI.isEmpty()");
 		this.mode = WasherModes.ECO;
 		this.isOn = new AtomicBoolean(false);
-		this.hasPlan = new AtomicBoolean(false);
-		this.deadlineTime = new AtomicReference<>(null);
-		this.durationLastPlanned = new AtomicReference<>(null);
-		this.lastStartTime = new AtomicReference<>(null);
-		this.postponeDur = new AtomicReference<>(null);
+		this.programTemperature = new AtomicInteger(30);
+		this.startTime = new AtomicReference<>(null);
+		this.endTime = new AtomicReference<>(null);
 		this.wip = new WasherInboundPort(washerInboundPortURI, this);
 		this.wip.publishPort();
 		this.cop = new ControllerOutboundPort(this);
@@ -263,6 +246,10 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	 */
 	@Override
 	public void setProgramTemperature(int temperature) throws Exception {
+		if (temperature > 60)
+			temperature = 60;
+		else if (temperature < 30)
+			temperature = 30;
 		this.programTemperature.set(temperature);
 		Log.printAndLog(this, "setProgramTemperature(" + temperature + ") service called");
 	}
@@ -318,12 +305,14 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 		switch (mode) {
 		case ECO:
 			mode = WasherModes.STD;
-			simulateOperation(Operations.SET_STD);
+			if (this.isSILSimulated)
+				simulateOperation(Operations.SET_STD);
 			succeed = true;
 			break;
 		case STD:
 			mode = WasherModes.PERFORMANCE;
-			simulateOperation(Operations.SET_PERFORMANCE);
+			if (this.isSILSimulated)
+				simulateOperation(Operations.SET_PERFORMANCE);
 			succeed = true;
 			break;
 		case PERFORMANCE:
@@ -332,7 +321,7 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 		default:
 			break;
 		}
-		this.logMessage("upMode() service result : " + succeed + ", current mode : " + mode);
+		Log.printAndLog(this, "upMode() service result : " + succeed + ", current mode : " + mode);
 		return succeed;
 	}
 
@@ -348,18 +337,20 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 			break;
 		case STD:
 			mode = WasherModes.ECO;
-			simulateOperation(Operations.SET_ECO);
+			if (this.isSILSimulated)
+				simulateOperation(Operations.SET_ECO);
 			succeed = true;
 			break;
 		case PERFORMANCE:
 			mode = WasherModes.STD;
-			simulateOperation(Operations.SET_STD);
+			if (this.isSILSimulated)
+				simulateOperation(Operations.SET_STD);
 			succeed = true;
 			break;
 		default:
 			break;
 		}
-		this.logMessage("downMode() service result : " + succeed + ", current mode : " + mode);
+		Log.printAndLog(this, "downMode() service result : " + succeed + ", current mode : " + mode);
 		return succeed;
 	}
 
@@ -374,27 +365,30 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 			if (mode != WasherModes.ECO) {
 				succeed = true;
 				mode = WasherModes.ECO;
-				simulateOperation(Operations.SET_ECO);
+				if (this.isSILSimulated)
+					simulateOperation(Operations.SET_ECO);
 			}
 			break;
 		case 1:
 			if (mode != WasherModes.STD) {
 				succeed = true;
 				mode = WasherModes.STD;
-				simulateOperation(Operations.SET_STD);
+				if (this.isSILSimulated)
+					simulateOperation(Operations.SET_STD);
 			}
 			break;
 		case 2:
 			if (mode != WasherModes.PERFORMANCE) {
 				succeed = true;
 				mode = WasherModes.PERFORMANCE;
-				simulateOperation(Operations.SET_PERFORMANCE);
+				if (this.isSILSimulated)
+					simulateOperation(Operations.SET_PERFORMANCE);
 			}
 			break;
 		default:
 			break;
 		}
-		this.logMessage("setMode(" + modeIndex + ") service result : " + succeed + ", current mode : " + mode);
+		Log.printAndLog(this, "setMode(" + modeIndex + ") service result : " + succeed + ", current mode : " + mode);
 		return succeed;
 	}
 
@@ -409,101 +403,98 @@ public class Washer extends AbstractCyPhyComponent implements WasherImplementati
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#hasPlan()
+	 * @see interfaces.BatteryImplementationI#hasPlan()
 	 */
 	@Override
 	public boolean hasPlan() throws Exception {
-		boolean res = this.hasPlan.get();
-		Log.printAndLog(this, "hasPlan() service result : " + res);
-		return res;
+		boolean result = this.startTime.get() != null;
+		Log.printAndLog(this, "hasPlan() service result : " + result);
+		return result;
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#startTime()
+	 * @see interfaces.BatteryImplementationI#startTime()
 	 */
 	@Override
 	public LocalTime startTime() throws Exception {
-		LocalTime res = this.lastStartTime.get();
-		Log.printAndLog(this, "startTime() service result : " + res);
-		return res;
+		LocalTime result = this.startTime.get();
+		Log.printAndLog(this, "startTime() service result : " + result);
+		return result;
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#duration()
+	 * @see interfaces.BatteryImplementationI#duration()
 	 */
 	@Override
 	public Duration duration() throws Exception {
-		Duration res = this.durationLastPlanned.get();
-		Log.printAndLog(this, "duration() service result : " + res);
-		return res;
+		Duration result = null;
+		if (this.startTime.get() != null && this.endTime.get() != null) {
+			result = Duration.between(this.startTime.get(), this.endTime.get());
+		}
+		Log.printAndLog(this, "Duration() service result : " + result);
+		return result;
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#deadline()
+	 * @see interfaces.BatteryImplementationI#deadline()
 	 */
 	@Override
 	public LocalTime deadline() throws Exception {
-		LocalTime res = this.deadlineTime.get();
-		Log.printAndLog(this, "deadline() service result : " + res);
-		return res;
+		LocalTime result = this.endTime.get();
+		Log.printAndLog(this, "deadLine() service result : " + result);
+		return result;
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#postpone(Duration)
+	 * @see interfaces.BatteryImplementationI#postpone(Duration)
 	 */
 	@Override
 	public boolean postpone(Duration d) throws Exception {
 		boolean succeed = false;
-		succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(),
-				this.lastStartTime.get().plusHours(d.toHours()));
+		if (this.startTime.get() != null && this.endTime.get() != null) {
+			this.startTime.set((LocalTime) d.addTo(this.startTime.get()));
+			this.endTime.set((LocalTime) d.addTo(this.endTime.get()));
+			succeed = true;
+		}
 		Log.printAndLog(this, "postpone(" + d + ") service result : " + succeed);
 		return succeed;
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#cancel()
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#cancel()
 	 */
 	@Override
 	public boolean cancel() throws Exception {
 		boolean succeed = false;
-		synchronized (this.lastStartTime) {
-			succeed = this.lastStartTime.compareAndSet(this.lastStartTime.get(), null);
-			succeed = this.hasPlan.compareAndSet(true, false);
-			succeed = this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), null);
-			succeed = this.deadlineTime.compareAndSet(this.deadlineTime.get(), null);
+		// if the program isn't running, we can cancel it
+		if (this.startTime.get() != null && this.startTime.get().isAfter(LocalTime.now())) {
+			synchronized (this.startTime) {
+				this.startTime.set(null);
+				this.endTime.set(null);
+				succeed = true;
+			}
 		}
 		Log.printAndLog(this, "cancel() service result : " + succeed);
 		return succeed;
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#planifyEvent(Duration,
+	 * @see main.java.components.battery.interfaces.BatteryImplementationI#planifyEvent(Duration,
 	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) {
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) {
 		boolean succeed = false;
-		synchronized (this.lastStartTime) {
-			succeed = true;
-			succeed &= this.hasPlan.compareAndSet(false, true);
-			succeed &= this.durationLastPlanned.compareAndSet(this.durationLastPlanned.get(), durationLastPlanned);
-			succeed &= this.deadlineTime.compareAndSet(this.deadlineTime.get(), deadline);
+		if (startTime.isAfter(LocalTime.now()) && endTime.isAfter(startTime)) {
+			synchronized (this.startTime) {
+				this.startTime.set(startTime);
+				this.endTime.set(endTime);
+				succeed = true;
+			}
 		}
+		Log.printAndLog(this, "planifyEvent(" + startTime + ", " + endTime + ") service result : " + succeed
+				+ ". startTime : " + this.startTime.get() + ", endTime : " + this.endTime.get());
 		return succeed;
-	}
-
-	// TODO a voir si necessaire, mais a priori oui
-
-	@Override
-	public void setProgramDuration(int duration) throws Exception {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public int getProgramDuration() throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	protected void simulateOperation(Operations op) throws Exception {

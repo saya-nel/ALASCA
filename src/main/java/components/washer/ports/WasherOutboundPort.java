@@ -64,22 +64,6 @@ public class WasherOutboundPort extends AbstractOutboundPort implements WasherCI
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#setProgramDuration(int)
-	 */
-	@Override
-	public void setProgramDuration(int duration) throws Exception {
-		((WasherCI) this.getConnector()).setProgramDuration(duration);
-	}
-
-	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#getProgramDuration()
-	 */
-	@Override
-	public int getProgramDuration() throws Exception {
-		return ((WasherCI) this.getConnector()).getProgramDuration();
-	}
-
-	/**
 	 * @see main.java.components.washer.interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
@@ -180,7 +164,7 @@ public class WasherOutboundPort extends AbstractOutboundPort implements WasherCI
 	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-		return ((WasherCI) this.getConnector()).planifyEvent(durationLastPlanned, deadline);
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception {
+		return ((WasherCI) this.getConnector()).planifyEvent(startTime, endTime);
 	}
 }

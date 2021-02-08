@@ -34,18 +34,6 @@ public interface WasherCI extends WasherImplementationI, RequiredCI, OfferedCI {
 	public int getProgramTemperature() throws Exception;
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#setProgramDuration(int)
-	 */
-	@Override
-	public void setProgramDuration(int duration) throws Exception;
-
-	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#getProgramDuration()
-	 */
-	@Override
-	public int getProgramDuration() throws Exception;
-
-	/**
 	 * @see main.java.components.washer.interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
@@ -116,4 +104,7 @@ public interface WasherCI extends WasherImplementationI, RequiredCI, OfferedCI {
 	 */
 	@Override
 	public boolean cancel() throws Exception;
+
+	@Override
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception;
 }

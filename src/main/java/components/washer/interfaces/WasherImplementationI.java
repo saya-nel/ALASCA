@@ -34,22 +34,6 @@ public interface WasherImplementationI {
 	 */
 	public int getProgramTemperature() throws Exception;
 
-	/**
-	 * Change the duration of the program
-	 * 
-	 * @param duration duration of the program
-	 * @throws Exception
-	 */
-	public void setProgramDuration(int duration) throws Exception;
-
-	/**
-	 * Return the duration of the program
-	 * 
-	 * @return duration of the program
-	 * @throws Exception
-	 */
-	public int getProgramDuration() throws Exception;
-
 	/*
 	 * 
 	 * STANDARD
@@ -138,5 +122,5 @@ public interface WasherImplementationI {
 	 * @return true if success
 	 * @throws Exception
 	 */
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception;
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception;
 }

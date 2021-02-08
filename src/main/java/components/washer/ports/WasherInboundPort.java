@@ -60,28 +60,6 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#setProgramDuration(int)
-	 */
-	@Override
-	public void setProgramDuration(int duration) throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Washer) owner).setProgramDuration(duration);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#getProgramDuration()
-	 */
-	@Override
-	public int getProgramDuration() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).getProgramDuration());
-	}
-
-	/**
 	 * @see main.java.components.washer.interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
@@ -182,7 +160,7 @@ public class WasherInboundPort extends AbstractInboundPort implements WasherCI {
 	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).planifyEvent(durationLastPlanned, deadline));
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception {
+		return this.getOwner().handleRequestSync(owner -> ((Washer) owner).planifyEvent(startTime, endTime));
 	}
 }

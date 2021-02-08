@@ -39,22 +39,6 @@ public class WasherConnector extends AbstractConnector implements WasherCI {
 	}
 
 	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#setProgramDuration(int)
-	 */
-	@Override
-	public void setProgramDuration(int duration) throws Exception {
-		((WasherCI) this.offering).setProgramDuration(duration);
-	}
-
-	/**
-	 * @see main.java.components.washer.interfaces.WasherImplementationI#getProgramDuration()
-	 */
-	@Override
-	public int getProgramDuration() throws Exception {
-		return ((WasherCI) this.offering).getProgramDuration();
-	}
-
-	/**
 	 * @see main.java.components.washer.interfaces.WasherImplementationI#turnOn()
 	 */
 	@Override
@@ -155,7 +139,7 @@ public class WasherConnector extends AbstractConnector implements WasherCI {
 	 *      LocalTime)
 	 */
 	@Override
-	public boolean planifyEvent(Duration durationLastPlanned, LocalTime deadline) throws Exception {
-		return ((WasherCI) this.offering).planifyEvent(durationLastPlanned, deadline);
+	public boolean planifyEvent(LocalTime startTime, LocalTime endTime) throws Exception {
+		return ((WasherCI) this.offering).planifyEvent(startTime, endTime);
 	}
 }

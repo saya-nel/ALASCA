@@ -79,7 +79,7 @@ public class RunSILSimulation extends AbstractCVM {
 		try {
 			RunSILSimulation r = new RunSILSimulation();
 			long d = TimeUnit.SECONDS.toMillis((long) (SIMULATION_DURATION / ACC_FACTOR));
-			r.startStandardLifeCycle(d + 5000L);
+			r.startStandardLifeCycle(d);
 			Thread.sleep(10000L);
 			System.exit(0);
 		} catch (Exception e) {
