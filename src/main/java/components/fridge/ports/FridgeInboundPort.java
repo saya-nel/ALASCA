@@ -27,36 +27,6 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeCI {
 	}
 
 	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getCurrentTemperature()
-	 */
-	@Override
-	public float getRequestedTemperature() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getRequestedTemperature());
-	}
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#setRequestedTemperature(float)
-	 */
-	@Override
-	public void setRequestedTemperature(float temp) throws Exception {
-		this.getOwner().runTask(owner -> {
-			try {
-				((Fridge) owner).setRequestedTemperature(temp);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getCurrentTemperature()
-	 */
-	@Override
-	public float getCurrentTemperature() throws Exception {
-		return this.getOwner().handleRequestSync(owner -> ((Fridge) owner).getCurrentTemperature());
-	}
-
-	/**
 	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#upMode()
 	 */
 	@Override

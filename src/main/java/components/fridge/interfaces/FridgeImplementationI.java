@@ -8,27 +8,6 @@ package main.java.components.fridge.interfaces;
  */
 public interface FridgeImplementationI {
 
-	/**
-	 * @return requested temperature of fridge
-	 * @throws Exception
-	 */
-	public float getRequestedTemperature() throws Exception;
-
-	/**
-	 * set the temperature requested
-	 * 
-	 * @param temp temperature of the fridge aimed
-	 * @throws Exception
-	 */
-	public void setRequestedTemperature(float temp) throws Exception;
-
-	/**
-	 *
-	 * @return current temperature inside the fridge
-	 * @throws Exception
-	 */
-	public float getCurrentTemperature() throws Exception;
-
 	/*
 	 * 
 	 * STANDARD METHODS

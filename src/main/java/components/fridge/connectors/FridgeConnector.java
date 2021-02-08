@@ -12,30 +12,6 @@ import main.java.components.fridge.interfaces.FridgeCI;
 public class FridgeConnector extends AbstractConnector implements FridgeCI {
 
 	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getRequestedTemperature()
-	 */
-	@Override
-	public float getRequestedTemperature() throws Exception {
-		return ((FridgeCI) this.offering).getRequestedTemperature();
-	}
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#setRequestedTemperature(float)
-	 */
-	@Override
-	public void setRequestedTemperature(float temp) throws Exception {
-		((FridgeCI) this.offering).setRequestedTemperature(temp);
-	}
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getCurrentTemperature()
-	 */
-	@Override
-	public float getCurrentTemperature() throws Exception {
-		return ((FridgeCI) this.offering).getCurrentTemperature();
-	}
-
-	/**
 	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#upMode()
 	 */
 	@Override

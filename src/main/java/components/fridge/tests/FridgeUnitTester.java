@@ -1,4 +1,4 @@
-package main.java.tests;
+package main.java.components.fridge.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -105,72 +105,25 @@ public class FridgeUnitTester extends AbstractComponent {
 	// TESTS
 	// -------------------------------------------------------------------------
 
-	/**
-	 * Test the getRequestedTemperature method
-	 */
-	public void testGetRequestedTemperature() {
-		Log.printAndLog(this, "test getRequestedTemperature()");
-		try {
-			assertEquals(10, this.fop.getRequestedTemperature());
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
-
-	/**
-	 * Test the setRequestedTemperature method
-	 */
-	public void testSetRequestedTemperature() {
-		Log.printAndLog(this, "test setRequestedTemperatuer()");
-		try {
-			fop.setRequestedTemperature(12);
-			assertEquals(12, this.fop.getRequestedTemperature());
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
-
-	/**
-	 * Test the getCurrentTemperature method
-	 */
-	public void testGetCurrentTemperature() {
-		Log.printAndLog(this, "test getCurrentTemperature()");
-		try {
-			assertEquals(20, this.fop.getCurrentTemperature());
-		} catch (Exception e) {
-			assertTrue(false);
-		}
-		Log.printAndLog(this, "done...");
-	}
-
-	/**
-	 *
-	 * TEST STANDARDS EQUIPMENTS METHODS
-	 *
-	 */
 	public void testUpMode() {
 		Log.printAndLog(this, "testUpMode()");
 		try {
-			int cur_value = this.fop.currentMode();
+			this.fop.setMode(0);
 			this.fop.upMode();
-			assertEquals(this.fop.currentMode(), (cur_value + 1) % 3);
+			assertEquals(this.fop.currentMode(), 1);
 		} catch (Exception e) {
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
-
 
 	public void testDownMode() {
 		Log.printAndLog(this, "testDownMode()");
 		try {
-			int cur_value = this.fop.currentMode();
+			this.fop.setMode(1);
 			this.fop.downMode();
-			assertEquals(this.fop.currentMode(), Math.floorMod((cur_value - 1), 3));
+			assertEquals(this.fop.currentMode(), 0);
 		} catch (Exception e) {
-			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -179,27 +132,48 @@ public class FridgeUnitTester extends AbstractComponent {
 	public void testSetMode() {
 		Log.printAndLog(this, "testSetMode()");
 		try {
-			int exp_value = (this.fop.currentMode() + 1) % 3;
-			this.fop.setMode(exp_value);
-			assertEquals(exp_value, this.fop.currentMode());
+			this.fop.setMode(1);
+			assertEquals(1, this.fop.currentMode());
 		} catch (Exception e) {
-			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
 	}
+
+	public void testCurrentMode() {
+		Log.printAndLog(this, "testGetMode()");
+		try {
+			this.fop.setMode(0);
+			assertEquals(0, this.fop.currentMode());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
 	/**
 	 *
 	 * TEST SUSPENSIBLE METHODS
 	 *
 	 */
+
+	public void testSuspended() {
+		Log.printAndLog(this, "testSuspended()");
+		try {
+			this.fop.suspend();
+			assertTrue(this.fop.suspended());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+		Log.printAndLog(this, "done...");
+	}
+
 	public void testSuspend() {
 		Log.printAndLog(this, "testSuspend()");
 		try {
 			this.fop.suspend();
 			assertTrue(this.fop.suspended());
 		} catch (Exception e) {
-			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -211,7 +185,6 @@ public class FridgeUnitTester extends AbstractComponent {
 			this.fop.resume();
 			assertTrue(!this.fop.suspended());
 		} catch (Exception e) {
-			System.err.println("Error occured in test down mode");
 			assertTrue(false);
 		}
 		Log.printAndLog(this, "done...");
@@ -226,17 +199,16 @@ public class FridgeUnitTester extends AbstractComponent {
 			assertTrue(false);
 		}
 	}
+
 	/**
 	 * Run all the tests
 	 */
 	protected void runAllTests() {
-		this.testGetCurrentTemperature();
-		this.testGetRequestedTemperature();
-		this.testSetRequestedTemperature();
 		this.testUpMode();
 		this.testDownMode();
 		this.testSetMode();
-		this.testSuspend();//ordre important
+		this.testCurrentMode();
+		this.testSuspend();
 		this.testResume();
 		this.testEmergency();
 		Log.printAndLog(this, "all test passed");

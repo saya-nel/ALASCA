@@ -175,7 +175,7 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 			if (!this.owner.suspended()) {
 				// the freezing contribution: temperature difference between the
 				// evaporator and the fridge content divided by the cold transfer constant
-				if (this.owner.getMode() == FridgeMode.NORMAL) {
+				if (this.owner.currentMode() == FridgeMode.NORMAL.ordinal()) {
 					this.currentTempDerivative = (Fridge.STANDARD_FREEZE_TEMP - this.contentTemperature.v)
 							/ Fridge.FREEZE_TRANSFER_CONSTANT;
 				} else {

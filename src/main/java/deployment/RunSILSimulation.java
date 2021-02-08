@@ -65,7 +65,7 @@ public class RunSILSimulation extends AbstractCVM {
 		AbstractComponent.createComponent(Washer.class.getCanonicalName(),
 				new Object[] { "washerSerial", WASHER_INBOUND_PORT_URI, CONTROLLER_INBOUND_PORT_URI, true, false });
 		AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
-				new Object[] { "fridgeSerial", CONTROLLER_INBOUND_PORT_URI, true });
+				new Object[] { "fridgeSerial", CONTROLLER_INBOUND_PORT_URI, true, false });
 		AbstractComponent.createComponent(FridgeReactiveController.class.getCanonicalName(), new Object[] {});
 		AbstractComponent.createComponent(ElectricMeter.class.getCanonicalName(), new Object[] { false });
 

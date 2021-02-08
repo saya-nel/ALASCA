@@ -43,8 +43,10 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	public static final String REFLECTION_INBOUND_PORT_URI = Fridge.class.getSimpleName();
 
-	/** true if the component is executed in a SIL simulation mode. */
 	protected boolean isSILSimulated;
+	/** true if the component is executed in a SIL simulation mode. */
+	protected boolean isUnitTest;
+
 	protected static final String SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 
 	/** plug-in for the real atomic simulator of the fridge */
@@ -94,11 +96,12 @@ public class Fridge extends AbstractCyPhyComponent
 
 	public final static double TRANSFER_OUTSIDE_CONSTANT = 10000;
 
-	protected Fridge(String serialNumber, String cip_URI, boolean isSILSimulated) throws Exception {
+	protected Fridge(String serialNumber, String cip_URI, boolean isSILSimulated, boolean isUnitTest) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
 		// attributs
 		this.serialNumber = serialNumber;
 		this.isSILSimulated = isSILSimulated;
+		this.isUnitTest = isUnitTest;
 		this.passive = new AtomicBoolean(false);
 		this.lastSuspensionTime = new AtomicReference<>();
 		this.mode = new AtomicReference<>(FridgeMode.NORMAL);
@@ -138,7 +141,7 @@ public class Fridge extends AbstractCyPhyComponent
 				this.simulatorPlugin = new FridgeRTAtomicSimulatorPlugin();
 				this.simulatorPlugin.setPluginURI(FridgeTemperatureSILModel.URI);
 				this.simulatorPlugin.setSimulationExecutorService(SCHEDULED_EXECUTOR_SERVICE_URI);
-				this.simulatorPlugin.initialiseSimulationArchitecture();
+				this.simulatorPlugin.initialiseSimulationArchitecture(isUnitTest);
 				this.installPlugin(this.simulatorPlugin);
 			} catch (Exception e) {
 				throw new ComponentStartException(e);
@@ -193,34 +196,6 @@ public class Fridge extends AbstractCyPhyComponent
 	// ----------------------------------------------------------------------------
 	// Component services implementation
 	// ----------------------------------------------------------------------------
-
-	public FridgeMode getMode() {
-		return mode.get();
-	}
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getRequestedTemperature()
-	 */
-	@Override
-	public float getRequestedTemperature() throws Exception {
-		throw new Exception("not implemented yet");
-	}
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#setRequestedTemperature(float)
-	 */
-	@Override
-	public void setRequestedTemperature(float temp) throws Exception {
-		throw new Exception("not implemented yet");
-	}
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getCurrentTemperature()
-	 */
-	@Override
-	public float getCurrentTemperature() throws Exception {
-		throw new Exception("not implemented yet");
-	}
 
 	/**
 	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#upMode()

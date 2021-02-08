@@ -10,6 +10,7 @@ import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
 import fr.sorbonne_u.devs_simulation.hioa.architectures.RTAtomicHIOA_Descriptor;
 import fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI;
 import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDescriptor;
+import main.java.components.battery.sil.BatteryElectricalSILModel;
 import main.java.deployment.RunSILSimulation;
 
 /**
@@ -30,6 +31,7 @@ public class FridgeRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	 * simulation model from its owner component.
 	 */
 	public static final String FRIDGE_TEMPERATURE_VARIABLE_NAME = "contentTemperature";
+	protected boolean isUnitTest;
 
 	// -------------------------------------------------------------------------
 	// Constructors
@@ -46,7 +48,8 @@ public class FridgeRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 	 *
 	 * @throws Exception <i>to do</i>.
 	 */
-	public void initialiseSimulationArchitecture() throws Exception {
+	public void initialiseSimulationArchitecture(boolean isUnitTest) throws Exception {
+		this.isUnitTest = isUnitTest;
 
 		Map<String, AbstractAtomicModelDescriptor> atomicModelDescriptors = new HashMap<>();
 
@@ -54,6 +57,13 @@ public class FridgeRTAtomicSimulatorPlugin extends RTAtomicSimulatorPlugin {
 				RTAtomicHIOA_Descriptor.create(FridgeTemperatureSILModel.class, FridgeTemperatureSILModel.URI,
 						TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						RunSILSimulation.ACC_FACTOR));
+
+		if (isUnitTest) {
+			atomicModelDescriptors.put(BatteryElectricalSILModel.URI,
+					RTAtomicHIOA_Descriptor.create(BatteryElectricalSILModel.class, BatteryElectricalSILModel.URI,
+							TimeUnit.SECONDS, null, SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+							RunSILSimulation.ACC_FACTOR));
+		}
 
 		this.setSimulationArchitecture(
 				new RTArchitecture(RunSILSimulation.SIM_ARCHITECTURE_URI, FridgeTemperatureSILModel.URI,

@@ -10,23 +10,6 @@ import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 
 public interface FridgeCI extends FridgeImplementationI, OfferedCI, RequiredCI {
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getRequestedTemperature()
-	 */
-	@Override
-	public float getRequestedTemperature() throws Exception;
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#setRequestedTemperature(float)
-	 */
-	@Override
-	public void setRequestedTemperature(float temp) throws Exception;
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getCurrentTemperature()
-	 */
-	@Override
-	public float getCurrentTemperature() throws Exception;
 
 	/**
 	 * @see main.java.components.controller.interfaces.StandardEquipmentControlCI#upMode()

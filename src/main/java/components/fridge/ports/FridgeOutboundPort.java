@@ -25,30 +25,6 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	}
 
 	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getRequestedTemperature()
-	 */
-	@Override
-	public float getRequestedTemperature() throws Exception {
-		return ((FridgeCI) this.getConnector()).getRequestedTemperature();
-	}
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#setRequestedTemperature(float)
-	 */
-	@Override
-	public void setRequestedTemperature(float temp) throws Exception {
-		((FridgeCI) this.getConnector()).setRequestedTemperature(temp);
-	}
-
-	/**
-	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#getCurrentTemperature()
-	 */
-	@Override
-	public float getCurrentTemperature() throws Exception {
-		return ((FridgeCI) this.getConnector()).getCurrentTemperature();
-	}
-
-	/**
 	 * @see main.java.components.fridge.interfaces.FridgeImplementationI#upMode()
 	 */
 	@Override
