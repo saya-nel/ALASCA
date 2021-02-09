@@ -15,6 +15,11 @@ public class Passivate extends Event {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * create a Passivate event.
+	 *
+	 * @param timeOfOccurrence time of occurrence of the event.
+	 */
 	public Passivate(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}

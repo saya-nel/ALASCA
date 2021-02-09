@@ -15,6 +15,11 @@ public class Activate extends Event {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * create an Activate event.
+	 *
+	 * @param timeOfOccurrence time of occurrence of the event.
+	 */
 	public Activate(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);
 	}

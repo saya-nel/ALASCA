@@ -1,7 +1,9 @@
 package main.java.components.fridge.interfaces;
 
 /**
- * Methods of fridge component
+ * The interface <code>FridgeImplementationI</code> defines the operations to be
+ * implemented to control the fridge and its operation mode.
+ *
  *
  * @author Bello Memmi
  *

@@ -21,15 +21,8 @@ import main.java.components.fridge.utils.FridgeMode;
 import main.java.utils.FileLogger;
 
 /**
- * The class <code>FridgeElectricity_MILModel</code> defines a MIL model of the
+ * The class <code>FridgeElectricalSILModel</code> defines a SIL model of the
  * electricity consumption of a Fridge.
- * <p>
- * <string>Description</string>
- * </p>
- * <p>
- * The fridge can change mode and it changes the consumption.
- * </p>
- * </p>
  * 
  * @author Bello Memmi
  */
@@ -42,6 +35,9 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
+	/**
+	 * URI for an instance model; works as long as only one instance is created.
+	 */
 	public static final String URI = FridgeElectricalSILModel.class.getSimpleName();
 
 	/** owner component */

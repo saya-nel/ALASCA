@@ -10,15 +10,7 @@ import main.java.components.fridge.utils.FridgeMode;
  * The class <code>SetNormal</code> defines the MIL event of the fridge being
  * set to medium mode.
  *
- * <p><strong>Description</strong></p>
- *
- * <p><strong>Invariant</strong></p>
- *
- * <pre>
- * invariant		true
- * </pre>
- *
- * @author	Bello Memmi
+ * @author Bello Memmi
  */
 public class SetNormal extends AbstractFridgeEvent {
 
@@ -27,14 +19,7 @@ public class SetNormal extends AbstractFridgeEvent {
 	/**
 	 * create a SetNormal event.
 	 *
-	 * <p><strong>Contract</strong></p>
-	 *
-	 * <pre>
-	 * pre	{@code timeOfOccurrence != null}
-	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
-	 * </pre>
-	 *
-	 * @param timeOfOccurrence	time of occurrence of the event.
+	 * @param timeOfOccurrence time of occurrence of the event.
 	 */
 	public SetNormal(Time timeOfOccurrence) {
 		super(timeOfOccurrence, null);

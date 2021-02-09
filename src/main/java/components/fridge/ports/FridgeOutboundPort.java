@@ -5,7 +5,8 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import main.java.components.fridge.interfaces.FridgeCI;
 
 /**
- * Outbound port of Fridge component interface
+ * The class <code>FridgeOutboundPort</code> implements an outbound port for the
+ * <code>FridgeCI</code> component interface.
  *
  * @author Bello Memmi
  *
@@ -15,7 +16,7 @@ public class FridgeOutboundPort extends AbstractOutboundPort implements FridgeCI
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Constructor of Fridge inbound port
+	 * Constructor of Fridge outbound port
 	 * 
 	 * @param owner owner of the component
 	 * @throws Exception

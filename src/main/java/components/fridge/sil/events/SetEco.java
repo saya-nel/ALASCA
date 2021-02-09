@@ -10,18 +10,6 @@ import main.java.components.fridge.utils.FridgeMode;
  * The class <code>SetEco</code> defines the MIL event of the Fridge being set
  * to eco mode.
  *
- * <p>
- * <strong>Description</strong>
- * </p>
- *
- * <p>
- * <strong>Invariant</strong>
- * </p>
- *
- * <pre>
- * invariant		true
- * </pre>
- *
  * @author Bello Memmi
  */
 public class SetEco extends AbstractFridgeEvent {
@@ -30,15 +18,6 @@ public class SetEco extends AbstractFridgeEvent {
 
 	/**
 	 * create a SetEco event.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	{@code timeOfOccurrence != null}
-	 * post	{@code getTimeOfOccurrence().equals(timeOfOccurrence)}
-	 * </pre>
 	 *
 	 * @param timeOfOccurrence time of occurrence of the event.
 	 */

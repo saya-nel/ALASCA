@@ -12,9 +12,15 @@ import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
 /**
+ * 
+ * The class <code>HEMProjectCoupledModel</code> defines the coupled model to be
+ * used to compose at the highest level the simulation models in the HEM
+ * example.
+ * 
  * @author Bello Memmi
  */
 public class HEMProjectCoupledModel extends CoupledModel {
+
 	private static final long serialVersionUID = 1L;
 	/** URI of the model, works for singleton. */
 	protected static final String URI = HEMProjectCoupledModel.class.getSimpleName();

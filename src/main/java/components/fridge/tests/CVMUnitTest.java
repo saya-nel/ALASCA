@@ -5,6 +5,13 @@ import fr.sorbonne_u.components.cvm.AbstractCVM;
 import main.java.components.fridge.Fridge;
 import main.java.components.fridge.FridgeReactiveController;
 
+/**
+ * The class <code>CVMUnitTest</code> performs unit tests on the {@link Fridge}
+ * component.
+ * 
+ * @author Bello Memmi
+ *
+ */
 public class CVMUnitTest extends AbstractCVM {
 	/**
 	 * if true, the unit test is driven by the SIL simulation, otherwise it is

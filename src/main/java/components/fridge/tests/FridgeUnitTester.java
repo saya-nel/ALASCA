@@ -13,8 +13,9 @@ import main.java.components.fridge.ports.FridgeOutboundPort;
 import main.java.utils.Log;
 
 /**
- * Tester for the Fridge component
- *
+ * The class <code>FridgeUnitTester</code> implements a component performing
+ * unit tests for the class <code>Fridge</code> as a BCM component.
+ * 
  * @author Bello Memmi
  *
  */
@@ -105,6 +106,9 @@ public class FridgeUnitTester extends AbstractComponent {
 	// TESTS
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Test the upMode method
+	 */
 	public void testUpMode() {
 		Log.printAndLog(this, "testUpMode()");
 		try {
@@ -117,6 +121,9 @@ public class FridgeUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the downMode method
+	 */
 	public void testDownMode() {
 		Log.printAndLog(this, "testDownMode()");
 		try {
@@ -129,6 +136,9 @@ public class FridgeUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the setMode method
+	 */
 	public void testSetMode() {
 		Log.printAndLog(this, "testSetMode()");
 		try {
@@ -140,6 +150,9 @@ public class FridgeUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the currentMode method
+	 */
 	public void testCurrentMode() {
 		Log.printAndLog(this, "testGetMode()");
 		try {
@@ -157,6 +170,9 @@ public class FridgeUnitTester extends AbstractComponent {
 	 *
 	 */
 
+	/**
+	 * Test the suspended method
+	 */
 	public void testSuspended() {
 		Log.printAndLog(this, "testSuspended()");
 		try {
@@ -168,6 +184,9 @@ public class FridgeUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the suspend method
+	 */
 	public void testSuspend() {
 		Log.printAndLog(this, "testSuspend()");
 		try {
@@ -179,6 +198,9 @@ public class FridgeUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the resume method
+	 */
 	public void testResume() {
 		Log.printAndLog(this, "testResume()");
 		try {
@@ -190,6 +212,9 @@ public class FridgeUnitTester extends AbstractComponent {
 		Log.printAndLog(this, "done...");
 	}
 
+	/**
+	 * Test the emergency method
+	 */
 	public void testEmergency() {
 		Log.printAndLog(this, "testEmergency()");
 		try {

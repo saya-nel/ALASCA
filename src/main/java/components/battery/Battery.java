@@ -106,10 +106,13 @@ public class Battery extends AbstractCyPhyComponent implements BatteryImplementa
 	protected AtomicReference<LocalTime> endTime;
 
 	/**
-	 * Constructor of battery
+	 * constructor of the battery component
 	 * 
-	 * @param reflectionPortURI URI battery component
-	 * @param bipURI            URI inbound port battery
+	 * @param serialNumber   serial number to register to controller
+	 * @param bipURI         inboud port uri
+	 * @param cip_URI        controller inbound port uri
+	 * @param isSILSimulated true if the component is simulated
+	 * @param isUnitTest     tur if the component is under unit test
 	 * @throws Exception
 	 */
 	protected Battery(String serialNumber, String bipURI, String cip_URI, boolean isSILSimulated, boolean isUnitTest)

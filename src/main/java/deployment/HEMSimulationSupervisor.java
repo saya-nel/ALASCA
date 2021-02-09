@@ -48,6 +48,9 @@ import main.java.components.washer.sil.events.SetPerformance;
 import main.java.components.washer.sil.events.SetStd;
 
 /**
+ * The class <code>HEMSimulationSupervisor</code> defines the component used in
+ * the HEM example to execute the simulation supervisor.
+ * 
  * @author Bello Memmi
  */
 public class HEMSimulationSupervisor extends AbstractCyPhyComponent {

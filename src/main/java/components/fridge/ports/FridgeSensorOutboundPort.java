@@ -14,10 +14,19 @@ public class FridgeSensorOutboundPort extends AbstractOutboundPort implements Fr
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * constructor
+	 * 
+	 * @param owner owner component
+	 * @throws Exception
+	 */
 	public FridgeSensorOutboundPort(ComponentI owner) throws Exception {
 		super(FridgeSensorCI.class, owner);
 	}
 
+	/**
+	 * @see main.java.components.fridge.interfaces.FridgeSensorCI#getContentTemperatureInCelsius()
+	 */
 	@Override
 	public double getContentTemperatureInCelsius() throws Exception {
 		return ((FridgeSensorCI) this.getConnector()).getContentTemperatureInCelsius();

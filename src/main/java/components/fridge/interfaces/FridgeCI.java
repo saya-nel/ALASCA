@@ -9,6 +9,13 @@ package main.java.components.fridge.interfaces;
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 
+/**
+ * The component interface <code>FridgeCI</code> defines the services the fridge
+ * offers to control its operation and its operation mode.
+ *
+ * @author Bello Memmi
+ *
+ */
 public interface FridgeCI extends FridgeImplementationI, OfferedCI, RequiredCI {
 
 	/**

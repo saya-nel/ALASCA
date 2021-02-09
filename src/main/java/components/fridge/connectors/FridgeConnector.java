@@ -4,7 +4,8 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 import main.java.components.fridge.interfaces.FridgeCI;
 
 /**
- * Connector for the FridgeCI component interface
+ * The class <code>FridgeConnector</code> implements a connector for the
+ * <code>FridgeCI</code> component interface.
  * 
  * @author Bello Memmi
  *

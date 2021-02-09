@@ -16,6 +16,12 @@ public class FridgeActuatorInboundPort extends AbstractInboundPort implements Fr
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * constructor
+	 * 
+	 * @param owner owner component
+	 * @throws Exception
+	 */
 	public FridgeActuatorInboundPort(ComponentI owner) throws Exception {
 		super(Fridge.ACTUATOR_INBOUND_PORT_URI, FridgeActuatorCI.class, owner);
 		assert owner instanceof FridgeReactiveControlImplementationI;

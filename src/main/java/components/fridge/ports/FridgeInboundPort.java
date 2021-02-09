@@ -6,7 +6,8 @@ import main.java.components.fridge.Fridge;
 import main.java.components.fridge.interfaces.FridgeCI;
 
 /**
- * Fridge inbound port for the fridge component interface
+ * The class <code>FridgeInboundPort</code> implements an inbound port for the
+ * <code>FridgeCI</code> component interface.
  * 
  * @author Bello Memmi
  *

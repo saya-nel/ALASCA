@@ -15,6 +15,8 @@ import main.java.components.solarPanels.SolarPanels;
 import main.java.components.washer.Washer;
 
 /**
+ * The class <code>RunSILSimulation</code> executes the SIL simulaiton of the
+ * HEM example using one JVM.
  * 
  * @author Bello Memmi
  *

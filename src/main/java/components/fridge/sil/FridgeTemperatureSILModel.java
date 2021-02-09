@@ -71,15 +71,6 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 	/**
 	 * create an instance of the fridge model.
 	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
-	 *
 	 * @param uri               unique identifier of the model.
 	 * @param simulatedTimeUnit time unit used for the simulation clock.
 	 * @param simulationEngine  simulation engine enacting the model.
@@ -96,14 +87,7 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 	// Instance methods
 	// -------------------------------------------------------------------------
 	/**
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
+	 * return the current content temperature
 	 *
 	 * @return the current content temperature.
 	 */

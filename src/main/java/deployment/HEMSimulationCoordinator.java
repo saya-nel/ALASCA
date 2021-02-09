@@ -3,6 +3,9 @@ package main.java.deployment;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 
 /**
+ * The class <code>HEMSimulationCoordinator</code> defines the component used in
+ * the HEM example to execute the simulation coordinator.
+ * 
  * @author Bello Memmi
  */
 public class HEMSimulationCoordinator extends AbstractCyPhyComponent {

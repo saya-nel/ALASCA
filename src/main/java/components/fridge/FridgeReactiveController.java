@@ -21,24 +21,12 @@ import main.java.deployment.RunSILSimulation;
  * The class <code>FridgeReactiveController</code> implements a simple reactive
  * controller with hysteresis for a Fridge.
  *
- * <p>
- * <strong>Description</strong>
- * </p>
- *
- * <p>
- * <strong>Invariant</strong>
- * </p>
- *
- * <pre>
- * invariant	{@code Boiler.EXTERNAL_TEMP < targetTemp}
- * invariant	{@code targetTemp < Boiler.STANDARD_HEATING_TEMP}
- * </pre>
- *
  * @author Bello Memmi
  */
 
 @RequiredInterfaces(required = { FridgeSensorCI.class, FridgeActuatorCI.class, FridgeCI.class })
 public class FridgeReactiveController extends AbstractComponent {
+
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
@@ -72,15 +60,6 @@ public class FridgeReactiveController extends AbstractComponent {
 
 	/**
 	 * create a fridge reactive controller component.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true		// no precondition.
-	 * post	true		// no postcondition.
-	 * </pre>
 	 *
 	 */
 	protected FridgeReactiveController() {
@@ -174,16 +153,7 @@ public class FridgeReactiveController extends AbstractComponent {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * water temperature control.
-	 *
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 *
-	 * <pre>
-	 * pre	true			// no precondition.
-	 * post	true			// no postcondition.
-	 * </pre>
+	 * fridge temperature control.
 	 *
 	 * @throws Exception <i>to do</i>.
 	 */

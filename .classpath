@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="lib/BCM4Java-01102020-src/src"/>
-	<classpathentry kind="src" path="lib/Simulation-08012021-src/Simulation-01122020-src/src"/>
-	<classpathentry kind="src" path="lib/BCM-CyPhy-08012021-src/src"/>
 	<classpathentry kind="lib" path="jars/commons-math3-3.5.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -18,5 +15,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="jars/jing.jar"/>
 	<classpathentry kind="lib" path="jars/jfreechart-1.6.0-snapshot.jar"/>
+	<classpathentry kind="lib" path="jars/BCM-CyPhy-08012021.jar"/>
+	<classpathentry kind="lib" path="jars/BCM4Java-01102020.jar"/>
+	<classpathentry kind="lib" path="jars/Simulation-08012021.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

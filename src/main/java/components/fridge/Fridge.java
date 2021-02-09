@@ -32,6 +32,14 @@ import main.java.components.fridge.sil.events.SetNormal;
 import main.java.components.fridge.utils.FridgeMode;
 import main.java.utils.Log;
 
+/**
+ * The class <code>Fridge</code> implements a fridge component A fridge can be
+ * on two mode : eco or normal A fridge can be suspended, but will restart when
+ * the critical temperature is reach
+ * 
+ * @author Bello Memmi
+ *
+ */
 @OfferedInterfaces(offered = { FridgeCI.class, FridgeSensorCI.class, FridgeActuatorCI.class })
 @RequiredInterfaces(required = { ControllerCI.class })
 public class Fridge extends AbstractCyPhyComponent
@@ -42,13 +50,19 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	public static final String REFLECTION_INBOUND_PORT_URI = Fridge.class.getSimpleName();
 
+	/**
+	 * true if the component is executed in a SIL simulation mode.
+	 */
 	protected boolean isSILSimulated;
-	/** true if the component is executed in a SIL simulation mode. */
 	protected boolean isUnitTest;
-
+	/**
+	 * URI of the executor service used for real time simulation.
+	 */
 	protected static final String SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 
-	/** plug-in for the real atomic simulator of the fridge */
+	/**
+	 * plug-in for the real atomic simulator of the fridge
+	 */
 	protected FridgeRTAtomicSimulatorPlugin simulatorPlugin;
 
 	public static final String SENSOR_INBOUND_PORT_URI = "FRIDGE-SENSOR-IBP-URI";
@@ -70,6 +84,9 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	protected ControllerOutboundPort cop;
 
+	/**
+	 * Uri of the controller to connect to
+	 */
 	protected String cip_URI;
 
 	/** maximum time during which the fridge can be suspended **/
@@ -86,15 +103,39 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	protected AtomicReference<FridgeMode> mode;
 
+	/**
+	 * Freeze temp in standard mode
+	 */
 	public final static double STANDARD_FREEZE_TEMP = -20;
+	/**
+	 * Freeze temp in eco mode
+	 */
 	public final static double ECO_FREEZE_TEMP = -10;
 
+	/**
+	 * temperature in the room
+	 */
 	public final static double EXTERNAL_TEMPERATURE = 20;
 
+	/**
+	 * fridge transfer constant in the differential equation.
+	 */
 	public final static double FREEZE_TRANSFER_CONSTANT = 1000;
 
+	/**
+	 * insulation fridge transfer constant in the differential equation.
+	 */
 	public final static double TRANSFER_OUTSIDE_CONSTANT = 10000;
 
+	/**
+	 * create a fridge component
+	 * 
+	 * @param serialNumber   serial number for register to the controller
+	 * @param cip_URI        uri of the controller inbound port
+	 * @param isSILSimulated true if the component is simulated
+	 * @param isUnitTest     true if the component is under unit tests
+	 * @throws Exception
+	 */
 	protected Fridge(String serialNumber, String cip_URI, boolean isSILSimulated, boolean isUnitTest) throws Exception {
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
 		// attributs
