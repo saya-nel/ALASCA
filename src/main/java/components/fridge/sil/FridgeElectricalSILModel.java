@@ -47,11 +47,11 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	/** owner component */
 	protected ComponentI owner;
 	/** energy generated during eco mode */
-	public static final double ECO_MODE_CONSUMPTION = 40;
+	public static final double ECO_MODE_CONSUMPTION = 200;
 	/** energy generated during normal mode */
-	public static final double NORMAL_MODE_CONSUMPTION = 80;
+	public static final double NORMAL_MODE_CONSUMPTION = 350;
 	/** tension same for all the house */
-	public static final double TENSION = 15;
+	public static final double TENSION = 220;
 
 	/** current mode of the fridge */
 	protected FridgeMode currentMode = FridgeMode.NORMAL;
@@ -156,7 +156,7 @@ public class FridgeElectricalSILModel extends AtomicHIOA {
 	@Override
 	public void initialiseState(Time initialTime) {
 		this.lastReceivedEvent = null;
-		this.isSuspended = true;
+		this.isSuspended = false;
 
 		super.initialiseState(initialTime);
 	}

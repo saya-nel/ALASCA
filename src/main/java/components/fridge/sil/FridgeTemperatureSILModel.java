@@ -60,7 +60,7 @@ public class FridgeTemperatureSILModel extends AtomicHIOAwithDE {
 
 	/** the current content temperature. */
 	@InternalVariable(type = Double.class)
-	protected final Value<Double> contentTemperature = new Value<Double>(this, 6., 0);
+	protected final Value<Double> contentTemperature = new Value<Double>(this, 20., 0);
 	/** the current derivative of the water temperature. */
 	protected double currentTempDerivative = 0.0;
 

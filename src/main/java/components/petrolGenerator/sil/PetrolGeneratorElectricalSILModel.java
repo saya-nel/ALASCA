@@ -41,7 +41,7 @@ public class PetrolGeneratorElectricalSILModel extends AtomicHIOA {
 	/**
 	 * Electricity produced when the petrol generator is on and get petrol in watts
 	 */
-	protected static final double GENERATING = 1700;
+	protected static final double GENERATING = 1500;
 	/**
 	 * tension in volts
 	 */

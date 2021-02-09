@@ -45,15 +45,15 @@ public class FanElectricalSILModel extends AtomicHIOA {
 	/**
 	 * energy consumption during low mode in watts
 	 */
-	public static final double LOW_MODE_CONSUMPTION = 20;
+	public static final double LOW_MODE_CONSUMPTION = 40;
 	/**
 	 * energy consumption during medium mode in watts
 	 */
-	public static final double MID_MODE_CONSUMPTION = 40;
+	public static final double MID_MODE_CONSUMPTION = 60;
 	/**
 	 * energy consumption during high mode in watts
 	 */
-	public static final double HIGH_MODE_CONSUMPTION = 60;
+	public static final double HIGH_MODE_CONSUMPTION = 80;
 
 	/**
 	 * nominal tension (in Volts) of the hair dryer.

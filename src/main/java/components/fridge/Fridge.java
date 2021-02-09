@@ -23,7 +23,6 @@ import main.java.components.fridge.interfaces.FridgeSensorCI;
 import main.java.components.fridge.ports.FridgeActuatorInboundPort;
 import main.java.components.fridge.ports.FridgeInboundPort;
 import main.java.components.fridge.ports.FridgeSensorInboundPort;
-import main.java.components.fridge.sil.FridgeElectricalSILModel;
 import main.java.components.fridge.sil.FridgeRTAtomicSimulatorPlugin;
 import main.java.components.fridge.sil.FridgeTemperatureSILModel;
 import main.java.components.fridge.sil.events.Activate;
@@ -187,11 +186,13 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	@Override
 	public synchronized void execute() throws Exception {
-		byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/fridge-control.xml"));
-		String xmlFile = new String(encoded, "UTF-8");
-		boolean isRegister = this.cop.register(this.serialNumber, this.fip.getPortURI(), xmlFile);
-		if (!isRegister)
-			throw new Exception("Fridge can't register to controller");
+		if (cip_URI.length() > 0) {
+			byte[] encoded = Files.readAllBytes(Paths.get("src/main/java/adapter/fridge-control.xml"));
+			String xmlFile = new String(encoded, "UTF-8");
+			boolean isRegister = this.cop.register(this.serialNumber, this.fip.getPortURI(), xmlFile);
+			if (!isRegister)
+				throw new Exception("Fridge can't register to controller");
+		}
 	}
 	// ----------------------------------------------------------------------------
 	// Component services implementation
@@ -202,21 +203,8 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	@Override
 	public boolean upMode() throws Exception {
-		boolean succeed = false;
-		if (this.mode.get() == FridgeMode.NORMAL)
-			succeed = false;
-		else
-			succeed = this.mode.compareAndSet(this.mode.get(),
-					FridgeMode.values()[(this.mode.get().ordinal() + 1) % 2]);
-		if (isSILSimulated && succeed) {
-			if (this.mode.get() == FridgeMode.ECO) {
-				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetNormal(t));
-			}
-//			else {
-//				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
-//			}
-		}
-		Log.printAndLog(this, "upMode() service result : " + true);
+		boolean succeed = setMode(mode.get().ordinal() + 1);
+		Log.printAndLog(this, "upMode() service result : " + succeed);
 		return succeed;
 	}
 
@@ -225,21 +213,8 @@ public class Fridge extends AbstractCyPhyComponent
 	 */
 	@Override
 	public boolean downMode() throws Exception {
-		boolean succeed = false;
-		if (this.mode.get() == FridgeMode.ECO)
-			succeed = false;
-		else
-			succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[this.mode.get().ordinal() - 1]);
-		if (isSILSimulated && succeed) {
-			if (this.mode.get() == FridgeMode.NORMAL) {
-				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
-
-			}
-//			else {
-//				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
-//			}
-		}
-		Log.printAndLog(this, "downmode() service result : " + true);
+		boolean succeed = setMode(mode.get().ordinal() - 1);
+		Log.printAndLog(this, "downmode() service result : " + succeed);
 		return succeed;
 	}
 
@@ -249,16 +224,15 @@ public class Fridge extends AbstractCyPhyComponent
 	@Override
 	public boolean setMode(int modeIndex) throws Exception {
 		boolean succeed = false;
-		try {
-			succeed = this.mode.compareAndSet(this.mode.get(), FridgeMode.values()[modeIndex]);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (modeIndex >= 0 && modeIndex < FridgeMode.values().length && modeIndex != this.mode.get().ordinal()) {
+			succeed = true;
+			this.mode.set(FridgeMode.values()[modeIndex]);
 		}
 		if (isSILSimulated && succeed) {
 			if (this.mode.get() == FridgeMode.NORMAL) {
-				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetNormal(t));
+				this.simulatorPlugin.triggerExternalEvent(FridgeTemperatureSILModel.URI, t -> new SetNormal(t));
 			} else {
-				this.simulatorPlugin.triggerExternalEvent(FridgeElectricalSILModel.URI, t -> new SetEco(t));
+				this.simulatorPlugin.triggerExternalEvent(FridgeTemperatureSILModel.URI, t -> new SetEco(t));
 			}
 		}
 		Log.printAndLog(this, "setMode(" + modeIndex + ") service result : " + succeed);
@@ -271,7 +245,7 @@ public class Fridge extends AbstractCyPhyComponent
 	@Override
 	public int currentMode() throws Exception {
 		int res = this.mode.get().ordinal();
-		Log.printAndLog(this, "currentMode() service result : " + res);
+		// Log.printAndLog(this, "currentMode() service result : " + res);
 		return res;
 	}
 
@@ -281,7 +255,7 @@ public class Fridge extends AbstractCyPhyComponent
 	@Override
 	public boolean suspended() throws Exception {
 		boolean res = this.passive.get();
-		Log.printAndLog(this, "suspended() service result : " + res);
+		// Log.printAndLog(this, "suspended() service result : " + res);
 		return res;
 	}
 
@@ -295,6 +269,8 @@ public class Fridge extends AbstractCyPhyComponent
 			succeed = this.passive.compareAndSet(false, true);
 			if (succeed) {
 				this.lastSuspensionTime.set(LocalTime.now());
+				if (isSILSimulated)
+					this.simulatorPlugin.triggerExternalEvent(FridgeTemperatureSILModel.URI, t -> new Passivate(t));
 			}
 		}
 		Log.printAndLog(this, "suspend() service result : " + succeed);
@@ -311,6 +287,8 @@ public class Fridge extends AbstractCyPhyComponent
 			succeed = this.passive.compareAndSet(true, false);
 			if (succeed) {
 				this.lastSuspensionTime.set(null);
+				if (isSILSimulated)
+					this.simulatorPlugin.triggerExternalEvent(FridgeTemperatureSILModel.URI, t -> new Activate(t));
 			}
 		}
 		Log.printAndLog(this, "resume() service result : " + succeed);

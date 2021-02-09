@@ -127,6 +127,7 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	public ElectricMeterSILModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
 		super(uri, simulatedTimeUnit, simulationEngine);
 		this.standardStep = new Duration(STEP_LENGTH, simulatedTimeUnit);
+		this.setLogger(new FileLogger("electricMeter.log"));
 	}
 
 	// -------------------------------------------------------------------------
@@ -188,7 +189,6 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 	@Override
 	public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception {
 		this.owner = (ComponentI) simParams.get(ELECTRIC_METER_REFERENCE_NAME);
-		this.setLogger(new FileLogger("electricMeter.log"));
 		super.setSimulationRunParameters(simParams);
 	}
 
@@ -232,19 +232,24 @@ public class ElectricMeterSILModel extends AtomicHIOA {
 			this.currentIntensity.v = this.FanIntensity.v + this.BatteryIntensity.v + this.WasherIntensity.v
 					+ this.FridgeIntensity.v;
 			this.currentIntensity.time = this.getCurrentStateTime();
-			this.logMessage("Consumption : " + String.format("%.2f", this.currentIntensity.v) + "(fan : "
+			String message = this.getCurrentStateTime() + " Consumption : "
+					+ String.format("%.2f", this.currentIntensity.v) + "(fan : "
 					+ String.format("%.2f", this.FanIntensity.v) + ", battery : "
 					+ String.format("%.2f", this.BatteryIntensity.v) + ", washer : "
 					+ String.format("%.2f", this.WasherIntensity.v) + ", fridge : "
-					+ String.format("%.2f", this.FridgeIntensity.v) + ")\n");
+					+ String.format("%.2f", this.FridgeIntensity.v) + ")\n";
+			this.owner.logMessage(message);
+			this.logMessage(message);
 
 			this.currentProduction.v = this.SolarPanelsProduction.v + this.PetrolGeneratorProduction.v
 					+ this.BatteryProduction.v;
 			this.currentProduction.time = this.getCurrentStateTime();
-			this.logMessage("Production : " + String.format("%.2f", this.currentProduction.v) + "(solarPanels : "
-					+ String.format("%.2f", this.SolarPanelsProduction.v) + ", petrol generator : "
+			message = this.getCurrentStateTime() + "Production : " + String.format("%.2f", this.currentProduction.v)
+					+ "(solarPanels : " + String.format("%.2f", this.SolarPanelsProduction.v) + ", petrol generator : "
 					+ String.format("%.2f", this.PetrolGeneratorProduction.v) + ", battery : "
-					+ String.format("%.2f", this.BatteryProduction.v) + ")\n");
+					+ String.format("%.2f", this.BatteryProduction.v) + ")\n";
+			this.owner.logMessage(message);
+			this.logMessage(message);
 
 			// the next planned computation
 			this.nextStep = this.standardStep;

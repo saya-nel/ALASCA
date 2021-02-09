@@ -41,7 +41,7 @@ public class SolarPanelsElectricalSILModel extends AtomicHIOA {
 	/**
 	 * Production in watts, supposed to vary according to weather
 	 */
-	public static final double DRAINING_MODE_PRODUCTION = 50;
+	public static final double DRAINING_MODE_PRODUCTION = 370;
 
 	/**
 	 * In volts

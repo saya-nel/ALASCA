@@ -32,7 +32,7 @@ public class FanUserSILModel extends AtomicModel {
 	/**
 	 * time interval between event outputs.
 	 */
-	protected static final double STEP = 2.0;
+	protected static final double STEP = 10.0;
 	/**
 	 * the current event being output.
 	 */
@@ -134,7 +134,7 @@ public class FanUserSILModel extends AtomicModel {
 	@Override
 	public Duration timeAdvance() {
 		if (this.currentOperation == null) {
-			return new Duration(0, TimeUnit.SECONDS);
+			return new Duration(30, TimeUnit.SECONDS);
 		}
 		if (this.currentOperation != null && this.currentOperation == Fan.Operations.TURN_OFF)
 			return new Duration(6 * 3600, TimeUnit.SECONDS);

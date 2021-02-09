@@ -41,13 +41,13 @@ public class BatteryElectricalSILModel extends AtomicHIOA {
 	public static final String URI = BatteryElectricalSILModel.class.getSimpleName();
 
 	/** power energy generated during draining mode in watts */
-	public static final double DRAINING_MODE_PRODUCTION = 5000;
+	public static final double DRAINING_MODE_PRODUCTION = 1500;
 
 	/** power consumption during Recharging mode in watts */
-	public static final double RECHARGING_MODE_CONSUMPTION = 5000;
+	public static final double RECHARGING_MODE_CONSUMPTION = 1500;
 
 	/** tension in volts */
-	public static final double TENSION = 48;
+	public static final double TENSION = 220;
 
 	/**
 	 * current consumption in Amperes; intensity is power/tension.

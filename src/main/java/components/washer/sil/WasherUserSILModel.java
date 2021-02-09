@@ -118,7 +118,7 @@ public class WasherUserSILModel extends AtomicModel {
 	@Override
 	public Duration timeAdvance() {
 		if (this.currentOperation == null) {
-			return new Duration(10, TimeUnit.SECONDS);
+			return new Duration(60 * 1.5, TimeUnit.SECONDS);
 		} else {
 			return this.time2next;
 		}

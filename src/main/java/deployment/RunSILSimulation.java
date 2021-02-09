@@ -27,8 +27,8 @@ public class RunSILSimulation extends AbstractCVM {
 	 * (the order is delivered to the models during this delay.
 	 */
 	public static final long DELAY_TO_START_SIMULATION = 1000L;
-	/** duration of the simulation. */
-	public static final double SIMULATION_DURATION = 100;
+	/** duration of the simulation on seconds. */
+	public static final double SIMULATION_DURATION = 10 * 60;
 	/** URI of the simulation architecture used in the execution. */
 	public static final String SIM_ARCHITECTURE_URI = "sil";
 	/** URI of the inbound port of the fan component. */
@@ -38,7 +38,7 @@ public class RunSILSimulation extends AbstractCVM {
 	/** URI of the inbound port of the petrol generator component. */
 	protected final static String PETROL_GENERATOR_INBOUND_PORT_URI = "pgip-URI";
 	/** URI of the inbound port of the battery component. */
-	protected final static String BATTERY_INBOUND_PORT_URI = "bip-URI";
+	public final static String BATTERY_INBOUND_PORT_URI = "bip-URI";
 	/** URI of the inbound port of the washer component. */
 	protected final static String WASHER_INBOUND_PORT_URI = "wip-URI";
 	/** URI of the inbound port of the controller component. */

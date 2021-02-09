@@ -157,7 +157,7 @@ public class PetrolGeneratorUserSILModel extends AtomicModel {
 	@Override
 	public Duration timeAdvance() {
 		if (this.currentOperation == null) {
-			return new Duration(0, TimeUnit.SECONDS);
+			return new Duration(2 * 60, TimeUnit.SECONDS);
 		} else
 			return this.time2next;
 	}

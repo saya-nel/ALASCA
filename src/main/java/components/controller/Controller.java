@@ -40,6 +40,7 @@ import main.java.components.electricMeter.connectors.ElectricMeterConnector;
 import main.java.components.electricMeter.interfaces.ElectricMeterCI;
 import main.java.components.electricMeter.ports.ElectricMeterOutboundPort;
 import main.java.deployment.RunSILSimulation;
+import main.java.utils.FileLogger;
 import main.java.utils.Log;
 
 /**
@@ -105,9 +106,7 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 	 */
 	private String eipURI;
 
-	public static int countChangeMode = 0;
-
-	public static double lastRatio = 1;
+	private FileLogger fileLogger;
 
 	/**
 	 * Constructor of the controller
@@ -126,6 +125,7 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 
 		initialise(cipURI);
 
+		fileLogger = new FileLogger("controller.log");
 		this.tracer.get().setTitle("Controller component");
 		this.tracer.get().setRelativePosition(2, 1);
 		this.toggleTracing();
@@ -202,6 +202,9 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		super.shutdown();
 	}
 
+	double lastLoopEnergy = 0;
+	boolean isRunning = false;
+
 	/**
 	 * Handle the management of the available energy in the house, the controller
 	 * look each second the consumption and production and make decisions
@@ -214,87 +217,206 @@ public class Controller extends AbstractCyPhyComponent implements ControllerImpl
 		ComponentI me = this;
 
 		class RunControl extends TimerTask {
+
 			@Override
 			public void run() {
 				try {
-					if (!isStarted()) {
-						cancel();
-						throw new Exception();
-					}
+					if (!isRunning) {
+						isRunning = true;
 
-					Log.printAndLog(me, "controller, consommation " + eop.getIntensity());
-					Log.printAndLog(me, "controller, production " + eop.getProduction());
+						if (!isStarted()) {
+							cancel();
+							throw new Exception();
+						}
 
-					double prod = eop.getProduction();
-					double cons = eop.getIntensity();
-//					Log.printAndLog(me, "controller, consommation " + cons);
-//					Log.printAndLog(me, "controller, production " + prod);
-					// faire des choses
-					double ratio = cons / prod;
-					Log.printAndLog(me, "ratio conso/prod " + ratio);
-					// more production than consumption
-					if (ratio < 1) {
-						if (lastRatio >= 1) {
-							// ratio changed so cpt of up and down mode set to 0
-							countChangeMode = 0;
-						}
-						if (countChangeMode == 0 || countChangeMode == 1) {
-							// upper consumption mode
-							for (StandardEquipmentControlOutboundPort stecop : stecops)
-								stecop.upMode();
-						} else if (countChangeMode >= 2) {
-							for (StandardEquipmentControlOutboundPort stecop : stecops)
-								stecop.upMode();
-							for (PlanningEquipmentControlOutboundPort plecop : plecops)
-								plecop.upMode();
-							for (SuspensionEquipmentControlOutboundPort suecop : suecops)
-								suecop.upMode();
-						}
-						countChangeMode++;
-					}
-					// more consumption than production
-					else if (ratio > 1) {
-						if (lastRatio <= 1) {
-							countChangeMode = 0;
-						}
-						// lower consumption mode
-						if (countChangeMode == 0 || countChangeMode == -1) {
-							for (StandardEquipmentControlOutboundPort stecop : stecops)
-								stecop.downMode();
-						} else if (countChangeMode <= -2) {
-							for (StandardEquipmentControlOutboundPort stecop : stecops)
-								stecop.downMode();
-							for (PlanningEquipmentControlOutboundPort plecop : plecops)
-								plecop.downMode();
+						double prod = eop.getProduction();
+						double cons = eop.getIntensity();
+
+						double energy = prod - cons;
+
+						if (energy < 0) {
+							if (lastLoopEnergy >= 0) {
+								String message = "House energy being negative";
+								Log.printAndLog(me, message);
+								fileLogger.logMessage("", message);
+							}
+
+							// down mode all equipments, but dont ask to battery to produce energy
+							int totalDowned = 0;
+							for (StandardEquipmentControlOutboundPort stecop : stecops) {
+								boolean res = stecop.downMode();
+								if (res)
+									totalDowned++;
+							}
 							for (SuspensionEquipmentControlOutboundPort suecop : suecops) {
-								suecop.downMode();
-								if (suecop.suspended()) {
-									double emergency = suecop.emergency(); // 0 to 1
-									if (emergency >= Math.abs(countChangeMode * 0.1)) {// heuristic using
-																						// countchangemode in order to
-																						// decide level of emergency
-																						// acceptable before resume
-										suecop.resume();
-									}
-								} else {// otherwise suspend suspension equipment
-									suecop.suspend();
+								boolean res = suecop.downMode();
+								if (res)
+									totalDowned++;
+							}
+							for (PlanningEquipmentControlOutboundPort plecop : plecops) {
+								if (!plecop.getServerPortURI().equals(RunSILSimulation.BATTERY_INBOUND_PORT_URI)) {
+									boolean res = plecop.downMode();
+									if (res)
+										totalDowned++;
 								}
 							}
-							if (countChangeMode <= -4) {
-								// many negatives ratios
-								// controller has to postpone planned event wanted by users
-								for (PlanningEquipmentControlOutboundPort plecop : plecops)
-									plecop.postpone(Duration.ofMinutes(POSTPONE_DURATION));
+							if (totalDowned > 0) {
+								String message = "have execute downMode() with success on " + totalDowned
+										+ " equipments";
+								Log.printAndLog(me, message);
+								fileLogger.logMessage("", message);
 							}
+
+							// if no equipment was downed, we try to launch the battery
+							if (totalDowned == 0) {
+								boolean batteryProduce = false;
+								for (PlanningEquipmentControlOutboundPort plecop : plecops) {
+									if (plecop.getServerPortURI().equals(RunSILSimulation.BATTERY_INBOUND_PORT_URI)) {
+										batteryProduce = plecop.setMode(0);
+									}
+								}
+								if (batteryProduce) {
+									String message = "battery wasn't producing energy, start to produce now";
+									Log.printAndLog(me, message);
+									fileLogger.logMessage("", message);
+								}
+
+								// if the battery can't product energy or was already producting energy, we try
+								// postpone equipments that arent battery
+								if (!batteryProduce) {
+									int nbPostponed = 0;
+									for (PlanningEquipmentControlOutboundPort plecop : plecops) {
+										if (!plecop.getServerPortURI()
+												.equals(RunSILSimulation.BATTERY_INBOUND_PORT_URI)) {
+											boolean res = plecop.postpone(Duration.ofMinutes(30));
+											if (res)
+												nbPostponed++;
+										}
+									}
+									if (nbPostponed > 0) {
+										String message = "have execute postpone(30 minutes) with success on "
+												+ nbPostponed + " equipments";
+										Log.printAndLog(me, message);
+										fileLogger.logMessage("", message);
+									}
+
+									if (nbPostponed == 0) {
+										int nbSuspended = 0;
+										// if no equipment can be postponed, we stop the suspensibles
+										for (SuspensionEquipmentControlCI suecop : suecops) {
+											boolean res = suecop.suspend();
+											if (res)
+												nbSuspended++;
+										}
+										if (nbSuspended > 0) {
+											String message = "have execute suspend() with success on " + nbSuspended
+													+ " equipments";
+											Log.printAndLog(me, message);
+											fileLogger.logMessage("", message);
+										}
+									}
+								}
+							}
+
 						}
-						countChangeMode--;
+						// positive house energy
+						else {
+							if (lastLoopEnergy < 0) {
+								String message = "House energy being positive";
+								Log.printAndLog(me, message);
+								fileLogger.logMessage("", message);
+							}
+
+							// if the battery is draining and we have enought energy to stop it, we stop it
+							boolean batteryStoppedDraining = false;
+							if (energy > 7) {
+								for (PlanningEquipmentControlOutboundPort plecop : plecops) {
+									if (plecop.getServerPortURI().equals(RunSILSimulation.BATTERY_INBOUND_PORT_URI)) {
+										if (plecop.currentMode() == 0)
+											batteryStoppedDraining = plecop.setMode(1);
+									}
+								}
+								if (batteryStoppedDraining) {
+									String message = "force battery to go sleep";
+									Log.printAndLog(me, message);
+									fileLogger.logMessage("", message);
+								}
+							}
+
+							// if the battery wasn't draining, we unsuspend equipment
+							if (!batteryStoppedDraining) {
+
+								// we unsuspend equipment if we have enougth energy
+								int nbActivated = 0;
+								if (energy > 2) {
+									for (SuspensionEquipmentControlCI suecop : suecops) {
+										boolean res = suecop.resume();
+										if (res)
+											nbActivated++;
+									}
+									if (nbActivated > 0) {
+										String message = "have unsuspended " + nbActivated + " equipments";
+										Log.printAndLog(me, message);
+										fileLogger.logMessage("", message);
+									}
+								}
+
+								// if no equipment was unsuspended, we upmode equipments except battery
+								if (nbActivated == 0 && energy > 2) {
+									int totalUpped = 0;
+									for (StandardEquipmentControlOutboundPort stecop : stecops) {
+										boolean res = stecop.upMode();
+										if (res)
+											totalUpped++;
+									}
+									for (SuspensionEquipmentControlOutboundPort suecop : suecops) {
+										boolean res = suecop.upMode();
+										if (res)
+											totalUpped++;
+									}
+									for (PlanningEquipmentControlOutboundPort plecop : plecops) {
+										if (!plecop.getServerPortURI()
+												.equals(RunSILSimulation.BATTERY_INBOUND_PORT_URI)) {
+											boolean res = plecop.upMode();
+											if (res)
+												totalUpped++;
+										}
+									}
+									if (totalUpped > 0) {
+										String message = "have execute upMode() with success on " + totalUpped
+												+ " equipments";
+										Log.printAndLog(me, message);
+										fileLogger.logMessage("", message);
+									}
+
+									// if no equipment was upped, we put battery in charging mode if we have enougth
+									// energy
+									if (totalUpped == 0 && energy > 7) {
+										boolean batteryIsCharging = false;
+										for (PlanningEquipmentControlOutboundPort plecop : plecops) {
+											if (plecop.getServerPortURI()
+													.equals(RunSILSimulation.BATTERY_INBOUND_PORT_URI)) {
+												batteryIsCharging = plecop.setMode(2);
+											}
+										}
+										if (batteryIsCharging) {
+											String message = "battery is now recharging.";
+											Log.printAndLog(me, message);
+											fileLogger.logMessage("", message);
+										}
+									}
+								}
+							}
+
+						}
+
+						lastLoopEnergy = energy;
+						isRunning = false;
 					}
-					lastRatio = ratio;
 				} catch (Exception e) {
 				}
 			}
 		}
-
 		this.runTask(CONTROL_EXECUTOR_URI, owner -> {
 			try {
 

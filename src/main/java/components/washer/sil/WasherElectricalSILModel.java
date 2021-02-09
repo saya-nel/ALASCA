@@ -45,19 +45,19 @@ public class WasherElectricalSILModel extends AtomicHIOA {
 	/**
 	 * energy generated during eco mode in watts
 	 */
-	public static final double ECO_MODE_CONSUMPTION = 20;
+	public static final double ECO_MODE_CONSUMPTION = 1500;
 	/**
 	 * energy generated during standard mode in watts
 	 */
-	public static final double STD_MODE_CONSUMPTION = 22;
+	public static final double STD_MODE_CONSUMPTION = 2000;
 	/**
 	 * energy generated during performance mode in watts
 	 */
-	public static final double PERFORMANCE_MODE_CONSUMPTION = 23;
+	public static final double PERFORMANCE_MODE_CONSUMPTION = 2500;
 	/**
 	 * tension in volts
 	 */
-	public static final double TENSION = 15;
+	public static final double TENSION = 220;
 	/**
 	 * current intensity in Amperes; intensity is power/tension.
 	 */
