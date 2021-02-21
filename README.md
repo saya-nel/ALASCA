@@ -1,6 +1,6 @@
 # ALASCA
 
-Simulation d'un gestionnaire d'énergie pour une maison connecté. 
+Simulation d'un gestionnaire d'énergie pour une maison connecté. Voir sujet.pdf.
 
 ## Lancement
 
